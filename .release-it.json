@@ -1,0 +1,13 @@
+{
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": true,
+    "assets": ["builds/*.xpi"]
+  },
+  "hooks": {
+    "after:bump": "npm run build",
+    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+  }
+}

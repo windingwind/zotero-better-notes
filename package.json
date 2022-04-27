@@ -1,0 +1,33 @@
+{
+  "name": "notero",
+  "addonName": "Notero",
+  "addonID": "notero@windingwind.com",
+  "addonRef": "Notero",
+  "version": "0.0.0",
+  "description": "Knowledge management for Zotero",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node build.js",
+    "release": "release-it",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windingwind/Notero.git"
+  },
+  "author": "iShareStuff",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/windingwind/Notero/issues"
+  },
+  "homepage": "https://github.com/windingwind/Notero#readme",
+  "dependencies": {
+    "compressing": "^1.5.1",
+    "crypto-js": "^4.1.1",
+    "esbuild": "^0.14.34",
+    "replace-in-file": "^6.3.2"
+  },
+  "devDependencies": {
+    "release-it": "^14.14.0"
+  }
+}

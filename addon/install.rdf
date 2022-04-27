@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<RDF:RDF
+    xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+    xmlns:NC="http://home.netscape.com/NC-rdf#"
+    xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <RDF:Description
+        RDF:about="urn:mozilla:install-manifest"
+        em:id="__addonID__"
+        em:name="__addonName__"
+        em:version="__buildVersion__"
+        em:type="2"
+        em:creator="__author__"
+        em:description="__description__"
+        em:homepageURL="__homepage__"
+        em:iconURL="chrome://__addonRef__/skin/favicon.png"
+        em:updateURL="https://raw.githubusercontent.com/windingwind/Notero/master/update.rdf">>
+        <em:type>2</em:type>
+        <em:targetApplication RDF:resource="rdf:#$x61SL3"/>
+        <em:targetApplication>
+            <Description>
+                <em:id>zotero@chnm.gmu.edu</em:id>
+                <em:minVersion>5.0</em:minVersion>
+                <em:maxVersion>*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+        <em:targetApplication>
+            <Description>
+                <em:id>juris-m@juris-m.github.io</em:id>
+                <em:minVersion>5.0</em:minVersion>
+                <em:maxVersion>*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+  </RDF:Description>
+</RDF:RDF>
