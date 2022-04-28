@@ -69,3 +69,7 @@ declare class ClassList {
 declare class XULEvent extends Event {
   public target: XUL.Element;
 }
+
+declare class XULWindow extends Window {
+  public document: XMLDocument;
+}

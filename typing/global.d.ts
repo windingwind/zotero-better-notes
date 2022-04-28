@@ -127,6 +127,7 @@ declare const Zotero: {
     set: (key: string, value: any) => any;
   };
   Reader: Reader;
+  Notes: Notes;
   Notero: import("../src/Notero");
 };
 
@@ -154,8 +155,26 @@ declare class Reader {
 declare class ReaderObj {
   [attr: string]: any;
   itemID: number;
-  _iframeWindow: Window;
+  _iframeWindow: XULWindow;
 }
+
+declare class EditorInstance {
+  _iframeWindow: XULWindow;
+  _item: ZoteroItem;
+  _initPromise: Promise
+}
+
+declare class Notes {
+  _editorInstances: EditorInstance[];
+  registerEditorInstance: (instance: EditorInstance) => void;
+  // custom
+  _registerEditorInstance?: (instance: EditorInstance) => void;
+}
+
+declare const ZoteroContextPane: {
+  [attr: string]: any;
+  getActiveEditor: () => EditorInstance;
+};
 
 declare class Annotation {
   text: string;
