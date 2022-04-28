@@ -1,6 +1,6 @@
 # Knowledge4Zotero
 
-Zotero 主题
+Knowledge management for Zotero!
 
 # Quick Start Guide
 
