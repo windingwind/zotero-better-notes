@@ -18,6 +18,15 @@ class AddonViews extends AddonBase {
     };
   }
 
+  async getEditor(instance: EditorInstance) {
+    await instance._initPromise;
+    let editor =
+      instance._iframeWindow.document.getElementsByClassName(
+        "primary-editor"
+      )[0];
+    return editor;
+  }
+
   async addEditorButton(
     editorInstances: EditorInstance,
     id: string,
@@ -46,6 +55,15 @@ class AddonViews extends AddonBase {
   changeEditorButton(button: Element, icon: string, title: string) {
     button.innerHTML = this.editorIcon[icon];
     button.setAttribute("title", title);
+  }
+
+  async scrollToLine(instance: EditorInstance, lineIndex: number) {
+    let editor = await this.getEditor(instance);
+    if (lineIndex > editor.children.length) {
+      lineIndex = editor.children.length - 1;
+    }
+    // @ts-ignore
+    editor.parentNode.scrollTo(0, editor.children[lineIndex].offsetTop);
   }
 
   showProgressWindow(

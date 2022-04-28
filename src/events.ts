@@ -23,8 +23,23 @@ class AddonEvents extends AddonBase {
     };
   }
 
+  public async addEditorEventListener(
+    instance: EditorInstance,
+    event: string,
+    message: EditorMessage
+  ) {
+    let editor: Element = await this._Addon.views.getEditor(instance);
+    editor.addEventListener(event, (e: XULEvent) => {
+      message.content.event = e;
+      message.content.editorInstance = instance;
+      this.onEditorEvent(message);
+    });
+  }
+
   public async onEditorEvent(message: EditorMessage) {
-    Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${String(message)}`);
+    Zotero.debug(
+      `Knowledge4Zotero: onEditorEvent\n${message.type}\n${message.content}`
+    );
     if (message.type === "addNoteInstance") {
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
@@ -50,6 +65,11 @@ class AddonEvents extends AddonBase {
         "addToKnowledge",
         "Add Note Link to Knowledge Workspace",
         new EditorMessage("addToKnowledge", {})
+      );
+      this.addEditorEventListener(
+        message.content.editorInstance,
+        "click",
+        new EditorMessage("noteEditorClick", {})
       );
     } else if (message.type === "addToKnowledge") {
       /*
@@ -105,6 +125,24 @@ class AddonEvents extends AddonBase {
           }
         }
       }
+    } else if (message.type === "noteEditorClick") {
+      let el: XUL.Element = message.content.event.target;
+      if (el.children.length !== 0) {
+        return;
+      }
+      let urlIndex = el.innerHTML.search(/zotero:\/\/note\//g);
+      if (urlIndex >= 0) {
+        let noteID = parseInt(
+          el.innerHTML.substring(urlIndex + "zotero://note/".length)
+        );
+        let note = Zotero.Items.get(noteID);
+        if (note && note.isNote()) {
+          // TODO: Open note
+          Zotero.debug(`Knowledge4Zotero: noteEditorClick ${note.id}`);
+        }
+      }
+    } else {
+      Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }
   }
 

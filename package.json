@@ -24,7 +24,8 @@
   "dependencies": {
     "compressing": "^1.5.1",
     "esbuild": "^0.14.34",
-    "replace-in-file": "^6.3.2"
+    "replace-in-file": "^6.3.2",
+    "tree-model": "^1.0.7"
   },
   "devDependencies": {
     "release-it": "^14.14.0"

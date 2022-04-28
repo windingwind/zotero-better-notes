@@ -83,6 +83,7 @@ declare interface ZoteroItem {
   id: number;
   isRegularItem: () => boolean;
   isNote: () => boolean;
+  getNote: () => string;
   isAttachment: () => boolean;
   isAnnotation?: () => boolean;
   itemTypeID: number;
@@ -126,6 +127,9 @@ declare const Zotero: {
     get: (key: string) => any;
     set: (key: string, value: any) => any;
   };
+  Items: {
+    get: (key: string | number) => ZoteroItem;
+  };
   Reader: Reader;
   Notes: Notes;
   Knowledge4Zotero: import("../src/addon");
@@ -161,7 +165,7 @@ declare class ReaderObj {
 declare class EditorInstance {
   _iframeWindow: XULWindow;
   _item: ZoteroItem;
-  _initPromise: Promise
+  _initPromise: Promise;
 }
 
 declare class Notes {
