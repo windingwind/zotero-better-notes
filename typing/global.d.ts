@@ -128,7 +128,7 @@ declare const Zotero: {
   };
   Reader: Reader;
   Notes: Notes;
-  Notero: import("../src/Notero");
+  Knowledge4Zotero: import("../src/addon");
 };
 
 declare const ZoteroPane: {

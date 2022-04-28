@@ -1,4 +1,4 @@
-# Notero
+# Knowledge4Zotero
 
 Zotero 主题
 

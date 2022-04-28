@@ -1,12 +1,12 @@
 import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
-  constructor(parent: Notero) {
+  constructor(parent: Knowledge4Zotero) {
     super(parent);
   }
 
   public async onInit() {
-    Zotero.debug("Notero: init called");
+    Zotero.debug("Knowledge4Zotero: init called");
     this.addNoteInstanceListener();
     this.resetState();
   }
@@ -24,49 +24,54 @@ class AddonEvents extends AddonBase {
   }
 
   public async onEditorEvent(message: EditorMessage) {
-    Zotero.debug(`Notero: onEditorEvent\n${String(message)}`);
-    switch (message.type) {
-      case "addNoteInstance":
-        let mainKnowledgeID = parseInt(
-          Zotero.Prefs.get("Notero.mainKnowledgeID")
-        );
-        await message.content.editorInstance._initPromise;
+    Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${String(message)}`);
+    if (message.type === "addNoteInstance") {
+      let mainKnowledgeID = parseInt(
+        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+      );
+      await message.content.editorInstance._initPromise;
 
-        if (message.content.editorInstance._item.id !== mainKnowledgeID) {
-          Zotero.debug(`Notero: main Knowledge`);
-          this._Addon.views.addEditorButton(
-            message.content.editorInstance,
-            "setMainKnowledge",
-            "Use Current Note as Knowledge Workspace",
-            new EditorMessage("setMainKnowledge", {})
-          );
-          this._Addon.views.addEditorButton(
-            message.content.editorInstance,
-            "addToKnowledge",
-            "Add Note Link to Knowledge Workspace",
-            new EditorMessage("addToKnowledge", {})
-          );
-        }
-        break;
+      let isMainKnowledge =
+        message.content.editorInstance._item.id === mainKnowledgeID;
 
-      case "addToKnowledge":
-        /*
+      Zotero.debug(`Knowledge4Zotero: main Knowledge`);
+      this._Addon.views.addEditorButton(
+        message.content.editorInstance,
+        "mainKnowledge",
+        isMainKnowledge ? "isMainKnowledge" : "setMainKnowledge",
+        isMainKnowledge
+          ? "This Note is Knowledge Workspace"
+          : "Use Current Note as Knowledge Workspace",
+        new EditorMessage("setMainKnowledge", {})
+      );
+      this._Addon.views.addEditorButton(
+        message.content.editorInstance,
+        "addToKnowledge",
+        "addToKnowledge",
+        "Add Note Link to Knowledge Workspace",
+        new EditorMessage("addToKnowledge", {})
+      );
+    } else if (message.type === "addToKnowledge") {
+      /*
         message.content = {
           editorInstance
         }
         */
-        // TODO: Complete this part
-        Zotero.debug("Notero: addToKnowledge");
-        break;
-      case "setMainKnowledge":
-        /*
+      // TODO: Complete this part
+      Zotero.debug("Knowledge4Zotero: addToKnowledge");
+    } else if (message.type === "setMainKnowledge") {
+      /*
         message.content = {
           editorInstance
         }
         */
-        // TODO: Complete this part
-        Zotero.debug("Notero: addToKnowledge");
-        if (Zotero.Prefs.get("Notero.mainKnowledgeID")) {
+      // TODO: Complete this part
+      Zotero.debug("Knowledge4Zotero: setMainKnowledge");
+      let mainKnowledgeID = parseInt(
+        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+      );
+      if (message.content.editorInstance._item.id !== mainKnowledgeID) {
+        if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
           let confirmChange = confirm(
             "Will remove current Knowledge Workspace. Confirm?"
           );
@@ -75,7 +80,7 @@ class AddonEvents extends AddonBase {
           }
         }
         Zotero.Prefs.set(
-          "Notero.mainKnowledgeID",
+          "Knowledge4Zotero.mainKnowledgeID",
           message.content.editorInstance._item.id
         );
         // Set the button to selected state
@@ -85,9 +90,21 @@ class AddonEvents extends AddonBase {
           "This Note is Knowledge Workspace"
         );
         // TODO: update workspace window here
-        break;
-      default:
-        break;
+        for (let editor of Zotero.Notes._editorInstances) {
+          await editor._initPromise;
+          if (editor._item.id === mainKnowledgeID) {
+            let button =
+              editor._iframeWindow.document.getElementById("mainKnowledge");
+            if (button) {
+              this._Addon.views.changeEditorButton(
+                button,
+                "setMainKnowledge",
+                "Use Current Note as Knowledge Workspace"
+              );
+            }
+          }
+        }
+      }
     }
   }
 

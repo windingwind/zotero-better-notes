@@ -1,11 +1,11 @@
-import Notero from "./Notero";
+import Knowledge4Zotero from "./addon";
 
-Zotero.Notero = new Notero();
+Zotero.Knowledge4Zotero = new Knowledge4Zotero();
 
 window.addEventListener(
   "load",
   async function (e) {
-    Zotero.Notero.events.onInit();
+    Zotero.Knowledge4Zotero.events.onInit();
   },
   false
 );

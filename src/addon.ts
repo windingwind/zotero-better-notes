@@ -2,7 +2,7 @@ import AddonEvents from "./events";
 import AddonViews from "./views";
 import AddonPrefs from "./prefs";
 
-class Notero {
+class Knowledge4Zotero {
   public events: AddonEvents;
   public views: AddonViews;
   public prefs: AddonPrefs;
@@ -14,4 +14,4 @@ class Notero {
   }
 }
 
-export default Notero;
+export default Knowledge4Zotero;

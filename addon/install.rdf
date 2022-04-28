@@ -13,7 +13,7 @@
         em:description="__description__"
         em:homepageURL="__homepage__"
         em:iconURL="chrome://__addonRef__/skin/favicon.png"
-        em:updateURL="https://raw.githubusercontent.com/windingwind/Notero/master/update.rdf">>
+        em:updateURL="https://raw.githubusercontent.com/windingwind/Knowledge4Zotero/master/update.rdf">>
         <em:type>2</em:type>
         <em:targetApplication RDF:resource="rdf:#$x61SL3"/>
         <em:targetApplication>

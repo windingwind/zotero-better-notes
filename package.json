@@ -1,8 +1,8 @@
 {
-  "name": "notero",
-  "addonName": "Notero",
-  "addonID": "notero@windingwind.com",
-  "addonRef": "Notero",
+  "name": "knowledge-for-zotero",
+  "addonName": "Knowledge for Zotero",
+  "addonID": "Knowledge4Zotero@windingwind.com",
+  "addonRef": "Knowledge4Zotero",
   "version": "0.0.0",
   "description": "Knowledge management for Zotero",
   "main": "src/index.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/windingwind/Notero.git"
+    "url": "git+https://github.com/windingwind/Knowledge4Zotero.git"
   },
   "author": "windingwind",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/windingwind/Notero/issues"
+    "url": "https://github.com/windingwind/Knowledge4Zotero/issues"
   },
-  "homepage": "https://github.com/windingwind/Notero#readme",
+  "homepage": "https://github.com/windingwind/Knowledge4Zotero#readme",
   "dependencies": {
     "compressing": "^1.5.1",
     "esbuild": "^0.14.34",

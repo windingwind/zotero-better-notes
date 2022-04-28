@@ -1,6 +1,6 @@
 class AddonBase {
-  protected _Addon: Notero;
-  constructor(parent: Notero) {
+  protected _Addon: Knowledge4Zotero;
+  constructor(parent: Knowledge4Zotero) {
     this._Addon = parent;
   }
 }
