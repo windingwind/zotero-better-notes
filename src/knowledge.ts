@@ -116,8 +116,8 @@ class Knowledge {
       return undefined;
     }
 
-    let currentLineRange = this.getLineRangeInNoteTree(note, currentNode);
-    let targetLineRange = this.getLineRangeInNoteTree(note, targetNode);
+    let currentLineRange = this.getNodeLineRangeInNoteTree(note, currentNode);
+    let targetLineRange = this.getNodeLineRangeInNoteTree(note, targetNode);
     let targetIndex = 0;
     let targetRank = 1;
 
@@ -236,7 +236,29 @@ class Knowledge {
     );
   }
 
-  getLineRangeInNoteTree(
+  getNoteTreeNodeById(
+    note: ZoteroItem,
+    id: number,
+    root: TreeModel.Node<object> = undefined
+  ) {
+    root = root || this.getNoteTree(note);
+    return root.first(function (node) {
+      return node.model.id === id;
+    });
+  }
+
+  getNoteTreeNodesByRank(
+    note: ZoteroItem,
+    rank: number,
+    root: TreeModel.Node<object> = undefined
+  ) {
+    root = root || this.getNoteTree(note);
+    return root.all(function (node) {
+      return node.model.rank === rank;
+    });
+  }
+
+  getNodeLineRangeInNoteTree(
     note: ZoteroItem,
     node: TreeModel.Node<object>
   ): number[] {
