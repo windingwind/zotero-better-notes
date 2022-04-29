@@ -68,6 +68,8 @@ declare class ClassList {
 
 declare class XULEvent extends Event {
   public target: XUL.Element;
+  clientX: number;
+  clientY: number;
 }
 
 declare class XULWindow extends Window {

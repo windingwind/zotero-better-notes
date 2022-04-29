@@ -8,9 +8,8 @@ class AddonBase {
 class EditorMessage {
   public type: string;
   public content: {
-    itemID?: string;
     event?: XULEvent;
-    editorInstance?: EditorInstance
+    editorInstance?: EditorInstance;
   };
   constructor(type: string, content: object) {
     this.type = type;

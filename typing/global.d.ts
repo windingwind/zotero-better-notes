@@ -84,6 +84,8 @@ declare interface ZoteroItem {
   isRegularItem: () => boolean;
   isNote: () => boolean;
   getNote: () => string;
+  setNote: (string) => void;
+  getNoteTitle: () => string;
   isAttachment: () => boolean;
   isAnnotation?: () => boolean;
   itemTypeID: number;
@@ -163,6 +165,7 @@ declare class ReaderObj {
 }
 
 declare class EditorInstance {
+  [attr: string]: any;
   _iframeWindow: XULWindow;
   _item: ZoteroItem;
   _initPromise: Promise;

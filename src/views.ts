@@ -18,12 +18,8 @@ class AddonViews extends AddonBase {
     };
   }
 
-  async getEditor(instance: EditorInstance) {
-    await instance._initPromise;
-    let editor =
-      instance._iframeWindow.document.getElementsByClassName(
-        "primary-editor"
-      )[0];
+  getEditor(_document: Document) {
+    let editor = _document.getElementsByClassName("primary-editor")[0];
     return editor;
   }
 
@@ -58,7 +54,8 @@ class AddonViews extends AddonBase {
   }
 
   async scrollToLine(instance: EditorInstance, lineIndex: number) {
-    let editor = await this.getEditor(instance);
+    await instance._initPromise;
+    let editor = this.getEditor(instance._iframeWindow.document);
     if (lineIndex > editor.children.length) {
       lineIndex = editor.children.length - 1;
     }
