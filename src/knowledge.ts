@@ -2,6 +2,7 @@ const TreeModel = require("./treemodel");
 
 class Knowledge {
   currentLine: number;
+  workspaceWindow: Window;
   constructor() {
     this.currentLine = 0;
   }
@@ -10,6 +11,72 @@ class Knowledge {
     return Zotero.Items.get(
       Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
     );
+  }
+
+  getWorkspaceWindow(): Window | boolean {
+    if (this.workspaceWindow && !this.workspaceWindow.closed) {
+      return this.workspaceWindow;
+    }
+    return false;
+  }
+
+  async openWorkspaceWindow() {
+    if (this.getWorkspaceWindow()) {
+      (this.getWorkspaceWindow() as Window).focus();
+    } else {
+      let win = window.open(
+        "chrome://Knowledge4Zotero/content/workspace.xul",
+        "_blank",
+        "chrome,extrachrome,menubar,resizable,scrollbars,status,width=900,height=600"
+      );
+      this.workspaceWindow = win;
+      await this.waitWorkspaceRedy();
+      this.setWorkspaceMainNote();
+    }
+  }
+
+  async waitWorkspaceRedy() {
+    let _window = this.getWorkspaceWindow() as Window;
+    if (!_window) {
+      return false;
+    }
+    let t = 0;
+    while (_window.document.readyState !== "complete" && t < 500) {
+      t += 1;
+      await Zotero.Promise.delay(10);
+    }
+    return t < 500;
+  }
+
+  async setWorkspaceMainNote(note: ZoteroItem = undefined) {
+    let _window = this.getWorkspaceWindow() as Window;
+    note = note || this.getWorkspaceNote();
+    if (!_window) {
+      return;
+    }
+    await this.waitWorkspaceRedy();
+    let noteEditor: any = _window.document.getElementById(
+      "zotero-note-editor-main"
+    );
+    noteEditor.mode = "edit";
+    noteEditor.viewMode = "library";
+    noteEditor.parent = null;
+    noteEditor.item = note;
+  }
+
+  async setWorkspacePreviewNote(note: ZoteroItem) {
+    let _window = this.getWorkspaceWindow() as Window;
+    if (!_window) {
+      return;
+    }
+    await this.waitWorkspaceRedy();
+    let noteEditor: any = _window.document.getElementById(
+      "zotero-note-editor-preview"
+    );
+    noteEditor.mode = "edit";
+    noteEditor.viewMode = "library";
+    noteEditor.parent = null;
+    noteEditor.item = note;
   }
 
   getLinesInNote(note: ZoteroItem): string[] {
@@ -279,55 +346,35 @@ class Knowledge {
     return [node.model.lineIndex, endIndex];
   }
 
-  async getNoteMarkdown(note: ZoteroItem) {
+  async getNoteExport(note: ZoteroItem, format: "markdown" | "html") {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return;
     }
     let items = [note];
-    let markdownFormat = {
+    let formatObj = {
       mode: "export",
-      id: Zotero.Translators.TRANSLATOR_ID_NOTE_MARKDOWN,
+      id:
+        format === "markdown"
+          ? Zotero.Translators.TRANSLATOR_ID_NOTE_MARKDOWN
+          : Zotero.Translators.TRANSLATOR_ID_NOTE_HTML,
     };
-    // let htmlFormat = {
-    //   mode: "export",
-    //   id: Zotero.Translators.TRANSLATOR_ID_NOTE_HTML,
-    // };
-    let mdText = "";
+    let text = "";
     let done = false;
-    Zotero.QuickCopy.getContentFromItems(
-      items,
-      markdownFormat,
-      (obj, worked) => {
-        if (!worked) {
-          Zotero.log(Zotero.getString("fileInterface.exportError"), "warning");
-          return;
-        }
-        mdText = obj.string.replace(/\r\n/g, "\n");
-        done = true;
-        // Zotero.QuickCopy.getContentFromItems(
-        //   items,
-        //   htmlFormat,
-        //   (obj2, worked) => {
-        //     if (!worked) {
-        //       Zotero.log(
-        //         Zotero.getString("fileInterface.exportError"),
-        //         "warning"
-        //       );
-        //       return;
-        //     }
-        //     console.log(obj.string.replace(/\r\n/g, "\n"));
-        //     console.log("text/html", obj2.string.replace(/\r\n/g, "\n"));
-        //   }
-        // );
+    Zotero.QuickCopy.getContentFromItems(items, formatObj, (obj, worked) => {
+      if (!worked) {
+        Zotero.log(Zotero.getString("fileInterface.exportError"), "warning");
+        return;
       }
-    );
+      text = obj.string.replace(/\r\n/g, "\n");
+      done = true;
+    });
     let t = 0;
     while (!done && t < 500) {
       t += 1;
       await Zotero.Promise.delay(10);
     }
-    return mdText;
+    return text;
   }
 
   parseNoteHTML(note: ZoteroItem): Element {

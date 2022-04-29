@@ -1286,7 +1286,9 @@ function ZoteroProtocolHandler() {
       Zotero.debug(`${noteID} called with ${extraParams}`);
       let item = Zotero.Items.get(noteID);
       if (item && item.isNote()) {
-        Zotero.Knowledge4Zotero.events.onEditorEvent({
+        Zotero.Knowledge4Zotero.events.onEditorEvent.bind(
+          Zotero.Knowledge4Zotero.events
+        )({
           type: "onNoteLink",
           content: {
             params: {

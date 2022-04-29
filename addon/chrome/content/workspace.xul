@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+
+<!DOCTYPE window [
+    <!ENTITY % zoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %zoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
+
+<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script src="chrome://zotero/content/include.js" />
+    <script src="chrome://zotero/content/note.js" />
+
+    <script type="application/javascript">
+        window.addEventListener(
+          "load",
+          function (e) {
+            let vbox = document.getElementById('zotero-knowledge-outline');
+            vbox.width = 250;
+            vbox.minWidth = 250;
+            vbox.maxWidth = 250;
+          },
+          false
+        );
+      </script>
+
+    <keyset>
+        <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
+    </keyset>
+    <command id="cmd_close" oncommand="window.close();" />
+
+    <hbox flex="1">
+        <vbox id="zotero-knowledge-outline" flex="1" width="250" maxWidth="250" minWidth="250">
+            <!-- Outline Here -->
+        </vbox>
+        <splitter collapse="before">
+            <grippy></grippy>
+        </splitter>
+        <zoteronoteeditor id="zotero-note-editor-main" flex="1" onerror="return;onError()" />
+        <splitter collapse="after">
+            <grippy></grippy>
+        </splitter>
+        <zoteronoteeditor id="zotero-note-editor-preview" flex="1" onerror="return;onError()" />
+    </hbox>
+
+</window>

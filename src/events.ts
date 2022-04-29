@@ -8,7 +8,8 @@ class AddonEvents extends AddonBase {
 
   public async onInit() {
     Zotero.debug("Knowledge4Zotero: init called");
-    this._Addon.knowledge = new Knowledge();
+    await Zotero.uiReadyPromise;
+    this._Addon.views.addOpenWorkspaceButton();
     this.addEditorInstanceListener();
     this.resetState();
   }
@@ -57,9 +58,8 @@ class AddonEvents extends AddonBase {
   }
 
   public async onEditorEvent(message: EditorMessage) {
-    Zotero.debug(
-      `Knowledge4Zotero: onEditorEvent\n${message.type}\n${message.content}`
-    );
+    Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
+    Zotero.debug(message.content);
     if (message.type === "addNoteInstance") {
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
@@ -87,11 +87,6 @@ class AddonEvents extends AddonBase {
         new EditorMessage("addToKnowledge", {
           itemID: message.content.editorInstance._item.id,
         })
-      );
-      this.addEditorEventListener(
-        message.content.editorInstance,
-        "click",
-        new EditorMessage("noteEditorClick", {})
       );
       if (!message.content.editorInstance._knowledgeSelectionInitialized) {
         this.addEditorDocumentEventListener(
@@ -144,6 +139,7 @@ class AddonEvents extends AddonBase {
           "This Note is Knowledge Workspace"
         );
         // TODO: update workspace window here
+        await this._Addon.knowledge.setWorkspaceMainNote();
         for (let editor of Zotero.Notes._editorInstances) {
           await editor._initPromise;
           if (editor._item.id === mainKnowledgeID) {
@@ -159,37 +155,20 @@ class AddonEvents extends AddonBase {
           }
         }
       }
-    } else if (message.type === "noteEditorClick") {
-      let el: XUL.Element = message.content.event.target;
-      if (el.children.length !== 0) {
-        // This is not a line element
-        return;
-      }
-      if (
-        el.tagName === "A" &&
-        (el as HTMLLinkElement).href.search(/zotero:\/\/note\//g) >= 0
-      ) {
-        let urlIndex = (el as HTMLLinkElement).href.search(
-          /zotero:\/\/note\//g
-        );
-        if (urlIndex >= 0) {
-          let noteID = parseInt(
-            (el as HTMLLinkElement).href.substring(
-              urlIndex + "zotero://note/".length
-            )
-          );
-          let note = Zotero.Items.get(noteID);
-          if (note && note.isNote()) {
-            // TODO: Open note
-            Zotero.debug(`Knowledge4Zotero: noteEditorClick ${note.id}`);
-          }
-        }
-      }
     } else if (message.type === "onNoteLink") {
       // TODO: Open note
       Zotero.debug(
-        `Knowledge4Zotero: onNoteLink ${message.content.params.item}`
+        `Knowledge4Zotero: onNoteLink ${message.content.params.item.id}`
       );
+      let _window = this._Addon.knowledge.getWorkspaceWindow();
+      if (_window) {
+        this._Addon.knowledge.setWorkspacePreviewNote(
+          message.content.params.item
+        );
+        (_window as Window).focus();
+      } else {
+        ZoteroPane.openNoteWindow(message.content.params.item.id);
+      }
     } else if (message.type === "noteEditorSelectionChange") {
       if (
         message.content.editorInstance._item.id ===

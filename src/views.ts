@@ -63,6 +63,21 @@ class AddonViews extends AddonBase {
     editor.parentNode.scrollTo(0, editor.children[lineIndex].offsetTop);
   }
 
+  addOpenWorkspaceButton() {
+    let lastButton = document.getElementById("zotero-tb-advanced-search");
+    let button = document.createElement("toolbarbutton");
+    button.setAttribute("id", "zotero-tb-knowledge-openwindow");
+    button.setAttribute("tooltiptext", "Open Knowledge Workspace");
+    button.addEventListener("click", (e) => {
+      this._Addon.knowledge.openWorkspaceWindow();
+    });
+    button.setAttribute(
+      "style",
+      "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon@0.5x.png');"
+    );
+    lastButton.after(button);
+  }
+
   showProgressWindow(
     header: string,
     context: string,
