@@ -8,7 +8,7 @@ class AddonEvents extends AddonBase {
 
   public async onInit() {
     Zotero.debug("Knowledge4Zotero: init called");
-    this._Addon.knowledge = new Knowledge(undefined);
+    this._Addon.knowledge = new Knowledge();
     this.addEditorInstanceListener();
     this.resetState();
   }
@@ -108,7 +108,8 @@ class AddonEvents extends AddonBase {
         }
         */
       Zotero.debug("Knowledge4Zotero: addToKnowledge");
-      this._Addon.knowledge.addLink(
+      this._Addon.knowledge.addLinkToNote(
+        undefined,
         -1,
         message.content.editorInstance._item.id
       );
@@ -202,11 +203,15 @@ class AddonEvents extends AddonBase {
         }
 
         // Make sure this is a direct child node of editor
-        while (
-          !focusNode.parentElement.className ||
-          focusNode.parentElement.className.indexOf("primary-editor") === -1
-        ) {
-          focusNode = focusNode.parentNode;
+        try {
+          while (
+            !focusNode.parentElement.className ||
+            focusNode.parentElement.className.indexOf("primary-editor") === -1
+          ) {
+            focusNode = focusNode.parentNode;
+          }
+        } catch (e) {
+          return;
         }
 
         let currentLineIndex = getChildIndex(focusNode);

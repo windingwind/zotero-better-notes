@@ -2,13 +2,9 @@ const TreeModel = require("./treemodel");
 
 class Knowledge {
   currentLine: number;
-  constructor(noteItem: ZoteroItem) {
+  constructor() {
     this.currentLine = 0;
-    // this.createKnowledgeItem();
   }
-  //   createKnowledgeItem() {
-  //     return;
-  //   }
 
   getWorkspaceNote() {
     return Zotero.Items.get(
@@ -16,8 +12,8 @@ class Knowledge {
     );
   }
 
-  getLines(): string[] {
-    let note = this.getWorkspaceNote();
+  getLinesInNote(note: ZoteroItem = undefined): string[] {
+    note = note || this.getWorkspaceNote();
     if (!note) {
       return [];
     }
@@ -33,11 +29,14 @@ class Knowledge {
     return noteLines;
   }
 
-  getLineParent(lineIndex: number = -1): TreeModel.Node<object> {
+  getLineParentInNote(
+    note: ZoteroItem,
+    lineIndex: number = -1
+  ): TreeModel.Node<object> {
     if (lineIndex < 0) {
       lineIndex = this.currentLine;
     }
-    let nodes = this.getOutlineList();
+    let nodes = this.getNoteOutlineList(note);
     if (!nodes.length || nodes[0].model.lineIndex > lineIndex) {
       // There is no parent node
       return undefined;
@@ -55,27 +54,27 @@ class Knowledge {
     }
   }
 
-  addLine(text: string, lineIndex: number) {
-    let note = this.getWorkspaceNote();
+  addLineToNote(note: ZoteroItem, text: string, lineIndex: number) {
+    note = note || this.getWorkspaceNote();
     if (!note) {
       return;
     }
-    let noteLines = this.getLines();
+    let noteLines = this.getLinesInNote(note);
     noteLines.splice(lineIndex, 0, text);
     note.setNote(`<div data-schema-version="8">${noteLines.join("\n")}</div>`);
     note.saveTx();
   }
 
-  addLineToParent(text: string, lineIndex: number = -1) {
+  addSubLineToNote(note: ZoteroItem, text: string, lineIndex: number = -1) {
     if (lineIndex < 0) {
       lineIndex = this.currentLine;
     }
-    let parentNode = this.getLineParent();
+    let parentNode = this.getLineParentInNote(note, lineIndex);
     if (!parentNode) {
-      this.addLine(text, lineIndex);
+      this.addLineToNote(note, text, lineIndex);
       return;
     }
-    let nodes = this.getOutlineList();
+    let nodes = this.getNoteOutlineList(note);
     let i = 0;
     for (let node of nodes) {
       if (node.model.lineIndex === parentNode.model.lineIndex) {
@@ -89,16 +88,30 @@ class Knowledge {
       i = nodes.length - 1;
     }
     // Add line before next header, which is also the end of current parent header
-    this.addLine(text, nodes[i].model.lineIndex);
+    this.addLineToNote(note, text, nodes[i].model.lineIndex);
   }
 
-  addLink(lineIndex: number, noteID: number) {
-    this.addLineToParent(`<a href="zotero://note/${noteID}" rel="noopener noreferrer nofollow">${Zotero.Items.get(noteID).getNoteTitle()}</a>`, lineIndex);
+  addLinkToNote(note: ZoteroItem, lineIndex: number, linkedNoteID: number) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    this.addSubLineToNote(
+      note,
+      `<a href="zotero://note/${linkedNoteID}" rel="noopener noreferrer nofollow">${Zotero.Items.get(
+        linkedNoteID
+      ).getNoteTitle()}</a>`,
+      lineIndex
+    );
   }
 
-  getOutline(): TreeModel.Node<object> {
+  getNoteOutline(note: ZoteroItem): TreeModel.Node<object> {
     // See http://jnuno.com/tree-model-js
-    let metadataContainer = this.parseNoteHTML();
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return undefined;
+    }
+    let metadataContainer = this.parseNoteHTML(note);
     let tree = new TreeModel();
     /*
     tree-model/index.js: line 40
@@ -137,18 +150,68 @@ class Knowledge {
     return root;
   }
 
-  getOutlineList(doFilter: boolean = true): TreeModel.Node<object>[] {
-    return this.getOutline().all(
+  getNoteOutlineList(
+    note: ZoteroItem,
+    doFilter: boolean = true
+  ): TreeModel.Node<object>[] {
+    return this.getNoteOutline(note).all(
       (node) => !doFilter || node.model.lineIndex >= 0
     );
   }
 
-  jumpToNote(noteLinke: string) {}
+  async getNoteMarkdown(note: ZoteroItem) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    let items = [note];
+    let markdownFormat = {
+      mode: "export",
+      id: Zotero.Translators.TRANSLATOR_ID_NOTE_MARKDOWN,
+    };
+    // let htmlFormat = {
+    //   mode: "export",
+    //   id: Zotero.Translators.TRANSLATOR_ID_NOTE_HTML,
+    // };
+    let mdText = "";
+    let done = false;
+    Zotero.QuickCopy.getContentFromItems(
+      items,
+      markdownFormat,
+      (obj, worked) => {
+        if (!worked) {
+          Zotero.log(Zotero.getString("fileInterface.exportError"), "warning");
+          return;
+        }
+        mdText = obj.string.replace(/\r\n/g, "\n");
+        done = true;
+        // Zotero.QuickCopy.getContentFromItems(
+        //   items,
+        //   htmlFormat,
+        //   (obj2, worked) => {
+        //     if (!worked) {
+        //       Zotero.log(
+        //         Zotero.getString("fileInterface.exportError"),
+        //         "warning"
+        //       );
+        //       return;
+        //     }
+        //     console.log(obj.string.replace(/\r\n/g, "\n"));
+        //     console.log("text/html", obj2.string.replace(/\r\n/g, "\n"));
+        //   }
+        // );
+      }
+    );
+    let t = 0;
+    while (!done && t < 500) {
+      t += 1;
+      await Zotero.Promise.delay(10);
+    }
+    return mdText;
+  }
 
-  export() {}
-
-  parseNoteHTML(): Element {
-    let note = this.getWorkspaceNote();
+  parseNoteHTML(note: ZoteroItem): Element {
+    note = note || this.getWorkspaceNote();
     if (!note) {
       return undefined;
     }
