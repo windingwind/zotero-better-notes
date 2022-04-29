@@ -185,6 +185,11 @@ class AddonEvents extends AddonBase {
           }
         }
       }
+    } else if (message.type === "onNoteLink") {
+      // TODO: Open note
+      Zotero.debug(
+        `Knowledge4Zotero: onNoteLink ${message.content.params.item}`
+      );
     } else if (message.type === "noteEditorSelectionChange") {
       if (
         message.content.editorInstance._item.id ===

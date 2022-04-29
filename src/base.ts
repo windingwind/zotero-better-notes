@@ -10,6 +10,7 @@ class EditorMessage {
   public content: {
     event?: XULEvent;
     editorInstance?: EditorInstance;
+    params?: any
   };
   constructor(type: string, content: object) {
     this.type = type;

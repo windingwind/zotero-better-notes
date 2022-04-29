@@ -14,6 +14,7 @@ const {
   addonRef,
   version,
 } = require("./package.json");
+const { join } = require("path");
 
 function copyFileSync(source, target) {
   var targetFile = target;
@@ -149,6 +150,11 @@ console.log(
 console.log("[Build] Replace OK");
 
 console.log("[Build] Addon prepare OK");
+
+copyFileSync(
+  "src/zotero-protocol-handler.js",
+  path.join(buildDir, "addon/components/zotero-protocol-handler.js")
+);
 
 compressing.zip.compressDir(
   path.join(buildDir, "addon"),
