@@ -12,7 +12,7 @@ class Knowledge {
     );
   }
 
-  getLinesInNote(note: ZoteroItem = undefined): string[] {
+  getLinesInNote(note: ZoteroItem): string[] {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return [];
@@ -36,7 +36,7 @@ class Knowledge {
     if (lineIndex < 0) {
       lineIndex = this.currentLine;
     }
-    let nodes = this.getNoteOutlineList(note);
+    let nodes = this.getNoteTreeAsList(note);
     if (!nodes.length || nodes[0].model.lineIndex > lineIndex) {
       // There is no parent node
       return undefined;
@@ -74,7 +74,7 @@ class Knowledge {
       this.addLineToNote(note, text, lineIndex);
       return;
     }
-    let nodes = this.getNoteOutlineList(note);
+    let nodes = this.getNoteTreeAsList(note);
     let i = 0;
     for (let node of nodes) {
       if (node.model.lineIndex === parentNode.model.lineIndex) {
@@ -105,7 +105,71 @@ class Knowledge {
     );
   }
 
-  getNoteOutline(note: ZoteroItem): TreeModel.Node<object> {
+  moveHeaderLineInNote(
+    note: ZoteroItem,
+    currentNode: TreeModel.Node<object>,
+    targetNode: TreeModel.Node<object>,
+    as: "child" | "before" | "after"
+  ) {
+    note = note || this.getWorkspaceNote();
+    if (!note || targetNode.getPath().indexOf(currentNode) >= 0) {
+      return undefined;
+    }
+
+    let currentLineRange = this.getLineRangeInNoteTree(note, currentNode);
+    let targetLineRange = this.getLineRangeInNoteTree(note, targetNode);
+    let targetIndex = 0;
+    let targetRank = 1;
+
+    let lines = this.getLinesInNote(note);
+
+    if (as === "child") {
+      targetIndex = targetLineRange[1];
+      targetRank = targetNode.model.rank === 6 ? 6 : targetNode.model.rank + 1;
+    } else if (as === "before") {
+      targetIndex = targetLineRange[0];
+      targetRank = targetNode.model.rank;
+    } else if (as === "after") {
+      targetIndex = targetLineRange[1];
+      targetRank = targetNode.model.rank;
+    }
+
+    if (targetIndex > currentLineRange[1]) {
+      targetIndex -= currentLineRange[1] - currentLineRange[0];
+    }
+
+    let rankChange = targetRank - currentNode.model.rank;
+
+    let movedLines = lines.splice(
+      currentLineRange[0],
+      currentLineRange[1] - currentLineRange[0]
+    );
+
+    let headerStartReg = new RegExp("<h[1-6]>");
+    let headerStopReg = new RegExp("</h[1-6]>");
+    for (let i = 0; i < movedLines.length; i++) {
+      let headerStart = movedLines[i].search(headerStartReg);
+      if (headerStart === -1) {
+        continue;
+      }
+      let lineRank = parseInt(movedLines[i][headerStart + 2]) + rankChange;
+      if (lineRank > 6) {
+        lineRank = 6;
+      } else if (lineRank < 1) {
+        lineRank = 1;
+      }
+      movedLines[i] = movedLines[i]
+        .replace(headerStartReg, `<h${lineRank}>`)
+        .replace(headerStopReg, `</h${lineRank}>`);
+    }
+    let newLines = lines
+      .slice(0, targetIndex)
+      .concat(movedLines, lines.slice(targetIndex));
+    note.setNote(`<div data-schema-version="8">${newLines.join("\n")}</div>`);
+    note.saveTx();
+  }
+
+  getNoteTree(note: ZoteroItem): TreeModel.Node<object> {
     // See http://jnuno.com/tree-model-js
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -124,10 +188,14 @@ class Knowledge {
     // }
     */
     let root = tree.parse({
+      id: -1,
       rank: 0,
       lineIndex: -1,
+      endIndex: -1,
     });
+    let id = 0;
     let currentNode = root;
+    let lastNode = undefined;
     for (let i = 0; i < metadataContainer.children.length; i++) {
       let currentRank = 7;
       let lineElement = metadataContainer.children[i];
@@ -139,24 +207,54 @@ class Knowledge {
         while (currentNode.model.rank >= currentRank) {
           currentNode = currentNode.parent;
         }
-        currentNode.addChild(
-          tree.parse({
-            rank: currentRank,
-            lineIndex: i,
-          })
-        );
+        if (lastNode) {
+          lastNode.model.endIndex = i;
+        }
+        lastNode = tree.parse({
+          id: id++,
+          rank: currentRank,
+          lineIndex: i,
+          endIndex: metadataContainer.children.length,
+        });
+        currentNode.addChild(lastNode);
+        currentNode = lastNode;
       }
     }
     return root;
   }
 
-  getNoteOutlineList(
+  getNoteTreeAsList(
     note: ZoteroItem,
     doFilter: boolean = true
   ): TreeModel.Node<object>[] {
-    return this.getNoteOutline(note).all(
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    return this.getNoteTree(note).all(
       (node) => !doFilter || node.model.lineIndex >= 0
     );
+  }
+
+  getLineRangeInNoteTree(
+    note: ZoteroItem,
+    node: TreeModel.Node<object>
+  ): number[] {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    let nodes = this.getNoteTreeAsList(note);
+    let endIndex = node.model.endIndex;
+    for (let i = 0; i < nodes.length; i++) {
+      if (
+        nodes[i].model.lineIndex >= node.model.lineIndex &&
+        nodes[i].model.rank > node.model.rank
+      ) {
+        endIndex = nodes[i].model.endIndex;
+      }
+    }
+    return [node.model.lineIndex, endIndex];
   }
 
   async getNoteMarkdown(note: ZoteroItem) {
