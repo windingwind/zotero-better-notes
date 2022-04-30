@@ -1283,41 +1283,12 @@ function ZoteroProtocolHandler() {
       let message = {
         type: "onNoteLink",
         content: {
-          params: {
-            item: false,
-            infoText: "",
-          },
+          params: await Zotero.Knowledge4Zotero.knowledge.getNoteFromLink(
+            uri.spec
+          ),
         },
       };
-      let [groupID, noteKey] = uri.spec
-        .substring("zotero://note/".length)
-        .split("/");
 
-      // User libraryID by defaultx
-      let libraryID = 1;
-
-      if (groupID !== "u") {
-        // Not a user item
-        groupID = parseInt(groupID);
-        libraryID = Zotero.Groups.getLibraryIDFromGroupID(groupID);
-      }
-
-      if (!libraryID) {
-        message.content.params.infoText =
-          "Library does not exist or access denied.";
-      } else {
-        let item = await Zotero.Items.getByLibraryAndKeyAsync(
-          libraryID,
-          noteKey
-        );
-        if (!item || !item.isNote()) {
-          message.content.params.infoText =
-            "Note does not exist or is not a note.";
-        } else {
-          message.content.params.item = item;
-        }
-      }
-      Zotero.debug(`Note link ${libraryID} : ${noteKey} called.`);
       Zotero.Knowledge4Zotero.events.onEditorEvent.bind(
         Zotero.Knowledge4Zotero.events
       )(message);

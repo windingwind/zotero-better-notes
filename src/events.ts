@@ -59,7 +59,17 @@ class AddonEvents extends AddonBase {
 
   public async onEditorEvent(message: EditorMessage) {
     Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
-    if (message.type === "addNoteInstance") {
+    if (message.type === "openWorkspace") {
+      /*
+        message.content = {}
+      */
+      await this._Addon.knowledge.openWorkspaceWindow();
+    } else if (message.type === "addNoteInstance") {
+      /*
+        message.content = {
+          editorInstance,
+        }
+      */
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
       );
@@ -71,19 +81,31 @@ class AddonEvents extends AddonBase {
       Zotero.debug(`Knowledge4Zotero: main Knowledge`);
       this._Addon.views.addEditorButton(
         message.content.editorInstance,
-        "mainKnowledge",
-        isMainKnowledge ? "isMainKnowledge" : "setMainKnowledge",
+        "workspace",
+        isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
         isMainKnowledge
-          ? "This Note is Knowledge Workspace"
-          : "Use Current Note as Knowledge Workspace",
-        new EditorMessage("setMainKnowledge", {})
+          ? "Edit the main knowledge in Workspace"
+          : "Open Workspace",
+        "start",
+        new EditorMessage("openWorkspace", {})
       );
       this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "addToKnowledge",
         "addToKnowledge",
         "Add Note Link to Knowledge Workspace",
+        "middle",
         new EditorMessage("addToKnowledge", {
+          itemID: message.content.editorInstance._item.id,
+        })
+      );
+      this._Addon.views.addEditorButton(
+        message.content.editorInstance,
+        "export",
+        "export",
+        "Export Markdown with linked Notes",
+        "end",
+        new EditorMessage("export", {
           itemID: message.content.editorInstance._item.id,
         })
       );
@@ -95,12 +117,36 @@ class AddonEvents extends AddonBase {
         );
         message.content.editorInstance._knowledgeSelectionInitialized = true;
       }
+    } else if (message.type === "enterWorkspace") {
+      /*
+        message.content = {
+          editorInstance,
+          params: "main" | "preview"
+        }
+      */
+      if (message.content.params === "main") {
+        // This is a main knowledge, hide all buttons except the export button and add title
+      } else {
+        // This is a preview knowledge, hide openWorkspace button add show close botton
+      }
+    } else if (message.type === "leaveWorkspace") {
+      /*
+        message.content = {
+          editorInstance,
+          params: "main" | "preview"
+        }
+      */
+      if (message.content.params === "main") {
+        // This is a main knowledge, show all buttons and remove title
+      } else {
+        // This is a preview knowledge, show openWorkspace button add hide close botton
+      }
     } else if (message.type === "addToKnowledge") {
       /*
         message.content = {
           editorInstance
         }
-        */
+      */
       Zotero.debug("Knowledge4Zotero: addToKnowledge");
       this._Addon.knowledge.addLinkToNote(
         undefined,
@@ -112,8 +158,7 @@ class AddonEvents extends AddonBase {
         message.content = {
           editorInstance
         }
-        */
-      // TODO: Complete this part
+      */
       Zotero.debug("Knowledge4Zotero: setMainKnowledge");
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
@@ -132,29 +177,36 @@ class AddonEvents extends AddonBase {
           message.content.editorInstance._item.id
         );
         // Set the button to selected state
-        this._Addon.views.changeEditorButton(
+        this._Addon.views.changeEditorButtonView(
           message.content.event.target,
           "isMainKnowledge",
-          "This Note is Knowledge Workspace"
+          "Edit the main knowledge in Workspace"
         );
-        // TODO: update workspace window here
-        await this._Addon.knowledge.setWorkspaceMainNote();
+        await this._Addon.knowledge.setWorkspaceNote("main");
         for (let editor of Zotero.Notes._editorInstances) {
           await editor._initPromise;
           if (editor._item.id === mainKnowledgeID) {
             let button =
-              editor._iframeWindow.document.getElementById("mainKnowledge");
+              editor._iframeWindow.document.getElementById("workspace");
             if (button) {
-              this._Addon.views.changeEditorButton(
+              this._Addon.views.changeEditorButtonView(
                 button,
-                "setMainKnowledge",
-                "Use Current Note as Knowledge Workspace"
+                "notMainKnowledge",
+                "Open Workspace"
               );
             }
           }
         }
       }
     } else if (message.type === "onNoteLink") {
+      /*
+        message.content = {
+          params: {
+            item: ZoteroItem | boolean,
+            infoText: string
+          }
+        }
+      */
       if (!message.content.params.item) {
         Zotero.debug(`Knowledge4Zotero: ${message.content.params.infoText}`);
       }
@@ -163,7 +215,8 @@ class AddonEvents extends AddonBase {
       );
       let _window = this._Addon.knowledge.getWorkspaceWindow();
       if (_window) {
-        this._Addon.knowledge.setWorkspacePreviewNote(
+        this._Addon.knowledge.setWorkspaceNote(
+          "preview",
           message.content.params.item
         );
         (_window as Window).focus();
@@ -203,6 +256,15 @@ class AddonEvents extends AddonBase {
         this._Addon.knowledge.currentLine = currentLineIndex;
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
       }
+    } else if (message.type === "export") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      await this._Addon.knowledge.exportNoteToFile(
+        message.content.editorInstance._item
+      );
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }

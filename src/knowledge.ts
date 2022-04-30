@@ -1,4 +1,4 @@
-import { AddonBase } from "./base";
+import { AddonBase, EditorMessage } from "./base";
 
 const TreeModel = require("./treemodel");
 
@@ -34,7 +34,7 @@ class Knowledge extends AddonBase {
       );
       this.workspaceWindow = win;
       await this.waitWorkspaceRedy();
-      this.setWorkspaceMainNote();
+      this.setWorkspaceNote("main");
     }
   }
 
@@ -51,35 +51,46 @@ class Knowledge extends AddonBase {
     return t < 500;
   }
 
-  async setWorkspaceMainNote(note: ZoteroItem = undefined) {
+  async getWorkspaceEditor(type: "main" | "preview" = "main") {
+    let _window = this.getWorkspaceWindow() as Window;
+    if (!_window) {
+      return;
+    }
+    await this.waitWorkspaceRedy();
+    return _window.document.getElementById(`zotero-note-editor-${type}`);
+  }
+
+  async setWorkspaceNote(
+    type: "main" | "preview" = "main",
+    note: ZoteroItem = undefined
+  ) {
     let _window = this.getWorkspaceWindow() as Window;
     note = note || this.getWorkspaceNote();
     if (!_window) {
       return;
     }
     await this.waitWorkspaceRedy();
-    let noteEditor: any = _window.document.getElementById(
-      "zotero-note-editor-main"
-    );
-    noteEditor.mode = "edit";
-    noteEditor.viewMode = "library";
-    noteEditor.parent = null;
-    noteEditor.item = note;
-  }
-
-  async setWorkspacePreviewNote(note: ZoteroItem) {
-    let _window = this.getWorkspaceWindow() as Window;
-    if (!_window) {
-      return;
+    let noteEditor: any = await this.getWorkspaceEditor(type);
+    let lastEditorInstance = noteEditor._editorInstance as EditorInstance;
+    if (lastEditorInstance) {
+      await this._Addon.events.onEditorEvent(
+        new EditorMessage("leaveWorkspace", {
+          editorInstance: lastEditorInstance,
+          params: type,
+        })
+      );
     }
-    await this.waitWorkspaceRedy();
-    let noteEditor: any = _window.document.getElementById(
-      "zotero-note-editor-preview"
-    );
     noteEditor.mode = "edit";
     noteEditor.viewMode = "library";
     noteEditor.parent = null;
     noteEditor.item = note;
+
+    await this._Addon.events.onEditorEvent(
+      new EditorMessage("enterWorkspace", {
+        editorInstance: noteEditor,
+        params: type,
+      })
+    );
   }
 
   getLinesInNote(note: ZoteroItem): string[] {
@@ -394,6 +405,81 @@ class Knowledge extends AddonBase {
       await Zotero.Promise.delay(10);
     }
     return text;
+  }
+
+  async exportNoteToFile(note: ZoteroItem, convertNoteLinks: boolean = true) {
+    let exporter = new Zotero_File_Exporter();
+
+    if (convertNoteLinks) {
+      let item: ZoteroItem = new Zotero.Item("note");
+      let noteLines = this.getLinesInNote(note);
+      let newLines = [];
+      for (let i in noteLines) {
+        newLines.push(noteLines[i]);
+        let linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
+        while (linkIndex >= 0) {
+          let link = noteLines[i].substring(linkIndex);
+          link = link.substring(0, link.search('"'));
+          let res = await this.getNoteFromLink(link);
+          if (res.item && res.item.id !== note.id) {
+            Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
+            newLines.push("<blockquote>");
+            newLines.push(
+              `<p><strong>Linked Note: <a href="${link}" rel="noopener noreferrer nofollow">${res.item.getNoteTitle()}</a></strong></p>`
+            );
+            let linkedLines = this.getLinesInNote(res.item);
+            newLines = newLines.concat(linkedLines);
+            newLines.push("</blockquote>");
+          }
+          noteLines[i] = noteLines[i].substring(
+            noteLines[i].search(/zotero:\/\/note\//g)
+          );
+          noteLines[i] = noteLines[i].substring(
+            noteLines[i].search(/<\/a>/g) + "</a>".length
+          );
+          linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
+        }
+      }
+      item.setNote(`<div data-schema-version="8">${newLines.join("\n")}</div>`);
+      item.saveTx();
+      exporter.items = [item];
+      exporter.save();
+      Zotero.Items.erase(item.id);
+    } else {
+      exporter.items = [note];
+      exporter.save();
+    }
+  }
+
+  async getNoteFromLink(uri: string) {
+    let [groupID, noteKey] = uri.substring("zotero://note/".length).split("/");
+
+    // User libraryID by defaultx
+    let libraryID = 1;
+
+    if (groupID !== "u") {
+      // Not a user item
+      let _groupID = parseInt(groupID);
+      libraryID = Zotero.Groups.getLibraryIDFromGroupID(_groupID);
+    }
+
+    if (!libraryID) {
+      return {
+        item: false,
+        infoText: "Library does not exist or access denied.",
+      };
+    }
+    let item = await Zotero.Items.getByLibraryAndKeyAsync(libraryID, noteKey);
+    if (!item || !item.isNote()) {
+      return {
+        item: false,
+        infoText: "Note does not exist or is not a note.",
+      };
+    }
+    return {
+      item: item,
+      infoText: "OK",
+    };
   }
 
   parseNoteHTML(note: ZoteroItem): Element {

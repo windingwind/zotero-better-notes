@@ -149,6 +149,11 @@ declare class ZoteroCollection {
   getChildItems: (arg1: boolean, arg2: boolean) => Array<ZoteroItem>;
 }
 
+declare class Zotero_File_Exporter {
+  items: ZoteroItem[];
+  save: () => void;
+}
+
 declare const Components: any;
 declare const Services: any;
 
