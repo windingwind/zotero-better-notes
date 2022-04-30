@@ -59,7 +59,6 @@ class AddonEvents extends AddonBase {
 
   public async onEditorEvent(message: EditorMessage) {
     Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
-    Zotero.debug(message.content);
     if (message.type === "addNoteInstance") {
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
@@ -156,7 +155,9 @@ class AddonEvents extends AddonBase {
         }
       }
     } else if (message.type === "onNoteLink") {
-      // TODO: Open note
+      if (!message.content.params.item) {
+        Zotero.debug(`Knowledge4Zotero: ${message.content.params.infoText}`);
+      }
       Zotero.debug(
         `Knowledge4Zotero: onNoteLink ${message.content.params.item.id}`
       );

@@ -13,7 +13,7 @@ class Knowledge4Zotero {
     this.events = new AddonEvents(this);
     this.views = new AddonViews(this);
     this.prefs = new AddonPrefs(this);
-    this.knowledge = new Knowledge
+    this.knowledge = new Knowledge(this);
   }
 }
 

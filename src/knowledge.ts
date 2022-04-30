@@ -1,9 +1,12 @@
+import { AddonBase } from "./base";
+
 const TreeModel = require("./treemodel");
 
-class Knowledge {
+class Knowledge extends AddonBase {
   currentLine: number;
   workspaceWindow: Window;
-  constructor() {
+  constructor(parent: Knowledge4Zotero) {
+    super(parent);
     this.currentLine = 0;
   }
 
@@ -158,17 +161,33 @@ class Knowledge {
     this.addLineToNote(note, text, nodes[i].model.lineIndex);
   }
 
-  addLinkToNote(note: ZoteroItem, lineIndex: number, linkedNoteID: number) {
-    note = note || this.getWorkspaceNote();
-    if (!note) {
+  addLinkToNote(
+    targetNote: ZoteroItem,
+    lineIndex: number,
+    linkedNoteID: number
+  ) {
+    targetNote = targetNote || this.getWorkspaceNote();
+    if (!targetNote) {
       return;
     }
+    let linkedNote = Zotero.Items.get(linkedNoteID);
+    let libraryID = linkedNote.libraryID;
+    let library = Zotero.Libraries.get(libraryID);
+    let groupID: string;
+    if (library.libraryType === "user") {
+      groupID = "u";
+    } else if (library.libraryType === "group") {
+      groupID = `${library.id}`;
+    }
+    let noteKey = linkedNote.key;
     this.addSubLineToNote(
-      note,
-      `<a href="zotero://note/${linkedNoteID}" rel="noopener noreferrer nofollow">${Zotero.Items.get(
-        linkedNoteID
-      ).getNoteTitle()}</a>`,
+      targetNote,
+      `<a href="zotero://note/${groupID}/${noteKey}" rel="noopener noreferrer nofollow">${linkedNote.getNoteTitle()}</a>`,
       lineIndex
+    );
+    this._Addon.views.showProgressWindow(
+      "Knowledge",
+      "Link is added to workspace"
     );
   }
 
