@@ -4,4 +4,8 @@
 
 <overlay id="__addonRef__" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script src="chrome://__addonRef__/content/scripts/index.js" />
+    <popup id="zotero-itemmenu">
+        <menuseparator />
+        <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({'setMainKnowledge', {editorInstance: }})" class="menuitem-iconic" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+    </popup>
 </overlay>

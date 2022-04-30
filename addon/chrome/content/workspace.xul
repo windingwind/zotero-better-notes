@@ -38,11 +38,11 @@
         <vbox id="zotero-knowledge-outline" flex="1" width="250" maxWidth="250" minWidth="250">
             <!-- Outline Here -->
         </vbox>
-        <splitter collapse="before">
+        <splitter id="outline-splitter" collapse="before">
             <grippy></grippy>
         </splitter>
         <zoteronoteeditor id="zotero-note-editor-main" flex="1" onerror="return;onError()" />
-        <splitter collapse="after">
+        <splitter id="preview-splitter" collapse="after" state="collapsed">
             <grippy></grippy>
         </splitter>
         <zoteronoteeditor id="zotero-note-editor-preview" flex="1" onerror="return;onError()" />

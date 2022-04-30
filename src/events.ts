@@ -1,5 +1,4 @@
 import { AddonBase, EditorMessage } from "./base";
-import { Knowledge } from "./knowledge";
 
 class AddonEvents extends AddonBase {
   constructor(parent: Knowledge4Zotero) {
@@ -75,39 +74,37 @@ class AddonEvents extends AddonBase {
       );
       await message.content.editorInstance._initPromise;
 
+      message.content.editorInstance._knowledgeUIInitialized = false;
+
       let isMainKnowledge =
         message.content.editorInstance._item.id === mainKnowledgeID;
 
       Zotero.debug(`Knowledge4Zotero: main Knowledge`);
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
-        "workspace",
+        "knowledge-start",
         isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
         isMainKnowledge
           ? "Edit the main knowledge in Workspace"
           : "Open Workspace",
-        "start",
-        new EditorMessage("openWorkspace", {})
+        "openWorkspace",
+        "start"
       );
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
-        "addToKnowledge",
+        "knowledge-addlink",
         "addToKnowledge",
         "Add Note Link to Knowledge Workspace",
-        "middle",
-        new EditorMessage("addToKnowledge", {
-          itemID: message.content.editorInstance._item.id,
-        })
+        "addToKnowledge",
+        "middle"
       );
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
-        "export",
+        "knowledge-end",
         "export",
         "Export Markdown with linked Notes",
-        "end",
-        new EditorMessage("export", {
-          itemID: message.content.editorInstance._item.id,
-        })
+        "export",
+        "end"
       );
       if (!message.content.editorInstance._knowledgeSelectionInitialized) {
         this.addEditorDocumentEventListener(
@@ -117,6 +114,7 @@ class AddonEvents extends AddonBase {
         );
         message.content.editorInstance._knowledgeSelectionInitialized = true;
       }
+      message.content.editorInstance._knowledgeUIInitialized = true;
     } else if (message.type === "enterWorkspace") {
       /*
         message.content = {
@@ -124,10 +122,34 @@ class AddonEvents extends AddonBase {
           params: "main" | "preview"
         }
       */
+      const _window = message.content.editorInstance._iframeWindow;
+      let t = 0;
+      while (
+        !message.content.editorInstance._knowledgeUIInitialized &&
+        t < 500
+      ) {
+        t += 1;
+        await Zotero.Promise.delay(10);
+      }
       if (message.content.params === "main") {
         // This is a main knowledge, hide all buttons except the export button and add title
+        const title = _window.document.getElementById("knowledge-addlink");
+        this._Addon.views.changeEditorButtonView(
+          title,
+          "mainTitle",
+          "This is a Main Knowledge",
+          "empty"
+        );
+        title.setAttribute("class", "");
+        title.setAttribute("style", "font-size: medium");
       } else {
         // This is a preview knowledge, hide openWorkspace button add show close botton
+        this._Addon.views.changeEditorButtonView(
+          _window.document.getElementById("knowledge-end"),
+          "close",
+          "Close Preview",
+          "closePreview"
+        );
       }
     } else if (message.type === "leaveWorkspace") {
       /*
@@ -136,10 +158,26 @@ class AddonEvents extends AddonBase {
           params: "main" | "preview"
         }
       */
+      const _window = message.content.editorInstance._iframeWindow;
       if (message.content.params === "main") {
         // This is a main knowledge, show all buttons and remove title
+        const title = _window.document.getElementById("knowledge-addlink");
+        this._Addon.views.changeEditorButtonView(
+          title,
+          "mainTitle",
+          "Add Note Link to Knowledge Workspace",
+          "addToKnowledge"
+        );
+        title.setAttribute("class", "");
+        title.setAttribute("style", "font-size: medium");
       } else {
         // This is a preview knowledge, show openWorkspace button add hide close botton
+        this._Addon.views.changeEditorButtonView(
+          _window.document.getElementById("knowledge-end"),
+          "export",
+          "Export Markdown with linked Notes",
+          "export"
+        );
       }
     } else if (message.type === "addToKnowledge") {
       /*
@@ -187,7 +225,7 @@ class AddonEvents extends AddonBase {
           await editor._initPromise;
           if (editor._item.id === mainKnowledgeID) {
             let button =
-              editor._iframeWindow.document.getElementById("workspace");
+              editor._iframeWindow.document.getElementById("knowledge-start");
             if (button) {
               this._Addon.views.changeEditorButtonView(
                 button,
@@ -198,6 +236,16 @@ class AddonEvents extends AddonBase {
           }
         }
       }
+    } else if (message.type === "closePreview") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const _window = this._Addon.knowledge.getWorkspaceWindow() as Window;
+      _window.document
+        .getElementById("preview-splitter")
+        .setAttribute("state", "collapsed");
     } else if (message.type === "onNoteLink") {
       /*
         message.content = {
@@ -215,10 +263,15 @@ class AddonEvents extends AddonBase {
       );
       let _window = this._Addon.knowledge.getWorkspaceWindow();
       if (_window) {
-        this._Addon.knowledge.setWorkspaceNote(
-          "preview",
-          message.content.params.item
-        );
+        if (
+          message.content.params.item.id !==
+          Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+        ) {
+          this._Addon.knowledge.setWorkspaceNote(
+            "preview",
+            message.content.params.item
+          );
+        }
         (_window as Window).focus();
       } else {
         ZoteroPane.openNoteWindow(message.content.params.item.id);

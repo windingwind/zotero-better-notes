@@ -30,15 +30,15 @@ class Knowledge extends AddonBase {
       let win = window.open(
         "chrome://Knowledge4Zotero/content/workspace.xul",
         "_blank",
-        "chrome,extrachrome,menubar,resizable,scrollbars,status,width=900,height=600"
+        "chrome,extrachrome,menubar,resizable,scrollbars,status,width=1000,height=600"
       );
       this.workspaceWindow = win;
-      await this.waitWorkspaceRedy();
+      await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
     }
   }
 
-  async waitWorkspaceRedy() {
+  async waitWorkspaceReady() {
     let _window = this.getWorkspaceWindow() as Window;
     if (!_window) {
       return false;
@@ -56,7 +56,7 @@ class Knowledge extends AddonBase {
     if (!_window) {
       return;
     }
-    await this.waitWorkspaceRedy();
+    await this.waitWorkspaceReady();
     return _window.document.getElementById(`zotero-note-editor-${type}`);
   }
 
@@ -69,9 +69,14 @@ class Knowledge extends AddonBase {
     if (!_window) {
       return;
     }
-    await this.waitWorkspaceRedy();
+    if (type === "preview") {
+      _window.document
+        .getElementById("preview-splitter")
+        .setAttribute("state", "open");
+    }
+    await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
-    let lastEditorInstance = noteEditor._editorInstance as EditorInstance;
+    let lastEditorInstance = noteEditor.getCurrentInstance() as EditorInstance;
     if (lastEditorInstance) {
       await this._Addon.events.onEditorEvent(
         new EditorMessage("leaveWorkspace", {
@@ -85,9 +90,15 @@ class Knowledge extends AddonBase {
     noteEditor.parent = null;
     noteEditor.item = note;
 
+    await noteEditor._initPromise;
+    let t = 0;
+    while (!noteEditor.getCurrentInstance() && t < 500) {
+      t += 1;
+      await Zotero.Promise.delay(10);
+    }
     await this._Addon.events.onEditorEvent(
       new EditorMessage("enterWorkspace", {
-        editorInstance: noteEditor,
+        editorInstance: noteEditor.getCurrentInstance(),
         params: type,
       })
     );
@@ -191,9 +202,12 @@ class Knowledge extends AddonBase {
       groupID = `${library.id}`;
     }
     let noteKey = linkedNote.key;
+    let linkText = linkedNote.getNoteTitle().trim();
     this.addSubLineToNote(
       targetNote,
-      `<a href="zotero://note/${groupID}/${noteKey}" rel="noopener noreferrer nofollow">${linkedNote.getNoteTitle()}</a>`,
+      `<a href="zotero://note/${groupID}/${noteKey}" rel="noopener noreferrer nofollow">${
+        linkText ? linkText : `zotero://note/${groupID}/${noteKey}`
+      }</a>`,
       lineIndex
     );
     this._Addon.views.showProgressWindow(
