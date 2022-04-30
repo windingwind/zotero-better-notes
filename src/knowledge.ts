@@ -443,8 +443,8 @@ class Knowledge extends AddonBase {
       item.setNote(`<div data-schema-version="8">${newLines.join("\n")}</div>`);
       item.saveTx();
       exporter.items = [item];
-      exporter.save();
-      Zotero.Items.erase(item.id);
+      await exporter.save();
+      await Zotero.Items.erase(item.id);
     } else {
       exporter.items = [note];
       exporter.save();

@@ -79,7 +79,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance._item.id === mainKnowledgeID;
 
       Zotero.debug(`Knowledge4Zotero: main Knowledge`);
-      this._Addon.views.addEditorButton(
+      await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "workspace",
         isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
@@ -89,7 +89,7 @@ class AddonEvents extends AddonBase {
         "start",
         new EditorMessage("openWorkspace", {})
       );
-      this._Addon.views.addEditorButton(
+      await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "addToKnowledge",
         "addToKnowledge",
@@ -99,7 +99,7 @@ class AddonEvents extends AddonBase {
           itemID: message.content.editorInstance._item.id,
         })
       );
-      this._Addon.views.addEditorButton(
+      await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "export",
         "export",

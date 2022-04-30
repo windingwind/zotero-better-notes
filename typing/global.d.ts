@@ -151,7 +151,7 @@ declare class ZoteroCollection {
 
 declare class Zotero_File_Exporter {
   items: ZoteroItem[];
-  save: () => void;
+  save = async () => {};
 }
 
 declare const Components: any;

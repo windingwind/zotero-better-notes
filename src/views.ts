@@ -28,23 +28,26 @@ class AddonViews extends AddonBase {
   async addEditorKnowledgeToolBar(editorInstances: EditorInstance) {
     await editorInstances._initPromise;
 
-    const _document = editorInstances._iframeWindow.document;
-    const knowledgeToolBar = _document.createElement("div");
-    knowledgeToolBar.setAttribute("id", "knowledge-tools");
-    knowledgeToolBar.setAttribute("class", "toolbar");
-    const start = _document.createElement("div");
-    start.setAttribute("id", "knowledge-tools-start");
-    start.setAttribute("class", "start");
-    const middle = _document.createElement("div");
-    middle.setAttribute("id", "knowledge-tools-middle");
-    middle.setAttribute("class", "middle");
-    const end = _document.createElement("div");
-    end.setAttribute("id", "knowledge-tools-end");
-    end.setAttribute("class", "end");
-    knowledgeToolBar.append(start, middle, end);
-    _document
-      .getElementsByClassName("editor")[0]
-      .childNodes[0].before(knowledgeToolBar);
+    await new Promise<void>((resolve, reject) => {
+      const _document = editorInstances._iframeWindow.document;
+      const knowledgeToolBar = _document.createElement("div");
+      knowledgeToolBar.setAttribute("id", "knowledge-tools");
+      knowledgeToolBar.setAttribute("class", "toolbar");
+      const start = _document.createElement("div");
+      start.setAttribute("id", "knowledge-tools-start");
+      start.setAttribute("class", "start");
+      const middle = _document.createElement("div");
+      middle.setAttribute("id", "knowledge-tools-middle");
+      middle.setAttribute("class", "middle");
+      const end = _document.createElement("div");
+      end.setAttribute("id", "knowledge-tools-end");
+      end.setAttribute("class", "end");
+      knowledgeToolBar.append(start, middle, end);
+      _document
+        .getElementsByClassName("editor")[0]
+        .childNodes[0].before(knowledgeToolBar);
+      resolve();
+    });
   }
 
   async addEditorButton(
