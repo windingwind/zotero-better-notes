@@ -60,6 +60,18 @@ class Knowledge extends AddonBase {
     return _window.document.getElementById(`zotero-note-editor-${type}`);
   }
 
+  async getWorkspaceEditorInstance(
+    type: "main" | "preview" = "main"
+  ): Promise<EditorInstance> {
+    let noteEditor = (await this.getWorkspaceEditor(type)) as any;
+    let t = 0;
+    while (!noteEditor.getCurrentInstance() && t < 500) {
+      t += 1;
+      await Zotero.Promise.delay(10);
+    }
+    return noteEditor.getCurrentInstance() as EditorInstance;
+  }
+
   async setWorkspaceNote(
     type: "main" | "preview" = "main",
     note: ZoteroItem = undefined
@@ -76,15 +88,6 @@ class Knowledge extends AddonBase {
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
-    let lastEditorInstance = noteEditor.getCurrentInstance() as EditorInstance;
-    if (lastEditorInstance) {
-      await this._Addon.events.onEditorEvent(
-        new EditorMessage("leaveWorkspace", {
-          editorInstance: lastEditorInstance,
-          params: type,
-        })
-      );
-    }
     noteEditor.mode = "edit";
     noteEditor.viewMode = "library";
     noteEditor.parent = null;

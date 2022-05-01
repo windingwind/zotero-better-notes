@@ -1,4 +1,5 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge工作区">
+<!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "设置为主Knowledge">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

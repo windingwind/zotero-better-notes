@@ -151,34 +151,6 @@ class AddonEvents extends AddonBase {
           "closePreview"
         );
       }
-    } else if (message.type === "leaveWorkspace") {
-      /*
-        message.content = {
-          editorInstance,
-          params: "main" | "preview"
-        }
-      */
-      const _window = message.content.editorInstance._iframeWindow;
-      if (message.content.params === "main") {
-        // This is a main knowledge, show all buttons and remove title
-        const title = _window.document.getElementById("knowledge-addlink");
-        this._Addon.views.changeEditorButtonView(
-          title,
-          "mainTitle",
-          "Add Note Link to Knowledge Workspace",
-          "addToKnowledge"
-        );
-        title.setAttribute("class", "");
-        title.setAttribute("style", "font-size: medium");
-      } else {
-        // This is a preview knowledge, show openWorkspace button add hide close botton
-        this._Addon.views.changeEditorButtonView(
-          _window.document.getElementById("knowledge-end"),
-          "export",
-          "Export Markdown with linked Notes",
-          "export"
-        );
-      }
     } else if (message.type === "addToKnowledge") {
       /*
         message.content = {
@@ -194,45 +166,48 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "setMainKnowledge") {
       /*
         message.content = {
-          editorInstance
+          params: itemID
         }
       */
       Zotero.debug("Knowledge4Zotero: setMainKnowledge");
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
       );
-      if (message.content.editorInstance._item.id !== mainKnowledgeID) {
+      let itemID = message.content.params;
+      if (itemID === mainKnowledgeID) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Already a main Knowledge."
+        );
+      } else if (!Zotero.Items.get(itemID).isNote()) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Not a valid note item."
+        );
+      } else {
         if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
           let confirmChange = confirm(
-            "Will remove current Knowledge Workspace. Confirm?"
+            "Will change current Knowledge Workspace. Confirm?"
           );
           if (!confirmChange) {
             return;
           }
         }
-        Zotero.Prefs.set(
-          "Knowledge4Zotero.mainKnowledgeID",
-          message.content.editorInstance._item.id
-        );
-        // Set the button to selected state
-        this._Addon.views.changeEditorButtonView(
-          message.content.event.target,
-          "isMainKnowledge",
-          "Edit the main knowledge in Workspace"
-        );
+        Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
         await this._Addon.knowledge.setWorkspaceNote("main");
         for (let editor of Zotero.Notes._editorInstances) {
           await editor._initPromise;
-          if (editor._item.id === mainKnowledgeID) {
-            let button =
-              editor._iframeWindow.document.getElementById("knowledge-start");
-            if (button) {
-              this._Addon.views.changeEditorButtonView(
-                button,
-                "notMainKnowledge",
-                "Open Workspace"
-              );
-            }
+          let isMainKnowledge = editor._item.id === mainKnowledgeID;
+          let button =
+            editor._iframeWindow.document.getElementById("knowledge-start");
+          if (button) {
+            this._Addon.views.changeEditorButtonView(
+              button,
+              isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
+              isMainKnowledge
+                ? "Edit the main knowledge in Workspace"
+                : "Open Workspace"
+            );
           }
         }
       }

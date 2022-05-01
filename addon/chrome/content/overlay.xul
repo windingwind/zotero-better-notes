@@ -6,6 +6,6 @@
     <script src="chrome://__addonRef__/content/scripts/index.js" />
     <popup id="zotero-itemmenu">
         <menuseparator />
-        <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({'setMainKnowledge', {editorInstance: }})" class="menuitem-iconic" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setMainKnowledge', content: {params: ZoteroPane.getSelectedItems()[0].id}})" class="menuitem-iconic" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
     </popup>
 </overlay>
