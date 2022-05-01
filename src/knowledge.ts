@@ -4,6 +4,7 @@ const TreeModel = require("./treemodel");
 
 class Knowledge extends AddonBase {
   currentLine: number;
+  currentVersion: number;
   workspaceWindow: Window;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -35,7 +36,7 @@ class Knowledge extends AddonBase {
       this.workspaceWindow = win;
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
-      this._Addon.views.buildOutline(this.getWorkspaceNote());
+      this._Addon.views.buildOutline();
     }
   }
 
@@ -117,7 +118,7 @@ class Knowledge extends AddonBase {
     let containerIndex = noteText.search(/data-schema-version="8">/g);
     if (containerIndex != -1) {
       noteText = noteText.substring(
-        containerIndex + '<div data-schema-version="8">'.length,
+        containerIndex + 'data-schema-version="8">'.length,
         noteText.length - "</div>".length
       );
     }
@@ -296,7 +297,7 @@ class Knowledge extends AddonBase {
     this.setLinesToNote(note, newLines);
   }
 
-  getNoteTree(note: ZoteroItem): TreeModel.Node<object> {
+  getNoteTree(note: ZoteroItem = undefined): TreeModel.Node<object> {
     // See http://jnuno.com/tree-model-js
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -444,6 +445,8 @@ class Knowledge extends AddonBase {
 
     if (convertNoteLinks) {
       let item: ZoteroItem = new Zotero.Item("note");
+      item.setNote(note.getNote());
+      item.saveTx();
       let noteLines = this.getLinesInNote(note);
       let newLines = [];
       for (let i in noteLines) {
@@ -472,8 +475,7 @@ class Knowledge extends AddonBase {
           linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
         }
       }
-      item.setNote(`<div data-schema-version="8">${newLines.join("\n")}</div>`);
-      item.saveTx();
+      this.setLinesToNote(item, newLines);
       exporter.items = [item];
       await exporter.save();
       await Zotero.Items.erase(item.id);

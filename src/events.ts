@@ -1,8 +1,22 @@
 import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
+  notifierCallback: object;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
+    this.notifierCallback = {
+      notify: async (
+        event: string,
+        type: string,
+        ids: Array<string>,
+        extraData: object
+      ) => {
+        if (event == "modify") {
+          Zotero.debug("Knowledge4Zotero: main knowledge midified.");
+          this._Addon.views.buildOutline();
+        }
+      },
+    };
   }
 
   public async onInit() {
@@ -10,6 +24,19 @@ class AddonEvents extends AddonBase {
     await Zotero.uiReadyPromise;
     this._Addon.views.addOpenWorkspaceButton();
     this.addEditorInstanceListener();
+    // Register the callback in Zotero as an item observer
+    let notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, [
+      "item",
+    ]);
+
+    // Unregister callback when the window closes (important to avoid a memory leak)
+    window.addEventListener(
+      "unload",
+      function (e) {
+        Zotero.Notifier.unregisterObserver(notifierID);
+      },
+      false
+    );
     this.resetState();
   }
 
@@ -211,6 +238,34 @@ class AddonEvents extends AddonBase {
           }
         }
       }
+    } else if (message.type === "moveOutlineTitle") {
+      /*
+        message.content = {
+          params: {
+            fromID, toID, type: "before" | "after"
+          }
+        }
+      */
+      let tree = this._Addon.knowledge.getNoteTree();
+      let fromNode = this._Addon.knowledge.getNoteTreeNodeById(
+        undefined,
+        message.content.params.fromID,
+        tree
+      );
+      let toNode = this._Addon.knowledge.getNoteTreeNodeById(
+        undefined,
+        message.content.params.toID,
+        tree
+      );
+      Zotero.debug(fromNode.model);
+      Zotero.debug(toNode.model);
+      this._Addon.knowledge.moveHeaderLineInNote(
+        undefined,
+        fromNode,
+        toNode,
+        message.content.params.type
+      );
+      this._Addon.views.buildOutline();
     } else if (message.type === "closePreview") {
       /*
         message.content = {

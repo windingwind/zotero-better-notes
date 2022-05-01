@@ -296,14 +296,15 @@ class AddonViews extends AddonBase {
       toNode === null || isDropInsideItem
         ? toItems.length
         : this.findIndex(toItems, toNode.itemData.id);
-    Zotero.debug(fromNode.itemData);
-    Zotero.debug(toItems[toIndex]);
 
     this._Addon.events.onEditorEvent(
       new EditorMessage("moveOutlineTitle", {
         params: {
-          fromID: fromNode.itemData.id,
-          toID: toNode ? toNode.itemData.id : -1,
+          fromID: parseInt(fromNode.itemData.id),
+          toID: toNode
+            ? parseInt(toNode.itemData.id)
+            : toItems[toItems.length - 1].itemData.id,
+          type: toNode ? "before" : "after",
         },
       })
     );
