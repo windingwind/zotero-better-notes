@@ -35,6 +35,7 @@ class Knowledge extends AddonBase {
       this.workspaceWindow = win;
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
+      this._Addon.views.buildOutline(this.getWorkspaceNote());
     }
   }
 
@@ -113,7 +114,7 @@ class Knowledge extends AddonBase {
       return [];
     }
     let noteText: string = note.getNote();
-    let containerIndex = noteText.search(/<div data-schema-version="8">/g);
+    let containerIndex = noteText.search(/data-schema-version="8">/g);
     if (containerIndex != -1) {
       noteText = noteText.substring(
         containerIndex + '<div data-schema-version="8">'.length,
@@ -122,6 +123,20 @@ class Knowledge extends AddonBase {
     }
     let noteLines: string[] = noteText.split("\n").filter((s) => s);
     return noteLines;
+  }
+
+  setLinesToNote(note: ZoteroItem, noteLines: string[]) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return [];
+    }
+    let noteText: string = note.getNote();
+    let containerIndex = noteText.search(/data-schema-version="8">/g);
+    let noteHead = noteText.substring(0, containerIndex);
+    note.setNote(
+      `${noteHead}data-schema-version="8">${noteLines.join("\n")}</div>`
+    );
+    note.saveTx();
   }
 
   getLineParentInNote(
@@ -156,8 +171,7 @@ class Knowledge extends AddonBase {
     }
     let noteLines = this.getLinesInNote(note);
     noteLines.splice(lineIndex, 0, text);
-    note.setNote(`<div data-schema-version="8">${noteLines.join("\n")}</div>`);
-    note.saveTx();
+    this.setLinesToNote(note, noteLines);
   }
 
   addSubLineToNote(note: ZoteroItem, text: string, lineIndex: number = -1) {
@@ -279,8 +293,7 @@ class Knowledge extends AddonBase {
     let newLines = lines
       .slice(0, targetIndex)
       .concat(movedLines, lines.slice(targetIndex));
-    note.setNote(`<div data-schema-version="8">${newLines.join("\n")}</div>`);
-    note.saveTx();
+    this.setLinesToNote(note, newLines);
   }
 
   getNoteTree(note: ZoteroItem): TreeModel.Node<object> {
@@ -327,6 +340,8 @@ class Knowledge extends AddonBase {
         lastNode = tree.parse({
           id: id++,
           rank: currentRank,
+          // @ts-ignore
+          name: lineElement.innerText,
           lineIndex: i,
           endIndex: metadataContainer.children.length,
         });
@@ -505,7 +520,7 @@ class Knowledge extends AddonBase {
       return undefined;
     }
     let noteText = note.getNote();
-    if (noteText.search(/<div data-schema-version/g) === -1) {
+    if (noteText.search(/data-schema-version/g) === -1) {
       noteText = `<div data-schema-version="8">${noteText}\n</div>`;
     }
     let parser = Components.classes[

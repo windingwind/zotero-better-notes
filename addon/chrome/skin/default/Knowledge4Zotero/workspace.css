@@ -1,0 +1,35 @@
+.form {
+  display: flex;
+}
+
+.form > div {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#treeview {
+  margin-top: 10px;
+}
+
+.drive-header {
+  min-height: auto;
+  padding: 0;
+  cursor: default;
+}
+
+.drive-panel {
+  padding: 20px 15px;
+  font-size: 115%;
+  font-weight: bold;
+  border-right: 1px solid rgba(165, 165, 165, 0.4);
+  height: 100%;
+}
+
+.drive-panel:last-of-type {
+  border-right: none;
+}
+
+ul,
+li {
+  display: list-item;
+}

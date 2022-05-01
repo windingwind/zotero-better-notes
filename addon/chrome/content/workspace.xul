@@ -3,6 +3,8 @@
 <?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+<?xml-stylesheet href="chrome://__addonRef__/skin/workspace.css" type="text/css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/lib/css/dx.light.css" type="text/css"?>
 
 <!DOCTYPE window [
     <!ENTITY % zoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
@@ -11,22 +13,14 @@
     %knowledgeDTD;
 ]>
 
-<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
 
     <script src="chrome://zotero/content/include.js" />
     <script src="chrome://zotero/content/note.js" />
-
+    <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
+    <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
     <script type="application/javascript">
-        window.addEventListener(
-          "load",
-          function (e) {
-            let vbox = document.getElementById('zotero-knowledge-outline');
-            vbox.width = 250;
-            vbox.minWidth = 250;
-            vbox.maxWidth = 250;
-          },
-          false
-        );
+        Zotero.Knowledge4Zotero.views.$ = $;
       </script>
 
     <keyset>
@@ -35,8 +29,22 @@
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
-        <vbox id="zotero-knowledge-outline" flex="1" width="250" maxWidth="250" minWidth="250">
-            <!-- Outline Here -->
+        <vbox id="zotero-knowledge-outline" flex="1" width="250" maxwidth="250" minwidth="250">
+            <html:div class="dx-viewport">
+                <div class="demo-container">
+                    <div class="form">
+                        <div class="drive-panel">
+                            <div class="drive-header dx-treeview-item">
+                                <div class="dx-treeview-item-content">
+                                    <i class="dx-icon dx-icon-hierarchy"></i>
+                                    <span>Note Outline</span>
+                                </div>
+                            </div>
+                            <div id="treeview"></div>
+                        </div>
+                    </div>
+                </div>
+            </html:div>
         </vbox>
         <splitter id="outline-splitter" collapse="before">
             <grippy></grippy>

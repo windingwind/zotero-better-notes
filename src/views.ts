@@ -3,6 +3,7 @@ import { AddonBase, EditorMessage } from "./base";
 class AddonViews extends AddonBase {
   progressWindowIcon: object;
   editorIcon: object;
+  $: any;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -161,6 +162,195 @@ class AddonViews extends AddonBase {
     document
       .getElementById("zotero-collections-tree-container")
       .children[0].before(treeRow);
+  }
+
+  async buildOutline(note: ZoteroItem) {
+    let treeList = this._Addon.knowledge.getNoteTreeAsList(note);
+    const treeData = [];
+    treeList.map((node: TreeModel.Node<object>) => {
+      treeData.push({
+        id: String(node.model.id),
+        name: node.model.name,
+        isDirectory: node.hasChildren(),
+        expanded: true,
+        parentId:
+          node.model.rank > 1 ? String(node.parent.model.id) : undefined,
+      });
+    });
+    Zotero.debug(treeList);
+    Zotero.debug(treeData);
+
+    this.$(() => {
+      this.createTreeView("#treeview", treeData);
+      this.createSortable("#treeview", "treeData");
+    });
+  }
+
+  createTreeView(selector, items) {
+    // @ts-ignore
+    this.$(selector).dxTreeView({
+      items,
+      expandNodesRecursive: false,
+      dataStructure: "plain",
+      width: 220,
+      displayExpr: "name",
+    });
+  }
+
+  createSortable(selector, driveName) {
+    // @ts-ignore
+    this.$(selector).dxSortable({
+      filter: ".dx-treeview-item",
+      group: "shared",
+      data: driveName,
+      allowDropInsideItem: true,
+      allowReordering: true,
+      onDragChange: (e) => {
+        if (e.fromComponent === e.toComponent) {
+          const $nodes = e.element.find(".dx-treeview-node");
+          const isDragIntoChild =
+            $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
+          if (isDragIntoChild) {
+            e.cancel = true;
+          }
+        }
+      },
+      onDragEnd: (e) => {
+        if (e.fromComponent === e.toComponent && e.fromIndex === e.toIndex) {
+          return;
+        }
+
+        const fromTreeView = this.getTreeView();
+        const toTreeView = this.getTreeView();
+
+        const fromNode = this.findNode(fromTreeView, e.fromIndex);
+        const toNode = this.findNode(toTreeView, this.calculateToIndex(e));
+
+        if (
+          e.dropInsideItem &&
+          toNode !== null &&
+          !toNode.itemData.isDirectory
+        ) {
+          return;
+        }
+
+        const fromTopVisibleNode = this.getTopVisibleNode(fromTreeView);
+        const toTopVisibleNode = this.getTopVisibleNode(toTreeView);
+
+        const fromItems = fromTreeView.option("items");
+        const toItems = toTreeView.option("items");
+        this.moveNode(fromNode, toNode, fromItems, toItems, e.dropInsideItem);
+
+        fromTreeView.option("items", fromItems);
+        toTreeView.option("items", toItems);
+        fromTreeView.scrollToItem(fromTopVisibleNode);
+        toTreeView.scrollToItem(toTopVisibleNode);
+      },
+    });
+  }
+
+  getTreeView() {
+    // @ts-ignore
+    return this.$("#treeview").dxTreeView("instance");
+  }
+
+  calculateToIndex(e) {
+    if (e.fromComponent !== e.toComponent || e.dropInsideItem) {
+      return e.toIndex;
+    }
+
+    return e.fromIndex >= e.toIndex ? e.toIndex : e.toIndex + 1;
+  }
+
+  findNode(treeView, index) {
+    const nodeElement = treeView.element().find(".dx-treeview-node")[index];
+    if (nodeElement) {
+      return this.findNodeById(
+        treeView.getNodes(),
+        nodeElement.getAttribute("data-item-id")
+      );
+    }
+    return null;
+  }
+
+  findNodeById(nodes, id) {
+    for (let i = 0; i < nodes.length; i += 1) {
+      if (nodes[i].itemData.id === id) {
+        return nodes[i];
+      }
+      if (nodes[i].children) {
+        const node = this.findNodeById(nodes[i].children, id);
+        if (node != null) {
+          return node;
+        }
+      }
+    }
+    return null;
+  }
+
+  moveNode(fromNode, toNode, fromItems, toItems, isDropInsideItem) {
+    const fromIndex = this.findIndex(fromItems, fromNode.itemData.id);
+    fromItems.splice(fromIndex, 1);
+
+    const toIndex =
+      toNode === null || isDropInsideItem
+        ? toItems.length
+        : this.findIndex(toItems, toNode.itemData.id);
+    Zotero.debug(fromNode.itemData);
+    Zotero.debug(toItems[toIndex]);
+
+    this._Addon.events.onEditorEvent(
+      new EditorMessage("moveOutlineTitle", {
+        params: {
+          fromID: fromNode.itemData.id,
+          toID: toNode ? toNode.itemData.id : -1,
+        },
+      })
+    );
+    toItems.splice(toIndex, 0, fromNode.itemData);
+
+    this.moveChildren(fromNode, fromItems, toItems);
+    if (isDropInsideItem) {
+      fromNode.itemData.parentId = toNode.itemData.id;
+    } else {
+      fromNode.itemData.parentId =
+        toNode != null ? toNode.itemData.parentId : undefined;
+    }
+  }
+
+  moveChildren(node, fromItems, toItems) {
+    if (!node.itemData.isDirectory) {
+      return;
+    }
+
+    node.children.forEach((child) => {
+      if (child.itemData.isDirectory) {
+        this.moveChildren(child, fromItems, toItems);
+      }
+
+      const fromIndex = this.findIndex(fromItems, child.itemData.id);
+      fromItems.splice(fromIndex, 1);
+      toItems.splice(toItems.length, 0, child.itemData);
+    });
+  }
+
+  findIndex(array, id) {
+    const idsArray = array.map((elem) => elem.id);
+    return idsArray.indexOf(id);
+  }
+
+  getTopVisibleNode(component) {
+    const treeViewElement = component.element().get(0);
+    const treeViewTopPosition = treeViewElement.getBoundingClientRect().top;
+    const nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
+    for (let i = 0; i < nodes.length; i += 1) {
+      const nodeTopPosition = nodes[i].getBoundingClientRect().top;
+      if (nodeTopPosition >= treeViewTopPosition) {
+        return nodes[i];
+      }
+    }
+
+    return null;
   }
 
   showProgressWindow(
