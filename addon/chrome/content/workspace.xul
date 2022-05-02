@@ -37,13 +37,18 @@
                             <div class="drive-header dx-treeview-item">
                                 <div class="dx-treeview-item-content">
                                     <i class="dx-icon dx-icon-hierarchy"></i>
-                                    <span>Note Outline</span>
+                                    <span>Knowledge Outline</span>
                                 </div>
                             </div>
                             <div id="treeview"></div>
                         </div>
                     </div>
                 </div>
+            </html:div>
+            <html:div id="outline-tools" flex="1" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 50px 0px 50px;">
+                <div id="outline-addafter"></div>
+                <div id="outline-tab"></div>
+                <div id="outline-untab"></div>
             </html:div>
         </vbox>
         <splitter id="outline-splitter" collapse="before">

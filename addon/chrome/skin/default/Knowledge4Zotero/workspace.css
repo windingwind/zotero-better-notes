@@ -18,7 +18,7 @@
 }
 
 .drive-panel {
-  padding: 20px 15px;
+  padding: 20px 0px 20px 30px;
   font-size: 115%;
   font-weight: bold;
   border-right: 1px solid rgba(165, 165, 165, 0.4);

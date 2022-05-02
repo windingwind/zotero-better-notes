@@ -163,7 +163,7 @@ class AddonEvents extends AddonBase {
         const title = _window.document.getElementById("knowledge-addlink");
         this._Addon.views.changeEditorButtonView(
           title,
-          "mainTitle",
+          "mainHeading",
           "This is a Main Knowledge",
           "empty"
         );
@@ -187,6 +187,7 @@ class AddonEvents extends AddonBase {
       Zotero.debug("Knowledge4Zotero: addToKnowledge");
       this._Addon.knowledge.addLinkToNote(
         undefined,
+        // -1 for automatically insert to current selected line or end of note
         -1,
         message.content.editorInstance._item.id
       );
@@ -238,7 +239,24 @@ class AddonEvents extends AddonBase {
           }
         }
       }
-    } else if (message.type === "moveOutlineTitle") {
+    } else if (message.type === "clickOutlineHeading") {
+      /*
+        message.content = {
+          event: {itemData}
+        }
+      */
+      let editorInstance =
+        await this._Addon.knowledge.getWorkspaceEditorInstance();
+      // Set node id
+      this._Addon.knowledge.currentNodeID = parseInt(
+        (message.content.event as any).itemData.id
+      );
+      this._Addon.views.scrollToLine(
+        editorInstance,
+        // Scroll to 6 lines before the inserted line
+        (message.content.event as any).itemData.lineIndex - 5
+      );
+    } else if (message.type === "moveOutlineHeading") {
       /*
         message.content = {
           params: {

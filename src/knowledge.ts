@@ -4,11 +4,12 @@ const TreeModel = require("./treemodel");
 
 class Knowledge extends AddonBase {
   currentLine: number;
-  currentVersion: number;
+  currentNodeID: number;
   workspaceWindow: Window;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
-    this.currentLine = 0;
+    this.currentLine = -1;
+    this.currentNodeID = -1;
   }
 
   getWorkspaceNote() {
@@ -35,7 +36,13 @@ class Knowledge extends AddonBase {
       );
       this.workspaceWindow = win;
       await this.waitWorkspaceReady();
+      // @ts-ignore
+      win.addEventListener("resize", (e) => {
+        // @ts-ignore
+        this._Addon.views.setTreeViewHeight();
+      });
       this.setWorkspaceNote("main");
+      this.currentLine = -1;
       this._Addon.views.buildOutline();
     }
   }
@@ -87,6 +94,9 @@ class Knowledge extends AddonBase {
       _window.document
         .getElementById("preview-splitter")
         .setAttribute("state", "open");
+    } else {
+      // Set line to default
+      this.currentLine = -1;
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
@@ -175,30 +185,50 @@ class Knowledge extends AddonBase {
     this.setLinesToNote(note, noteLines);
   }
 
-  addSubLineToNote(note: ZoteroItem, text: string, lineIndex: number = -1) {
+  async addSubLineToNote(
+    note: ZoteroItem,
+    text: string,
+    lineIndex: number = -1
+  ) {
     if (lineIndex < 0) {
-      lineIndex = this.currentLine;
+      lineIndex =
+        this.currentLine >= 0
+          ? this.currentLine + 1
+          : this.getLinesInNote(note).length + 1;
     }
-    let parentNode = this.getLineParentInNote(note, lineIndex);
-    if (!parentNode) {
-      this.addLineToNote(note, text, lineIndex);
-      return;
-    }
-    let nodes = this.getNoteTreeAsList(note);
-    let i = 0;
-    for (let node of nodes) {
-      if (node.model.lineIndex === parentNode.model.lineIndex) {
-        break;
-      }
-      i++;
-    }
-    // Get next header line index
-    i++;
-    if (i >= nodes.length) {
-      i = nodes.length - 1;
-    }
-    // Add line before next header, which is also the end of current parent header
-    this.addLineToNote(note, text, nodes[i].model.lineIndex);
+    // let parentNode = this.getLineParentInNote(note, lineIndex);
+    // if (!parentNode) {
+    //   this.addLineToNote(note, text, lineIndex);
+    //   return;
+    // }
+    // let nodes = this.getNoteTreeAsList(note);
+    // let i = 0;
+    // for (let node of nodes) {
+    //   if (node.model.lineIndex === parentNode.model.lineIndex) {
+    //     break;
+    //   }
+    //   i++;
+    // }
+    // // Get next header line index
+    // i++;
+    // if (i >= nodes.length) {
+    //   i = nodes.length - 1;
+    // }
+    // Add to next line
+    this.addLineToNote(note, text, lineIndex);
+    await Zotero.Promise.delay(500);
+    let editorInstance = await this.getWorkspaceEditorInstance();
+    this._Addon.views.scrollToLine(
+      editorInstance,
+      // Scroll to 6 lines before the inserted line
+      lineIndex - 5
+    );
+    this._Addon.events.onEditorEvent(
+      new EditorMessage("enterWorkspace", {
+        editorInstance: editorInstance,
+        params: "main",
+      })
+    );
   }
 
   addLinkToNote(
@@ -232,6 +262,50 @@ class Knowledge extends AddonBase {
       "Knowledge",
       "Link is added to workspace"
     );
+  }
+
+  modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    let noteLines = this.getLinesInNote(note);
+    if (lineIndex < 0 || lineIndex >= noteLines.length) {
+      return;
+    }
+    noteLines[lineIndex] = text;
+    this.setLinesToNote(note, noteLines);
+  }
+
+  changeHeadingLineInNote(
+    note: ZoteroItem,
+    rankChange: number,
+    lineIndex: number
+  ) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    const noteLines = this.getLinesInNote(note);
+    if (lineIndex < 0 || lineIndex >= noteLines.length) {
+      return;
+    }
+    const headerStartReg = new RegExp("<h[1-6]>");
+    const headerStopReg = new RegExp("</h[1-6]>");
+    let headerStart = noteLines[lineIndex].search(headerStartReg);
+    if (headerStart === -1) {
+      return;
+    }
+    let lineRank = parseInt(noteLines[lineIndex][headerStart + 2]) + rankChange;
+    if (lineRank > 6) {
+      lineRank = 6;
+    } else if (lineRank < 1) {
+      lineRank = 1;
+    }
+    noteLines[lineIndex] = noteLines[lineIndex]
+      .replace(headerStartReg, `<h${lineRank}>`)
+      .replace(headerStopReg, `</h${lineRank}>`);
+    this.setLinesToNote(note, noteLines);
   }
 
   moveHeaderLineInNote(
