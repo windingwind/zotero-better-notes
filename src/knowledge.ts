@@ -175,6 +175,22 @@ class Knowledge extends AddonBase {
     }
   }
 
+  async scrollWithRefresh(lineIndex: number) {
+    await Zotero.Promise.delay(500);
+    let editorInstance = await this.getWorkspaceEditorInstance();
+    this._Addon.views.scrollToLine(
+      editorInstance,
+      // Scroll to 6 lines before the inserted line
+      lineIndex - 5
+    );
+    this._Addon.events.onEditorEvent(
+      new EditorMessage("enterWorkspace", {
+        editorInstance: editorInstance,
+        params: "main",
+      })
+    );
+  }
+
   addLineToNote(note: ZoteroItem, text: string, lineIndex: number) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -216,19 +232,7 @@ class Knowledge extends AddonBase {
     // }
     // Add to next line
     this.addLineToNote(note, text, lineIndex);
-    await Zotero.Promise.delay(500);
-    let editorInstance = await this.getWorkspaceEditorInstance();
-    this._Addon.views.scrollToLine(
-      editorInstance,
-      // Scroll to 6 lines before the inserted line
-      lineIndex - 5
-    );
-    this._Addon.events.onEditorEvent(
-      new EditorMessage("enterWorkspace", {
-        editorInstance: editorInstance,
-        params: "main",
-      })
-    );
+    await this.scrollWithRefresh(lineIndex);
   }
 
   addLinkToNote(
@@ -264,7 +268,7 @@ class Knowledge extends AddonBase {
     );
   }
 
-  modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {
+  async modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return;
@@ -275,9 +279,10 @@ class Knowledge extends AddonBase {
     }
     noteLines[lineIndex] = text;
     this.setLinesToNote(note, noteLines);
+    await this.scrollWithRefresh(lineIndex);
   }
 
-  changeHeadingLineInNote(
+  async changeHeadingLineInNote(
     note: ZoteroItem,
     rankChange: number,
     lineIndex: number
@@ -306,6 +311,7 @@ class Knowledge extends AddonBase {
       .replace(headerStartReg, `<h${lineRank}>`)
       .replace(headerStopReg, `</h${lineRank}>`);
     this.setLinesToNote(note, noteLines);
+    await this.scrollWithRefresh(lineIndex);
   }
 
   moveHeaderLineInNote(
