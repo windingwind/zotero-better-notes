@@ -199,6 +199,12 @@ class AddonEvents extends AddonBase {
       } else {
         // This is a preview knowledge, hide openWorkspace button add show close botton
         this._Addon.views.changeEditorButtonView(
+          _window.document.getElementById("knowledge-start"),
+          "jumpAttachment",
+          "Open Note Attachments",
+          "jumpAttachment"
+        );
+        this._Addon.views.changeEditorButtonView(
           _window.document.getElementById("knowledge-end"),
           "close",
           "Close Preview",
@@ -411,6 +417,39 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.exportNoteToFile(
         message.content.editorInstance._item
       );
+    } else if (message.type === "jumpAttachment") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const note = message.content.editorInstance._item;
+      let successCount = 0;
+      let failCount = 0;
+      if (note.parentItem) {
+        for (const attchment of Zotero.Items.get(
+          note.parentItem.getAttachments()
+        )) {
+          Zotero.debug(attchment);
+          try {
+            await Zotero.OpenPDF.openToPage(attchment);
+            successCount += 1;
+          } catch (e) {
+            Zotero.debug("Knowledge4Zotero: Open attachment failed:");
+            Zotero.debug(attchment);
+            failCount += 1;
+          }
+        }
+      }
+      if (successCount === 0) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          failCount
+            ? "Error occurred on opening attachemnts."
+            : "No attachment found.",
+          "fail"
+        );
+      }
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }
