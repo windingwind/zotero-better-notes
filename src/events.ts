@@ -117,7 +117,7 @@ class AddonEvents extends AddonBase {
         "openWorkspace",
         "start"
       );
-      await this._Addon.views.addEditorButton(
+      const addLinkDropDown: Element = await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-addlink",
         "addToKnowledge",
@@ -125,6 +125,33 @@ class AddonEvents extends AddonBase {
         "addToKnowledge",
         "middle"
       );
+      const buttonParam = [];
+      const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
+      for (let node of nodes) {
+        buttonParam.push({
+          id: `knowledge-addlink-popup-${node.model.endIndex}`,
+          text: node.model.name,
+          eventType: "addToKnowledgeLine",
+        });
+      }
+      addLinkDropDown.addEventListener("mouseover", async (e) => {
+        if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
+          return;
+        }
+        const popup: Element = await this._Addon.views.addEditorPopup(
+          message.content.editorInstance,
+          "knowledge-addlink-popup",
+          // [{ id: ''; icon: string; eventType: string }],
+          buttonParam,
+          addLinkDropDown
+        );
+        addLinkDropDown.addEventListener("mouseleave", (e) => {
+          popup.remove();
+        });
+        addLinkDropDown.addEventListener("click", (e) => {
+          popup.remove();
+        });
+      });
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-end",
@@ -160,15 +187,15 @@ class AddonEvents extends AddonBase {
       }
       if (message.content.params === "main") {
         // This is a main knowledge, hide all buttons except the export button and add title
-        const title = _window.document.getElementById("knowledge-addlink");
-        this._Addon.views.changeEditorButtonView(
-          title,
-          "mainHeading",
-          "This is a Main Knowledge",
-          "empty"
+        const middle = _window.document.getElementById(
+          "knowledge-tools-middle"
         );
-        title.setAttribute("class", "");
-        title.setAttribute("style", "font-size: medium");
+        middle.innerHTML = "";
+        const header = _window.document.createElement("div");
+        header.setAttribute("title", "This is a Main Knowledge");
+        header.innerHTML = "Main Knowledge";
+        header.setAttribute("style", "font-size: medium");
+        middle.append(header);
       } else {
         // This is a preview knowledge, hide openWorkspace button add show close botton
         this._Addon.views.changeEditorButtonView(
@@ -189,6 +216,24 @@ class AddonEvents extends AddonBase {
         undefined,
         // -1 for automatically insert to current selected line or end of note
         -1,
+        message.content.editorInstance._item.id
+      );
+    } else if (message.type === "addToKnowledgeLine") {
+      /*
+        message.content = {
+          editorInstance,
+          event,
+          type
+        }
+      */
+      //  if(message.content.)
+      Zotero.debug("Knowledge4Zotero: addToKnowledgeLine");
+      Zotero.debug(message.content.event.target.id);
+      const idSplit = message.content.event.target.id.split("-");
+      const lineIndex = parseInt(idSplit[idSplit.length - 1]);
+      this._Addon.knowledge.addLinkToNote(
+        undefined,
+        lineIndex,
         message.content.editorInstance._item.id
       );
     } else if (message.type === "setMainKnowledge") {
