@@ -27,7 +27,7 @@ class AddonEvents extends AddonBase {
           (event === "add" &&
             type === "item" &&
             Zotero.Items.get(ids).filter((item) => {
-              item.isAnnotation();
+              return item.isAnnotation();
             }).length > 0) ||
           (event === "close" && type === "tab") ||
           (event === "open" && type === "file")
@@ -45,6 +45,7 @@ class AddonEvents extends AddonBase {
     Zotero.debug("Knowledge4Zotero: init called");
     await Zotero.uiReadyPromise;
     this._Addon.views.addOpenWorkspaceButton();
+    this._Addon.views.addNewKnowledgeButton();
     this.addEditorInstanceListener();
     // Register the callback in Zotero as an item observer
     let notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, [
@@ -113,6 +114,17 @@ class AddonEvents extends AddonBase {
       /*
         message.content = {}
       */
+      await this._Addon.knowledge.openWorkspaceWindow();
+    } else if (message.type === "createWorkspace") {
+      /*
+        message.content = {}
+      */
+      const noteID = await ZoteroPane_Local.newNote();
+      await this.onEditorEvent(
+        new EditorMessage("setMainKnowledge", {
+          params: noteID,
+        })
+      );
       await this._Addon.knowledge.openWorkspaceWindow();
     } else if (message.type === "addNoteInstance") {
       /*
@@ -224,9 +236,9 @@ class AddonEvents extends AddonBase {
         // This is a preview knowledge, hide openWorkspace button add show close botton
         this._Addon.views.changeEditorButtonView(
           _window.document.getElementById("knowledge-start"),
-          "jumpAttachment",
+          "openAttachment",
           "Open Note Attachments",
-          "jumpAttachment"
+          "openAttachment"
         );
         this._Addon.views.changeEditorButtonView(
           _window.document.getElementById("knowledge-end"),
@@ -298,21 +310,6 @@ class AddonEvents extends AddonBase {
         }
         Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
         await this._Addon.knowledge.setWorkspaceNote("main");
-        for (let editor of Zotero.Notes._editorInstances) {
-          await editor._initPromise;
-          let isMainKnowledge = editor._item.id === mainKnowledgeID;
-          let button =
-            editor._iframeWindow.document.getElementById("knowledge-start");
-          if (button) {
-            this._Addon.views.changeEditorButtonView(
-              button,
-              isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
-              isMainKnowledge
-                ? "Edit the main knowledge in Workspace"
-                : "Open Workspace"
-            );
-          }
-        }
       }
     } else if (message.type === "clickOutlineHeading") {
       /*
@@ -441,7 +438,7 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.exportNoteToFile(
         message.content.editorInstance._item
       );
-    } else if (message.type === "jumpAttachment") {
+    } else if (message.type === "openAttachment") {
       /*
         message.content = {
           editorInstance
@@ -453,10 +450,17 @@ class AddonEvents extends AddonBase {
       if (note.parentItem) {
         for (const attchment of Zotero.Items.get(
           note.parentItem.getAttachments()
-        )) {
+        ).filter((item: ZoteroItem) => {
+          return item.isPDFAttachment();
+        })) {
           Zotero.debug(attchment);
           try {
-            await Zotero.OpenPDF.openToPage(attchment, 0);
+            Zotero.debug("Launching PDF without page number");
+            let zp = Zotero.getActiveZoteroPane();
+            if (zp) {
+              zp.viewAttachment([attchment.id]);
+            }
+            Zotero.Notifier.trigger("open", "file", attchment.id);
             successCount += 1;
           } catch (e) {
             Zotero.debug("Knowledge4Zotero: Open attachment failed:");
@@ -492,15 +496,21 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "addAnnotationNote") {
       /*
         message.content = {
-          params: annotations of Reader JSON type
+          params: { annotations: Reader JSON type, annotationItem }
         }
       */
-      const annotations = message.content.params;
+      const annotations = message.content.params.annotations;
+      const annotationItem: ZoteroItem = message.content.params.annotationItem;
 
       const note: ZoteroItem = new Zotero.Item("note");
       note.parentID = Zotero.Items.get(
         annotations[0].attachmentItemID
       ).parentID;
+      if (annotationItem.annotationComment) {
+        note.setNote(
+          `<div data-schema-version="8"><p>${annotationItem.annotationComment}</p>\n</div>`
+        );
+      }
       await note.saveTx();
       ZoteroPane.openNoteWindow(note.id);
       let t = 0;
@@ -518,9 +528,8 @@ class AddonEvents extends AddonBase {
         await Zotero.Promise.delay(10);
       }
       const editorInstance = noteEditor.getCurrentInstance();
-      Zotero.debug(editorInstance);
       editorInstance.focus();
-      editorInstance.insertAnnotations(annotations);
+      await editorInstance.insertAnnotations(annotations);
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }

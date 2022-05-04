@@ -87,7 +87,8 @@ declare interface ZoteroItem {
   setNote: (string) => void;
   getNoteTitle: () => string;
   isAttachment: () => boolean;
-  isAnnotation?: () => boolean;
+  isAnnotation: () => boolean;
+  isPDFAttachment: () => boolean;
   itemTypeID: number;
   libraryID: number;
   parentID: number;
@@ -143,6 +144,10 @@ declare const ZoteroPane: {
   displayCannotEditLibraryMessage: () => void;
   getSelectedCollection: (arg: boolean) => ZoteroCollection;
   getSelectedItems: () => Array<ZoteroItem>;
+};
+
+declare const ZoteroPane_Local: {
+  newNote: () => Promise<number>;
 };
 
 declare class ZoteroCollection {

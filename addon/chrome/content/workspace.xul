@@ -46,9 +46,18 @@
                 </div>
             </html:div>
             <html:div id="outline-tools" flex="1" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 50px 0px 50px;">
-                <div id="outline-addafter"></div>
-                <div id="outline-tab"></div>
-                <div id="outline-untab"></div>
+                <div class="tooltip">
+                    <div id="outline-addafter"></div>
+                    <span class="tooltiptext">Add Heading</span>
+                </div>
+                <div class="tooltip">
+                    <div id="outline-tab"></div>
+                    <span class="tooltiptext">Raise the selected Heading level</span>
+                </div>
+                <div class="tooltip">
+                    <div id="outline-untab"></div>
+                    <span class="tooltiptext">Decrease the selected Heading level</span>
+                </div>
             </html:div>
         </vbox>
         <splitter id="outline-splitter" collapse="before">

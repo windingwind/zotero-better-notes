@@ -143,10 +143,17 @@ class Knowledge extends AddonBase {
     }
     let noteText: string = note.getNote();
     let containerIndex = noteText.search(/data-schema-version="8">/g);
-    let noteHead = noteText.substring(0, containerIndex);
-    note.setNote(
-      `${noteHead}data-schema-version="8">${noteLines.join("\n")}</div>`
-    );
+    if (containerIndex === -1) {
+      note.setNote(
+        `<div data-schema-version="8">${noteLines.join("\n")}</div>`
+      );
+    } else {
+      let noteHead = noteText.substring(0, containerIndex);
+      note.setNote(
+        `${noteHead}data-schema-version="8">${noteLines.join("\n")}</div>`
+      );
+    }
+
     note.saveTx();
   }
 
@@ -401,6 +408,9 @@ class Knowledge extends AddonBase {
       lineIndex: -1,
       endIndex: -1,
     });
+    if (!metadataContainer) {
+      return root;
+    }
     let id = 0;
     let currentNode = root;
     let lastNode = undefined;
