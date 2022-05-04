@@ -167,6 +167,7 @@ declare class ReaderObj {
   [attr: string]: any;
   itemID: number;
   _iframeWindow: XULWindow;
+  _initPromise: Promise;
 }
 
 declare class EditorInstance {

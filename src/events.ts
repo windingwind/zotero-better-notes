@@ -11,9 +11,31 @@ class AddonEvents extends AddonBase {
         ids: Array<string>,
         extraData: object
       ) => {
-        if (event == "modify") {
-          Zotero.debug("Knowledge4Zotero: main knowledge midified.");
-          this._Addon.views.buildOutline();
+        if (event === "modify" && type === "item") {
+          if (
+            ids.indexOf(Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) >=
+            0
+          ) {
+            Zotero.debug("Knowledge4Zotero: main knowledge modify check.");
+            this._Addon.views.buildOutline();
+          }
+        }
+        if (
+          (event == "select" &&
+            type == "tab" &&
+            extraData[ids[0]].type == "reader") ||
+          (event === "add" &&
+            type === "item" &&
+            Zotero.Items.get(ids).filter((item) => {
+              item.isAnnotation();
+            }).length > 0) ||
+          (event === "close" && type === "tab") ||
+          (event === "open" && type === "file")
+        ) {
+          Zotero.debug("Knowledge4Zotero: buildReaderAnnotationButton");
+          this.onEditorEvent(
+            new EditorMessage("buildReaderAnnotationButton", {})
+          );
         }
       },
     };
@@ -27,6 +49,8 @@ class AddonEvents extends AddonBase {
     // Register the callback in Zotero as an item observer
     let notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, [
       "item",
+      "tab",
+      "file",
     ]);
 
     // Unregister callback when the window closes (important to avoid a memory leak)
@@ -432,7 +456,7 @@ class AddonEvents extends AddonBase {
         )) {
           Zotero.debug(attchment);
           try {
-            await Zotero.OpenPDF.openToPage(attchment);
+            await Zotero.OpenPDF.openToPage(attchment, 0);
             successCount += 1;
           } catch (e) {
             Zotero.debug("Knowledge4Zotero: Open attachment failed:");
@@ -450,6 +474,53 @@ class AddonEvents extends AddonBase {
           "fail"
         );
       }
+    } else if (message.type === "buildReaderAnnotationButton") {
+      /*
+        message.content = {}
+      */
+      for (const reader of Zotero.Reader._readers) {
+        Zotero.debug("reader found");
+        let t = 0;
+        while (
+          t < 100 &&
+          !(await this._Addon.views.addReaderAnnotationButton(reader))
+        ) {
+          await Zotero.Promise.delay(50);
+          t += 1;
+        }
+      }
+    } else if (message.type === "addAnnotationNote") {
+      /*
+        message.content = {
+          params: annotations of Reader JSON type
+        }
+      */
+      const annotations = message.content.params;
+
+      const note: ZoteroItem = new Zotero.Item("note");
+      note.parentID = Zotero.Items.get(
+        annotations[0].attachmentItemID
+      ).parentID;
+      await note.saveTx();
+      ZoteroPane.openNoteWindow(note.id);
+      let t = 0;
+      while (t < 100 && !ZoteroPane.findNoteWindow(note.id)) {
+        await Zotero.Promise.delay(50);
+        t += 1;
+      }
+      const _window = ZoteroPane.findNoteWindow(note.id);
+
+      const noteEditor = _window.document.getElementById("zotero-note-editor");
+
+      t = 0;
+      while (!noteEditor.getCurrentInstance() && t < 500) {
+        t += 1;
+        await Zotero.Promise.delay(10);
+      }
+      const editorInstance = noteEditor.getCurrentInstance();
+      Zotero.debug(editorInstance);
+      editorInstance.focus();
+      editorInstance.insertAnnotations(annotations);
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }
