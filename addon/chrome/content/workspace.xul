@@ -21,7 +21,7 @@
     <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
     <script type="application/javascript">
         Zotero.Knowledge4Zotero.views.$ = $;
-      </script>
+    </script>
 
     <keyset>
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
@@ -29,7 +29,7 @@
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
-        <vbox id="zotero-knowledge-outline" flex="1" width="250" maxwidth="250" minwidth="250">
+        <vbox id="zotero-knowledge-outline" flex="1" width="300" minwidth="250" style="overflow: hidden;">
             <html:div class="dx-viewport">
                 <div class="demo-container">
                     <div class="form">
@@ -63,11 +63,11 @@
         <splitter id="outline-splitter" collapse="before">
             <grippy></grippy>
         </splitter>
-        <zoteronoteeditor id="zotero-note-editor-main" flex="1" onerror="return;onError()" />
+        <zoteronoteeditor id="zotero-note-editor-main" flex="1" width="700" onerror="return;onError()" />
         <splitter id="preview-splitter" collapse="after" state="collapsed">
             <grippy></grippy>
         </splitter>
-        <zoteronoteeditor id="zotero-note-editor-preview" flex="1" onerror="return;onError()" />
+        <zoteronoteeditor id="zotero-note-editor-preview" flex="1" width="500" onerror="return;onError()" />
     </hbox>
 
 </window>

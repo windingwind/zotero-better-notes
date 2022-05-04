@@ -174,7 +174,9 @@ class AddonViews extends AddonBase {
     button.setAttribute("id", "zotero-tb-knowledge-openwindow");
     button.setAttribute("tooltiptext", "Create new Knowledge Workspace");
     button.addEventListener("click", (e) => {
-      this._Addon.events.onEditorEvent(new EditorMessage("createWorkspace", {}));
+      this._Addon.events.onEditorEvent(
+        new EditorMessage("createWorkspace", {})
+      );
     });
     button.setAttribute(
       "style",
@@ -324,13 +326,14 @@ class AddonViews extends AddonBase {
 
   async buildOutline(note: ZoteroItem) {
     this._Addon.knowledge.currentNodeID = -1;
-    let treeList = this._Addon.knowledge.getNoteTreeAsList(note);
+    let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
     const treeData = [];
     treeList.map((node: TreeModel.Node<object>) => {
       treeData.push({
         id: String(node.model.id),
         name: node.model.name,
         rank: node.model.rank,
+        icon: node.model.rank === 7 ? "textdocument" : undefined,
         lineIndex: node.model.lineIndex,
         endIndex: node.model.endIndex,
         isDirectory: node.hasChildren(),
@@ -351,7 +354,6 @@ class AddonViews extends AddonBase {
       items,
       expandNodesRecursive: false,
       dataStructure: "plain",
-      width: 220,
       height: this.$("window").height() - 130,
       displayExpr: "name",
       noDataText: "No Heading 1 found",
@@ -369,6 +371,14 @@ class AddonViews extends AddonBase {
     this.$("#outline-addafter").dxButton({
       icon: "plus",
       onClick: (e) => {
+        let node = this._Addon.knowledge.getNoteTreeNodeById(
+          undefined,
+          this._Addon.knowledge.currentNodeID
+        );
+        if (node.model.rank === 7) {
+          this.showProgressWindow("Knowledge", "Please select a Heading.");
+          return;
+        }
         const text = prompt("Enter new heading:");
         this._Addon.knowledge.openWorkspaceWindow();
         if (text.trim()) {
@@ -381,10 +391,6 @@ class AddonViews extends AddonBase {
             );
             return;
           }
-          let node = this._Addon.knowledge.getNoteTreeNodeById(
-            undefined,
-            this._Addon.knowledge.currentNodeID
-          );
           this._Addon.knowledge.addSubLineToNote(
             undefined,
             `<h${node.model.rank}>${text}</h${node.model.rank}>`,
@@ -404,6 +410,10 @@ class AddonViews extends AddonBase {
           undefined,
           this._Addon.knowledge.currentNodeID
         );
+        if (node.model.rank === 7) {
+          this.showProgressWindow("Knowledge", "Please select a Heading.");
+          return;
+        }
         this._Addon.knowledge.changeHeadingLineInNote(
           undefined,
           1,
@@ -422,6 +432,10 @@ class AddonViews extends AddonBase {
           undefined,
           this._Addon.knowledge.currentNodeID
         );
+        if (node.model.rank === 7) {
+          this.showProgressWindow("Knowledge", "Please select a Heading.");
+          return;
+        }
         this._Addon.knowledge.changeHeadingLineInNote(
           undefined,
           -1,
@@ -431,8 +445,18 @@ class AddonViews extends AddonBase {
     });
   }
 
-  setTreeViewHeight() {
-    this.$("#treeview").css("height", `${this.$("window").height() - 130}px`);
+  bindTreeViewResize() {
+    this.$("#zotero-knowledge-outline").on("resize", (e) => {
+      Zotero.debug(111);
+      this.setTreeViewSize();
+    });
+  }
+
+  setTreeViewSize() {
+    this.$("#treeview").css({
+      height: `${this.$("window").height() - 130}px`,
+      width: `${this.$("#zotero-knowledge-outline").width() - 10}px`,
+    });
   }
 
   createSortable(selector, driveName) {

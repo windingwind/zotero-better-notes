@@ -36,11 +36,10 @@ class Knowledge extends AddonBase {
       );
       this.workspaceWindow = win;
       await this.waitWorkspaceReady();
-      // @ts-ignore
       win.addEventListener("resize", (e) => {
-        // @ts-ignore
-        this._Addon.views.setTreeViewHeight();
+        this._Addon.views.setTreeViewSize();
       });
+      this._Addon.views.bindTreeViewResize();
       this.setWorkspaceNote("main");
       this.currentLine = -1;
       this._Addon.views.buildOutline();
@@ -417,10 +416,12 @@ class Knowledge extends AddonBase {
     for (let i = 0; i < metadataContainer.children.length; i++) {
       let currentRank = 7;
       let lineElement = metadataContainer.children[i];
-      if (lineElement.tagName[0] === "H" && lineElement.tagName.length === 2) {
-        let _rank = parseInt(lineElement.tagName[1]);
-        if (_rank >= 1 && _rank <= 6) {
-          currentRank = _rank;
+      const isHeading =
+        lineElement.tagName[0] === "H" && lineElement.tagName.length === 2;
+      const isLink = lineElement.innerHTML.search(/zotero:\/\/note\//g) !== -1;
+      if (isHeading || isLink) {
+        if (isHeading) {
+          currentRank = parseInt(lineElement.tagName[1]);
         }
         while (currentNode.model.rank >= currentRank) {
           currentNode = currentNode.parent;
@@ -445,14 +446,17 @@ class Knowledge extends AddonBase {
 
   getNoteTreeAsList(
     note: ZoteroItem,
-    doFilter: boolean = true
+    filterRoot: boolean = true,
+    filterLikn: boolean = true
   ): TreeModel.Node<object>[] {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return;
     }
     return this.getNoteTree(note).all(
-      (node) => !doFilter || node.model.lineIndex >= 0
+      (node) =>
+        (!filterRoot || node.model.lineIndex >= 0) &&
+        (!filterLikn || node.model.rank <= 6)
     );
   }
 
