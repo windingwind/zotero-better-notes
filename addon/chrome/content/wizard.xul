@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+
+<!DOCTYPE window [
+    <!ENTITY % ZoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %ZoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
+
+<wizard xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="knowledge-wizard" title="&zotero.__addonRef__.wizard.title;" width="788" height="600" onwizardfinish="Zotero.Knowledge4Zotero.wizard.setup()">
+    <script src="chrome://zotero/content/include.js" />
+
+    <wizardpage label="&zotero.__addonRef__.wizard.title;">
+        <image src="chrome://__addonRef__/skin/knowledge-app.png" width="560" height="400"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page1.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page1.description;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.create;">
+        <image src="chrome://__addonRef__/skin/add-knowledge.gif" width="560" height="400" style="padding-top: 50px;"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page2.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page2.description;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.open;">
+        <image src="chrome://__addonRef__/skin/open-knowledge.png" width="560" height="400"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page3.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page3.description;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.layout;">
+        <image src="chrome://__addonRef__/skin/intro-workspace.png" width="560" height="400"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page4.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description1;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description2;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description3;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.layout;">
+        <image src="chrome://__addonRef__/skin/add-link.gif" width="560" height="400" style="padding-top: 50px;"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page5.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description1;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description2;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.setup;">
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page6.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page6.description1;</description>
+        <description style="white-space: pre-wrap; color: red;">&zotero.__addonRef__.wizard.page6.description2;</description>
+
+        <rows>
+            <row>
+                <checkbox id="__addonRef__-setup-enable" checked="true" oncommand="Zotero.Knowledge4Zotero.wizard.changeSetup()" />
+                <label value="&zotero.__addonRef__.wizard.setup.enable.label;" />
+            </row>
+            <row>
+                <checkbox id="__addonRef__-setup-collectionenable" checked="true" oncommand="Zotero.Knowledge4Zotero.wizard.updateCollectionSetup()" />
+                <label value="&zotero.__addonRef__.wizard.setup.collectionenable.label;" />
+                <textbox id="__addonRef__-setup-collectionname" value="My Knowledges" oninput="Zotero.Knowledge4Zotero.wizard.updateCollectionSetup()" />
+            </row>
+            <row>
+                <checkbox id="__addonRef__-setup-noteenable" checked="true" oncommand="Zotero.Knowledge4Zotero.wizard.updateNoteSetup()" />
+                <label value="&zotero.__addonRef__.wizard.setup.noteenable.label;" />
+            </row>
+        </rows>
+    </wizardpage>
+    <script>Zotero.Knowledge4Zotero.wizard.init(document)</script>
+</wizard>

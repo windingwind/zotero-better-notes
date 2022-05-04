@@ -443,6 +443,14 @@ class AddonViews extends AddonBase {
         );
       },
     });
+    this.$("#user-guide").dxButton({
+      icon: "tips",
+      onClick: (e) => {
+        this._Addon.events.onEditorEvent(
+          new EditorMessage("openUserGuide", {})
+        );
+      },
+    });
   }
 
   bindTreeViewResize() {

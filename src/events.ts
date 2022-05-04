@@ -62,6 +62,9 @@ class AddonEvents extends AddonBase {
       },
       false
     );
+    if (!Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
+      this.onEditorEvent(new EditorMessage("openUserGuide", {}));
+    }
     this.resetState();
   }
 
@@ -110,7 +113,17 @@ class AddonEvents extends AddonBase {
 
   public async onEditorEvent(message: EditorMessage) {
     Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
-    if (message.type === "openWorkspace") {
+    if (message.type === "openUserGuide") {
+      /*
+        message.content = {}
+      */
+      window.open(
+        "chrome://Knowledge4Zotero/content/wizard.xul",
+        "_blank",
+        // margin=44+44/32+10+10+53, final space is 700*500
+        "chrome,extrachrome,centerscreen,width=650,height=608"
+      );
+    } else if (message.type === "openWorkspace") {
       /*
         message.content = {}
       */

@@ -5,6 +5,7 @@ declare namespace XUL {
     public value?: string;
     public width?: number;
     public height?: number;
+    public disabled?: boolean;
     public getAttribute?(name: string): string;
     public setAttribute?(name: string, value: any): void;
   }

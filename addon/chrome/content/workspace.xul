@@ -58,6 +58,10 @@
                     <div id="outline-untab"></div>
                     <span class="tooltiptext">Decrease the selected Heading level</span>
                 </div>
+                <div class="tooltip">
+                    <div id="user-guide"></div>
+                    <span class="tooltiptext">Open User Guide</span>
+                </div>
             </html:div>
         </vbox>
         <splitter id="outline-splitter" collapse="before">

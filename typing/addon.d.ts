@@ -1,6 +1,6 @@
 declare interface Knowledge4Zotero {
   events: import("../src/events");
   views: import("../src/view");
-  prefs: import("../src/prefs");
+  wizard: import("../src/wizard");
   knowledge: import("../src/knowledge").Knowledge;
 }
