@@ -158,13 +158,36 @@ class AddonViews extends AddonBase {
   async scrollToLine(instance: EditorInstance, lineIndex: number) {
     await instance._initPromise;
     let editor = this.getEditor(instance._iframeWindow.document);
-    if (lineIndex > editor.children.length) {
-      lineIndex = editor.children.length - 1;
-    } else if (lineIndex < 0) {
+    const indexMap = [];
+    const diveTagNames = ["OL", "UL", "LI"];
+
+    function dive(e: Element, targetIndex: string) {
+      if (diveTagNames.indexOf(e.tagName) !== -1) {
+        if (e.tagName === "LI") {
+          indexMap.push(targetIndex);
+        }
+        for (let i in e.children) {
+          dive(e.children[i], targetIndex);
+        }
+      }
+    }
+    for (let i in editor.children) {
+      const ele = editor.children[i];
+      if (diveTagNames.indexOf(ele.tagName) !== -1) {
+        dive(ele, i);
+      } else {
+        indexMap.push(i);
+      }
+    }
+    if (lineIndex >= indexMap.length) {
+      lineIndex = indexMap.length - 1;
+    } else if (indexMap.length < 0) {
       lineIndex = 0;
     }
+    const mappedIndex = indexMap[lineIndex];
+
     // @ts-ignore
-    editor.parentNode.scrollTo(0, editor.children[lineIndex].offsetTop);
+    editor.parentNode.scrollTo(0, editor.children[mappedIndex].offsetTop);
   }
 
   addNewKnowledgeButton() {
