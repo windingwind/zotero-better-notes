@@ -268,7 +268,7 @@ class Knowledge extends AddonBase {
     if (lineIndex < 0) {
       lineIndex =
         this.currentLine >= 0
-          ? this.currentLine + 1
+          ? this.currentLine + 2
           : this.getLinesInNote(note).length + 1;
     }
     // let parentNode = this.getLineParentInNote(note, lineIndex);
