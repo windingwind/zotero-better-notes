@@ -132,8 +132,50 @@ class Knowledge extends AddonBase {
         noteText.length - "</div>".length
       );
     }
-    let noteLines: string[] = noteText.split("\n").filter((s) => s);
-    return noteLines;
+    let noteLines: string[] = noteText.split("\n");
+
+    const cacheStart = [/<ol>/g, /<ul>/g, /<li>/g, /<blockquote>/g, /<pre>/g];
+    const cacheEnd = [
+      /<\/ol>/g,
+      /<\/ul>/g,
+      /<\/li>/g,
+      /<\/blockquote>/g,
+      /<\/pre>/g,
+    ];
+    let parsedLines: string[] = [];
+    let appendLater: boolean = false;
+    let cacheStartLine = false;
+    let cachedLines: string = "";
+    for (let line of noteLines) {
+      cacheStartLine = false;
+      if (
+        cachedLines ||
+        cacheStart.filter((e) => {
+          return line.search(e) !== -1;
+        }).length > 0
+      ) {
+        appendLater = true;
+        cachedLines += `${cachedLines.length > 0 ? "\n" : ""}${line}`;
+        cacheStartLine = true;
+      }
+      if (
+        cacheEnd.filter((e) => {
+          return line.search(e) !== -1;
+        }).length > 0
+      ) {
+        appendLater = false;
+        // If already added to cache
+        if (!cacheStartLine) {
+          cachedLines += `\n${line}`;
+        }
+        line = cachedLines;
+        cachedLines = "";
+      }
+      if (!appendLater) {
+        parsedLines.push(line);
+      }
+    }
+    return parsedLines;
   }
 
   setLinesToNote(note: ZoteroItem, noteLines: string[]) {
@@ -401,7 +443,7 @@ class Knowledge extends AddonBase {
     if (!note) {
       return undefined;
     }
-    let metadataContainer = this.parseNoteHTML(note);
+    const noteLines = this.getLinesInNote(note);
     let tree = new TreeModel();
     /*
     tree-model/index.js: line 40
@@ -419,21 +461,28 @@ class Knowledge extends AddonBase {
       lineIndex: -1,
       endIndex: -1,
     });
-    if (!metadataContainer) {
-      return root;
-    }
     let id = 0;
     let currentNode = root;
     let lastNode = undefined;
-    for (let i = 0; i < metadataContainer.children.length; i++) {
+    let headerStartReg = new RegExp("<h[1-6]>");
+    let headerStopReg = new RegExp("</h[1-6]>");
+    for (let i in noteLines) {
       let currentRank = 7;
-      let lineElement = metadataContainer.children[i];
-      const isHeading =
-        lineElement.tagName[0] === "H" && lineElement.tagName.length === 2;
-      const isLink = lineElement.innerHTML.search(/zotero:\/\/note\//g) !== -1;
+      let lineElement = noteLines[i];
+      const isHeading = lineElement.search(headerStartReg) !== -1;
+      const isLink = lineElement.search(/zotero:\/\/note\//g) !== -1;
       if (isHeading || isLink) {
+        let name = "";
         if (isHeading) {
-          currentRank = parseInt(lineElement.tagName[1]);
+          const startIndex = lineElement.search(headerStartReg);
+          const stopIndex = lineElement.search(headerStopReg);
+          currentRank = parseInt(
+            lineElement.slice(startIndex + 2, startIndex + 3)
+          );
+          name = lineElement.slice(startIndex + 4, stopIndex);
+        } else {
+          name = lineElement.slice(lineElement.search(/">/g) + 2);
+          name = name.slice(0, name.search(/<\//g));
         }
         while (currentNode.model.rank >= currentRank) {
           currentNode = currentNode.parent;
@@ -445,9 +494,9 @@ class Knowledge extends AddonBase {
           id: id++,
           rank: currentRank,
           // @ts-ignore
-          name: lineElement.innerText,
+          name: name,
           lineIndex: i,
-          endIndex: metadataContainer.children.length,
+          endIndex: noteLines.length,
         });
         currentNode.addChild(lastNode);
         currentNode = lastNode;

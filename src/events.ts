@@ -469,14 +469,14 @@ class AddonEvents extends AddonBase {
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
       ) {
         // Update current line index
-        let focusNode =
-          message.content.editorInstance._iframeWindow.document.getSelection()
-            .focusNode;
+        let selection =
+          message.content.editorInstance._iframeWindow.document.getSelection();
+        let focusNode = selection.focusNode as XUL.Element;
         if (!focusNode) {
           return;
         }
 
-        function getChildIndex(node: Node) {
+        function getChildIndex(node) {
           return Array.prototype.indexOf.call(node.parentNode.childNodes, node);
         }
 
@@ -486,15 +486,39 @@ class AddonEvents extends AddonBase {
             !focusNode.parentElement.className ||
             focusNode.parentElement.className.indexOf("primary-editor") === -1
           ) {
-            focusNode = focusNode.parentNode;
+            focusNode = focusNode.parentNode as XUL.Element;
           }
         } catch (e) {
           return;
         }
 
         let currentLineIndex = getChildIndex(focusNode);
-        this._Addon.knowledge.currentLine = currentLineIndex;
+
+        const tableElements = Array.prototype.filter.call(
+          Array.prototype.slice.call(
+            focusNode.parentElement.childNodes,
+            0,
+            currentLineIndex
+          ),
+          (e) => {
+            return e.tagName === "UL" || e.tagName === "OL";
+          }
+        );
+
+        for (const tableElement of tableElements) {
+          currentLineIndex += tableElement.childElementCount - 1;
+        }
+
+        const tagName = focusNode.tagName;
+        if (tagName === "UL" || tagName === "OL") {
+          let liElement = selection.focusNode as XUL.Element;
+          while (liElement.tagName !== "LI") {
+            liElement = liElement.parentElement;
+          }
+          currentLineIndex += getChildIndex(liElement);
+        }
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
+        this._Addon.knowledge.currentLine = currentLineIndex;
       }
     } else if (message.type === "export") {
       /*
