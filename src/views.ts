@@ -356,7 +356,7 @@ class AddonViews extends AddonBase {
       dataStructure: "plain",
       height: this.$("window").height() - 130,
       displayExpr: "name",
-      noDataText: "No Heading 1 found",
+      noDataText: "Create a heading with '+'",
       onItemClick: (e) => {
         this._Addon.events.onEditorEvent(
           new EditorMessage("clickOutlineHeading", {
@@ -366,6 +366,14 @@ class AddonViews extends AddonBase {
       },
       onItemSelectionChanged: (e) => {
         console.log(e);
+      },
+    });
+    this.$("#outline-selectknowledge").dxButton({
+      icon: "folder",
+      onClick: async (e) => {
+        this._Addon.events.onEditorEvent(
+          new EditorMessage("selectMainKnowledge", {})
+        );
       },
     });
     this.$("#outline-addafter").dxButton({
@@ -414,6 +422,13 @@ class AddonViews extends AddonBase {
           this.showProgressWindow("Knowledge", "Please select a Heading.");
           return;
         }
+        if (node.model.rank === 6) {
+          this.showProgressWindow(
+            "Knowledge",
+            "Cannot decrease a level 6 Heading."
+          );
+          return;
+        }
         this._Addon.knowledge.changeHeadingLineInNote(
           undefined,
           1,
@@ -436,6 +451,13 @@ class AddonViews extends AddonBase {
           this.showProgressWindow("Knowledge", "Please select a Heading.");
           return;
         }
+        if (node.model.rank === 1) {
+          this.showProgressWindow(
+            "Knowledge",
+            "Cannot raise a level 1 Heading."
+          );
+          return;
+        }
         this._Addon.knowledge.changeHeadingLineInNote(
           undefined,
           -1,
@@ -455,7 +477,6 @@ class AddonViews extends AddonBase {
 
   bindTreeViewResize() {
     this.$("#zotero-knowledge-outline").on("resize", (e) => {
-      Zotero.debug(111);
       this.setTreeViewSize();
     });
   }

@@ -1,6 +1,11 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge Workspace">
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Knowledge">
 
+<!ENTITY zotero.__addonRef__.export.title "Export Knowledge">
+<!ENTITY zotero.__addonRef__.export.file.enable.label "Export to file(MarkDown/HTML/RDF)">
+<!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
+<!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
+
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Knowledge for Zotero">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero User Guide">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "Click Next to Continue.">

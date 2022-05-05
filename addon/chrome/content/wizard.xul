@@ -11,7 +11,7 @@
     %knowledgeDTD;
 ]>
 
-<wizard xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="knowledge-wizard" title="&zotero.__addonRef__.wizard.title;" width="788" height="600" onwizardfinish="Zotero.Knowledge4Zotero.wizard.setup()">
+<wizard xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="knowledge-wizard" windowtype="knowledge-wizard" title="&zotero.__addonRef__.wizard.title;" width="788" height="600" onwizardfinish="Zotero.Knowledge4Zotero.wizard.setup()">
     <script src="chrome://zotero/content/include.js" />
 
     <wizardpage label="&zotero.__addonRef__.wizard.title;">

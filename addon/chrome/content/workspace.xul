@@ -45,18 +45,22 @@
                     </div>
                 </div>
             </html:div>
-            <html:div id="outline-tools" flex="1" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 50px 0px 50px;">
+            <html:div id="outline-tools" flex="1" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 30px 0px 30px;">
+                <div class="tooltip">
+                    <div id="outline-selectknowledge"></div>
+                    <span class="tooltiptext">Select Main Knowledge</span>
+                </div>
                 <div class="tooltip">
                     <div id="outline-addafter"></div>
                     <span class="tooltiptext">Add Heading</span>
                 </div>
                 <div class="tooltip">
                     <div id="outline-tab"></div>
-                    <span class="tooltiptext">Raise the selected Heading level</span>
+                    <span class="tooltiptext">Decrease the selected Heading level</span>
                 </div>
                 <div class="tooltip">
                     <div id="outline-untab"></div>
-                    <span class="tooltiptext">Decrease the selected Heading level</span>
+                    <span class="tooltiptext">Raise the selected Heading level</span>
                 </div>
                 <div class="tooltip">
                     <div id="user-guide"></div>

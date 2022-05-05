@@ -75,4 +75,11 @@ declare class XULEvent extends Event {
 
 declare class XULWindow extends Window {
   public document: XMLDocument;
+  public arguments: any;
+  public openDialog: (
+    target: string,
+    type: string,
+    params: string,
+    extraParams?: object
+  ) => XULWindow;
 }

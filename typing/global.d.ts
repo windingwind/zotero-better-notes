@@ -150,6 +150,10 @@ declare const ZoteroPane_Local: {
   newNote: () => Promise<number>;
 };
 
+declare const Zotero_File_Interface: {
+  exportItemsToClipboard: (items: ZoteroItem[], translatorID: string) => void;
+};
+
 declare class ZoteroCollection {
   getChildItems: (arg1: boolean, arg2: boolean) => Array<ZoteroItem>;
 }

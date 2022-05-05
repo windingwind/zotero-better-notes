@@ -1,6 +1,11 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge工作区">
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "设置为主Knowledge">
 
+<!ENTITY zotero.__addonRef__.export.title "导出Knowledge">
+<!ENTITY zotero.__addonRef__.export.file.enable.label "导出为文件(MarkDown/HTML/RDF)">
+<!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
+<!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
+
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Knowledge for Zotero">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero 用户指引">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "单击下一步以继续。">

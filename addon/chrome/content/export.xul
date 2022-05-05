@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+
+<!DOCTYPE window [
+    <!ENTITY % ZoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %ZoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
+
+<dialog id="zotero-select-items-dialog" windowtype="knowledge-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.export.doAccept();" onload="Zotero.Knowledge4Zotero.export.doLoad(window);" onunload="Zotero.Knowledge4Zotero.export.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
+    <script src="chrome://zotero/content/include.js" />
+    <box flex="1">
+        <rows flex="1">
+            <row>
+                <checkbox id="__addonRef__-export-enablefile" checked="true" />
+                <label value="&zotero.__addonRef__.export.file.enable.label;" />
+            </row>
+            <row>
+                <checkbox id="__addonRef__-export-enablenote" checked="false" />
+                <label value="&zotero.__addonRef__.export.note.enable.label;" />
+            </row>
+            <row>
+                <checkbox id="__addonRef__-export-enablecopy" checked="false" />
+                <label value="&zotero.__addonRef__.export.copy.enable.label;" />
+            </row>
+        </rows>
+    </box>
+</dialog>

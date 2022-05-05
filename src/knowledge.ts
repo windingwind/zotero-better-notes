@@ -116,6 +116,7 @@ class Knowledge extends AddonBase {
         params: type,
       })
     );
+    this._Addon.views.buildOutline();
   }
 
   getLinesInNote(note: ZoteroItem): string[] {
@@ -197,20 +198,30 @@ class Knowledge extends AddonBase {
     );
   }
 
-  addLineToNote(note: ZoteroItem, text: string, lineIndex: number) {
+  private addLineToNote(
+    note: ZoteroItem,
+    text: string,
+    lineIndex: number,
+    newLine: boolean
+  ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return;
     }
     let noteLines = this.getLinesInNote(note);
-    noteLines.splice(lineIndex, 0, text);
+    if (newLine) {
+      noteLines.splice(lineIndex, 0, "<p> </p>", text);
+    } else {
+      noteLines.splice(lineIndex, 0, text);
+    }
     this.setLinesToNote(note, noteLines);
   }
 
   async addSubLineToNote(
     note: ZoteroItem,
     text: string,
-    lineIndex: number = -1
+    lineIndex: number = -1,
+    newLine: boolean = false
   ) {
     if (lineIndex < 0) {
       lineIndex =
@@ -237,7 +248,7 @@ class Knowledge extends AddonBase {
     //   i = nodes.length - 1;
     // }
     // Add to next line
-    this.addLineToNote(note, text, lineIndex);
+    this.addLineToNote(note, text, lineIndex, newLine);
     await this.scrollWithRefresh(lineIndex);
   }
 
@@ -266,7 +277,8 @@ class Knowledge extends AddonBase {
       `<a href="zotero://note/${groupID}/${noteKey}" rel="noopener noreferrer nofollow">${
         linkText ? linkText : `zotero://note/${groupID}/${noteKey}`
       }</a>`,
-      lineIndex
+      lineIndex,
+      true
     );
     this._Addon.views.showProgressWindow(
       "Knowledge",
@@ -503,40 +515,13 @@ class Knowledge extends AddonBase {
     return [node.model.lineIndex, endIndex];
   }
 
-  async getNoteExport(note: ZoteroItem, format: "markdown" | "html") {
-    note = note || this.getWorkspaceNote();
-    if (!note) {
-      return;
-    }
-    let items = [note];
-    let formatObj = {
-      mode: "export",
-      id:
-        format === "markdown"
-          ? Zotero.Translators.TRANSLATOR_ID_NOTE_MARKDOWN
-          : Zotero.Translators.TRANSLATOR_ID_NOTE_HTML,
-    };
-    let text = "";
-    let done = false;
-    Zotero.QuickCopy.getContentFromItems(items, formatObj, (obj, worked) => {
-      if (!worked) {
-        Zotero.log(Zotero.getString("fileInterface.exportError"), "warning");
-        return;
-      }
-      text = obj.string.replace(/\r\n/g, "\n");
-      done = true;
-    });
-    let t = 0;
-    while (!done && t < 500) {
-      t += 1;
-      await Zotero.Promise.delay(10);
-    }
-    return text;
-  }
-
-  async exportNoteToFile(note: ZoteroItem, convertNoteLinks: boolean = true) {
-    let exporter = new Zotero_File_Exporter();
-
+  async exportNoteToFile(
+    note: ZoteroItem,
+    convertNoteLinks: boolean = true,
+    saveFile: boolean = true,
+    saveNote: boolean = false,
+    saveCopy: boolean = false
+  ) {
     if (convertNoteLinks) {
       let item: ZoteroItem = new Zotero.Item("note");
       item.setNote(note.getNote());
@@ -570,12 +555,31 @@ class Knowledge extends AddonBase {
         }
       }
       this.setLinesToNote(item, newLines);
-      exporter.items = [item];
-      await exporter.save();
-      await Zotero.Items.erase(item.id);
+      if (saveFile) {
+        const exporter = new Zotero_File_Exporter();
+        exporter.items = [item];
+        await exporter.save();
+      }
+      if (saveCopy) {
+        Zotero_File_Interface.exportItemsToClipboard(
+          [item],
+          Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
+        );
+        this._Addon.views.showProgressWindow("Knowledge", "Note Copied");
+      }
+      if (!saveNote) {
+        if (saveCopy) {
+          // Wait copy finish
+          await Zotero.Promise.delay(500);
+        }
+        await Zotero.Items.erase(item.id);
+      }
     } else {
-      exporter.items = [note];
-      exporter.save();
+      if (saveFile) {
+        const exporter = new Zotero_File_Exporter();
+        exporter.items = [note];
+        exporter.save();
+      }
     }
   }
 
@@ -631,4 +635,4 @@ class Knowledge extends AddonBase {
   }
 }
 
-export { Knowledge };
+export default Knowledge;

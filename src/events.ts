@@ -135,10 +135,97 @@ class AddonEvents extends AddonBase {
       const noteID = await ZoteroPane_Local.newNote();
       await this.onEditorEvent(
         new EditorMessage("setMainKnowledge", {
-          params: noteID,
+          params: { itemID: noteID },
         })
       );
       await this._Addon.knowledge.openWorkspaceWindow();
+    } else if (message.type === "selectMainKnowledge") {
+      /*
+        message.content = {}
+      */
+      const io = {
+        // Not working
+        singleSelection: true,
+        dataIn: null,
+        dataOut: null,
+        deferred: Zotero.Promise.defer(),
+      };
+
+      (window as unknown as XULWindow).openDialog(
+        "chrome://zotero/content/selectItemsDialog.xul",
+        "",
+        "chrome,dialog=no,centerscreen,resizable=yes",
+        io
+      );
+      await io.deferred.promise;
+
+      const ids = io.dataOut;
+      if (ids.length === 0) {
+        this._Addon.views.showProgressWindow("Knowledge", "No note selected.");
+        return;
+      } else if (ids.length > 1) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Please select a note item."
+        );
+        return;
+      }
+
+      const note = Zotero.Items.get(ids[0]);
+      if (note && note.isNote()) {
+        this.onEditorEvent(
+          new EditorMessage("setMainKnowledge", {
+            params: { itemID: note.id, enableConfirm: false },
+          })
+        );
+      } else {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Not a valid note item."
+        );
+      }
+    } else if (message.type === "setMainKnowledge") {
+      /*
+        message.content = {
+          params: {itemID, enableConfirm}
+        }
+      */
+      Zotero.debug("Knowledge4Zotero: setMainKnowledge");
+      let mainKnowledgeID = parseInt(
+        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+      );
+      let itemID = message.content.params.itemID;
+      const item = Zotero.Items.get(itemID);
+      if (itemID === mainKnowledgeID) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Already a main Knowledge."
+        );
+        return;
+      } else if (!item.isNote()) {
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          "Not a valid note item."
+        );
+      } else {
+        if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
+          if (message.content.params.enableConfirm) {
+            let confirmChange = confirm(
+              "Will change current Knowledge Workspace. Confirm?"
+            );
+            if (!confirmChange) {
+              return;
+            }
+          }
+        }
+        Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
+        await this._Addon.knowledge.openWorkspaceWindow();
+        await this._Addon.knowledge.setWorkspaceNote("main");
+        this._Addon.views.showProgressWindow(
+          "Knowledge",
+          `Set main Knowledge to: ${item.getNoteTitle()}`
+        );
+      }
     } else if (message.type === "addNoteInstance") {
       /*
         message.content = {
@@ -174,18 +261,18 @@ class AddonEvents extends AddonBase {
         "addToKnowledge",
         "middle"
       );
-      const buttonParam = [];
-      const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
-      for (let node of nodes) {
-        buttonParam.push({
-          id: `knowledge-addlink-popup-${node.model.endIndex}`,
-          text: node.model.name,
-          eventType: "addToKnowledgeLine",
-        });
-      }
       addLinkDropDown.addEventListener("mouseover", async (e) => {
         if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
           return;
+        }
+        const buttonParam = [];
+        const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
+        for (let node of nodes) {
+          buttonParam.push({
+            id: `knowledge-addlink-popup-${node.model.endIndex}`,
+            text: node.model.name,
+            eventType: "addToKnowledgeLine",
+          });
         }
         const popup: Element = await this._Addon.views.addEditorPopup(
           message.content.editorInstance,
@@ -205,7 +292,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance,
         "knowledge-end",
         "export",
-        "Export Markdown with linked Notes",
+        "Export with linked notes",
         "export",
         "end"
       );
@@ -291,39 +378,6 @@ class AddonEvents extends AddonBase {
         lineIndex,
         message.content.editorInstance._item.id
       );
-    } else if (message.type === "setMainKnowledge") {
-      /*
-        message.content = {
-          params: itemID
-        }
-      */
-      Zotero.debug("Knowledge4Zotero: setMainKnowledge");
-      let mainKnowledgeID = parseInt(
-        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
-      );
-      let itemID = message.content.params;
-      if (itemID === mainKnowledgeID) {
-        this._Addon.views.showProgressWindow(
-          "Knowledge",
-          "Already a main Knowledge."
-        );
-      } else if (!Zotero.Items.get(itemID).isNote()) {
-        this._Addon.views.showProgressWindow(
-          "Knowledge",
-          "Not a valid note item."
-        );
-      } else {
-        if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
-          let confirmChange = confirm(
-            "Will change current Knowledge Workspace. Confirm?"
-          );
-          if (!confirmChange) {
-            return;
-          }
-        }
-        Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
-        await this._Addon.knowledge.setWorkspaceNote("main");
-      }
     } else if (message.type === "clickOutlineHeading") {
       /*
         message.content = {
@@ -448,8 +502,27 @@ class AddonEvents extends AddonBase {
           editorInstance
         }
       */
+      const io = {
+        dataIn: null,
+        dataOut: null,
+        deferred: Zotero.Promise.defer(),
+      };
+
+      (window as unknown as XULWindow).openDialog(
+        "chrome://Knowledge4Zotero/content/export.xul",
+        "",
+        "chrome,centerscreen,width=300,height=150",
+        io
+      );
+      await io.deferred.promise;
+
+      const options = io.dataOut;
       await this._Addon.knowledge.exportNoteToFile(
-        message.content.editorInstance._item
+        message.content.editorInstance._item,
+        true,
+        options.exportFile,
+        options.exportNote,
+        options.exportCopy
       );
     } else if (message.type === "openAttachment") {
       /*
