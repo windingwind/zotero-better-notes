@@ -141,9 +141,8 @@
           });
 
           // read in the predefined graph using the JSON format data held in the "mySavedModel" textarea
-          // getData();
           window.parent.postMessage({type: "ready"}, "*");
-
+          getData()
         }
 
         function spotConverter(dir, from) {
@@ -279,8 +278,29 @@
           }
         }
 
-        window.addEventListener("DOMContentLoaded", init);
-        window.addEventListener('resize', (e)=>{myDiagram.diagram.layoutDiagram(true)})
+        window.addEventListener("DOMContentLoaded",  ()=>{
+          try{
+            init()
+          }catch(e){
+            window.parent.postMessage({type: "error", event: e}, "*");
+          }
+        });
+
+        var resizeTime = new Date().getTime()
+        window.addEventListener('resize', (e)=>{
+          const canvas = document.getElementsByTagName("canvas")[0]
+          const div = document.getElementById('myDiagramDiv')
+          canvas.setAttribute('height', div.getAttribute('height'))
+          canvas.setAttribute('width', div.getAttribute('width'))
+          const currentResize = new Date().getTime()
+          resizeTime = currentResize
+          // Delay update
+          setTimeout(()=>{
+            if(resizeTime === currentResize){
+              getData()
+            }
+          }, 500)
+        })
 
       </script>
 
@@ -299,8 +319,6 @@
           <canvas
             tabindex="0"
             style="
-              width: 100%;
-              height: 100%;
               position: absolute;
               top: 0px;
               left: 0px;

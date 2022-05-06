@@ -29,6 +29,7 @@ class Knowledge extends AddonBase {
     if (this.getWorkspaceWindow()) {
       (this.getWorkspaceWindow() as Window).focus();
     } else {
+      this._Addon.views._initIframe = Zotero.Promise.defer();
       let win = window.open(
         "chrome://Knowledge4Zotero/content/workspace.xul",
         "_blank",

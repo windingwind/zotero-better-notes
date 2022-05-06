@@ -5,7 +5,7 @@ class AddonViews extends AddonBase {
   editorIcon: object;
   $: any;
   outlineView: boolean;
-  _initIframe: typeof Promise;
+  _initIframe: any;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -366,15 +366,7 @@ class AddonViews extends AddonBase {
     if (e.data.type === "ready") {
       this._initIframe.resolve();
     } else if (e.data.type === "getMindMapData") {
-      (
-        _window.document.getElementById("mindmapIframe") as HTMLIFrameElement
-      ).contentWindow.postMessage(
-        {
-          type: "setMindMapData",
-          nodes: this._Addon.knowledge.getNoteTreeAsList(),
-        },
-        "*"
-      );
+      this.updateMindMap();
     } else if (e.data.type === "jumpNode") {
       this.scrollToLine(
         await this._Addon.knowledge.getWorkspaceEditorInstance(),
@@ -399,18 +391,27 @@ class AddonViews extends AddonBase {
     const outline = _window.document.getElementById("outline-container");
     this.outlineView = status;
     if (this.outlineView) {
+      _window.document.getElementById("mindmapIframe").remove();
       mindmap.setAttribute("hidden", "hidden");
       outline.removeAttribute("hidden");
     } else {
+      const iframe = _window.document.createElement("iframe");
+      iframe.setAttribute("id", "mindmapIframe");
+      iframe.setAttribute(
+        "src",
+        "chrome://Knowledge4Zotero/content/mindMap.html"
+      );
       outline.setAttribute("hidden", "hidden");
       mindmap.removeAttribute("hidden");
+      mindmap.append(iframe);
+      this.setTreeViewSize();
     }
     this.buildOutline(this._Addon.knowledge.getWorkspaceNote());
   }
 
   async updateMindMap() {
     Zotero.debug("Knowledge4Zotero: updateMindMap");
-    await this._initIframe;
+    // await this._initIframe.promise;
     const _window = this._Addon.knowledge.getWorkspaceWindow();
     const iframe = _window.document.getElementById(
       "mindmapIframe"
