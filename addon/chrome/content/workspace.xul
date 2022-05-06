@@ -19,8 +19,10 @@
     <script src="chrome://zotero/content/note.js" />
     <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
     <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
+    <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
     <script type="application/javascript">
         Zotero.Knowledge4Zotero.views.$ = $;
+        Zotero.Knowledge4Zotero.views.go = go;
     </script>
 
     <keyset>
@@ -30,7 +32,7 @@
 
     <hbox flex="1">
         <vbox id="zotero-knowledge-outline" flex="1" width="300" minwidth="250" style="overflow: hidden;">
-            <html:div class="dx-viewport">
+            <html:div class="dx-viewport" id="outline-container">
                 <div class="demo-container">
                     <div class="form">
                         <div class="drive-panel">
@@ -45,10 +47,17 @@
                     </div>
                 </div>
             </html:div>
-            <html:div id="outline-tools" flex="1" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 30px 0px 30px;">
+            <html:div id="mindmap-container">
+                <iframe src="chrome://Knowledge4Zotero/content/mindMap.html" id="mindmapIframe"></iframe>
+            </html:div>
+            <html:div id="outline-tools" height="50" maxheight="50" minheight="50" style="display: flex; flex-flex-direction: row; justify-content: space-between; margin: 0px 30px 0px 30px;">
                 <div class="tooltip">
                     <div id="outline-selectknowledge"></div>
                     <span class="tooltiptext">Select Main Knowledge</span>
+                </div>
+                <div class="tooltip">
+                    <div id="outline-switchview"></div>
+                    <span class="tooltiptext">Switch Outline/Mind Map View</span>
                 </div>
                 <div class="tooltip">
                     <div id="outline-addafter"></div>

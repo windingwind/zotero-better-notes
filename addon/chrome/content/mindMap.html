@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
+    <style>
+      html,
+      body,
+      div {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      #canvas {
+        position:absolute;
+        height:100%; width:100%;
+      }
+    </style>
+    <div id="allSampleContent" class="p-4 w-full">
+      <script id="code">
+        function init() {
+          window.addEventListener('message', handler, false)
+
+          // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
+          // For details, see https://gojs.net/latest/intro/buildingObjects.html
+          const $ = go.GraphObject.make;
+
+          myDiagram = $(go.Diagram, "myDiagramDiv", {
+            "commandHandler.copiesTree": true,
+            "commandHandler.copiesParentKey": true,
+            "commandHandler.deletesTree": true,
+            "draggingTool.dragsTree": true,
+            "undoManager.isEnabled": true,
+            initialAutoScale: go.Diagram.UniformToFill,
+            layout: $(go.TreeLayout,
+              { comparer: go.LayoutVertex.smartComparer })
+          });
+
+          // a node consists of some text with a line shape underneath
+          myDiagram.nodeTemplate = $(
+            go.Node,
+            "Vertical",
+            { selectionObjectName: "TEXT" },
+            $(
+              go.TextBlock,
+              {
+                name: "TEXT",
+                minSize: new go.Size(30, 15),
+                editable: true,
+              },
+              // remember not only the text string but the scale and the font in the node data
+              new go.Binding("text", "text").makeTwoWay(),
+              new go.Binding("scale", "scale").makeTwoWay(),
+              new go.Binding("font", "font").makeTwoWay()
+            ),
+            $(
+              go.Shape,
+              "LineH",
+              {
+                stretch: go.GraphObject.Horizontal,
+                strokeWidth: 3,
+                height: 3,
+                // this line shape is the port -- what links connect with
+                portId: "",
+                fromSpot: go.Spot.LeftRightSides,
+                toSpot: go.Spot.LeftRightSides,
+              },
+              new go.Binding("stroke", "brush"),
+              // make sure links come in from the proper direction and go out appropriately
+              new go.Binding("fromSpot", "dir", (d) => spotConverter(d, true)),
+              new go.Binding("toSpot", "dir", (d) => spotConverter(d, false))
+            ),
+            // remember the locations of each node in the node data
+            new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
+              go.Point.stringify
+            ),
+            // make sure text "grows" in the desired direction
+            new go.Binding("locationSpot", "dir", (d) =>
+              spotConverter(d, false)
+            )
+          );
+
+          // selected nodes show a button for adding children
+          myDiagram.nodeTemplate.selectionAdornmentTemplate = $(
+            go.Adornment,
+            "Spot",
+            $(
+              go.Panel,
+              "Auto",
+              // this Adornment has a rectangular blue Shape around the selected node
+              $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 3 }),
+              $(go.Placeholder, { margin: new go.Margin(4, 4, 0, 4) })
+            ),
+            // and this Adornment has a Button to the right of the selected node
+            $(
+              "Button",
+              {
+                alignment: go.Spot.Right,
+                alignmentFocus: go.Spot.Left,
+                click: jumpNode, // define click behavior for this Button in the Adornment
+              },
+              $(
+                go.TextBlock,
+                "↗️", // the Button content
+                { font: "bold 8pt sans-serif" }
+              )
+            )
+          );
+
+          // a link is just a Bezier-curved line of the same color as the node to which it is connected
+          myDiagram.linkTemplate = $(
+            go.Link,
+            {
+              curve: go.Link.Bezier,
+              fromShortLength: -2,
+              toShortLength: -2,
+              selectable: false,
+            },
+            $(
+              go.Shape,
+              { strokeWidth: 3 },
+              new go.Binding("stroke", "toNode", (n) => {
+                if (n.data.brush) return n.data.brush;
+                return "black";
+              }).ofObject()
+            )
+          );
+
+          myDiagram.addDiagramListener("SelectionMoved", (e) => {
+            var rootX = myDiagram.findNodeForKey(0).location.x;
+            myDiagram.selection.each((node) => {
+              if (node.data.parent !== 0) return; // Only consider nodes connected to the root
+              var nodeX = node.location.x;
+              if (rootX < nodeX && node.data.dir !== "right") {
+                updateNodeDirection(node, "right");
+              } else if (rootX > nodeX && node.data.dir !== "left") {
+                updateNodeDirection(node, "left");
+              }
+              layoutTree(node);
+            });
+          });
+
+          // read in the predefined graph using the JSON format data held in the "mySavedModel" textarea
+          // getData();
+          window.parent.postMessage({type: "ready"}, "*");
+
+        }
+
+        function spotConverter(dir, from) {
+          if (dir === "left") {
+            return from ? go.Spot.Left : go.Spot.Right;
+          } else {
+            return from ? go.Spot.Right : go.Spot.Left;
+          }
+        }
+
+        function changeTextSize(obj, factor) {
+          var adorn = obj.part;
+          adorn.diagram.startTransaction("Change Text Size");
+          var node = adorn.adornedPart;
+          var tb = node.findObject("TEXT");
+          tb.scale *= factor;
+          adorn.diagram.commitTransaction("Change Text Size");
+        }
+
+        function toggleTextWeight(obj) {
+          var adorn = obj.part;
+          adorn.diagram.startTransaction("Change Text Weight");
+          var node = adorn.adornedPart;
+          var tb = node.findObject("TEXT");
+          // assume "bold" is at the start of the font specifier
+          var idx = tb.font.indexOf("bold");
+          if (idx < 0) {
+            tb.font = "bold " + tb.font;
+          } else {
+            tb.font = tb.font.slice(idx + 5);
+          }
+          adorn.diagram.commitTransaction("Change Text Weight");
+        }
+
+        function updateNodeDirection(node, dir) {
+          myDiagram.model.setDataProperty(node.data, "dir", dir);
+          // recursively update the direction of the child nodes
+          var chl = node.findTreeChildrenNodes(); // gives us an iterator of the child nodes related to this particular node
+          while (chl.next()) {
+            updateNodeDirection(chl.value, dir);
+          }
+        }
+
+        function layoutTree(node) {
+          if (node.data.key === 0) {
+            // adding to the root?
+            layoutAll(); // lay out everything
+          } else {
+            // otherwise lay out only the subtree starting at this parent node
+            var parts = node.findTreeParts();
+            layoutAngle(parts, node.data.dir === "left" ? 180 : 0);
+          }
+        }
+
+        function layoutAngle(parts, angle) {
+          var layout = go.GraphObject.make(go.TreeLayout, {
+            angle: angle,
+            arrangement: go.TreeLayout.ArrangementFixedRoots,
+            nodeSpacing: 5,
+            layerSpacing: 20,
+            setsPortSpot: false, // don't set port spots since we're managing them with our spotConverter function
+            setsChildPortSpot: false,
+          });
+          layout.doLayout(parts);
+        }
+
+        function layoutAll() {
+          var root = myDiagram.findNodeForKey(0);
+          if (root === null) return;
+          myDiagram.startTransaction("Layout");
+          // split the nodes and links into two collections
+          var rightward = new go.Set(/*go.Part*/);
+          var leftward = new go.Set(/*go.Part*/);
+          root.findLinksConnected().each((link) => {
+            var child = link.toNode;
+            if (child.data.dir === "left") {
+              leftward.add(root); // the root node is in both collections
+              leftward.add(link);
+              leftward.addAll(child.findTreeParts());
+            } else {
+              rightward.add(root); // the root node is in both collections
+              rightward.add(link);
+              rightward.addAll(child.findTreeParts());
+            }
+          });
+          // do one layout and then the other without moving the shared root node
+          layoutAngle(rightward, 0);
+          layoutAngle(leftward, 180);
+          myDiagram.commitTransaction("Layout");
+        }
+
+        function getData(){
+          window.parent.postMessage({type: "getMindMapData"}, "*");
+        }
+
+        function setData(nodes){
+          const data = {
+            class: "go.TreeModel",
+            nodeDataArray: [{ key: 999, text: "Mind Map", parent: undefined }],
+          };
+          const colors = []
+          for (const node of nodes) {
+            console.log(node.model.link)
+            const parent = node.parent.model.id === -1? 999:node.parent.model.id;
+              data.nodeDataArray.push({
+              key: node.model.id,
+              text: `${node.model.rank===7?'🔗':''}${node.model.name.slice(0,10)}${node.model.name.length>=10?'...':''}`,
+              parent: parent,
+              lineIndex: node.model.lineIndex,
+              noteLink: node.model.rank===7?node.model.link:'',
+              brush: go.Brush.randomColor()
+            });
+          }
+          myDiagram.model = go.Model.fromJson(data);
+        }
+
+        
+        function jumpNode(e, obj) {
+          var adorn = obj.part;
+          var oldnode = adorn.adornedPart;
+          var olddata = oldnode.data;
+          if(olddata.noteLink){
+            window.parent.postMessage({type: "jumpNote", link: olddata.noteLink}, "*");
+          }else{
+            window.parent.postMessage({type: "jumpNode", lineIndex: olddata.lineIndex}, "*");
+          }
+        }
+        
+        function handler(e){
+          console.log(e)
+          if(e.data.type === "setMindMapData"){
+            setData(e.data.nodes)
+          }
+        }
+
+        window.addEventListener("DOMContentLoaded", init);
+        window.addEventListener('resize', (e)=>{myDiagram.diagram.layoutDiagram(true)})
+
+      </script>
+
+      <div id="sample">
+        <div
+          id="myDiagramDiv"
+          style="
+            width: 100%;
+            position: relative;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+            cursor: auto;
+            font: 13px sans-serif;
+            overflow: hidden;
+          "
+        >
+          <canvas
+            tabindex="0"
+            style="
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              z-index: 2;
+              user-select: none;
+              touch-action: none;
+              cursor: auto;
+            "
+            >This text is displayed if your browser does not support the Canvas
+            HTML element.</canvas
+          >
+        </div>
+      </div>
+  </body>
+</html>

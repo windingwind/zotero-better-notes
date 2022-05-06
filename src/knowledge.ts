@@ -42,7 +42,10 @@ class Knowledge extends AddonBase {
       this._Addon.views.bindTreeViewResize();
       this.setWorkspaceNote("main");
       this.currentLine = -1;
+      this._Addon.views.initKnowledgeWindow(win);
+      this._Addon.views.switchView(true);
       this._Addon.views.buildOutline();
+      // this._Addon.views.buildMindMap();
     }
   }
 
@@ -473,6 +476,7 @@ class Knowledge extends AddonBase {
       const isLink = lineElement.search(/zotero:\/\/note\//g) !== -1;
       if (isHeading || isLink) {
         let name = "";
+        let link = "";
         if (isHeading) {
           const startIndex = lineElement.search(headerStartReg);
           const stopIndex = lineElement.search(headerStopReg);
@@ -483,6 +487,8 @@ class Knowledge extends AddonBase {
         } else {
           name = lineElement.slice(lineElement.search(/">/g) + 2);
           name = name.slice(0, name.search(/<\//g));
+          link = lineElement.slice(lineElement.search(/href="/g) + 6);
+          link = link.slice(0, link.search(/"/g));
         }
         while (currentNode.model.rank >= currentRank) {
           currentNode = currentNode.parent;
@@ -497,6 +503,7 @@ class Knowledge extends AddonBase {
           name: name,
           lineIndex: i,
           endIndex: noteLines.length,
+          link: link,
         });
         currentNode.addChild(lastNode);
         currentNode = lastNode;
@@ -508,7 +515,7 @@ class Knowledge extends AddonBase {
   getNoteTreeAsList(
     note: ZoteroItem,
     filterRoot: boolean = true,
-    filterLikn: boolean = true
+    filterLink: boolean = true
   ): TreeModel.Node<object>[] {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -517,7 +524,7 @@ class Knowledge extends AddonBase {
     return this.getNoteTree(note).all(
       (node) =>
         (!filterRoot || node.model.lineIndex >= 0) &&
-        (!filterLikn || node.model.rank <= 6)
+        (!filterLink || node.model.rank <= 6)
     );
   }
 

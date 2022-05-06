@@ -4,6 +4,8 @@ class AddonViews extends AddonBase {
   progressWindowIcon: object;
   editorIcon: object;
   $: any;
+  outlineView: boolean;
+  _initIframe: typeof Promise;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -21,7 +23,10 @@ class AddonViews extends AddonBase {
       export: `<svg t="1651322116327" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11894" width="24" height="24"><path d="M849.2 599v217H178.5V599c-0.7-23.7-20.1-42.7-44-42.7s-43.3 19-44 42.7v252.5c0 28.9 23.6 52.5 52.5 52.5h741.7c28.9 0 52.5-23.6 52.5-52.5V599c-0.7-23.7-20.1-42.7-44-42.7s-43.3 19-44 42.7z" p-id="11895"></path><path d="M482.7 135.4l-164 164c-17.1 17.1-17.1 45.1 0 62.2s45.1 17.1 62.2 0l85.7-85.7v314.8c0 26 21.3 47.2 47.2 47.2 26 0 47.2-21.3 47.2-47.2V276l85.7 85.7c17.1 17.1 45.1 17.1 62.2 0s17.1-45.1 0-62.2l-164-164c-17.1-17.2-45.1-17.2-62.2-0.1z" p-id="11896"></path></svg>`,
       close: `<svg t="1651331457107" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12754" width="24" height="24"><path d="M557.311759 513.248864l265.280473-263.904314c12.54369-12.480043 12.607338-32.704421 0.127295-45.248112-12.512727-12.576374-32.704421-12.607338-45.248112-0.127295L512.127295 467.904421 249.088241 204.063755c-12.447359-12.480043-32.704421-12.54369-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.280796l262.975407 263.775299-265.151458 263.744335c-12.54369 12.480043-12.607338 32.704421-0.127295 45.248112 6.239161 6.271845 14.463432 9.440452 22.687703 9.440452 8.160624 0 16.319527-3.103239 22.560409-9.311437l265.216826-263.807983 265.440452 266.240344c6.239161 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.311759 513.248864z" p-id="12755"></path></svg>`,
       openWorkspaceCollectionView: `<svg t="1651317033804" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2432" width="100%" height="100%"><path d="M874.9 459.4c-18.8 0-34 15.2-34 34v355.7c0 18.6-15.5 33.7-34.5 33.7H181.5c-19 0-34.5-15.1-34.5-33.7V232.3c0-18.6 15.5-33.7 34.5-33.7H541c18.8 0 34-15.2 34-34s-15.2-34-34-34H181.5C125 130.6 79 176.2 79 232.3v616.8c0 56 46 101.7 102.5 101.7h624.9c56.5 0 102.5-45.6 102.5-101.7V493.4c0-18.8-15.2-34-34-34z" fill="#b6b6b6" p-id="2433"></path><path d="M885.5 82.7H657.1c-18.8 0-34 15.2-34 34s15.2 34 34 34h169.7L358.5 619.1c-13.3 13.3-13.3 34.8 0 48.1 6.6 6.6 15.3 10 24 10s17.4-3.3 24-10l470-470v169.7c0 18.8 15.2 34 34 34s34-15.2 34-34V141.5c0.1-32.4-26.4-58.8-59-58.8z" fill="#b6b6b6" p-id="2434"></path></svg>`,
+      switchView: `<svg t="1651813727621" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14171" width="18" height="18"><path d="M1024 733v131c0 53-43 96-96 96h-96c-53 0-96-43-96-96V733c0-53 43-96 96-96 8.8 0 16-7.2 16-16v-77c0-17.7-14.3-32-32-32H560c-8.8 0-16 7.2-16 16v94c0 8.3 6.7 15 15 15h1c53 0 96 43 96 96v131c0 53-43 96-96 96h-96c-53 0-96-43-96-96V733c0-53 43-96 96-96h1c8.3 0 15-6.7 15-15v-94c0-8.8-7.2-16-16-16H208c-17.7 0-32 14.3-32 32v77c0 8.8 7.2 16 16 16 53 0 96 43 96 96v131c0 53-43 96-96 96H96c-53 0-96-43-96-96V733c0-53 43-96 96-96 8.8 0 16-7.2 16-16v-77c0-53 43-96 96-96h256c8.8 0 16-7.2 16-16v-48h-96c-53 0-96-43-96-96V144c0-53 43-96 96-96h256c53 0 96 43 96 96v144c0 53-43 96-96 96h-96v48c0 8.8 7.2 16 16 16h256c53 0 96 43 96 96v77c0 8.8 7.2 16 16 16 53 0 96 43 96 96z" p-id="14172"></path></svg>`,
     };
+    this.outlineView = true;
+    this._initIframe = Zotero.Promise.defer();
   }
 
   getEditor(_document: Document) {
@@ -181,13 +186,18 @@ class AddonViews extends AddonBase {
     }
     if (lineIndex >= indexMap.length) {
       lineIndex = indexMap.length - 1;
-    } else if (indexMap.length < 0) {
+    } else if (lineIndex < 0) {
       lineIndex = 0;
     }
-    const mappedIndex = indexMap[lineIndex];
+    lineIndex = indexMap[lineIndex];
+    if (lineIndex >= editor.children.length) {
+      lineIndex = editor.children.length - 1;
+    } else if (lineIndex < 0) {
+      lineIndex = 0;
+    }
 
     // @ts-ignore
-    editor.parentNode.scrollTo(0, editor.children[mappedIndex].offsetTop);
+    editor.parentNode.scrollTo(0, editor.children[lineIndex].offsetTop);
   }
 
   addNewKnowledgeButton() {
@@ -203,7 +213,7 @@ class AddonViews extends AddonBase {
     });
     button.setAttribute(
       "style",
-      "list-style-image: url('chrome://Knowledge4Zotero/skin/knowledge.png');"
+      "list-style-image: url('chrome://Knowledge4Zotero/skin/knowledge@0.5x.png');"
     );
     addNoteButton.after(button);
   }
@@ -347,28 +357,103 @@ class AddonViews extends AddonBase {
     return reader.annotationItemIDs.length === updateCount;
   }
 
+  initKnowledgeWindow(_window: Window) {
+    _window.addEventListener("message", (e) => this.messageHandler(e), false);
+  }
+
+  async messageHandler(e) {
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    if (e.data.type === "ready") {
+      this._initIframe.resolve();
+    } else if (e.data.type === "getMindMapData") {
+      (
+        _window.document.getElementById("mindmapIframe") as HTMLIFrameElement
+      ).contentWindow.postMessage(
+        {
+          type: "setMindMapData",
+          nodes: this._Addon.knowledge.getNoteTreeAsList(),
+        },
+        "*"
+      );
+    } else if (e.data.type === "jumpNode") {
+      this.scrollToLine(
+        await this._Addon.knowledge.getWorkspaceEditorInstance(),
+        e.data.lineIndex
+      );
+    } else if (e.data.type === "jumpNote") {
+      Zotero.debug(e.data);
+      this._Addon.events.onEditorEvent(
+        new EditorMessage("onNoteLink", {
+          params: await this._Addon.knowledge.getNoteFromLink(e.data.link),
+        })
+      );
+    }
+  }
+
+  switchView(status: boolean = undefined) {
+    if (typeof status === "undefined") {
+      status = !this.outlineView;
+    }
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    const mindmap = _window.document.getElementById("mindmap-container");
+    const outline = _window.document.getElementById("outline-container");
+    this.outlineView = status;
+    if (this.outlineView) {
+      mindmap.setAttribute("hidden", "hidden");
+      outline.removeAttribute("hidden");
+    } else {
+      outline.setAttribute("hidden", "hidden");
+      mindmap.removeAttribute("hidden");
+    }
+    this.buildOutline(this._Addon.knowledge.getWorkspaceNote());
+  }
+
+  async updateMindMap() {
+    Zotero.debug("Knowledge4Zotero: updateMindMap");
+    await this._initIframe;
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    const iframe = _window.document.getElementById(
+      "mindmapIframe"
+    ) as HTMLIFrameElement;
+    iframe.contentWindow.postMessage(
+      {
+        type: "setMindMapData",
+        nodes: this._Addon.knowledge.getNoteTreeAsList(undefined, true, false),
+      },
+      "*"
+    );
+  }
+
+  /*
+   *  Outline Code Start
+   */
+
   async buildOutline(note: ZoteroItem) {
-    this._Addon.knowledge.currentNodeID = -1;
-    let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
-    const treeData = [];
-    treeList.map((node: TreeModel.Node<object>) => {
-      treeData.push({
-        id: String(node.model.id),
-        name: node.model.name,
-        rank: node.model.rank,
-        icon: node.model.rank === 7 ? "textdocument" : undefined,
-        lineIndex: node.model.lineIndex,
-        endIndex: node.model.endIndex,
-        isDirectory: node.hasChildren(),
-        expanded: true,
-        parentId:
-          node.model.rank > 1 ? String(node.parent.model.id) : undefined,
+    if (this.outlineView) {
+      this._Addon.knowledge.currentNodeID = -1;
+      let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
+      const treeData = [];
+      treeList.map((node: TreeModel.Node<object>) => {
+        treeData.push({
+          id: String(node.model.id),
+          name: node.model.name,
+          rank: node.model.rank,
+          icon: node.model.rank === 7 ? "textdocument" : undefined,
+          lineIndex: node.model.lineIndex,
+          endIndex: node.model.endIndex,
+          isDirectory: node.hasChildren(),
+          expanded: true,
+          parentId:
+            node.model.rank > 1 ? String(node.parent.model.id) : undefined,
+        });
       });
-    });
-    this.$(() => {
-      this.createTreeView("#treeview", treeData);
-      this.createSortable("#treeview", "treeData");
-    });
+      this.$(() => {
+        this.createTreeView("#treeview", treeData);
+        this.createSortable("#treeview", "treeData");
+      });
+    } else {
+      this.updateMindMap();
+    }
   }
 
   createTreeView(selector, items) {
@@ -397,6 +482,13 @@ class AddonViews extends AddonBase {
         this._Addon.events.onEditorEvent(
           new EditorMessage("selectMainKnowledge", {})
         );
+      },
+    });
+    this.$("#outline-switchview").dxButton({
+      // icon: this.editorIcon["switchView"],
+      icon: "chart",
+      onClick: async (e) => {
+        this.switchView();
       },
     });
     this.$("#outline-addafter").dxButton({
@@ -507,6 +599,10 @@ class AddonViews extends AddonBase {
   setTreeViewSize() {
     this.$("#treeview").css({
       height: `${this.$("window").height() - 130}px`,
+      width: `${this.$("#zotero-knowledge-outline").width() - 10}px`,
+    });
+    this.$("#mindmapIframe").css({
+      height: `${this.$("window").height() - 58}px`,
       width: `${this.$("#zotero-knowledge-outline").width() - 10}px`,
     });
   }
@@ -667,6 +763,10 @@ class AddonViews extends AddonBase {
 
     return null;
   }
+
+  /*
+   *  Outline Code End
+   */
 
   showProgressWindow(
     header: string,

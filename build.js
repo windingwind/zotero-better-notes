@@ -111,6 +111,7 @@ const optionsAddon = {
     path.join(buildDir, "**/*.rdf"),
     path.join(buildDir, "**/*.dtd"),
     path.join(buildDir, "**/*.xul"),
+    path.join(buildDir, "**/*.html"),
     path.join(buildDir, "**/*.manifest"),
     "update.rdf",
   ],
