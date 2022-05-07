@@ -16,7 +16,9 @@ Knowledge management for Zotero!
 
 ## Introduction
 
-**Note**: a atomized **note** containing a point , or a method describe in a paper, your thought when you reading the paper, or everything else your draw from a paper. In Zotero, a note looks like below with qutoe sencetes and your own though.
+**Note**: an atomized **note** including a point, or a method described in a paper, or your thoughts while reading the paper, or anything else you drew from a paper.
+
+A note in Zotero looks something like this (below), with quote sentences and your own thoughts.
 
 ![](image/README/1651892918746.png)
 
@@ -65,7 +67,6 @@ manage your notes after you added from pdf annotation
 Go back to the paper from your knowledge (bi-directional links or backlinks). Click the note and Zotero link, back to the paper when you needed (this is my favorite part).
 
 ![img](image/README/1651898254827.png)
-
 
 ## Development & Contributing
 
