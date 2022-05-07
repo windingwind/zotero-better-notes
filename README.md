@@ -26,7 +26,7 @@ A note in Zotero looks something like this (below), with quote sentences and you
 
 ![](image/README/1651895948057.png)
 
-**Knowledge Workspace**: a place to manage your **note** in a hierarchical outline.
+**Knowledge Workspace**: a place to manage your **notes** in a hierarchical outline.
 
 ![](image/README/1651896006854.png)
 
@@ -34,7 +34,7 @@ A note in Zotero looks something like this (below), with quote sentences and you
 
 ### Set a new knowledge
 
-After the plugin installtion, click the menu on the top panel to "creat new knoledge workspace".
+After the plugin installtion, click the menu on the top panel to "create new knowledge workspace".
 
 ![img](image/README/1651896159066.png)
 
@@ -44,7 +44,7 @@ After the plugin installtion, click the menu on the top panel to "creat new knol
 
 select some sentences you interested (1) and add to pdf annotation (2);
 
-put some thought when you are reaing these sentences and add to the certain place of knowledge (3 - 5);
+put some thoughts when you are reading these sentences and add to the certain place of knowledge (3 - 5);
 
 ![](image/README/1651897206384.png)
 
@@ -64,7 +64,9 @@ manage your notes after you added from pdf annotation
 
 ### Backlinks
 
-Go back to the paper from your knowledge (bi-directional links or backlinks). Click the note and Zotero link, back to the paper when you needed (this is my favorite part).
+Go back to the paper from your knowledge (bi-directional links or backlinks). 
+
+Click the note and Zotero link, back to the paper when you need (this is my favorite part).
 
 ![img](image/README/1651898254827.png)
 
@@ -74,7 +76,7 @@ This add-on is built on the Zotero Addon Template of [zotero-pdf-translate](http
 
 ## Disclaimer
 
-Use this code under AGPL(open source required). No warranties are provided. Keep the laws of your locality in mind!
+Use this code under AGPL (open source required). No warranties are provided. Keep the laws of your locality in mind!
 
 Part of the code of this repo refers to other open-source projects within the allowed scope.
 
