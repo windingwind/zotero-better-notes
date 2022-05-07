@@ -6,8 +6,7 @@ Knowledge management for Zotero!
 
 ## Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-pdf-translate/releases)  
-  _Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-pdf-translate/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
@@ -15,7 +14,58 @@ Knowledge management for Zotero!
 - Restart Zotero, by clicking `restart now` in the extensions list where the
   Zotero PDF Translate plugin is now listed.
 
+## Introduction
+
+**Note**: a atomized **note** containing a point , or a method describe in a paper, your thought when you reading the paper, or everything else your draw from a paper. In Zotero, a note looks like below with qutoe sencetes and your own though.
+
+![](image/README/1651892918746.png)
+
+**Knowledge**: Simply, knowledge = note**s**.
+
+![](image/README/1651895948057.png)
+
+**Knowledge Workspace**: a place to manage your **note** in a hierarchical outline.
+
+![](image/README/1651896006854.png)
+
 ## Usage
+
+### Set a new knowledge
+
+After the plugin installtion, click the menu on the top panel to "creat new knoledge workspace".
+
+![img](image/README/1651896159066.png)
+
+![](image/README/1651896602114.png)
+
+### Add note to knowledge
+
+select some sentences you interested (1) and add to pdf annotation (2);
+
+put some thought when you are reaing these sentences and add to the certain place of knowledge (3 - 5);
+
+![](image/README/1651897206384.png)
+
+Add an existing note to your knowledge
+
+![](image/README/1651898023847.png)
+
+### Manage your knowledge
+
+Open your knowledge
+
+![](image/README/1651898106681.png)
+
+manage your notes after you added from pdf annotation
+
+![](image/README/1651897924046.png)
+
+### Backlinks
+
+Go back to the paper from your knowledge (bi-directional links or backlinks). Click the note and Zotero link, back to the paper when you needed (this is my favorite part).
+
+![img](image/README/1651898254827.png)
+
 
 ## Development & Contributing
 
