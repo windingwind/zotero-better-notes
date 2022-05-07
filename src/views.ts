@@ -202,20 +202,23 @@ class AddonViews extends AddonBase {
 
   addNewKnowledgeButton() {
     // Top toolbar button
-    let addNoteButton = document.getElementById("zotero-tb-note-add");
-    let button = document.createElement("toolbarbutton");
+    let addNoteItem = document
+      .getElementById("zotero-tb-note-add")
+      .getElementsByTagName("menuitem")[1];
+    let button = document.createElement("menuitem");
     button.setAttribute("id", "zotero-tb-knowledge-openwindow");
-    button.setAttribute("tooltiptext", "Create new Knowledge Workspace");
+    button.setAttribute("label", "New Main Note");
     button.addEventListener("click", (e) => {
       this._Addon.events.onEditorEvent(
         new EditorMessage("createWorkspace", {})
       );
     });
+    button.setAttribute("class", "menuitem-iconic");
     button.setAttribute(
       "style",
-      "list-style-image: url('chrome://Knowledge4Zotero/skin/knowledge@0.5x.png');"
+      "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');"
     );
-    addNoteButton.after(button);
+    addNoteItem.after(button);
   }
 
   addOpenWorkspaceButton() {
@@ -224,7 +227,7 @@ class AddonViews extends AddonBase {
     treeRow.setAttribute("class", "row");
     treeRow.setAttribute(
       "style",
-      "height: 22px; margin: 0 0 22px 0; padding: 0 6px 0 6px;"
+      "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
     );
     const span1 = document.createElement("span");
     span1.setAttribute("class", "cell label primary");
@@ -235,7 +238,7 @@ class AddonViews extends AddonBase {
     span3.setAttribute("class", "icon icon-bg cell-icon");
     span3.setAttribute(
       "style",
-      "background-image:url(chrome://Knowledge4Zotero/skin/knowledge.png)"
+      "background-image:url(chrome://Knowledge4Zotero/skin/favicon.png)"
     );
     const span4 = document.createElement("span");
     span4.setAttribute("class", "cell-text");
@@ -249,13 +252,25 @@ class AddonViews extends AddonBase {
     treeRow.addEventListener("mouseover", (e: XULEvent) => {
       treeRow.setAttribute(
         "style",
-        "height: 22px; margin: 0 0 22px 0; padding: 0 6px 0 6px; background-color: grey;"
+        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; background-color: grey;"
       );
     });
     treeRow.addEventListener("mouseleave", (e: XULEvent) => {
       treeRow.setAttribute(
         "style",
-        "height: 22px; margin: 0 0 22px 0; padding: 0 6px 0 6px;"
+        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
+      );
+    });
+    treeRow.addEventListener("mousedown", (e: XULEvent) => {
+      treeRow.setAttribute(
+        "style",
+        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; color: #FFFFFF;"
+      );
+    });
+    treeRow.addEventListener("mouseup", (e: XULEvent) => {
+      treeRow.setAttribute(
+        "style",
+        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
       );
     });
     document
@@ -446,7 +461,7 @@ class AddonViews extends AddonBase {
    */
 
   async buildOutline(note: ZoteroItem) {
-    Zotero.debug(this.currentOutline)
+    Zotero.debug(this.currentOutline);
     if (this.currentOutline === OutlineType.treeView) {
       this._Addon.knowledge.currentNodeID = -1;
       let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);

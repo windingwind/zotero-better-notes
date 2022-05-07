@@ -1,5 +1,5 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Knowledge">
+<!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Note">
 
 <!ENTITY zotero.__addonRef__.export.title "Export Knowledge">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to file(MarkDown/HTML/RDF)">
@@ -16,9 +16,9 @@
 <!ENTITY zotero.__addonRef__.wizard.page3.header "Open Knowledge Workspace">
 <!ENTITY zotero.__addonRef__.wizard.page3.description "Click the link above 'My Library' or the home button in the note editor to open or focus the workspace.">
 <!ENTITY zotero.__addonRef__.wizard.layout "Knowledge Workspace Layout">
-<!ENTITY zotero.__addonRef__.wizard.page4.header "Outline/Main Knowledge/Linked Note Preview">
-<!ENTITY zotero.__addonRef__.wizard.page4.description1 "Modify/jump to headings inside main Knowledge with the Outline;">
-<!ENTITY zotero.__addonRef__.wizard.page4.description2 "Main Knowledge stores all linked notes. Export to MarkDown/HTML with full text supported;">
+<!ENTITY zotero.__addonRef__.wizard.page4.header "Outline/Main Note/Linked Note Preview">
+<!ENTITY zotero.__addonRef__.wizard.page4.description1 "Modify/jump to headings inside main Note with the Outline;">
+<!ENTITY zotero.__addonRef__.wizard.page4.description2 "Main Note stores all linked notes. Export to MarkDown/HTML with full text supported;">
 <!ENTITY zotero.__addonRef__.wizard.page4.description3 "Open and edit linked notes in the preview.">
 <!ENTITY zotero.__addonRef__.wizard.link "Add Note Link to Knowledge">
 <!ENTITY zotero.__addonRef__.wizard.page5.header "Open note link in Knowledge, and everywhere.">
@@ -27,11 +27,11 @@
 <!ENTITY zotero.__addonRef__.wizard.setup "Setup Workspace">
 <!ENTITY zotero.__addonRef__.wizard.page6.header "Almost there. Setup your workspace before starting.">
 <!ENTITY zotero.__addonRef__.wizard.page6.description1 "You can come back later from the knowledge workspace.">
-<!ENTITY zotero.__addonRef__.wizard.page6.description2 "WARNING If main knowledge is not set, this addon will not work properly.">
+<!ENTITY zotero.__addonRef__.wizard.page6.description2 "WARNING If main Note is not set, this addon will not work properly.">
 
 <!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Setup">
 <!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection with the name:">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a new note and use it as the main Knowledge">
+<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a new note and use it as the main Note">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

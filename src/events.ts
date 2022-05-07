@@ -132,7 +132,17 @@ class AddonEvents extends AddonBase {
       /*
         message.content = {}
       */
+      const res = confirm(
+        `Will create a new note under collection '${ZoteroPane_Local.getSelectedCollection().getName()}' and set it the main note. Continue?`
+      );
+      if (!res) {
+        return;
+      }
+      const header = prompt("Enter new note header:");
       const noteID = await ZoteroPane_Local.newNote();
+      Zotero.Items.get(noteID).setNote(
+        `<div data-schema-version="8"><h1>${header}</h1>\n</div>`
+      );
       await this.onEditorEvent(
         new EditorMessage("setMainKnowledge", {
           params: { itemID: noteID },
@@ -199,7 +209,7 @@ class AddonEvents extends AddonBase {
       if (itemID === mainKnowledgeID) {
         this._Addon.views.showProgressWindow(
           "Knowledge",
-          "Already a main Knowledge."
+          "Already a main Note."
         );
         return;
       } else if (!item.isNote()) {
@@ -223,7 +233,7 @@ class AddonEvents extends AddonBase {
         await this._Addon.knowledge.setWorkspaceNote("main");
         this._Addon.views.showProgressWindow(
           "Knowledge",
-          `Set main Knowledge to: ${item.getNoteTitle()}`
+          `Set main Note to: ${item.getNoteTitle()}`
         );
       }
     } else if (message.type === "addNoteInstance") {
@@ -247,9 +257,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance,
         "knowledge-start",
         isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
-        isMainKnowledge
-          ? "Edit the main knowledge in Workspace"
-          : "Open Workspace",
+        isMainKnowledge ? "Edit the main Note in Workspace" : "Open Workspace",
         "openWorkspace",
         "start"
       );
@@ -257,7 +265,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance,
         "knowledge-addlink",
         "addToKnowledge",
-        "Add Note Link to Knowledge Workspace",
+        "Add link of current note to the main note",
         "addToKnowledge",
         "middle"
       );
@@ -328,8 +336,8 @@ class AddonEvents extends AddonBase {
         );
         middle.innerHTML = "";
         const header = _window.document.createElement("div");
-        header.setAttribute("title", "This is a Main Knowledge");
-        header.innerHTML = "Main Knowledge";
+        header.setAttribute("title", "This is a Main Note");
+        header.innerHTML = "Main Note";
         header.setAttribute("style", "font-size: medium");
         middle.append(header);
       } else {
@@ -612,6 +620,18 @@ class AddonEvents extends AddonBase {
       const annotations = message.content.params.annotations;
       const annotationItem: ZoteroItem = message.content.params.annotationItem;
 
+      const text = annotationItem.annotationComment;
+      let link = text.substring(text.search(/zotero:\/\/note\//g));
+      link = link.substring(0, link.search('"'));
+
+      if (link) {
+        const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;
+        if (note && note.id) {
+          Zotero.debug(note);
+          ZoteroPane.openNoteWindow(note.id);
+          return;
+        }
+      }
       const note: ZoteroItem = new Zotero.Item("note");
       note.parentID = Zotero.Items.get(
         annotations[0].attachmentItemID
@@ -622,6 +642,17 @@ class AddonEvents extends AddonBase {
         );
       }
       await note.saveTx();
+      let libraryID = note.libraryID;
+      let library = Zotero.Libraries.get(libraryID);
+      let groupID: string;
+      if (library.libraryType === "user") {
+        groupID = "u";
+      } else if (library.libraryType === "group") {
+        groupID = `${library.id}`;
+      }
+      let noteKey = note.key;
+      annotationItem.annotationComment = `${annotationItem.annotationComment}\nnote link: "zotero://note/${groupID}/${noteKey}/"`;
+      await annotationItem.saveTx();
       ZoteroPane.openNoteWindow(note.id);
       let t = 0;
       while (t < 100 && !ZoteroPane.findNoteWindow(note.id)) {

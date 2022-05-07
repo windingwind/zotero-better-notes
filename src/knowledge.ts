@@ -320,8 +320,8 @@ class Knowledge extends AddonBase {
     let linkText = linkedNote.getNoteTitle().trim();
     this.addSubLineToNote(
       targetNote,
-      `<a href="zotero://note/${groupID}/${noteKey}" rel="noopener noreferrer nofollow">${
-        linkText ? linkText : `zotero://note/${groupID}/${noteKey}`
+      `<a href="zotero://note/${groupID}/${noteKey}/" rel="noopener noreferrer nofollow">${
+        linkText ? linkText : `zotero://note/${groupID}/${noteKey}/`
       }</a>`,
       lineIndex,
       true

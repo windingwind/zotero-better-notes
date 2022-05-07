@@ -147,7 +147,8 @@ declare const ZoteroPane: {
 };
 
 declare const ZoteroPane_Local: {
-  newNote: () => Promise<number>;
+  getSelectedCollection: () => ZoteroCollection;
+  newNote: (popup?, parentKey?, text?, citeURI?) => Promise<number>;
 };
 
 declare const Zotero_File_Interface: {
@@ -155,6 +156,7 @@ declare const Zotero_File_Interface: {
 };
 
 declare class ZoteroCollection {
+  getName: () => string;
   getChildItems: (arg1: boolean, arg2: boolean) => Array<ZoteroItem>;
 }
 
