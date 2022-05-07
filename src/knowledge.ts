@@ -1,4 +1,4 @@
-import { AddonBase, EditorMessage } from "./base";
+import { AddonBase, EditorMessage, OutlineType } from "./base";
 
 const TreeModel = require("./treemodel");
 
@@ -44,7 +44,7 @@ class Knowledge extends AddonBase {
       this.setWorkspaceNote("main");
       this.currentLine = -1;
       this._Addon.views.initKnowledgeWindow(win);
-      this._Addon.views.switchView(true);
+      this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.buildOutline();
       // this._Addon.views.buildMindMap();
     }
