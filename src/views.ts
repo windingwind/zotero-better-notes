@@ -359,6 +359,7 @@ class AddonViews extends AddonBase {
 
   initKnowledgeWindow(_window: Window) {
     _window.addEventListener("message", (e) => this.messageHandler(e), false);
+    this.currentOutline = OutlineType.treeView;
   }
 
   async messageHandler(e) {
@@ -445,7 +446,8 @@ class AddonViews extends AddonBase {
    */
 
   async buildOutline(note: ZoteroItem) {
-    if (this.currentOutline) {
+    Zotero.debug(this.currentOutline)
+    if (this.currentOutline === OutlineType.treeView) {
       this._Addon.knowledge.currentNodeID = -1;
       let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
       const treeData = [];
