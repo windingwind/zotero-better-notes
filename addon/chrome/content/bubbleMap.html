@@ -100,7 +100,7 @@
                 },
                 new go.Binding("fill", "isSelected", (s, obj) => s ? "#f2ac46" : "lightgray").ofObject())),
               $(go.TextBlock,
-                { font: "bold 10pt helvetica, bold arial, sans-serif", textAlign: "center", maxSize: new go.Size(100, NaN) }, 
+                { textAlign: "center", maxSize: new go.Size(100, NaN) }, 
                 new go.Binding("text", "text"))
             );
           // the rest of this app is the same as samples/conceptMap.html
