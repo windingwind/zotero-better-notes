@@ -10,7 +10,7 @@ class EditorMessage {
   public content: {
     event?: XULEvent;
     editorInstance?: EditorInstance;
-    params?: any
+    params?: any;
   };
   constructor(type: string, content: object) {
     this.type = type;
@@ -18,4 +18,10 @@ class EditorMessage {
   }
 }
 
-export { AddonBase, EditorMessage };
+enum OutlineType {
+  treeView = 1,
+  mindMap,
+  bubbleMap,
+}
+
+export { AddonBase, EditorMessage, OutlineType };

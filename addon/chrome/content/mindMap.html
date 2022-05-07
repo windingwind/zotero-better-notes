@@ -241,11 +241,10 @@
         function setData(nodes){
           const data = {
             class: "go.TreeModel",
-            nodeDataArray: [{ key: 999, text: "Mind Map", parent: undefined }],
+            nodeDataArray: [{ key: 999, text: "Knowledge", parent: undefined }],
           };
           const colors = []
           for (const node of nodes) {
-            console.log(node.model.link)
             const parent = node.parent.model.id === -1? 999:node.parent.model.id;
               data.nodeDataArray.push({
               key: node.model.id,

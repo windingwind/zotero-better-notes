@@ -1,10 +1,10 @@
-import { AddonBase, EditorMessage } from "./base";
+import { AddonBase, EditorMessage, OutlineType } from "./base";
 
 class AddonViews extends AddonBase {
   progressWindowIcon: object;
   editorIcon: object;
   $: any;
-  outlineView: boolean;
+  currentOutline: OutlineType;
   _initIframe: any;
 
   constructor(parent: Knowledge4Zotero) {
@@ -25,7 +25,7 @@ class AddonViews extends AddonBase {
       openWorkspaceCollectionView: `<svg t="1651317033804" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2432" width="100%" height="100%"><path d="M874.9 459.4c-18.8 0-34 15.2-34 34v355.7c0 18.6-15.5 33.7-34.5 33.7H181.5c-19 0-34.5-15.1-34.5-33.7V232.3c0-18.6 15.5-33.7 34.5-33.7H541c18.8 0 34-15.2 34-34s-15.2-34-34-34H181.5C125 130.6 79 176.2 79 232.3v616.8c0 56 46 101.7 102.5 101.7h624.9c56.5 0 102.5-45.6 102.5-101.7V493.4c0-18.8-15.2-34-34-34z" fill="#b6b6b6" p-id="2433"></path><path d="M885.5 82.7H657.1c-18.8 0-34 15.2-34 34s15.2 34 34 34h169.7L358.5 619.1c-13.3 13.3-13.3 34.8 0 48.1 6.6 6.6 15.3 10 24 10s17.4-3.3 24-10l470-470v169.7c0 18.8 15.2 34 34 34s34-15.2 34-34V141.5c0.1-32.4-26.4-58.8-59-58.8z" fill="#b6b6b6" p-id="2434"></path></svg>`,
       switchView: `<svg t="1651813727621" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14171" width="18" height="18"><path d="M1024 733v131c0 53-43 96-96 96h-96c-53 0-96-43-96-96V733c0-53 43-96 96-96 8.8 0 16-7.2 16-16v-77c0-17.7-14.3-32-32-32H560c-8.8 0-16 7.2-16 16v94c0 8.3 6.7 15 15 15h1c53 0 96 43 96 96v131c0 53-43 96-96 96h-96c-53 0-96-43-96-96V733c0-53 43-96 96-96h1c8.3 0 15-6.7 15-15v-94c0-8.8-7.2-16-16-16H208c-17.7 0-32 14.3-32 32v77c0 8.8 7.2 16 16 16 53 0 96 43 96 96v131c0 53-43 96-96 96H96c-53 0-96-43-96-96V733c0-53 43-96 96-96 8.8 0 16-7.2 16-16v-77c0-53 43-96 96-96h256c8.8 0 16-7.2 16-16v-48h-96c-53 0-96-43-96-96V144c0-53 43-96 96-96h256c53 0 96 43 96 96v144c0 53-43 96-96 96h-96v48c0 8.8 7.2 16 16 16h256c53 0 96 43 96 96v77c0 8.8 7.2 16 16 16 53 0 96 43 96 96z" p-id="14172"></path></svg>`,
     };
-    this.outlineView = true;
+    this.currentOutline = OutlineType.treeView;
     this._initIframe = Zotero.Promise.defer();
   }
 
@@ -382,24 +382,39 @@ class AddonViews extends AddonBase {
     }
   }
 
-  switchView(status: boolean = undefined) {
-    if (typeof status === "undefined") {
-      status = !this.outlineView;
+  switchView(newType: OutlineType = undefined) {
+    if (!newType) {
+      newType = this.currentOutline + 1;
+    }
+    if (newType > OutlineType.bubbleMap) {
+      newType = OutlineType.treeView;
     }
     const _window = this._Addon.knowledge.getWorkspaceWindow();
     const mindmap = _window.document.getElementById("mindmap-container");
     const outline = _window.document.getElementById("outline-container");
-    this.outlineView = status;
-    if (this.outlineView) {
+    this.currentOutline = newType;
+    if (this.currentOutline === OutlineType.treeView) {
       _window.document.getElementById("mindmapIframe").remove();
       mindmap.setAttribute("hidden", "hidden");
       outline.removeAttribute("hidden");
-    } else {
+    } else if (this.currentOutline === OutlineType.mindMap) {
       const iframe = _window.document.createElement("iframe");
       iframe.setAttribute("id", "mindmapIframe");
       iframe.setAttribute(
         "src",
         "chrome://Knowledge4Zotero/content/mindMap.html"
+      );
+      outline.setAttribute("hidden", "hidden");
+      mindmap.removeAttribute("hidden");
+      mindmap.append(iframe);
+      this.setTreeViewSize();
+    } else if (this.currentOutline === OutlineType.bubbleMap) {
+      _window.document.getElementById("mindmapIframe").remove();
+      const iframe = _window.document.createElement("iframe");
+      iframe.setAttribute("id", "mindmapIframe");
+      iframe.setAttribute(
+        "src",
+        "chrome://Knowledge4Zotero/content/bubbleMap.html"
       );
       outline.setAttribute("hidden", "hidden");
       mindmap.removeAttribute("hidden");
@@ -430,7 +445,7 @@ class AddonViews extends AddonBase {
    */
 
   async buildOutline(note: ZoteroItem) {
-    if (this.outlineView) {
+    if (this.currentOutline) {
       this._Addon.knowledge.currentNodeID = -1;
       let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
       const treeData = [];

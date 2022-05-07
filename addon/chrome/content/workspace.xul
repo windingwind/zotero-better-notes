@@ -57,7 +57,7 @@
                 </div>
                 <div class="tooltip">
                     <div id="outline-switchview"></div>
-                    <span class="tooltiptext">Switch Outline/Mind Map View</span>
+                    <span class="tooltiptext">Switch Outline Mode</span>
                 </div>
                 <div class="tooltip">
                     <div id="outline-addafter"></div>
