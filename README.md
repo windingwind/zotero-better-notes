@@ -34,7 +34,9 @@ A note in Zotero looks something like this (below), with quote sentences and you
 
 ### Set a new knowledge
 
-After the plugin installtion, click the menu on the top panel to "create new knowledge workspace".
+After the plugin installtion, click the menu on the top panel to "create new knowledge workspace" to set a new knowledge.
+
+Or, switch the main knowledge to another existing knowledge
 
 ![img](image/README/1651896159066.png)
 
@@ -54,7 +56,7 @@ Add an existing note to your knowledge
 
 ### Manage your knowledge
 
-Open your knowledge
+Open your main knowledge
 
 ![](image/README/1651898106681.png)
 
@@ -64,11 +66,22 @@ manage your notes after you added from pdf annotation
 
 ### Backlinks
 
-Go back to the paper from your knowledge (bi-directional links or backlinks). 
+Go back to the paper from your knowledge (bi-directional links or backlinks).
 
 Click the note and Zotero link, back to the paper when you need (this is my favorite part).
 
 ![img](image/README/1651898254827.png)
+
+### Outline mindmap
+
+Click the switch outline mode to see the mindmap
+
+![](image/README/1651900109443.png)
+
+Click the button again to switch outline mode
+
+![](image/README/1651900283206.png)
+
 
 ## Development & Contributing
 
