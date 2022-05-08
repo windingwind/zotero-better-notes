@@ -9,29 +9,26 @@
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Knowledge for Zotero">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero User Guide">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "Click Next to Continue.">
-<!ENTITY zotero.__addonRef__.wizard.create "Create Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page2.header "Create Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page2.description "Knowledge uses a note as the main workspace. Create a new note or right-click to set an existing note in the main workspace.">
-<!ENTITY zotero.__addonRef__.wizard.open "Open Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page3.header "Open Knowledge Workspace">
+<!ENTITY zotero.__addonRef__.wizard.open "Knowledge Workspace">
+<!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge Workspace">
 <!ENTITY zotero.__addonRef__.wizard.page3.description "Click the link above 'My Library' or the home button in the note editor to open or focus the workspace.">
 <!ENTITY zotero.__addonRef__.wizard.layout "Knowledge Workspace Layout">
 <!ENTITY zotero.__addonRef__.wizard.page4.header "Outline/Main Note/Linked Note Preview">
 <!ENTITY zotero.__addonRef__.wizard.page4.description1 "Modify/jump to headings inside main Note with the Outline;">
-<!ENTITY zotero.__addonRef__.wizard.page4.description2 "Main Note stores all linked notes. Export to MarkDown/HTML with full text supported;">
+<!ENTITY zotero.__addonRef__.wizard.page4.description2 "Add links to the main note while reading. Export to MarkDown/HTML with full text supported;">
 <!ENTITY zotero.__addonRef__.wizard.page4.description3 "Open and edit linked notes in the preview.">
-<!ENTITY zotero.__addonRef__.wizard.link "Add Note Link to Knowledge">
-<!ENTITY zotero.__addonRef__.wizard.page5.header "Open note link in Knowledge, and everywhere.">
-<!ENTITY zotero.__addonRef__.wizard.page5.description1 "Click to insert the current note's link after the current line in main Knowledge, or select a position to insert.">
+<!ENTITY zotero.__addonRef__.wizard.link "Add Note's Link">
+<!ENTITY zotero.__addonRef__.wizard.page5.header "Note as you go, and open the links as your will.">
+<!ENTITY zotero.__addonRef__.wizard.page5.description1 "Click to insert the current note's link after the current line in main note.">
 <!ENTITY zotero.__addonRef__.wizard.page5.description2 "Jump to notes even from other Apps via a note link!">
 <!ENTITY zotero.__addonRef__.wizard.setup "Setup Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page6.header "Almost there. Setup your workspace before starting.">
+<!ENTITY zotero.__addonRef__.wizard.page6.header "Almost there. Please follow the user guide before starting.">
 <!ENTITY zotero.__addonRef__.wizard.page6.description1 "You can come back later from the knowledge workspace.">
 <!ENTITY zotero.__addonRef__.wizard.page6.description2 "WARNING If main Note is not set, this addon will not work properly.">
 
-<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Setup">
-<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection with the name:">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a new note and use it as the main Note">
+<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Auto Setup">
+<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection for main notes:">
+<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a 'Knowledge for Zotero User Guide: Workflow' note">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

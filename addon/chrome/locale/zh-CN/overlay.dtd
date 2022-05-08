@@ -9,29 +9,26 @@
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Knowledge for Zotero">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero 用户指引">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "单击下一步以继续。">
-<!ENTITY zotero.__addonRef__.wizard.create "创建Knowledge工作区">
-<!ENTITY zotero.__addonRef__.wizard.page2.header "创建Knowledge工作区">
-<!ENTITY zotero.__addonRef__.wizard.page2.description "Knowledge使用笔记(note)作为工作区。创建新笔记或在项目目录右键单击现有笔记以设置工作区。">
-<!ENTITY zotero.__addonRef__.wizard.open "打开Knowledge工作区">
-<!ENTITY zotero.__addonRef__.wizard.page3.header "打开Knowledge工作区">
+<!ENTITY zotero.__addonRef__.wizard.open "Knowledge工作区">
+<!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge工作区">
 <!ENTITY zotero.__addonRef__.wizard.page3.description "单击“我的文库”上方链接或笔记编辑器中的“主页”按钮，来打开或聚焦工作区。">
 <!ENTITY zotero.__addonRef__.wizard.layout "Knowledge 工作区布局">
 <!ENTITY zotero.__addonRef__.wizard.page4.header "大纲/主笔记/链接笔记预览">
 <!ENTITY zotero.__addonRef__.wizard.page4.description1 "用大纲修改/跳转主笔记的标题；">
-<!ENTITY zotero.__addonRef__.wizard.page4.description2 "主笔记存储所有链接的笔记。支持导出包含链接全文的MarkDown/HTML；">
+<!ENTITY zotero.__addonRef__.wizard.page4.description2 "在阅读时可以从其他笔记添加链接到主笔记。支持导出包含链接全文的MarkDown/HTML。">
 <!ENTITY zotero.__addonRef__.wizard.page4.description3 "在预览中打开并编辑链接的笔记。">
-<!ENTITY zotero.__addonRef__.wizard.link "添加笔记链接到笔记">
-<!ENTITY zotero.__addonRef__.wizard.page5.header "在工作区, 以及任何地方打开笔记链接。">
-<!ENTITY zotero.__addonRef__.wizard.page5.description1 "单击按钮，在主笔记中当前行插入当前笔记的链接，或选择位置以插入链接。">
+<!ENTITY zotero.__addonRef__.wizard.link "添加笔记链接">
+<!ENTITY zotero.__addonRef__.wizard.page5.header "随写随记，并在任何地方打开笔记链接。">
+<!ENTITY zotero.__addonRef__.wizard.page5.description1 "单击按钮，在主笔记中当前行插入当前笔记的链接。">
 <!ENTITY zotero.__addonRef__.wizard.page5.description2 "通过笔记链接，甚至可以从其他应用程序跳转到笔记！">
 <!ENTITY zotero.__addonRef__.wizard.setup "配置工作区">
-<!ENTITY zotero.__addonRef__.wizard.page6.header "即将完成。在开始之前，请设置工作区。">
-<!ENTITY zotero.__addonRef__.wizard.page6.description1 "您可以稍后从工作区返回配置指引。">
-<!ENTITY zotero.__addonRef__.wizard.page6.description2 "警告：如果未设置主笔记，此插件将无法正常工作。">
+<!ENTITY zotero.__addonRef__.wizard.page6.header "即将完成。在开始之前，建议按照指引快速配置并上手。">
+<!ENTITY zotero.__addonRef__.wizard.page6.description1 "您可以稍后从工作区左侧'💡'返回这里。">
+<!ENTITY zotero.__addonRef__.wizard.page6.description2 "提示：如果未设置主笔记，此插件将无法正常工作。">
 
-<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "启用工作区配置">
-<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "用这个名字创建新的工作区分类文件夹：">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建一个新的笔记，并将其设为主笔记">
+<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "启用快速配置">
+<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "创建新的分类用来存放主笔记：">
+<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建 'Knowledge for Zotero 用户指引：工作流' 笔记">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
