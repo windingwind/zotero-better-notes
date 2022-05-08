@@ -298,6 +298,7 @@ class AddonViews extends AddonBase {
       }
       moreButton.setAttribute("knowledgeinit", "true");
       const addAnnotationNoteButton = _document.createElement("div");
+      addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
       addAnnotationNoteButton.innerHTML = this.editorIcon["addAnnotationNote"];
 
       let annotationWrapper = moreButton;
@@ -367,10 +368,13 @@ class AddonViews extends AddonBase {
         e.preventDefault();
       });
       addAnnotationNoteButton.addEventListener("mouseover", (e: XULEvent) => {
-        e.target.setAttribute("style", "background: #F0F0F0;");
+        addAnnotationNoteButton.setAttribute(
+          "style",
+          "background: #F0F0F0; margin: 5px;"
+        );
       });
       addAnnotationNoteButton.addEventListener("mouseout", (e: XULEvent) => {
-        e.target.removeAttribute("style");
+        addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
       });
       moreButton.before(addAnnotationNoteButton);
       updateCount += 1;

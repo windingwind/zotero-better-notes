@@ -681,7 +681,10 @@ class AddonEvents extends AddonBase {
       const noteEditor = _window.document.getElementById("zotero-note-editor");
 
       t = 0;
-      while (!noteEditor.getCurrentInstance() && t < 500) {
+      while (
+        (!noteEditor.getCurrentInstance || !noteEditor.getCurrentInstance()) &&
+        t < 500
+      ) {
         t += 1;
         await Zotero.Promise.delay(10);
       }
