@@ -102,7 +102,7 @@ class AddonViews extends AddonBase {
   async addEditorPopup(
     editorInstances: EditorInstance,
     id: string,
-    buttons: { id: string; text: string; eventType: string }[],
+    buttons: { id: string; text: string; rank: number; eventType: string }[],
     parentDropDown: Element
   ) {
     // Use Zotero.Notes._editorInstances to find current opened note editor
@@ -115,10 +115,15 @@ class AddonViews extends AddonBase {
     }
     const popup = _document.createElement("div");
     popup.setAttribute("class", "popup");
+    popup.setAttribute("style", "right: -100px;");
     popup.setAttribute("id", id);
     for (let buttonParam of buttons) {
       const button = _document.createElement("button");
       button.setAttribute("class", "option");
+      button.setAttribute(
+        "style",
+        `text-indent: ${(buttonParam.rank - 1) * 5}px;`
+      );
       button.setAttribute("id", buttonParam.id);
       button.setAttribute("eventType", buttonParam.eventType);
       button.innerHTML = buttonParam.text;
@@ -243,7 +248,7 @@ class AddonViews extends AddonBase {
     const span4 = document.createElement("span");
     span4.setAttribute("class", "cell-text");
     span4.setAttribute("style", "margin-left: 6px;");
-    span4.innerHTML = "Knowledge";
+    span4.innerHTML = "Open Workspace";
     span1.append(span2, span3, span4);
     treeRow.append(span1);
     treeRow.addEventListener("click", (e) => {

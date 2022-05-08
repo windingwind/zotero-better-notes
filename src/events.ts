@@ -279,6 +279,7 @@ class AddonEvents extends AddonBase {
           buttonParam.push({
             id: `knowledge-addlink-popup-${node.model.endIndex}`,
             text: node.model.name,
+            rank: node.model.rank,
             eventType: "addToKnowledgeLine",
           });
         }
@@ -312,6 +313,17 @@ class AddonEvents extends AddonBase {
         );
         message.content.editorInstance._knowledgeSelectionInitialized = true;
       }
+      // Title indent
+      const _window = message.content.editorInstance._iframeWindow;
+      const style = _window.document.createElement("style");
+      style.innerHTML = `
+        h2 {text-indent: 10px}
+        h3 {text-indent: 20px}
+        h4 {text-indent: 30px}
+        h5 {text-indent: 40px}
+        h6 {text-indent: 50px}
+      `;
+      _window.document.body.append(style);
       message.content.editorInstance._knowledgeUIInitialized = true;
     } else if (message.type === "enterWorkspace") {
       /*

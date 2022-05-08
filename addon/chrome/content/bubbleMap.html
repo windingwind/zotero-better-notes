@@ -151,7 +151,7 @@
         }
 
         function setData(nodes){
-          const nodeDataArray = [{ key: 999, text: "Knowledge", parent: undefined }]
+          const nodeDataArray = [{ key: 999, text: "📄", parent: undefined }]
           const linkDataArray = []
           for (const node of nodes) {
             const parent = node.parent.model.id === -1? 999:node.parent.model.id;
