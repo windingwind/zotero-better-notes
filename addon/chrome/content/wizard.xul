@@ -24,18 +24,18 @@
         <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page3.header;</description>
         <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page3.description;</description>
     </wizardpage>
-    <wizardpage label="&zotero.__addonRef__.wizard.link;">
-        <image src="chrome://__addonRef__/skin/add-link.gif" width="560" height="400" style="padding-top: 50px;"></image>
-        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page5.header;</description>
-        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description1;</description>
-        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description2;</description>
-    </wizardpage>
     <wizardpage label="&zotero.__addonRef__.wizard.layout;">
         <image src="chrome://__addonRef__/skin/intro-workspace.png" width="560" height="400"></image>
         <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page4.header;</description>
         <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description1;</description>
         <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description2;</description>
         <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page4.description3;</description>
+    </wizardpage>
+    <wizardpage label="&zotero.__addonRef__.wizard.link;">
+        <image src="chrome://__addonRef__/skin/add-link.gif" width="560" height="400" style="padding-top: 50px;"></image>
+        <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page5.header;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description1;</description>
+        <description style="white-space: pre-wrap;">&zotero.__addonRef__.wizard.page5.description2;</description>
     </wizardpage>
     <wizardpage label="&zotero.__addonRef__.wizard.setup;">
         <description style="white-space: pre-wrap; font-size: large; font-weight: bold;">&zotero.__addonRef__.wizard.page6.header;</description>

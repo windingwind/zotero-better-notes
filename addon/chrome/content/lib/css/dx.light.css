@@ -8617,7 +8617,7 @@
   left: -4px;
 }
 .dx-treeview-toggle-item-visibility::before {
-  content: "\f04e";
+  content: "▸";
   position: absolute;
   display: block;
   width: 22px;
@@ -8631,7 +8631,7 @@
   text-align: center;
 }
 .dx-treeview-toggle-item-visibility.dx-treeview-toggle-item-visibility-opened::before {
-  content: "\f001";
+  content: "▾";
   position: absolute;
   display: block;
   width: 22px;
