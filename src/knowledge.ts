@@ -480,17 +480,14 @@ class Knowledge extends AddonBase {
         let link = "";
         if (isHeading) {
           const startIndex = lineElement.search(headerStartReg);
-          const stopIndex = lineElement.search(headerStopReg);
           currentRank = parseInt(
             lineElement.slice(startIndex + 2, startIndex + 3)
           );
-          name = lineElement.slice(startIndex + 4, stopIndex);
         } else {
-          name = lineElement.slice(lineElement.search(/">/g) + 2);
-          name = name.slice(0, name.search(/<\//g));
           link = lineElement.slice(lineElement.search(/href="/g) + 6);
           link = link.slice(0, link.search(/"/g));
         }
+        name = this.parseLineText(lineElement);
         while (currentNode.model.rank >= currentRank) {
           currentNode = currentNode.parent;
         }
@@ -689,6 +686,23 @@ class Knowledge extends AddonBase {
       "body > div[data-schema-version]"
     );
     return metadataContainer;
+  }
+
+  parseLineText(line: string): string {
+    const parser = Components.classes[
+      "@mozilla.org/xmlextras/domparser;1"
+    ].createInstance(Components.interfaces.nsIDOMParser);
+    try {
+      if (line.search(/data-schema-version/g) === -1) {
+        line = `<div data-schema-version="8">${line}</div>`;
+      }
+      return parser
+        .parseFromString(line, "text/html")
+        .querySelector("body > div[data-schema-version]")
+        .innerText.trim();
+    } catch (e) {
+      return "";
+    }
   }
 }
 
