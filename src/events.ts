@@ -632,18 +632,21 @@ class AddonEvents extends AddonBase {
       const annotations = message.content.params.annotations;
       const annotationItem: ZoteroItem = message.content.params.annotationItem;
 
-      const text = annotationItem.annotationComment;
-      let link = text.substring(text.search(/zotero:\/\/note\//g));
-      link = link.substring(0, link.search('"'));
+      if (annotationItem.annotationComment) {
+        const text = annotationItem.annotationComment;
+        let link = text.substring(text.search(/zotero:\/\/note\//g));
+        link = link.substring(0, link.search('"'));
 
-      if (link) {
-        const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;
-        if (note && note.id) {
-          Zotero.debug(note);
-          ZoteroPane.openNoteWindow(note.id);
-          return;
+        if (link) {
+          const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;
+          if (note && note.id) {
+            Zotero.debug(note);
+            ZoteroPane.openNoteWindow(note.id);
+            return;
+          }
         }
       }
+
       const note: ZoteroItem = new Zotero.Item("note");
       note.parentID = Zotero.Items.get(
         annotations[0].attachmentItemID
@@ -663,7 +666,9 @@ class AddonEvents extends AddonBase {
         groupID = `${library.id}`;
       }
       let noteKey = note.key;
-      annotationItem.annotationComment = `${annotationItem.annotationComment}\nnote link: "zotero://note/${groupID}/${noteKey}/"`;
+      annotationItem.annotationComment = `${
+        annotationItem.annotationComment ? annotationItem.annotationComment : ""
+      }\nnote link: "zotero://note/${groupID}/${noteKey}/"`;
       await annotationItem.saveTx();
       ZoteroPane.openNoteWindow(note.id);
       let t = 0;

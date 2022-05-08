@@ -115,7 +115,6 @@ class AddonViews extends AddonBase {
     }
     const popup = _document.createElement("div");
     popup.setAttribute("class", "popup");
-    popup.setAttribute("style", "right: -100px;");
     popup.setAttribute("id", id);
     for (let buttonParam of buttons) {
       const button = _document.createElement("button");
@@ -142,6 +141,8 @@ class AddonViews extends AddonBase {
       });
     }
     parentDropDown.append(popup);
+    Zotero.debug(popup.offsetWidth);
+    popup.setAttribute("style", `right: -${popup.offsetWidth / 2 - 15}px;`);
     return popup;
   }
 
