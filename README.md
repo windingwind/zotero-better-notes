@@ -5,11 +5,12 @@
 A full knowledge management workflow in Zotero.
 
 - Note as you go. Open note links as your will;
-- Foward-link to sub-notes and back-link to PDF attachments;
 - Quick link from note/annotation with just a click;
-- Export your knowledge including linked sub-notes in MarkDown/rich-text format.
+  <image src="./image/README/from-note.png" width="500px"></image>
+- Foward-link to sub-notes and back-link to PDF attachments;
+  <image src="./image/README/preview-note.png" width="500px"></image>
 
-<image src="./image/README/knowledge-app.png" width="400px"></image>
+- Export your knowledge including linked sub-notes in MarkDown/rich-text format.
 
 # Quick Start Guide
 
@@ -42,7 +43,7 @@ Part of the code of this repo refers to other open-source projects within the al
 
 - [zotero-pdf-translate](https://github.com/windingwind/zotero-pdf-translate)
 
-
 ## My Other Zotero Addons
+
 - [zotero-pdf-translate](https://github.com/windingwind/zotero-pdf-translate) PDF translation for Zotero 6
 - [zotero-tag](https://github.com/windingwind/zotero-tag) Automatically tag items/Batch tagging
