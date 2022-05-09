@@ -555,7 +555,7 @@ class AddonEvents extends AddonBase {
       (window as unknown as XULWindow).openDialog(
         "chrome://Knowledge4Zotero/content/export.xul",
         "",
-        "chrome,centerscreen,width=300,height=150",
+        "chrome,centerscreen,width=300,height=200",
         io
       );
       await io.deferred.promise;
