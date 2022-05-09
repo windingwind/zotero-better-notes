@@ -596,7 +596,7 @@ class Knowledge extends AddonBase {
             const lineStart = noteLines[i].slice(0, imageIndex);
             const imageLine = noteLines[i].slice(imageIndex);
             const lineEnd = noteLines[i].slice(
-              imageLine.search(imageBrReg) + imageBrReg.source.length
+              imageLine.search(imageBrReg) + imageBrReg.source.length + 3
             );
             const attachmentKeyIndex = imageLine.search(imageKeyReg);
 
@@ -617,8 +617,7 @@ class Knowledge extends AddonBase {
                 // const imageData = await editorInstance._getDataURL(
                 //   attachmentItem
                 // );
-                // TODO: deal with Zotero parse
-                newLines.push(`<p>![](${attachmentURL})</p>`);
+                newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
                 newLines.push(`${lineStart}${lineEnd}`);
                 continue;
               }
