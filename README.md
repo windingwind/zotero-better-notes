@@ -15,7 +15,7 @@ A full knowledge management workflow in Zotero.
 
 ## Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-pdf-translate/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/Knowledge4Zotero/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
