@@ -9,7 +9,7 @@ A full knowledge management workflow in Zotero.
 - Quick link from note/annotation with just a click;
 - Export your knowledge including linked sub-notes in MarkDown/rich-text format.
 
-![k4z](./image/README/knowledge-app.png)
+<image src="./image/README/knowledge-app.png" width="400px"></image>
 
 # Quick Start Guide
 
