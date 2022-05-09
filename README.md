@@ -1,13 +1,17 @@
 # Knowledge for Zotero
 
-[User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
-
 A full knowledge management workflow in Zotero.
 
+[User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+
+<image src="./image/README/knowledge-workflow.png" width="500px"></image>
+
+## Features
+
 - Note as you go. Open note links as your will;
-- Quick link from note/annotation with just a click;
+- Quick link from note/annotation with just a click;  
   <image src="./image/README/from-note.png" width="500px"></image>
-- Foward-link to sub-notes and back-link to PDF attachments;
+- Foward-link to sub-notes and back-link to PDF attachments;  
   <image src="./image/README/preview-note.png" width="500px"></image>
 
 - Export your knowledge including linked sub-notes in MarkDown/rich-text format.
