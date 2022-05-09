@@ -11,6 +11,7 @@ A full knowledge management workflow in Zotero.
   <image src="./image/README/preview-note.png" width="500px"></image>
 
 - Export your knowledge including linked sub-notes in MarkDown/rich-text format.
+  - Export markdown with images is supported in v0.1.1
 
 # Quick Start Guide
 
