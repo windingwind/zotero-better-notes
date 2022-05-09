@@ -564,6 +564,7 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.exportNoteToFile(
         message.content.editorInstance._item,
         true,
+        options.embedImage,
         options.exportFile,
         options.exportNote,
         options.exportCopy

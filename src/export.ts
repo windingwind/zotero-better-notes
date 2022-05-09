@@ -23,6 +23,14 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportFile;
     }
+    let embedImage = Zotero.Prefs.get("Knowledge4Zotero.embedImage");
+    if (typeof embedImage !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-embedImage"
+        ) as XUL.Checkbox
+      ).checked = embedImage;
+    }
     let exportNote = Zotero.Prefs.get("Knowledge4Zotero.exportNote");
     if (typeof exportNote !== "undefined") {
       (
@@ -50,6 +58,11 @@ class AddonExport extends AddonBase {
         "Knowledge4Zotero-export-enablefile"
       ) as XUL.Checkbox
     ).checked;
+    let embedImage = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-embedImage"
+      ) as XUL.Checkbox
+    ).checked;
     let exportNote = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablenote"
@@ -61,12 +74,14 @@ class AddonExport extends AddonBase {
       ) as XUL.Checkbox
     ).checked;
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
+    Zotero.Prefs.set("Knowledge4Zotero.embedImage", embedImage);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
     Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);
     Zotero.debug(this.io);
     Zotero.debug(this.io.dataOut);
     this.io.dataOut = {
       exportFile: exportFile,
+      embedImage: embedImage,
       exportNote: exportNote,
       exportCopy: exportCopy,
     };

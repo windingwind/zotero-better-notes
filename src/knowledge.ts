@@ -572,18 +572,61 @@ class Knowledge extends AddonBase {
   async exportNoteToFile(
     note: ZoteroItem,
     convertNoteLinks: boolean = true,
+    convertNoteImages: boolean = true,
     saveFile: boolean = true,
     saveNote: boolean = false,
     saveCopy: boolean = false
   ) {
     if (convertNoteLinks) {
-      let item: ZoteroItem = new Zotero.Item("note");
+      const noteID = await ZoteroPane_Local.newNote();
+      const item = Zotero.Items.get(noteID);
       item.setNote(note.getNote());
       item.saveTx();
       let noteLines = this.getLinesInNote(note);
       let newLines = [];
+      const imageReg = new RegExp("<img");
+      const imageBrReg = new RegExp("<br>");
+      const imageKeyReg = new RegExp(`data-attachment-key="`);
+      const editorInstance = new Zotero.EditorInstance();
       for (let i in noteLines) {
+        // Embed Image
+        if (convertNoteImages) {
+          const imageIndex = noteLines[i].search(imageReg);
+          if (imageIndex !== -1) {
+            const lineStart = noteLines[i].slice(0, imageIndex);
+            const imageLine = noteLines[i].slice(imageIndex);
+            const lineEnd = noteLines[i].slice(
+              imageLine.search(imageBrReg) + imageBrReg.source.length
+            );
+            const attachmentKeyIndex = imageLine.search(imageKeyReg);
+
+            if (attachmentKeyIndex !== -1) {
+              let attachmentKey = imageLine.slice(
+                attachmentKeyIndex + imageKeyReg.source.length
+              );
+              attachmentKey = attachmentKey.slice(
+                0,
+                attachmentKey.search(/"/g)
+              );
+              const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
+                note.libraryID,
+                attachmentKey
+              );
+              const attachmentURL = await attachmentItem.getFilePathAsync();
+              if (attachmentURL) {
+                // const imageData = await editorInstance._getDataURL(
+                //   attachmentItem
+                // );
+                // TODO: deal with Zotero parse
+                newLines.push(`<p>![](${attachmentURL})</p>`);
+                newLines.push(`${lineStart}${lineEnd}`);
+                continue;
+              }
+            }
+          }
+        }
         newLines.push(noteLines[i]);
+        // Convert Link
         let linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
         while (linkIndex >= 0) {
           let link = noteLines[i].substring(linkIndex);

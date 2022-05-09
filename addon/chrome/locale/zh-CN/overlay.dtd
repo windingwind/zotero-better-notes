@@ -3,6 +3,7 @@
 
 <!ENTITY zotero.__addonRef__.export.title "导出笔记">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "导出为文件(MarkDown/HTML/RDF)">
+<!ENTITY zotero.__addonRef__.export.image.enable.label "嵌入图片(只在MarkDown文件导出时勾选)">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
 

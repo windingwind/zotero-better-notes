@@ -20,6 +20,11 @@
                 <label value="&zotero.__addonRef__.export.file.enable.label;" />
             </row>
             <row>
+                <checkbox id="__addonRef__-export-embedImage" checked="true" />
+                <label value="&zotero.__addonRef__.export.image.enable.label;" />
+            </row>
+            <separator></separator>
+            <row>
                 <checkbox id="__addonRef__-export-enablenote" checked="false" />
                 <label value="&zotero.__addonRef__.export.note.enable.label;" />
             </row>
