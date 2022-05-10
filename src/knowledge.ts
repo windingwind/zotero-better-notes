@@ -580,76 +580,15 @@ class Knowledge extends AddonBase {
     if (convertNoteLinks) {
       const noteID = await ZoteroPane_Local.newNote();
       const item = Zotero.Items.get(noteID);
-      item.setNote(note.getNote());
-      item.saveTx();
-      let noteLines = this.getLinesInNote(note);
-      let newLines = [];
-      const imageReg = new RegExp("<img");
-      const imageBrReg = new RegExp("<br>");
-      const imageKeyReg = new RegExp(`data-attachment-key="`);
-      const editorInstance = new Zotero.EditorInstance();
-      for (let i in noteLines) {
-        // Embed Image
-        if (convertNoteImages) {
-          const imageIndex = noteLines[i].search(imageReg);
-          if (imageIndex !== -1) {
-            const lineStart = noteLines[i].slice(0, imageIndex);
-            const imageLine = noteLines[i].slice(imageIndex);
-            const lineEnd = noteLines[i].slice(
-              imageLine.search(imageBrReg) + imageBrReg.source.length + 3
-            );
-            const attachmentKeyIndex = imageLine.search(imageKeyReg);
+      const rootNoteIds = [note.id];
 
-            if (attachmentKeyIndex !== -1) {
-              let attachmentKey = imageLine.slice(
-                attachmentKeyIndex + imageKeyReg.source.length
-              );
-              attachmentKey = attachmentKey.slice(
-                0,
-                attachmentKey.search(/"/g)
-              );
-              const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
-                note.libraryID,
-                attachmentKey
-              );
-              const attachmentURL = await attachmentItem.getFilePathAsync();
-              if (attachmentURL) {
-                // const imageData = await editorInstance._getDataURL(
-                //   attachmentItem
-                // );
-                newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
-                newLines.push(`${lineStart}${lineEnd}`);
-                continue;
-              }
-            }
-          }
-        }
-        newLines.push(noteLines[i]);
-        // Convert Link
-        let linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
-        while (linkIndex >= 0) {
-          let link = noteLines[i].substring(linkIndex);
-          link = link.substring(0, link.search('"'));
-          let res = await this.getNoteFromLink(link);
-          if (res.item && res.item.id !== note.id) {
-            Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
-            newLines.push("<blockquote>");
-            newLines.push(
-              `<p><strong>Linked Note: <a href="${link}" rel="noopener noreferrer nofollow">${res.item.getNoteTitle()}</a></strong></p>`
-            );
-            let linkedLines = this.getLinesInNote(res.item);
-            newLines = newLines.concat(linkedLines);
-            newLines.push("</blockquote>");
-          }
-          noteLines[i] = noteLines[i].substring(
-            noteLines[i].search(/zotero:\/\/note\//g)
-          );
-          noteLines[i] = noteLines[i].substring(
-            noteLines[i].search(/<\/a>/g) + "</a>".length
-          );
-          linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
-        }
-      }
+      const newLines = await this.converNoteLines(
+        note,
+        rootNoteIds,
+        convertNoteLinks,
+        convertNoteImages
+      );
+
       this.setLinesToNote(item, newLines);
       if (saveFile) {
         const exporter = new Zotero_File_Exporter();
@@ -677,6 +616,104 @@ class Knowledge extends AddonBase {
         exporter.save();
       }
     }
+  }
+
+  async convertImage(line: string, newLines: string[], sourceNote: ZoteroItem) {
+    const imageReg = new RegExp("<img");
+    const imageBrReg = new RegExp("<br>");
+    const imageKeyReg = new RegExp(`data-attachment-key="`);
+    const imageIndex = line.search(imageReg);
+    if (imageIndex !== -1) {
+      const lineStart = line.slice(0, imageIndex);
+      const imageLine = line.slice(imageIndex);
+      const lineEnd = line.slice(
+        imageLine.search(imageBrReg) + imageBrReg.source.length + 3
+      );
+      const attachmentKeyIndex = imageLine.search(imageKeyReg);
+
+      if (attachmentKeyIndex !== -1) {
+        let attachmentKey = imageLine.slice(
+          attachmentKeyIndex + imageKeyReg.source.length
+        );
+        attachmentKey = attachmentKey.slice(0, attachmentKey.search(/"/g));
+        const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
+          sourceNote.libraryID,
+          attachmentKey
+        );
+        const attachmentURL = await attachmentItem.getFilePathAsync();
+        if (attachmentURL) {
+          Zotero.debug("convert image");
+          // const imageData = await editorInstance._getDataURL(
+          //   attachmentItem
+          // );
+          newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
+          newLines.push(`${lineStart}${lineEnd}`);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  async converNoteLines(
+    currentNote: ZoteroItem,
+    rootNoteIds: number[],
+    convertNoteLinks: boolean = true,
+    convertNoteImages: boolean = true
+  ) {
+    Zotero.debug(`convert note ${currentNote.id}`);
+
+    const [..._rootNoteIds] = rootNoteIds;
+    _rootNoteIds.push(currentNote.id);
+    let newLines = [];
+    const noteLines = this.getLinesInNote(currentNote);
+    for (let i in noteLines) {
+      // Embed Image
+      if (convertNoteImages) {
+        const hasImage = await this.convertImage(
+          noteLines[i],
+          newLines,
+          currentNote
+        );
+        if (hasImage) {
+          continue;
+        }
+      }
+      newLines.push(noteLines[i]);
+      // Convert Link
+      let linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
+      while (linkIndex >= 0) {
+        Zotero.debug("convert link");
+        let link = noteLines[i].substring(linkIndex);
+        link = link.substring(0, link.search('"'));
+        let res = await this.getNoteFromLink(link);
+        const subNote = res.item;
+        if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
+          Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
+          newLines.push("<blockquote>");
+          newLines.push(
+            `<p><strong>Linked Note: <a href="${link}" rel="noopener noreferrer nofollow">${res.item.getNoteTitle()}</a></strong></p>`
+          );
+          newLines = newLines.concat(
+            await this.converNoteLines(
+              subNote,
+              _rootNoteIds,
+              convertNoteLinks,
+              convertNoteImages
+            )
+          );
+          newLines.push("</blockquote>");
+        }
+        noteLines[i] = noteLines[i].substring(
+          noteLines[i].search(/zotero:\/\/note\//g)
+        );
+        noteLines[i] = noteLines[i].substring(
+          noteLines[i].search(/<\/a>/g) + "</a>".length
+        );
+        linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
+      }
+    }
+    return newLines;
   }
 
   async getNoteFromLink(uri: string) {
