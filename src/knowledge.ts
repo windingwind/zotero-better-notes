@@ -41,7 +41,7 @@ class Knowledge extends AddonBase {
       this.currentLine = -1;
       this._Addon.views.initKnowledgeWindow(win);
       this._Addon.views.switchView(OutlineType.treeView);
-      this._Addon.views.buildOutline();
+      this._Addon.views.updateOutline();
     }
   }
 
@@ -115,7 +115,7 @@ class Knowledge extends AddonBase {
         params: type,
       })
     );
-    this._Addon.views.buildOutline();
+    this._Addon.views.updateOutline();
   }
 
   getLinesInNote(note: ZoteroItem): string[] {

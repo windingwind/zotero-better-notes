@@ -498,7 +498,7 @@ class AddonViews extends AddonBase {
     if (e.data.type === "ready") {
       this._initIframe.resolve();
     } else if (e.data.type === "getMindMapData") {
-      this.updateMindMap();
+      this.updateOutline();
     } else if (e.data.type === "jumpNode") {
       this._Addon.events.onEditorEvent(
         new EditorMessage("jumpNode", {
@@ -547,10 +547,10 @@ class AddonViews extends AddonBase {
     iframe.setAttribute("src", srcList[this.currentOutline]);
     mindmap.append(iframe);
     this.resizeOutline(_window);
-    this.buildOutline(this._Addon.knowledge.getWorkspaceNote());
+    this.updateOutline();
   }
 
-  async updateMindMap() {
+  async updateOutline() {
     Zotero.debug("Knowledge4Zotero: updateMindMap");
     // await this._initIframe.promise;
     const _window = this._Addon.knowledge.getWorkspaceWindow();
@@ -564,12 +564,6 @@ class AddonViews extends AddonBase {
       },
       "*"
     );
-  }
-
-  // TODO: change this
-  async buildOutline(note: ZoteroItem) {
-    Zotero.debug(this.currentOutline);
-    this.updateMindMap();
   }
 
   resizeOutline(_window: Window) {

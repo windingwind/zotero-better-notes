@@ -11,7 +11,18 @@
         width: 100%;
         padding: 0;
         margin: 0;
+        animation: append-animate 0.3s ease-in-out;
       }
+
+      @keyframes append-animate {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
       .form {
         display: flex;
       }

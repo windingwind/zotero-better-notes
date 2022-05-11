@@ -17,7 +17,7 @@ class AddonEvents extends AddonBase {
             0
           ) {
             Zotero.debug("Knowledge4Zotero: main knowledge modify check.");
-            this._Addon.views.buildOutline();
+            this._Addon.views.updateOutline();
           }
         }
         if (
@@ -444,7 +444,6 @@ class AddonEvents extends AddonBase {
         toNode,
         message.content.params.moveType
       );
-      this._Addon.views.buildOutline();
     } else if (message.type === "closePreview") {
       /*
         message.content = {
