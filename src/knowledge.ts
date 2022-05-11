@@ -415,51 +415,54 @@ class Knowledge extends AddonBase {
       return undefined;
     }
 
-    let currentLineRange = this.getNodeLineRangeInNoteTree(note, currentNode);
-    let targetLineRange = this.getNodeLineRangeInNoteTree(note, targetNode);
     let targetIndex = 0;
     let targetRank = 1;
 
     let lines = this.getLinesInNote(note);
 
     if (as === "child") {
-      targetIndex = targetLineRange[1];
+      targetIndex = targetNode.model.endIndex;
       targetRank = targetNode.model.rank === 6 ? 6 : targetNode.model.rank + 1;
     } else if (as === "before") {
-      targetIndex = targetLineRange[0];
-      targetRank = targetNode.model.rank;
+      targetIndex = targetNode.model.lineIndex;
+      targetRank =
+        targetNode.model.rank === 7
+          ? targetNode.parent.model.rank === 6
+            ? 6
+            : targetNode.parent.model.rank + 1
+          : targetNode.model.rank;
     } else if (as === "after") {
-      targetIndex = targetLineRange[1];
-      targetRank = targetNode.model.rank;
-    }
-
-    if (targetIndex > currentLineRange[1]) {
-      targetIndex -= currentLineRange[1] - currentLineRange[0];
+      targetIndex = targetNode.model.endIndex;
+      targetRank =
+        targetNode.model.rank === 7
+          ? targetNode.parent.model.rank === 6
+            ? 6
+            : targetNode.parent.model.rank + 1
+          : targetNode.model.rank;
     }
 
     let rankChange = targetRank - currentNode.model.rank;
 
+    Zotero.debug(`move to ${targetIndex}`);
+
     let movedLines = lines.splice(
-      currentLineRange[0],
-      currentLineRange[1] - currentLineRange[0]
+      currentNode.model.lineIndex,
+      currentNode.model.endIndex - currentNode.model.lineIndex
     );
 
-    let headerStartReg = new RegExp("<h[1-6]>");
-    let headerStopReg = new RegExp("</h[1-6]>");
-    for (let i = 0; i < movedLines.length; i++) {
-      let headerStart = movedLines[i].search(headerStartReg);
-      if (headerStart === -1) {
-        continue;
-      }
-      let lineRank = parseInt(movedLines[i][headerStart + 2]) + rankChange;
-      if (lineRank > 6) {
-        lineRank = 6;
-      } else if (lineRank < 1) {
-        lineRank = 1;
-      }
-      movedLines[i] = movedLines[i]
-        .replace(headerStartReg, `<h${lineRank}>`)
-        .replace(headerStopReg, `</h${lineRank}>`);
+    let headerReg = /<\/?h[1-6]>/g;
+    for (const i in movedLines) {
+      movedLines[i] = movedLines[i].replace(headerReg, (e) => {
+        let rank = parseInt(e.slice(-2, -1));
+        rank += rankChange;
+        if (rank > 6) {
+          rank = 6;
+        }
+        if (rank < 1) {
+          rank = 1;
+        }
+        return `${e.slice(0, -2)}${rank}>`;
+      });
     }
     let newLines = lines
       .slice(0, targetIndex)
@@ -583,27 +586,6 @@ class Knowledge extends AddonBase {
     return root.all(function (node) {
       return node.model.rank === rank;
     });
-  }
-
-  getNodeLineRangeInNoteTree(
-    note: ZoteroItem,
-    node: TreeModel.Node<object>
-  ): number[] {
-    note = note || this.getWorkspaceNote();
-    if (!note) {
-      return;
-    }
-    let nodes = this.getNoteTreeAsList(note);
-    let endIndex = node.model.endIndex;
-    for (let i = 0; i < nodes.length; i++) {
-      if (
-        nodes[i].model.lineIndex >= node.model.lineIndex &&
-        nodes[i].model.rank > node.model.rank
-      ) {
-        endIndex = nodes[i].model.endIndex;
-      }
-    }
-    return [node.model.lineIndex, endIndex];
   }
 
   async exportNoteToFile(

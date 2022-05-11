@@ -105,6 +105,7 @@
               ) {
                 return;
               }
+              window._e = e;
 
               const fromTreeView = getTreeView();
               const toTreeView = getTreeView();
@@ -120,6 +121,18 @@
               ) {
                 return;
               }
+
+              window.parent.postMessage(
+                {
+                  type: "moveNode",
+                  fromID: parseInt(fromNode.itemData.id),
+                  toID: toNode
+                    ? parseInt(toNode.itemData.id)
+                    : toItems[toItems.length - 1].itemData.id,
+                  moveType: e.dropInsideItem ? "child" : "before",
+                },
+                "*"
+              );
 
               const fromTopVisibleNode = getTopVisibleNode(fromTreeView);
               const toTopVisibleNode = getTopVisibleNode(toTreeView);
@@ -190,18 +203,6 @@
             toNode === null || isDropInsideItem
               ? toItems.length
               : findIndex(toItems, toNode.itemData.id);
-
-          window.parent.postMessage(
-            {
-              type: "moveNode",
-              fromID: parseInt(fromNode.itemData.id),
-              toID: toNode
-                ? parseInt(toNode.itemData.id)
-                : toItems[toItems.length - 1].itemData.id,
-              type: toNode ? "before" : "after",
-            },
-            "*"
-          );
 
           toItems.splice(toIndex, 0, fromNode.itemData);
 

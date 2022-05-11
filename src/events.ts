@@ -420,7 +420,7 @@ class AddonEvents extends AddonBase {
       /*
         message.content = {
           params: {
-            fromID, toID, type: "before" | "after"
+            fromID, toID, moveType: "before" | "child"
           }
         }
       */
@@ -437,11 +437,12 @@ class AddonEvents extends AddonBase {
       );
       Zotero.debug(fromNode.model);
       Zotero.debug(toNode.model);
+      Zotero.debug(message.content.params.moveType);
       this._Addon.knowledge.moveHeaderLineInNote(
         undefined,
         fromNode,
         toNode,
-        message.content.params.type
+        message.content.params.moveType
       );
       this._Addon.views.buildOutline();
     } else if (message.type === "closePreview") {
