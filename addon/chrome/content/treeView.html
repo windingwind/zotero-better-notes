@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
+    <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
+    <style>
+      html,
+      body,
+      div {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      .form {
+        display: flex;
+      }
+
+      .form > div {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      #treeview {
+        padding: 20px 0 0 20px;
+      }
+
+      .drive-header {
+        min-height: auto;
+        padding: 0;
+        cursor: default;
+      }
+
+      .drive-panel {
+        font-size: 115%;
+        font-weight: bold;
+        border-right: 1px solid rgba(165, 165, 165, 0.4);
+        height: 100%;
+      }
+
+      .drive-panel:last-of-type {
+        border-right: none;
+      }
+
+      ul,
+      li {
+        display: list-item;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://__addonRef__/content/lib/css/dx.light.css"
+    />
+    <div
+      class="dx-viewport"
+      id="outline-container"
+      style="background-color: inherit; overflow: hidden"
+    >
+      <script id="code">
+        function init() {
+          window.addEventListener("message", handler, false);
+          window.parent.postMessage({ type: "ready" }, "*");
+          getData();
+        }
+
+        function createTreeView(selector, items) {
+          $(selector).dxTreeView({
+            items,
+            expandNodesRecursive: false,
+            dataStructure: "plain",
+            height: $("window").height() - 100,
+            displayExpr: "name",
+            noDataText: "Create a heading with '+'",
+            onItemClick: (e) => {
+              window.parent.postMessage(
+                { type: "jumpNode", lineIndex: e.itemData.lineIndex },
+                "*"
+              );
+            },
+          });
+        }
+
+        function createSortable(selector, driveName) {
+          $(selector).dxSortable({
+            filter: ".dx-treeview-item",
+            group: "shared",
+            data: driveName,
+            allowDropInsideItem: true,
+            allowReordering: true,
+            onDragChange: (e) => {
+              if (e.fromComponent === e.toComponent) {
+                const $nodes = e.element.find(".dx-treeview-node");
+                const isDragIntoChild =
+                  $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
+                if (isDragIntoChild) {
+                  e.cancel = true;
+                }
+              }
+            },
+            onDragEnd: (e) => {
+              if (
+                e.fromComponent === e.toComponent &&
+                e.fromIndex === e.toIndex
+              ) {
+                return;
+              }
+
+              const fromTreeView = getTreeView();
+              const toTreeView = getTreeView();
+
+              const fromNode = findNode(fromTreeView, e.fromIndex);
+              const toNode = findNode(toTreeView, calculateToIndex(e));
+
+              if (
+                e.dropInsideItem &&
+                toNode !== null &&
+                // !toNode.itemData.isDirectory &&
+                toNode.itemData.rank === 7
+              ) {
+                return;
+              }
+
+              const fromTopVisibleNode = getTopVisibleNode(fromTreeView);
+              const toTopVisibleNode = getTopVisibleNode(toTreeView);
+
+              const fromItems = fromTreeView.option("items");
+              const toItems = toTreeView.option("items");
+              moveNode(fromNode, toNode, fromItems, toItems, e.dropInsideItem);
+
+              fromTreeView.option("items", fromItems);
+              toTreeView.option("items", toItems);
+              fromTreeView.scrollToItem(fromTopVisibleNode);
+              toTreeView.scrollToItem(toTopVisibleNode);
+            },
+          });
+        }
+
+        function getTreeView() {
+          return $("#treeview").dxTreeView("instance");
+        }
+
+        function calculateToIndex(e) {
+          if (e.fromComponent !== e.toComponent || e.dropInsideItem) {
+            return e.toIndex;
+          }
+
+          return e.fromIndex >= e.toIndex ? e.toIndex : e.toIndex + 1;
+        }
+
+        function findNode(treeView, index) {
+          const nodeElement = treeView.element().find(".dx-treeview-node")[
+            index
+          ];
+          if (nodeElement) {
+            return findNodeById(
+              treeView.getNodes(),
+              nodeElement.getAttribute("data-item-id")
+            );
+          }
+          return null;
+        }
+
+        function findNodeById(nodes, id) {
+          for (let i = 0; i < nodes.length; i += 1) {
+            if (nodes[i].itemData.id === id) {
+              return nodes[i];
+            }
+            if (nodes[i].children) {
+              const node = findNodeById(nodes[i].children, id);
+              if (node != null) {
+                return node;
+              }
+            }
+          }
+          return null;
+        }
+
+        function moveNode(
+          fromNode,
+          toNode,
+          fromItems,
+          toItems,
+          isDropInsideItem
+        ) {
+          const fromIndex = findIndex(fromItems, fromNode.itemData.id);
+          fromItems.splice(fromIndex, 1);
+
+          const toIndex =
+            toNode === null || isDropInsideItem
+              ? toItems.length
+              : findIndex(toItems, toNode.itemData.id);
+
+          window.parent.postMessage(
+            {
+              type: "moveNode",
+              fromID: parseInt(fromNode.itemData.id),
+              toID: toNode
+                ? parseInt(toNode.itemData.id)
+                : toItems[toItems.length - 1].itemData.id,
+              type: toNode ? "before" : "after",
+            },
+            "*"
+          );
+
+          toItems.splice(toIndex, 0, fromNode.itemData);
+
+          moveChildren(fromNode, fromItems, toItems);
+          if (isDropInsideItem) {
+            fromNode.itemData.parentId = toNode.itemData.id;
+          } else {
+            fromNode.itemData.parentId =
+              toNode != null ? toNode.itemData.parentId : undefined;
+          }
+        }
+
+        function moveChildren(node, fromItems, toItems) {
+          if (!node.itemData.isDirectory) {
+            return;
+          }
+
+          node.children.forEach((child) => {
+            if (child.itemData.isDirectory) {
+              moveChildren(child, fromItems, toItems);
+            }
+
+            const fromIndex = findIndex(fromItems, child.itemData.id);
+            fromItems.splice(fromIndex, 1);
+            toItems.splice(toItems.length, 0, child.itemData);
+          });
+        }
+
+        function findIndex(array, id) {
+          const idsArray = array.map((elem) => elem.id);
+          return idsArray.indexOf(id);
+        }
+
+        function getTopVisibleNode(component) {
+          const treeViewElement = component.element().get(0);
+          const treeViewTopPosition =
+            treeViewElement.getBoundingClientRect().top;
+          const nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
+          for (let i = 0; i < nodes.length; i += 1) {
+            const nodeTopPosition = nodes[i].getBoundingClientRect().top;
+            if (nodeTopPosition >= treeViewTopPosition) {
+              return nodes[i];
+            }
+          }
+
+          return null;
+        }
+
+        const noteIcon = `<svg t="1652008007954" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10521" width="18" height="18"><path d="M574.3 896H159.7c-17.6 0-31.9-14.3-31.9-32V160c0-17.7 14.3-32 31.9-32h382.7v160c0 35.3 28.6 64 63.8 64h159.5v192c0 17.7 14.3 32 31.9 32 17.6 0 31.9-14.3 31.9-32V270.2c0-8.5-3.3-16.6-9.3-22.6L647.4 73.4c-6-6-14.1-9.4-22.6-9.4h-497C92.6 64 64 92.7 64 128v768c0 35.3 28.6 64 63.8 64h446.5c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM638.1 288c-17.6 0-31.9-14.3-31.9-32V128l159.5 160H638.1z" p-id="10522"></path><path d="M418.8 673H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32h193.3c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM608.2 481H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32h382.7c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM225.5 353h191.4c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32zM862.7 959.4c-23.6 0-47-8.8-64.8-26.6l-24.4-24.4c-12.5-12.5-12.5-32.8 0-45.3s32.7-12.5 45.1 0l24.4 24.4c11.3 11.4 30.7 10.4 43.2-2.1 12.5-12.5 13.4-31.9 2.1-43.3L749.2 702.6c-11.3-11.4-30.7-10.4-43.2 2.1-6.2 6.3-9.8 14.4-10 22.8-0.2 7.9 2.6 15.1 7.9 20.4 12.5 12.5 12.5 32.8 0 45.3s-32.7 12.5-45.1 0c-36.2-36.3-35.2-96.3 2.1-133.8 37.4-37.5 97.2-38.4 133.4-2.1l139.1 139.5c36.2 36.3 35.2 96.3-2.1 133.8-19 19.2-43.9 28.8-68.6 28.8z" p-id="10523"></path><path d="M696.3 883.1c-23.6 0-47-8.8-64.8-26.6l-139-139.6c-17.7-17.8-27.2-41.7-26.6-67.2 0.6-25 10.8-48.6 28.7-66.6 17.9-17.9 41.5-28.2 66.4-28.8 25.5-0.6 49.3 8.9 67 26.6l24.4 24.4c12.5 12.5 12.5 32.8 0 45.3s-32.7 12.5-45.1 0l-24.4-24.4c-5.3-5.3-12.5-8.1-20.4-7.9-8.4 0.2-16.5 3.8-22.8 10-6.2 6.3-9.8 14.4-10 22.8-0.2 7.9 2.6 15.1 7.9 20.4L676.7 811c11.3 11.4 30.7 10.4 43.2-2.1 12.5-12.5 13.4-31.9 2.1-43.3-12.5-12.5-12.5-32.8 0-45.3s32.7-12.5 45.1 0c36.2 36.3 35.3 96.3-2.1 133.8-19.1 19.3-44 29-68.7 29z" p-id="10524"></path></svg>`;
+
+        function getData() {
+          window.parent.postMessage({ type: "getMindMapData" }, "*");
+        }
+
+        function setData(nodes) {
+          console.log(nodes);
+          const treeData = [];
+          nodes.map((node) => {
+            treeData.push({
+              id: String(node.model.id),
+              name: node.model.name,
+              rank: node.model.rank,
+              icon: node.model.rank === 7 ? noteIcon : undefined,
+              lineIndex: node.model.lineIndex,
+              endIndex: node.model.endIndex,
+              isDirectory: node.children.length > 0,
+              expanded: true,
+              parentId:
+                node.model.rank > 1 ? String(node.parent.model.id) : undefined,
+            });
+          });
+          $(() => {
+            createTreeView("#treeview", treeData);
+            createSortable("#treeview", "treeData");
+          });
+        }
+
+        function jumpNode(e, obj) {
+          var adorn = obj.part;
+          var oldnode = adorn.adornedPart;
+          var olddata = oldnode.data;
+          if (olddata.noteLink) {
+            window.parent.postMessage(
+              { type: "jumpNote", link: olddata.noteLink },
+              "*"
+            );
+          } else {
+            window.parent.postMessage(
+              {
+                type: "jumpNode",
+                lineIndex: olddata.lineIndex,
+                id: parseInt(olddata.id),
+              },
+              "*"
+            );
+          }
+        }
+
+        function handler(e) {
+          console.log(e);
+          if (e.data.type === "setMindMapData") {
+            setData(e.data.nodes);
+          }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          try {
+            init();
+          } catch (e) {
+            window.parent.postMessage({ type: "error", event: e }, "*");
+          }
+        });
+      </script>
+      <div class="demo-container">
+        <div class="form">
+          <div class="drive-panel">
+            <div id="treeview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

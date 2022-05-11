@@ -37,16 +37,11 @@ class Knowledge extends AddonBase {
       );
       this.workspaceWindow = win;
       await this.waitWorkspaceReady();
-      win.addEventListener("resize", (e) => {
-        this._Addon.views.setTreeViewSize();
-      });
-      this._Addon.views.bindTreeViewResize();
       this.setWorkspaceNote("main");
       this.currentLine = -1;
       this._Addon.views.initKnowledgeWindow(win);
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.buildOutline();
-      // this._Addon.views.buildMindMap();
     }
   }
 
@@ -136,47 +131,69 @@ class Knowledge extends AddonBase {
         noteText.length - "</div>".length
       );
     }
-    let noteLines: string[] = noteText.split("\n");
+    let noteLines = noteText.split("\n").filter((e) => e);
 
-    const cacheStart = [/<ol>/g, /<ul>/g, /<li>/g, /<blockquote>/g, /<pre>/g];
-    const cacheEnd = [
-      /<\/ol>/g,
-      /<\/ul>/g,
-      /<\/li>/g,
-      /<\/blockquote>/g,
-      /<\/pre>/g,
-    ];
-    let parsedLines: string[] = [];
-    let appendLater: boolean = false;
-    let cacheStartLine = false;
-    let cachedLines: string = "";
+    let tagStack = [];
+    let toPush = [];
+    let toRemove = 0;
+
+    let nextAppend = false;
+
+    const forceInline = ["table", "blockquote", "pre", "li"];
+    const selfInline = ["ol", "ul"];
+
+    const parsedLines = [];
     for (let line of noteLines) {
-      cacheStartLine = false;
-      if (
-        cachedLines ||
-        cacheStart.filter((e) => {
-          return line.search(e) !== -1;
-        }).length > 0
-      ) {
-        appendLater = true;
-        cachedLines += `${cachedLines.length > 0 ? "\n" : ""}${line}`;
-        cacheStartLine = true;
-      }
-      if (
-        cacheEnd.filter((e) => {
-          return line.search(e) !== -1;
-        }).length > 0
-      ) {
-        appendLater = false;
-        // If already added to cache
-        if (!cacheStartLine) {
-          cachedLines += `\n${line}`;
+      for (const tag of forceInline) {
+        const startReg = `<${tag}>`;
+        const endReg = `</${tag}>`;
+        const startIdx = line.search(startReg);
+        const endIdx = line.search(endReg);
+        if (startIdx !== -1 && endIdx === -1) {
+          toPush.push(tag);
+        } else if (endIdx !== -1) {
+          toRemove += 1;
         }
-        line = cachedLines;
-        cachedLines = "";
       }
-      if (!appendLater) {
+
+      if (tagStack.filter((e) => forceInline.indexOf(e) !== -1).length === 0) {
+        let nextLoop = false;
+        for (const tag of selfInline) {
+          const startReg = new RegExp(`<${tag}>`);
+          const endReg = new RegExp(`</${tag}>`);
+          const startIdx = line.search(startReg);
+          const endIdx = line.search(endReg);
+          if (startIdx !== -1 && endIdx === -1) {
+            nextAppend = true;
+            nextLoop = true;
+            parsedLines.push(line);
+            break;
+          }
+          if (endIdx !== -1) {
+            parsedLines[parsedLines.length - 1] += `\n${line}`;
+            nextLoop = true;
+            break;
+          }
+        }
+        if (nextLoop) {
+          continue;
+        }
+      }
+
+      if (tagStack.length === 0 && !nextAppend) {
         parsedLines.push(line);
+      } else {
+        parsedLines[parsedLines.length - 1] += `\n${line}`;
+        nextAppend = false;
+      }
+
+      if (toPush.length > 0) {
+        tagStack = tagStack.concat(toPush);
+        toPush = [];
+      }
+      while (toRemove > 0) {
+        tagStack.pop();
+        toRemove -= 1;
       }
     }
     return parsedLines;
@@ -255,11 +272,20 @@ class Knowledge extends AddonBase {
       return;
     }
     let noteLines = this.getLinesInNote(note);
-    if (newLine) {
-      noteLines.splice(lineIndex, 0, "<p> </p>", text);
-    } else {
-      noteLines.splice(lineIndex, 0, text);
+    Zotero.debug(
+      `insert to ${lineIndex}, it used to be ${noteLines[lineIndex]}`
+    );
+    // Force links not to appear in one line
+    if (lineIndex > 0 && noteLines[lineIndex - 1].search(/<a href/g) !== -1) {
+      text = `<p> </p>\n${text}`;
     }
+    if (
+      lineIndex < noteLines.length &&
+      noteLines[lineIndex].search(/<a href/g)
+    ) {
+      text = `${text}\n<p> </p>`;
+    }
+    noteLines.splice(lineIndex, 0, text);
     this.setLinesToNote(note, noteLines);
   }
 
@@ -272,8 +298,8 @@ class Knowledge extends AddonBase {
     if (lineIndex < 0) {
       lineIndex =
         this.currentLine >= 0
-          ? this.currentLine + 2
-          : this.getLinesInNote(note).length + 1;
+          ? this.currentLine
+          : this.getLinesInNote(note).length;
     }
     // let parentNode = this.getLineParentInNote(note, lineIndex);
     // if (!parentNode) {
@@ -466,8 +492,7 @@ class Knowledge extends AddonBase {
       endIndex: -1,
     });
     let id = 0;
-    let currentNode = root;
-    let lastNode = undefined;
+    let lastNode = root;
     let headerStartReg = new RegExp("<h[1-6]>");
     let headerStopReg = new RegExp("</h[1-6]>");
     for (let i in noteLines) {
@@ -488,23 +513,35 @@ class Knowledge extends AddonBase {
           link = link.slice(0, link.search(/"/g));
         }
         name = this.parseLineText(lineElement);
-        while (currentNode.model.rank >= currentRank) {
-          currentNode = currentNode.parent;
+
+        // Find parent node
+        let parentNode = lastNode;
+        while (parentNode.model.rank >= currentRank) {
+          parentNode = parentNode.parent;
         }
-        if (lastNode) {
-          lastNode.model.endIndex = i;
-        }
-        lastNode = tree.parse({
+
+        const currentNode = tree.parse({
           id: id++,
           rank: currentRank,
-          // @ts-ignore
           name: name,
-          lineIndex: i,
+          lineIndex: parseInt(i),
           endIndex: noteLines.length,
           link: link,
         });
-        currentNode.addChild(lastNode);
-        currentNode = lastNode;
+        parentNode.addChild(currentNode);
+        const currentIndex = parentNode.children.indexOf(currentNode);
+        if (currentIndex > 0) {
+          const previousNode = parentNode.children[currentIndex - 1];
+          // Traverse the previous node tree and set the end index
+          previousNode.walk((node) => {
+            if (node.model.endIndex > parseInt(i)) {
+              node.model.endIndex = parseInt(i);
+            }
+            return true;
+          });
+          previousNode.model.endIndex = parseInt(i);
+        }
+        lastNode = currentNode;
       }
     }
     return root;

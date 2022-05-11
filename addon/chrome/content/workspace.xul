@@ -22,7 +22,6 @@
     <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
     <script type="application/javascript">
         Zotero.Knowledge4Zotero.views.$ = $;
-        Zotero.Knowledge4Zotero.views.go = go;
     </script>
 
     <keyset>
@@ -32,15 +31,6 @@
 
     <hbox flex="1">
         <vbox id="zotero-knowledge-outline" flex="1" width="330" minwidth="300" style="overflow: hidden;">
-            <html:div class="dx-viewport" id="outline-container">
-                <div class="demo-container">
-                    <div class="form">
-                        <div class="drive-panel">
-                            <div id="treeview"></div>
-                        </div>
-                    </div>
-                </div>
-            </html:div>
             <html:div id="mindmap-container">
                 <!-- Inser Here -->
             </html:div>

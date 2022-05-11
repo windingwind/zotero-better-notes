@@ -69,15 +69,19 @@ class AddonEvents extends AddonBase {
   }
 
   public addEditorInstanceListener() {
-    Zotero.Notes._registerEditorInstance = Zotero.Notes.registerEditorInstance;
-    Zotero.Notes.registerEditorInstance = (instance: EditorInstance) => {
-      Zotero.Notes._registerEditorInstance(instance);
-      this.onEditorEvent(
-        new EditorMessage("addNoteInstance", {
-          editorInstance: instance,
-        })
-      );
-    };
+    if (!Zotero.Notes._knowledgeInit) {
+      Zotero.Notes._knowledgeInit = true;
+      Zotero.Notes._registerEditorInstance =
+        Zotero.Notes.registerEditorInstance;
+      Zotero.Notes.registerEditorInstance = (instance: EditorInstance) => {
+        Zotero.Notes._registerEditorInstance(instance);
+        this.onEditorEvent(
+          new EditorMessage("addNoteInstance", {
+            editorInstance: instance,
+          })
+        );
+      };
+    }
   }
 
   public async addEditorEventListener(
@@ -388,7 +392,6 @@ class AddonEvents extends AddonBase {
           type
         }
       */
-      //  if(message.content.)
       Zotero.debug("Knowledge4Zotero: addToKnowledgeLine");
       Zotero.debug(message.content.event.target.id);
       const idSplit = message.content.event.target.id.split("-");
@@ -398,24 +401,22 @@ class AddonEvents extends AddonBase {
         lineIndex,
         message.content.editorInstance._item.id
       );
-    } else if (message.type === "clickOutlineHeading") {
+    } else if (message.type === "jumpNode") {
       /*
         message.content = {
-          event: {itemData}
+          params: {id, lineIndex}
         }
       */
       let editorInstance =
         await this._Addon.knowledge.getWorkspaceEditorInstance();
       // Set node id
-      this._Addon.knowledge.currentNodeID = parseInt(
-        (message.content.event as any).itemData.id
-      );
+      this._Addon.knowledge.currentNodeID = parseInt(message.content.params.id);
       this._Addon.views.scrollToLine(
         editorInstance,
-        // Scroll to 6 lines before the inserted line
-        (message.content.event as any).itemData.lineIndex - 5
+        // Scroll to 1 lines before the inserted line
+        message.content.params.lineIndex - 1
       );
-    } else if (message.type === "moveOutlineHeading") {
+    } else if (message.type === "moveNode") {
       /*
         message.content = {
           params: {

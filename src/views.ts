@@ -3,7 +3,6 @@ import { AddonBase, EditorMessage, OutlineType } from "./base";
 class AddonViews extends AddonBase {
   progressWindowIcon: object;
   editorIcon: object;
-  $: any;
   currentOutline: OutlineType;
   _initIframe: any;
 
@@ -23,7 +22,6 @@ class AddonViews extends AddonBase {
       export: `<svg t="1651322116327" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11894" width="24" height="24"><path d="M849.2 599v217H178.5V599c-0.7-23.7-20.1-42.7-44-42.7s-43.3 19-44 42.7v252.5c0 28.9 23.6 52.5 52.5 52.5h741.7c28.9 0 52.5-23.6 52.5-52.5V599c-0.7-23.7-20.1-42.7-44-42.7s-43.3 19-44 42.7z" p-id="11895"></path><path d="M482.7 135.4l-164 164c-17.1 17.1-17.1 45.1 0 62.2s45.1 17.1 62.2 0l85.7-85.7v314.8c0 26 21.3 47.2 47.2 47.2 26 0 47.2-21.3 47.2-47.2V276l85.7 85.7c17.1 17.1 45.1 17.1 62.2 0s17.1-45.1 0-62.2l-164-164c-17.1-17.2-45.1-17.2-62.2-0.1z" p-id="11896"></path></svg>`,
       close: `<svg t="1651331457107" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12754" width="24" height="24"><path d="M557.311759 513.248864l265.280473-263.904314c12.54369-12.480043 12.607338-32.704421 0.127295-45.248112-12.512727-12.576374-32.704421-12.607338-45.248112-0.127295L512.127295 467.904421 249.088241 204.063755c-12.447359-12.480043-32.704421-12.54369-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.280796l262.975407 263.775299-265.151458 263.744335c-12.54369 12.480043-12.607338 32.704421-0.127295 45.248112 6.239161 6.271845 14.463432 9.440452 22.687703 9.440452 8.160624 0 16.319527-3.103239 22.560409-9.311437l265.216826-263.807983 265.440452 266.240344c6.239161 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.311759 513.248864z" p-id="12755"></path></svg>`,
       openWorkspaceCollectionView: `<svg t="1651317033804" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2432" width="100%" height="100%"><path d="M874.9 459.4c-18.8 0-34 15.2-34 34v355.7c0 18.6-15.5 33.7-34.5 33.7H181.5c-19 0-34.5-15.1-34.5-33.7V232.3c0-18.6 15.5-33.7 34.5-33.7H541c18.8 0 34-15.2 34-34s-15.2-34-34-34H181.5C125 130.6 79 176.2 79 232.3v616.8c0 56 46 101.7 102.5 101.7h624.9c56.5 0 102.5-45.6 102.5-101.7V493.4c0-18.8-15.2-34-34-34z" fill="#b6b6b6" p-id="2433"></path><path d="M885.5 82.7H657.1c-18.8 0-34 15.2-34 34s15.2 34 34 34h169.7L358.5 619.1c-13.3 13.3-13.3 34.8 0 48.1 6.6 6.6 15.3 10 24 10s17.4-3.3 24-10l470-470v169.7c0 18.8 15.2 34 34 34s34-15.2 34-34V141.5c0.1-32.4-26.4-58.8-59-58.8z" fill="#b6b6b6" p-id="2434"></path></svg>`,
-      note: `<svg t="1652008007954" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10521" width="18" height="18"><path d="M574.3 896H159.7c-17.6 0-31.9-14.3-31.9-32V160c0-17.7 14.3-32 31.9-32h382.7v160c0 35.3 28.6 64 63.8 64h159.5v192c0 17.7 14.3 32 31.9 32 17.6 0 31.9-14.3 31.9-32V270.2c0-8.5-3.3-16.6-9.3-22.6L647.4 73.4c-6-6-14.1-9.4-22.6-9.4h-497C92.6 64 64 92.7 64 128v768c0 35.3 28.6 64 63.8 64h446.5c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM638.1 288c-17.6 0-31.9-14.3-31.9-32V128l159.5 160H638.1z" p-id="10522"></path><path d="M418.8 673H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32h193.3c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM608.2 481H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32h382.7c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32zM225.5 353h191.4c17.6 0 31.9-14.3 31.9-32s-14.3-32-31.9-32H225.5c-17.6 0-31.9 14.3-31.9 32s14.3 32 31.9 32zM862.7 959.4c-23.6 0-47-8.8-64.8-26.6l-24.4-24.4c-12.5-12.5-12.5-32.8 0-45.3s32.7-12.5 45.1 0l24.4 24.4c11.3 11.4 30.7 10.4 43.2-2.1 12.5-12.5 13.4-31.9 2.1-43.3L749.2 702.6c-11.3-11.4-30.7-10.4-43.2 2.1-6.2 6.3-9.8 14.4-10 22.8-0.2 7.9 2.6 15.1 7.9 20.4 12.5 12.5 12.5 32.8 0 45.3s-32.7 12.5-45.1 0c-36.2-36.3-35.2-96.3 2.1-133.8 37.4-37.5 97.2-38.4 133.4-2.1l139.1 139.5c36.2 36.3 35.2 96.3-2.1 133.8-19 19.2-43.9 28.8-68.6 28.8z" p-id="10523"></path><path d="M696.3 883.1c-23.6 0-47-8.8-64.8-26.6l-139-139.6c-17.7-17.8-27.2-41.7-26.6-67.2 0.6-25 10.8-48.6 28.7-66.6 17.9-17.9 41.5-28.2 66.4-28.8 25.5-0.6 49.3 8.9 67 26.6l24.4 24.4c12.5 12.5 12.5 32.8 0 45.3s-32.7 12.5-45.1 0l-24.4-24.4c-5.3-5.3-12.5-8.1-20.4-7.9-8.4 0.2-16.5 3.8-22.8 10-6.2 6.3-9.8 14.4-10 22.8-0.2 7.9 2.6 15.1 7.9 20.4L676.7 811c11.3 11.4 30.7 10.4 43.2-2.1 12.5-12.5 13.4-31.9 2.1-43.3-12.5-12.5-12.5-32.8 0-45.3s32.7-12.5 45.1 0c36.2 36.3 35.3 96.3-2.1 133.8-19.1 19.3-44 29-68.7 29z" p-id="10524"></path></svg>`,
     };
     this.currentOutline = OutlineType.treeView;
     this._initIframe = Zotero.Promise.defer();
@@ -490,24 +488,34 @@ class AddonViews extends AddonBase {
           new EditorMessage("openUserGuide", {})
         );
       });
+    _window.addEventListener("resize", (e) => this.resizeOutline(_window));
   }
 
   async messageHandler(e) {
     const _window = this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug(`Knowledge4Zotero: view message ${e.data.type}`);
+    console.log(`Knowledge4Zotero: view message ${e.data.type}`);
     if (e.data.type === "ready") {
       this._initIframe.resolve();
     } else if (e.data.type === "getMindMapData") {
       this.updateMindMap();
     } else if (e.data.type === "jumpNode") {
-      this.scrollToLine(
-        await this._Addon.knowledge.getWorkspaceEditorInstance(),
-        e.data.lineIndex
+      this._Addon.events.onEditorEvent(
+        new EditorMessage("jumpNode", {
+          params: e.data,
+        })
       );
     } else if (e.data.type === "jumpNote") {
       Zotero.debug(e.data);
       this._Addon.events.onEditorEvent(
         new EditorMessage("onNoteLink", {
           params: await this._Addon.knowledge.getNoteFromLink(e.data.link),
+        })
+      );
+    } else if (e.data.type === "moveNode") {
+      this._Addon.events.onEditorEvent(
+        new EditorMessage("moveNode", {
+          params: e.data,
         })
       );
     }
@@ -522,36 +530,23 @@ class AddonViews extends AddonBase {
     }
     const _window = this._Addon.knowledge.getWorkspaceWindow();
     const mindmap = _window.document.getElementById("mindmap-container");
-    const outline = _window.document.getElementById("outline-container");
-    this.currentOutline = newType;
-    if (this.currentOutline === OutlineType.treeView) {
-      _window.document.getElementById("mindmapIframe").remove();
-      mindmap.setAttribute("hidden", "hidden");
-      outline.removeAttribute("hidden");
-    } else if (this.currentOutline === OutlineType.mindMap) {
-      const iframe = _window.document.createElement("iframe");
-      iframe.setAttribute("id", "mindmapIframe");
-      iframe.setAttribute(
-        "src",
-        "chrome://Knowledge4Zotero/content/mindMap.html"
-      );
-      outline.setAttribute("hidden", "hidden");
-      mindmap.removeAttribute("hidden");
-      mindmap.append(iframe);
-      this.setTreeViewSize();
-    } else if (this.currentOutline === OutlineType.bubbleMap) {
-      _window.document.getElementById("mindmapIframe").remove();
-      const iframe = _window.document.createElement("iframe");
-      iframe.setAttribute("id", "mindmapIframe");
-      iframe.setAttribute(
-        "src",
-        "chrome://Knowledge4Zotero/content/bubbleMap.html"
-      );
-      outline.setAttribute("hidden", "hidden");
-      mindmap.removeAttribute("hidden");
-      mindmap.append(iframe);
-      this.setTreeViewSize();
+
+    const oldIframe = _window.document.getElementById("mindmapIframe");
+    if (oldIframe) {
+      oldIframe.remove();
     }
+    this.currentOutline = newType;
+    const srcList = [
+      "",
+      "chrome://Knowledge4Zotero/content/treeView.html",
+      "chrome://Knowledge4Zotero/content/mindMap.html",
+      "chrome://Knowledge4Zotero/content/bubbleMap.html",
+    ];
+    const iframe = _window.document.createElement("iframe");
+    iframe.setAttribute("id", "mindmapIframe");
+    iframe.setAttribute("src", srcList[this.currentOutline]);
+    mindmap.append(iframe);
+    this.resizeOutline(_window);
     this.buildOutline(this._Addon.knowledge.getWorkspaceNote());
   }
 
@@ -571,235 +566,22 @@ class AddonViews extends AddonBase {
     );
   }
 
-  /*
-   *  Outline Code Start
-   */
-
+  // TODO: change this
   async buildOutline(note: ZoteroItem) {
     Zotero.debug(this.currentOutline);
-    if (this.currentOutline === OutlineType.treeView) {
-      this._Addon.knowledge.currentNodeID = -1;
-      let treeList = this._Addon.knowledge.getNoteTreeAsList(note, true, false);
-      const treeData = [];
-      treeList.map((node: TreeModel.Node<object>) => {
-        treeData.push({
-          id: String(node.model.id),
-          name: node.model.name,
-          rank: node.model.rank,
-          icon: node.model.rank === 7 ? this.editorIcon["note"] : undefined,
-          lineIndex: node.model.lineIndex,
-          endIndex: node.model.endIndex,
-          isDirectory: node.hasChildren(),
-          expanded: true,
-          parentId:
-            node.model.rank > 1 ? String(node.parent.model.id) : undefined,
-        });
-      });
-      this.$(() => {
-        this.createTreeView("#treeview", treeData);
-        this.createSortable("#treeview", "treeData");
-      });
-    } else {
-      this.updateMindMap();
-    }
+    this.updateMindMap();
   }
 
-  createTreeView(selector, items) {
-    // @ts-ignore
-    this.$(selector).dxTreeView({
-      items,
-      expandNodesRecursive: false,
-      dataStructure: "plain",
-      height: this.$("window").height() - 100,
-      displayExpr: "name",
-      noDataText: "Create a heading with '+'",
-      onItemClick: (e) => {
-        this._Addon.events.onEditorEvent(
-          new EditorMessage("clickOutlineHeading", {
-            event: e,
-          })
-        );
-      },
-    });
-  }
-
-  bindTreeViewResize() {
-    this.$("#zotero-knowledge-outline").on("resize", (e) => {
-      this.setTreeViewSize();
-    });
-  }
-
-  setTreeViewSize() {
-    this.$("#treeview").css({
-      height: `${this.$("window").height() - 100}px`,
-      width: `${this.$("#zotero-knowledge-outline").width() - 10}px`,
-    });
-    this.$("#mindmapIframe").css({
-      height: `${this.$("window").height() - 58}px`,
-      width: `${this.$("#zotero-knowledge-outline").width() - 10}px`,
-    });
-  }
-
-  createSortable(selector, driveName) {
-    // @ts-ignore
-    this.$(selector).dxSortable({
-      filter: ".dx-treeview-item",
-      group: "shared",
-      data: driveName,
-      allowDropInsideItem: true,
-      allowReordering: true,
-      onDragChange: (e) => {
-        if (e.fromComponent === e.toComponent) {
-          const $nodes = e.element.find(".dx-treeview-node");
-          const isDragIntoChild =
-            $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
-          if (isDragIntoChild) {
-            e.cancel = true;
-          }
-        }
-      },
-      onDragEnd: (e) => {
-        if (e.fromComponent === e.toComponent && e.fromIndex === e.toIndex) {
-          return;
-        }
-
-        const fromTreeView = this.getTreeView();
-        const toTreeView = this.getTreeView();
-
-        const fromNode = this.findNode(fromTreeView, e.fromIndex);
-        const toNode = this.findNode(toTreeView, this.calculateToIndex(e));
-
-        if (
-          e.dropInsideItem &&
-          toNode !== null &&
-          !toNode.itemData.isDirectory
-        ) {
-          return;
-        }
-
-        const fromTopVisibleNode = this.getTopVisibleNode(fromTreeView);
-        const toTopVisibleNode = this.getTopVisibleNode(toTreeView);
-
-        const fromItems = fromTreeView.option("items");
-        const toItems = toTreeView.option("items");
-        this.moveNode(fromNode, toNode, fromItems, toItems, e.dropInsideItem);
-
-        fromTreeView.option("items", fromItems);
-        toTreeView.option("items", toItems);
-        fromTreeView.scrollToItem(fromTopVisibleNode);
-        toTreeView.scrollToItem(toTopVisibleNode);
-      },
-    });
-  }
-
-  getTreeView() {
-    // @ts-ignore
-    return this.$("#treeview").dxTreeView("instance");
-  }
-
-  calculateToIndex(e) {
-    if (e.fromComponent !== e.toComponent || e.dropInsideItem) {
-      return e.toIndex;
-    }
-
-    return e.fromIndex >= e.toIndex ? e.toIndex : e.toIndex + 1;
-  }
-
-  findNode(treeView, index) {
-    const nodeElement = treeView.element().find(".dx-treeview-node")[index];
-    if (nodeElement) {
-      return this.findNodeById(
-        treeView.getNodes(),
-        nodeElement.getAttribute("data-item-id")
-      );
-    }
-    return null;
-  }
-
-  findNodeById(nodes, id) {
-    for (let i = 0; i < nodes.length; i += 1) {
-      if (nodes[i].itemData.id === id) {
-        return nodes[i];
-      }
-      if (nodes[i].children) {
-        const node = this.findNodeById(nodes[i].children, id);
-        if (node != null) {
-          return node;
-        }
-      }
-    }
-    return null;
-  }
-
-  moveNode(fromNode, toNode, fromItems, toItems, isDropInsideItem) {
-    const fromIndex = this.findIndex(fromItems, fromNode.itemData.id);
-    fromItems.splice(fromIndex, 1);
-
-    const toIndex =
-      toNode === null || isDropInsideItem
-        ? toItems.length
-        : this.findIndex(toItems, toNode.itemData.id);
-
-    this._Addon.events.onEditorEvent(
-      new EditorMessage("moveOutlineHeading", {
-        params: {
-          fromID: parseInt(fromNode.itemData.id),
-          toID: toNode
-            ? parseInt(toNode.itemData.id)
-            : toItems[toItems.length - 1].itemData.id,
-          type: toNode ? "before" : "after",
-        },
-      })
+  resizeOutline(_window: Window) {
+    const iframe = _window.document.getElementById("mindmapIframe");
+    const container = _window.document.getElementById(
+      "zotero-knowledge-outline"
     );
-    toItems.splice(toIndex, 0, fromNode.itemData);
-
-    this.moveChildren(fromNode, fromItems, toItems);
-    if (isDropInsideItem) {
-      fromNode.itemData.parentId = toNode.itemData.id;
-    } else {
-      fromNode.itemData.parentId =
-        toNode != null ? toNode.itemData.parentId : undefined;
+    if (iframe) {
+      iframe.style.height = `${container.clientHeight - 60}px`;
+      iframe.style.width = `${container.clientWidth - 10}px`;
     }
   }
-
-  moveChildren(node, fromItems, toItems) {
-    if (!node.itemData.isDirectory) {
-      return;
-    }
-
-    node.children.forEach((child) => {
-      if (child.itemData.isDirectory) {
-        this.moveChildren(child, fromItems, toItems);
-      }
-
-      const fromIndex = this.findIndex(fromItems, child.itemData.id);
-      fromItems.splice(fromIndex, 1);
-      toItems.splice(toItems.length, 0, child.itemData);
-    });
-  }
-
-  findIndex(array, id) {
-    const idsArray = array.map((elem) => elem.id);
-    return idsArray.indexOf(id);
-  }
-
-  getTopVisibleNode(component) {
-    const treeViewElement = component.element().get(0);
-    const treeViewTopPosition = treeViewElement.getBoundingClientRect().top;
-    const nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
-    for (let i = 0; i < nodes.length; i += 1) {
-      const nodeTopPosition = nodes[i].getBoundingClientRect().top;
-      if (nodeTopPosition >= treeViewTopPosition) {
-        return nodes[i];
-      }
-    }
-
-    return null;
-  }
-
-  /*
-   *  Outline Code End
-   */
 
   showProgressWindow(
     header: string,

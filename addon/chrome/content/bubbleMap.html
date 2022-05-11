@@ -157,7 +157,7 @@
             const parent = node.parent.model.id === -1? 999:node.parent.model.id;
             nodeDataArray.push({
               key: node.model.id,
-              text: `${node.model.rank===7?'🔗':''}${node.model.name.slice(0,15)}${node.model.name.length>=15?'...':''}`,
+              text: `${node.model.rank===7?'🔗':''}${node.model.name.slice(0,50)}${node.model.name.length>=50?'...':''}`,
               lineIndex: node.model.lineIndex,
               noteLink: node.model.rank===7?node.model.link:'',
             });
@@ -174,9 +174,9 @@
           var oldnode = adorn.adornedPart;
           var olddata = oldnode.data;
           if(olddata.noteLink){
-            window.parent.postMessage({type: "jumpNote", link: olddata.noteLink}, "*");
+            window.parent.postMessage({type: "jumpNote", link: olddata.noteLink, id: olddata.key}, "*");
           }else{
-            window.parent.postMessage({type: "jumpNode", lineIndex: olddata.lineIndex}, "*");
+            window.parent.postMessage({type: "jumpNode", lineIndex: olddata.lineIndex, id: olddata.key}, "*");
           }
         }
         
