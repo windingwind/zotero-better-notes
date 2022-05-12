@@ -5,7 +5,9 @@ A full knowledge management workflow in Zotero.
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
 
-https://user-images.githubusercontent.com/33902321/167911214-797f7dd1-bf6c-4018-930b-464e84b5c786.mp4
+
+https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
+
 
 
 ## Features
