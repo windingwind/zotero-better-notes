@@ -1,6 +1,6 @@
 # Knowledge for Zotero
 
-Everything about note management in Zotero.
+Everything about note management. All in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
