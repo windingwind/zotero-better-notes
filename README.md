@@ -4,21 +4,19 @@ Everything about note management in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
-
+## All in Zotero: Best Note Practice
 
 https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
 
-
-
 ## Features
 
-- Note as you go. Open note links as your will;
-- Quick link from note/annotation with just a click;  
+- Note as you go;
+- Archive notes/annotations in one place with just a click;  
   <image src="./image/README/from-note.png" width="500px"></image>
 - Foward-link to sub-notes and back-link to PDF attachments;  
   <image src="./image/README/preview-note.png" width="500px"></image>
 
-- Export your knowledge including linked sub-notes in MarkDown/rich-text format.
+- Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
 
 # Quick Start Guide
