@@ -1,6 +1,6 @@
 # Knowledge for Zotero
 
-A full knowledge management workflow in Zotero.
+Everything about note management in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
