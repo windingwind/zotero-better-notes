@@ -1,4 +1,4 @@
-# Knowledge for Zotero
+# Zotero Better Notes
 
 Everything about note management. All in Zotero.
 
@@ -12,10 +12,7 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 
 - Note as you go;
 - Archive notes/annotations in one place with just a click;  
-  <image src="./image/README/from-note.png" width="500px"></image>
 - Foward-link to sub-notes and back-link to PDF attachments;  
-  <image src="./image/README/preview-note.png" width="500px"></image>
-
 - Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
 
@@ -23,7 +20,7 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 
 ## Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/Knowledge4Zotero/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
