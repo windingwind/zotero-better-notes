@@ -711,9 +711,7 @@ class Knowledge extends AddonBase {
         if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
           Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
           newLines.push("<blockquote>");
-          newLines.push(
-            `<p><strong>Linked Note: <a href="${link}" rel="noopener noreferrer nofollow">${res.item.getNoteTitle()}</a></strong></p>`
-          );
+          newLines.push(`<p><strong>Linked Note:</strong></p>`);
           newLines = newLines.concat(
             await this.converNoteLines(
               subNote,
