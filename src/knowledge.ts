@@ -289,6 +289,26 @@ class Knowledge extends AddonBase {
     this.setLinesToNote(note, noteLines);
   }
 
+  async addLinesToNote(
+    note: ZoteroItem,
+    newLines: string[],
+    lineIndex: number
+  ) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    let noteLines = this.getLinesInNote(note);
+    if (lineIndex < 0) {
+      lineIndex = 0;
+    }
+    this.setLinesToNote(
+      note,
+      noteLines.slice(0, lineIndex).concat(newLines, noteLines.slice(lineIndex))
+    );
+    await this.scrollWithRefresh(lineIndex);
+  }
+
   async addSubLineToNote(
     note: ZoteroItem,
     text: string,
@@ -602,7 +622,7 @@ class Knowledge extends AddonBase {
       const item = Zotero.Items.get(noteID);
       const rootNoteIds = [note.id];
 
-      const newLines = await this.converNoteLines(
+      const newLines = await this.convertNoteLines(
         note,
         rootNoteIds,
         convertNoteLinks,
@@ -675,7 +695,7 @@ class Knowledge extends AddonBase {
     return false;
   }
 
-  async converNoteLines(
+  async convertNoteLines(
     currentNote: ZoteroItem,
     rootNoteIds: number[],
     convertNoteLinks: boolean = true,
@@ -701,11 +721,9 @@ class Knowledge extends AddonBase {
       }
       newLines.push(noteLines[i]);
       // Convert Link
-      let linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
-      while (linkIndex >= 0) {
+      let link = this.getLinkFromText(noteLines[i]);
+      while (link) {
         Zotero.debug("convert link");
-        let link = noteLines[i].substring(linkIndex);
-        link = link.substring(0, link.search('"'));
         let res = await this.getNoteFromLink(link);
         const subNote = res.item;
         if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
@@ -713,7 +731,7 @@ class Knowledge extends AddonBase {
           newLines.push("<blockquote>");
           newLines.push(`<p><strong>Linked Note:</strong></p>`);
           newLines = newLines.concat(
-            await this.converNoteLines(
+            await this.convertNoteLines(
               subNote,
               _rootNoteIds,
               convertNoteLinks,
@@ -728,10 +746,21 @@ class Knowledge extends AddonBase {
         noteLines[i] = noteLines[i].substring(
           noteLines[i].search(/<\/a>/g) + "</a>".length
         );
-        linkIndex = noteLines[i].search(/zotero:\/\/note\//g);
+        link = this.getLinkFromText(noteLines[i]);
       }
     }
     return newLines;
+  }
+
+  getLinkFromText(text: string) {
+    // Must end with "
+    const linkIndex = text.search(/zotero:\/\/note\//g);
+    if (linkIndex === -1) {
+      return "";
+    }
+    let link = text.substring(linkIndex);
+    link = link.substring(0, link.search('"'));
+    return link;
   }
 
   async getNoteFromLink(uri: string) {

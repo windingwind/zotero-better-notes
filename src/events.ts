@@ -1,3 +1,4 @@
+import { link } from "fs";
 import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
@@ -356,6 +357,38 @@ class AddonEvents extends AddonBase {
         header.innerHTML = "Main Note";
         header.setAttribute("style", "font-size: medium");
         middle.append(header);
+
+        // Link popup listener
+        const container =
+          _window.document.getElementsByClassName("relative-container")[0];
+        const containerObserver = new MutationObserver(async (mutations) => {
+          for (const mut of mutations) {
+            for (const node of mut.addedNodes) {
+              // wait for ui ready
+              await Zotero.Promise.delay(20);
+              const linkElement = (node as Element).getElementsByTagName(
+                "a"
+              )[0];
+              if (!linkElement) {
+                return;
+              }
+              const linkObserver = new MutationObserver(async (linkMuts) => {
+                this._Addon.views.updateEditorPopupButtons(
+                  _window,
+                  linkElement.getAttribute("href")
+                );
+              });
+              linkObserver.observe(linkElement, { attributes: true });
+              this._Addon.views.updateEditorPopupButtons(
+                _window,
+                linkElement.getAttribute("href")
+              );
+            }
+          }
+        });
+        containerObserver.observe(container, {
+          childList: true,
+        });
       } else {
         // This is a preview knowledge, hide openWorkspace button add show close botton
         this._Addon.views.changeEditorButtonView(
@@ -722,8 +755,7 @@ class AddonEvents extends AddonBase {
 
       if (annotationItem.annotationComment) {
         const text = annotationItem.annotationComment;
-        let link = text.substring(text.search(/zotero:\/\/note\//g));
-        link = link.substring(0, link.search('"'));
+        let link = this._Addon.knowledge.getLinkFromText(text);
 
         if (link) {
           const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;
