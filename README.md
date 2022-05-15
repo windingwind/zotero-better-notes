@@ -1,27 +1,26 @@
-# Knowledge for Zotero
+# Zotero Better Notes
 
-A full knowledge management workflow in Zotero.
+Everything about note management. All in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
-<image src="./image/README/knowledge-workflow.png" width="800px"></image>
+## All in Zotero: Best Note Practice
+
+https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
 
 ## Features
 
-- Note as you go. Open note links as your will;
-- Quick link from note/annotation with just a click;  
-  <image src="./image/README/from-note.png" width="500px"></image>
+- Note as you go;
+- Archive notes/annotations in one place with just a click;  
 - Foward-link to sub-notes and back-link to PDF attachments;  
-  <image src="./image/README/preview-note.png" width="500px"></image>
-
-- Export your knowledge including linked sub-notes in MarkDown/rich-text format.
+- Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
 
 # Quick Start Guide
 
 ## Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/Knowledge4Zotero/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
