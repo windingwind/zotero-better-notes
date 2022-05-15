@@ -354,6 +354,10 @@ class Knowledge extends AddonBase {
       return;
     }
     let linkedNote = Zotero.Items.get(linkedNoteID);
+    if (!linkedNote.isNote()) {
+      this._Addon.views.showProgressWindow("Better Notes", "Not a note item");
+      return;
+    }
     let libraryID = linkedNote.libraryID;
     let library = Zotero.Libraries.get(libraryID);
     let groupID: string;
