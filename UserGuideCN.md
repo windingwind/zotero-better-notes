@@ -1,6 +1,6 @@
-# Knowledge for Zotero 用户指引：工作流
+# Zotero Better Notes 用户指引：工作流
 
-欢迎使用 **Knowledge for Zotero** !
+欢迎使用 **Zotero Better Notes** !
 
 本笔记帮助您在 3 分钟内快速学习如何使用此插件！
 
@@ -124,4 +124,4 @@ Zotero 的 note 很像一个标记/富文本编辑器。您可以使用上方工
 
 恭喜!
 
-你现在可以选择或新建一个主笔记，然后开始使用 **Knowledge for Zotero**了。用的开心！
+你现在可以选择或新建一个主笔记，然后开始使用 **Zotero Better Notes**了。用的开心！

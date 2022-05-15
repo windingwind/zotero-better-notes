@@ -49,7 +49,7 @@
             <row>
                 <checkbox id="__addonRef__-setup-collectionenable" checked="true" oncommand="Zotero.Knowledge4Zotero.wizard.updateCollectionSetup()" />
                 <label value="&zotero.__addonRef__.wizard.setup.collectionenable.label;" />
-                <textbox id="__addonRef__-setup-collectionname" value="My Knowledges" oninput="Zotero.Knowledge4Zotero.wizard.updateCollectionSetup()" />
+                <textbox id="__addonRef__-setup-collectionname" value="My Notes" oninput="Zotero.Knowledge4Zotero.wizard.updateCollectionSetup()" />
             </row>
             <row>
                 <checkbox id="__addonRef__-setup-noteenable" checked="true" oncommand="Zotero.Knowledge4Zotero.wizard.updateNoteSetup()" />

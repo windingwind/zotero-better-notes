@@ -83,12 +83,7 @@
             height: $("window").height() - 100,
             displayExpr: "name",
             noDataText: "Create a heading with '+'",
-            onItemClick: (e) => {
-              window.parent.postMessage(
-                { type: "jumpNode", lineIndex: e.itemData.lineIndex },
-                "*"
-              );
-            },
+            onItemClick: jumpNode,
           });
         }
 
@@ -291,21 +286,23 @@
           });
         }
 
-        function jumpNode(e, obj) {
-          var adorn = obj.part;
-          var oldnode = adorn.adornedPart;
-          var olddata = oldnode.data;
-          if (olddata.noteLink) {
+        function jumpNode(e) {
+          var itemData = e.itemData;
+          if (itemData.noteLink) {
             window.parent.postMessage(
-              { type: "jumpNote", link: olddata.noteLink },
+              {
+                type: "jumpNote",
+                link: itemData.noteLink,
+                id: parseInt(itemData.id),
+              },
               "*"
             );
           } else {
             window.parent.postMessage(
               {
                 type: "jumpNode",
-                lineIndex: olddata.lineIndex,
-                id: parseInt(olddata.id),
+                lineIndex: itemData.lineIndex,
+                id: parseInt(itemData.id),
               },
               "*"
             );

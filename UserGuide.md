@@ -1,6 +1,6 @@
-# Knowledge for Zotero User Guide: Workflow
+# Zotero Better Notes User Guide: Workflow
 
-Welcome to **Knowledge for Zotero** !
+Welcome to **Zotero Better Notes** !
 
 This note helps you quickly learn how to use this addon in 3 min!
 
@@ -124,4 +124,4 @@ Switch between different main notes with the '📂folder' button on the bottom o
 
 Congratulations!
 
-You can select a new main note and start working with **Knowledge for Zotero** now. Have fun!
+You can select a new main note and start working with **Zotero Better Notes** now. Have fun!

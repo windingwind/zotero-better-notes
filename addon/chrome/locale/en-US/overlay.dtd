@@ -1,14 +1,26 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge Workspace">
+
+<!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
+<!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
+<!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
+<!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">
+<!ENTITY zotero.__addonRef__.workspace.menu.treeview "Outline: Tree View">
+<!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
+<!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">
+<!ENTITY zotero.__addonRef__.workspace.menu.guide "Open User Guide">
+
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Note">
 
-<!ENTITY zotero.__addonRef__.export.title "Export Knowledge">
+<!ENTITY zotero.__addonRef__.export.title "Export">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to file(MarkDown/HTML/RDF)">
 <!ENTITY zotero.__addonRef__.export.image.enable.label "Embed Images(MarkDown file only)">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
 
-<!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Knowledge for Zotero">
-<!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero User Guide">
+<!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">
+<!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes User Guide">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "Click Next to Continue.">
 <!ENTITY zotero.__addonRef__.wizard.open "Knowledge Workspace">
 <!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge Workspace">
@@ -29,7 +41,7 @@
 
 <!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Auto Setup">
 <!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection for main notes:">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a 'Knowledge for Zotero User Guide: Workflow' note">
+<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a 'Zotero Better Notes User Guide: Workflow' note">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

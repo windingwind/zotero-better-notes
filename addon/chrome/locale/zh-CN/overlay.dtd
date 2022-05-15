@@ -1,4 +1,16 @@
 <!ENTITY zotero.__addonRef__.workspace.title "Knowledge工作区">
+
+<!ENTITY zotero.__addonRef__.workspace.menu.new "创建新主笔记">
+<!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
+<!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">
+<!ENTITY zotero.__addonRef__.workspace.menu.unindent "提升标题层级">
+<!ENTITY zotero.__addonRef__.workspace.menu.treeview "大纲: 树视图">
+<!ENTITY zotero.__addonRef__.workspace.menu.mindmap "大纲: 思维导图">
+<!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "大纲: 气泡导图">
+<!ENTITY zotero.__addonRef__.workspace.menu.guide "打开用户指引">
+
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "设置为主笔记">
 
 <!ENTITY zotero.__addonRef__.export.title "导出笔记">
@@ -7,13 +19,13 @@
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
 
-<!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Knowledge for Zotero">
-<!ENTITY zotero.__addonRef__.wizard.page1.header "Knowledge for Zotero 用户指引">
+<!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
+<!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">
 <!ENTITY zotero.__addonRef__.wizard.page1.description "单击下一步以继续。">
 <!ENTITY zotero.__addonRef__.wizard.open "Knowledge工作区">
 <!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge工作区">
 <!ENTITY zotero.__addonRef__.wizard.page3.description "单击“我的文库”上方链接或笔记编辑器中的“主页”按钮，来打开或聚焦工作区。">
-<!ENTITY zotero.__addonRef__.wizard.layout "Knowledge 工作区布局">
+<!ENTITY zotero.__addonRef__.wizard.layout "Knowledge工作区布局">
 <!ENTITY zotero.__addonRef__.wizard.page4.header "大纲/主笔记/链接笔记预览">
 <!ENTITY zotero.__addonRef__.wizard.page4.description1 "用大纲修改/跳转主笔记的标题；">
 <!ENTITY zotero.__addonRef__.wizard.page4.description2 "在阅读时可以从其他笔记添加链接到主笔记。支持导出包含链接全文的MarkDown/HTML。">
@@ -29,7 +41,7 @@
 
 <!ENTITY zotero.__addonRef__.wizard.setup.enable.label "启用快速配置">
 <!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "创建新的分类用来存放主笔记：">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建 'Knowledge for Zotero 用户指引：工作流' 笔记">
+<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建 'Zotero Better Notes 用户指引：工作流' 笔记">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

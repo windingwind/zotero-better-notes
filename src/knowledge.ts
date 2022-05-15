@@ -12,7 +12,7 @@ class Knowledge extends AddonBase {
     this.currentNodeID = -1;
   }
 
-  getWorkspaceNote() {
+  getWorkspaceNote(): ZoteroItem {
     return Zotero.Items.get(
       Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
     );
@@ -353,7 +353,7 @@ class Knowledge extends AddonBase {
       true
     );
     this._Addon.views.showProgressWindow(
-      "Knowledge",
+      "Better Notes",
       "Link is added to workspace"
     );
   }
@@ -596,6 +596,7 @@ class Knowledge extends AddonBase {
     saveNote: boolean = false,
     saveCopy: boolean = false
   ) {
+    note = note || this.getWorkspaceNote();
     if (convertNoteLinks) {
       const noteID = await ZoteroPane_Local.newNote();
       const item = Zotero.Items.get(noteID);
@@ -619,7 +620,7 @@ class Knowledge extends AddonBase {
           [item],
           Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
         );
-        this._Addon.views.showProgressWindow("Knowledge", "Note Copied");
+        this._Addon.views.showProgressWindow("Better Notes", "Note Copied");
       }
       if (!saveNote) {
         if (saveCopy) {

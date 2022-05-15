@@ -179,7 +179,7 @@ class AddonEvents extends AddonBase {
         return;
       } else if (ids.length > 1) {
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           "Please select a note item."
         );
         return;
@@ -194,7 +194,7 @@ class AddonEvents extends AddonBase {
         );
       } else {
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           "Not a valid note item."
         );
       }
@@ -212,13 +212,13 @@ class AddonEvents extends AddonBase {
       const item = Zotero.Items.get(itemID);
       if (itemID === mainKnowledgeID) {
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           "Already a main Note."
         );
         return;
       } else if (!item.isNote()) {
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           "Not a valid note item."
         );
       } else {
@@ -236,7 +236,7 @@ class AddonEvents extends AddonBase {
         await this._Addon.knowledge.openWorkspaceWindow();
         await this._Addon.knowledge.setWorkspaceNote("main");
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           `Set main Note to: ${item.getNoteTitle()}`
         );
       }
@@ -407,10 +407,12 @@ class AddonEvents extends AddonBase {
           params: {id, lineIndex}
         }
       */
+      Zotero.debug(message.content.params);
       let editorInstance =
         await this._Addon.knowledge.getWorkspaceEditorInstance();
       // Set node id
       this._Addon.knowledge.currentNodeID = parseInt(message.content.params.id);
+      this._Addon.views.updateEditCommand();
       this._Addon.views.scrollToLine(
         editorInstance,
         // Scroll to 1 lines before the inserted line
@@ -541,6 +543,90 @@ class AddonEvents extends AddonBase {
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
         this._Addon.knowledge.currentLine = currentLineIndex;
       }
+    } else if (message.type === "addHeading") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const text = prompt(`Enter new heading to Insert:`);
+      this._Addon.knowledge.openWorkspaceWindow();
+      if (text.trim()) {
+        if (this._Addon.knowledge.currentNodeID < 0) {
+          // Add a new H1
+          this._Addon.knowledge.addSubLineToNote(
+            undefined,
+            `<h1>${text}</h1>`,
+            -1
+          );
+          return;
+        }
+        let node = this._Addon.knowledge.getNoteTreeNodeById(
+          undefined,
+          this._Addon.knowledge.currentNodeID
+        );
+        this._Addon.knowledge.addSubLineToNote(
+          undefined,
+          `<h${node.model.rank}>${text}</h${node.model.rank}>`,
+          node.model.endIndex
+        );
+      }
+    } else if (message.type === "indentHeading") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      if (this._Addon.knowledge.currentNodeID < 0) {
+        return;
+      }
+      let node = this._Addon.knowledge.getNoteTreeNodeById(
+        undefined,
+        this._Addon.knowledge.currentNodeID
+      );
+      if (node.model.rank === 7) {
+        return;
+      }
+      if (node.model.rank === 6) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "Cannot decrease a level 6 Heading."
+        );
+        return;
+      }
+      this._Addon.knowledge.changeHeadingLineInNote(
+        undefined,
+        1,
+        node.model.lineIndex
+      );
+    } else if (message.type === "unindentHeading") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      if (this._Addon.knowledge.currentNodeID < 0) {
+        return;
+      }
+      let node = this._Addon.knowledge.getNoteTreeNodeById(
+        undefined,
+        this._Addon.knowledge.currentNodeID
+      );
+      if (node.model.rank === 7) {
+        return;
+      }
+      if (node.model.rank === 1) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "Cannot raise a level 1 Heading."
+        );
+        return;
+      }
+      this._Addon.knowledge.changeHeadingLineInNote(
+        undefined,
+        -1,
+        node.model.lineIndex
+      );
     } else if (message.type === "export") {
       /*
         message.content = {
@@ -603,7 +689,7 @@ class AddonEvents extends AddonBase {
       }
       if (successCount === 0) {
         this._Addon.views.showProgressWindow(
-          "Knowledge",
+          "Better Notes",
           failCount
             ? "Error occurred on opening attachemnts."
             : "No attachment found.",

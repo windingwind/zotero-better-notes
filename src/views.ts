@@ -384,109 +384,9 @@ class AddonViews extends AddonBase {
     _window.addEventListener("message", (e) => this.messageHandler(e), false);
     this.currentOutline = OutlineType.treeView;
     _window.document
-      .getElementById("outline-selectknowledge")
-      .addEventListener("click", async (e) => {
-        this._Addon.events.onEditorEvent(
-          new EditorMessage("selectMainKnowledge", {})
-        );
-      });
-    _window.document
       .getElementById("outline-switchview")
       .addEventListener("click", async (e) => {
         this.switchView();
-      });
-    _window.document
-      .getElementById("outline-addafter")
-      .addEventListener("click", async (e) => {
-        let node = this._Addon.knowledge.getNoteTreeNodeById(
-          undefined,
-          this._Addon.knowledge.currentNodeID
-        );
-        if (node.model.rank === 7) {
-          this.showProgressWindow("Knowledge", "Please select a Heading.");
-          return;
-        }
-        const text = prompt("Enter new heading:");
-        this._Addon.knowledge.openWorkspaceWindow();
-        if (text.trim()) {
-          if (this._Addon.knowledge.currentNodeID < 0) {
-            // Add a new H1
-            this._Addon.knowledge.addSubLineToNote(
-              undefined,
-              `<h1>${text}</h1>`,
-              -1
-            );
-            return;
-          }
-          this._Addon.knowledge.addSubLineToNote(
-            undefined,
-            `<h${node.model.rank}>${text}</h${node.model.rank}>`,
-            node.model.endIndex
-          );
-        }
-      });
-    _window.document
-      .getElementById("outline-indent")
-      .addEventListener("click", async (e) => {
-        if (this._Addon.knowledge.currentNodeID < 0) {
-          this.showProgressWindow("Knowledge", "Please select a Heading.");
-          return;
-        }
-        let node = this._Addon.knowledge.getNoteTreeNodeById(
-          undefined,
-          this._Addon.knowledge.currentNodeID
-        );
-        if (node.model.rank === 7) {
-          this.showProgressWindow("Knowledge", "Please select a Heading.");
-          return;
-        }
-        if (node.model.rank === 6) {
-          this.showProgressWindow(
-            "Knowledge",
-            "Cannot decrease a level 6 Heading."
-          );
-          return;
-        }
-        this._Addon.knowledge.changeHeadingLineInNote(
-          undefined,
-          1,
-          node.model.lineIndex
-        );
-      });
-    _window.document
-      .getElementById("outline-unindent")
-      .addEventListener("click", async (e) => {
-        if (this._Addon.knowledge.currentNodeID < 0) {
-          this.showProgressWindow("Knowledge", "Please select a Heading.");
-          return;
-        }
-        let node = this._Addon.knowledge.getNoteTreeNodeById(
-          undefined,
-          this._Addon.knowledge.currentNodeID
-        );
-        if (node.model.rank === 7) {
-          this.showProgressWindow("Knowledge", "Please select a Heading.");
-          return;
-        }
-        if (node.model.rank === 1) {
-          this.showProgressWindow(
-            "Knowledge",
-            "Cannot raise a level 1 Heading."
-          );
-          return;
-        }
-        this._Addon.knowledge.changeHeadingLineInNote(
-          undefined,
-          -1,
-          node.model.lineIndex
-        );
-      });
-    _window.document
-      .getElementById("user-guide")
-      .addEventListener("click", async (e) => {
-        this._Addon.events.onEditorEvent(
-          new EditorMessage("openUserGuide", {})
-        );
       });
     _window.addEventListener("resize", (e) => this.resizeOutline(_window));
   }
@@ -548,6 +448,9 @@ class AddonViews extends AddonBase {
     mindmap.append(iframe);
     this.resizeOutline(_window);
     this.updateOutline();
+    // Clear stored node id
+    this._Addon.knowledge.currentNodeID = -1;
+    this.updateEditCommand();
   }
 
   async updateOutline() {
@@ -575,6 +478,41 @@ class AddonViews extends AddonBase {
       iframe.style.height = `${container.clientHeight - 60}px`;
       iframe.style.width = `${container.clientWidth - 10}px`;
     }
+  }
+
+  updateEditCommand() {
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug(`updateEditMenu, ${this._Addon.knowledge.currentNodeID}`);
+    if (this._Addon.knowledge.currentNodeID < 0) {
+      _window.document
+        .getElementById("cmd_indent")
+        .setAttribute("disabled", true);
+      _window.document
+        .getElementById("cmd_unindent")
+        .setAttribute("disabled", true);
+    } else {
+      _window.document.getElementById("cmd_indent").removeAttribute("disabled");
+      _window.document
+        .getElementById("cmd_unindent")
+        .removeAttribute("disabled");
+    }
+  }
+
+  updateViewMenu() {
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug(`updateViewMenu, ${this.currentOutline}`);
+    const treeview = _window.document.getElementById("menu_treeview");
+    this.currentOutline === OutlineType.treeView
+      ? treeview.setAttribute("checked", true)
+      : treeview.removeAttribute("checked");
+    const mindmap = _window.document.getElementById("menu_mindmap");
+    this.currentOutline === OutlineType.mindMap
+      ? mindmap.setAttribute("checked", true)
+      : mindmap.removeAttribute("checked");
+    const bubblemap = _window.document.getElementById("menu_bubblemap");
+    this.currentOutline === OutlineType.bubbleMap
+      ? bubblemap.setAttribute("checked", true)
+      : bubblemap.removeAttribute("checked");
   }
 
   showProgressWindow(
