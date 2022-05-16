@@ -251,7 +251,7 @@ class Knowledge extends AddonBase {
     this._Addon.views.scrollToLine(
       editorInstance,
       // Scroll to 6 lines before the inserted line
-      lineIndex - 5
+      lineIndex - 1
     );
     this._Addon.events.onEditorEvent(
       new EditorMessage("enterWorkspace", {

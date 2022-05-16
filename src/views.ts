@@ -318,9 +318,76 @@ class AddonViews extends AddonBase {
           );
         });
       });
+
+      let updateButton = _window.document.getElementById("update-note-link");
+      if (updateButton) {
+        updateButton.remove();
+      }
+      updateButton = _window.document.createElement("button");
+      updateButton.setAttribute("id", "update-note-link");
+      updateButton.setAttribute(
+        "title",
+        `Update Linked Note: ${note.getNoteTitle()}`
+      );
+      updateButton.innerHTML = `<svg t="1652685521153" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7063" width="16" height="16"><path d="M271.914667 837.418667C182.314667 756.522667 128 637.653333 128 508.714667 128 304.896 263.338667 129.834667 450.986667 85.333333L469.333333 170.026667c-150.016 35.584-258.304 175.658667-258.304 338.688 0 106.069333 45.866667 203.562667 121.258667 268.373333L426.666667 682.666667v256H170.666667l101.248-101.248zM727.082667 168.917333C831.530667 249.045333 896 377.088 896 517.077333c0 202.922667-135.338667 377.258667-322.986667 421.589334L554.666667 854.357333c150.016-35.456 258.304-174.933333 258.304-337.322666 0-117.12-56.405333-223.786667-146.901334-287.146667L554.666667 341.333333V85.333333h256l-83.584 83.584z" p-id="7064"></path></svg>`;
+      updateButton.addEventListener("click", async (e) => {
+        Zotero.debug("Update Linked Note");
+        const noteLines = this._Addon.knowledge.getLinesInNote();
+        let line = noteLines[this._Addon.knowledge.currentLine];
+        Zotero.debug(line);
+
+        let linkStart = line.search(/<a /g);
+        let linkEnd = line.search(/<\/a>/g) + 4;
+        let beforeLink = line.slice(0, linkStart);
+        let afterLink = line.slice(linkEnd);
+        let linkPart = line.slice(linkStart, linkEnd);
+        let link = this._Addon.knowledge.getLinkFromText(linkPart);
+        let currentNote: ZoteroItem;
+        Zotero.debug(link);
+        if (link) {
+          currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
+            .item;
+        }
+
+        while (
+          linkPart &&
+          (!link || !currentNote || currentNote.id !== note.id)
+        ) {
+          line = afterLink;
+          beforeLink = beforeLink + linkPart;
+          line = afterLink;
+
+          linkStart = line.search(/<a /g);
+          linkEnd = line.search(/<\/a>/g) + 4;
+          beforeLink = beforeLink + line.slice(0, linkStart);
+          afterLink = line.slice(linkEnd);
+          linkPart = line.slice(linkStart, linkEnd);
+          link = this._Addon.knowledge.getLinkFromText(linkPart);
+          if (link) {
+            currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
+              .item;
+          }
+          Zotero.debug("----");
+          Zotero.debug(link);
+          Zotero.debug(linkPart);
+        }
+        if (!linkPart) {
+          return;
+        }
+        beforeLink = beforeLink + linkPart.slice(0, linkPart.search(/>/) + 1);
+        afterLink = "</a>" + afterLink;
+        const newLine = `${beforeLink}${currentNote.getNoteTitle()}${afterLink}`;
+        Zotero.debug(newLine);
+        noteLines[this._Addon.knowledge.currentLine] = newLine;
+
+        this._Addon.knowledge.setLinesToNote(undefined, noteLines);
+        this._Addon.knowledge.scrollWithRefresh(
+          this._Addon.knowledge.currentLine
+        );
+      });
       _window.document
         .getElementsByClassName("link-popup")[0]
-        .appendChild(insertButton);
+        .append(insertButton, updateButton);
     }
   }
 
