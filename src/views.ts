@@ -311,6 +311,12 @@ class AddonViews extends AddonBase {
           newLines,
           this._Addon.knowledge.currentLine + 1
         );
+        await Zotero.DB.executeTransaction(async () => {
+          await Zotero.Notes.copyEmbeddedImages(
+            note,
+            this._Addon.knowledge.getWorkspaceNote()
+          );
+        });
       });
       _window.document
         .getElementsByClassName("link-popup")[0]

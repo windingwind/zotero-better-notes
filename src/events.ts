@@ -254,6 +254,13 @@ class AddonEvents extends AddonBase {
 
       message.content.editorInstance._knowledgeUIInitialized = false;
 
+      const noteItem = Zotero.Items.get(
+        message.content.editorInstance._item.id
+      );
+      if (!noteItem.isNote()) {
+        return;
+      }
+
       let isMainKnowledge =
         message.content.editorInstance._item.id === mainKnowledgeID;
 
