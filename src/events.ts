@@ -254,7 +254,7 @@ class AddonEvents extends AddonBase {
 
       message.content.editorInstance._knowledgeUIInitialized = false;
 
-      const noteItem = Zotero.Items.get(
+      const noteItem: ZoteroItem = Zotero.Items.get(
         message.content.editorInstance._item.id
       );
       if (!noteItem.isNote()) {
@@ -269,7 +269,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance,
         "knowledge-start",
         isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
-        isMainKnowledge ? "Edit the main Note in Workspace" : "Open Workspace",
+        isMainKnowledge ? "Edit the Main Note in Workspace" : "Open Workspace",
         "openWorkspace",
         "start"
       );
@@ -277,7 +277,7 @@ class AddonEvents extends AddonBase {
         message.content.editorInstance,
         "knowledge-addlink",
         "addToKnowledge",
-        "Add link of current note to the main note",
+        "Add Link of Current Note to Main Note",
         "addToKnowledge",
         "middle"
       );
@@ -309,6 +309,35 @@ class AddonEvents extends AddonBase {
           popup.remove();
         });
       });
+      let topItem = noteItem.parentItem;
+      while (topItem && !topItem.isRegularItem()) {
+        topItem = topItem.parentItem;
+      }
+      if (topItem) {
+        const addCitationButton: Element =
+          await this._Addon.views.addEditorButton(
+            message.content.editorInstance,
+            "knowledge-addcitation",
+            "addCitation",
+            "Insert Note's Parent Citation",
+            "addCitation",
+            "middle"
+          );
+        addCitationButton.addEventListener("click", async (e) => {
+          let format = Zotero.QuickCopy.getFormatFromURL(
+            Zotero.QuickCopy.lastActiveURL
+          );
+          format = Zotero.QuickCopy.unserializeSetting(format);
+          const cite = Zotero.QuickCopy.getContentFromItems(
+            [topItem],
+            format,
+            null,
+            0
+          );
+          this._Addon.knowledge.addLineToNote(noteItem, cite.html, 65535);
+        });
+      }
+
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-end",
@@ -594,7 +623,7 @@ class AddonEvents extends AddonBase {
       if (text.trim()) {
         if (this._Addon.knowledge.currentNodeID < 0) {
           // Add a new H1
-          this._Addon.knowledge.addSubLineToNote(
+          this._Addon.knowledge.addLineToNote(
             undefined,
             `<h1>${text}</h1>`,
             -1
@@ -605,7 +634,7 @@ class AddonEvents extends AddonBase {
           undefined,
           this._Addon.knowledge.currentNodeID
         );
-        this._Addon.knowledge.addSubLineToNote(
+        this._Addon.knowledge.addLineToNote(
           undefined,
           `<h${node.model.rank}>${text}</h${node.model.rank}>`,
           node.model.endIndex
@@ -809,8 +838,14 @@ class AddonEvents extends AddonBase {
         if (link) {
           const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;
           if (note && note.id) {
-            Zotero.debug(note);
-            ZoteroPane.openNoteWindow(note.id);
+            await this.onEditorEvent(
+              new EditorMessage("onNoteLink", {
+                params: {
+                  item: note,
+                  infoText: "OK",
+                },
+              })
+            );
             return;
           }
         }
@@ -830,18 +865,10 @@ class AddonEvents extends AddonBase {
         note.addTag(tag.tag, tag.type);
       }
       await note.saveTx();
-      let libraryID = note.libraryID;
-      let library = Zotero.Libraries.get(libraryID);
-      let groupID: string;
-      if (library.libraryType === "user") {
-        groupID = "u";
-      } else if (library.libraryType === "group") {
-        groupID = `${library.id}`;
-      }
-      let noteKey = note.key;
+
       annotationItem.annotationComment = `${
         annotationItem.annotationComment ? annotationItem.annotationComment : ""
-      }\nnote link: "zotero://note/${groupID}/${noteKey}/"`;
+      }\nnote link: "${this._Addon.knowledge.getNoteLink(note)}"`;
       await annotationItem.saveTx();
       ZoteroPane.openNoteWindow(note.id);
       let t = 0;

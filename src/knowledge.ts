@@ -261,7 +261,7 @@ class Knowledge extends AddonBase {
     );
   }
 
-  private addLineToNote(
+  private async addLineToNote(
     note: ZoteroItem,
     text: string,
     lineIndex: number,
@@ -272,6 +272,14 @@ class Knowledge extends AddonBase {
       return;
     }
     let noteLines = this.getLinesInNote(note);
+    if (lineIndex < 0) {
+      lineIndex =
+        this.getWorkspaceNote().id === note.id && this.currentLine >= 0
+          ? this.currentLine
+          : noteLines.length;
+    } else if (lineIndex >= noteLines.length) {
+      lineIndex = noteLines.length;
+    }
     Zotero.debug(
       `insert to ${lineIndex}, it used to be ${noteLines[lineIndex]}`
     );
@@ -287,6 +295,7 @@ class Knowledge extends AddonBase {
     }
     noteLines.splice(lineIndex, 0, text);
     this.setLinesToNote(note, noteLines);
+    await this.scrollWithRefresh(lineIndex);
   }
 
   async addLinesToNote(
@@ -300,47 +309,17 @@ class Knowledge extends AddonBase {
     }
     let noteLines = this.getLinesInNote(note);
     if (lineIndex < 0) {
-      lineIndex = 0;
+      lineIndex =
+        this.getWorkspaceNote().id === note.id && this.currentLine >= 0
+          ? this.currentLine
+          : noteLines.length;
+    } else if (lineIndex >= noteLines.length) {
+      lineIndex = noteLines.length;
     }
     this.setLinesToNote(
       note,
       noteLines.slice(0, lineIndex).concat(newLines, noteLines.slice(lineIndex))
     );
-    await this.scrollWithRefresh(lineIndex);
-  }
-
-  async addSubLineToNote(
-    note: ZoteroItem,
-    text: string,
-    lineIndex: number = -1,
-    newLine: boolean = false
-  ) {
-    if (lineIndex < 0) {
-      lineIndex =
-        this.currentLine >= 0
-          ? this.currentLine
-          : this.getLinesInNote(note).length;
-    }
-    // let parentNode = this.getLineParentInNote(note, lineIndex);
-    // if (!parentNode) {
-    //   this.addLineToNote(note, text, lineIndex);
-    //   return;
-    // }
-    // let nodes = this.getNoteTreeAsList(note);
-    // let i = 0;
-    // for (let node of nodes) {
-    //   if (node.model.lineIndex === parentNode.model.lineIndex) {
-    //     break;
-    //   }
-    //   i++;
-    // }
-    // // Get next header line index
-    // i++;
-    // if (i >= nodes.length) {
-    //   i = nodes.length - 1;
-    // }
-    // Add to next line
-    this.addLineToNote(note, text, lineIndex, newLine);
     await this.scrollWithRefresh(lineIndex);
   }
 
@@ -360,7 +339,7 @@ class Knowledge extends AddonBase {
     }
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
-    this.addSubLineToNote(
+    this.addLineToNote(
       targetNote,
       `<a href="${link}" rel="noopener noreferrer nofollow">${
         linkText ? linkText : `${link}`
