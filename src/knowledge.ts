@@ -358,20 +358,12 @@ class Knowledge extends AddonBase {
       this._Addon.views.showProgressWindow("Better Notes", "Not a note item");
       return;
     }
-    let libraryID = linkedNote.libraryID;
-    let library = Zotero.Libraries.get(libraryID);
-    let groupID: string;
-    if (library.libraryType === "user") {
-      groupID = "u";
-    } else if (library.libraryType === "group") {
-      groupID = `${library.id}`;
-    }
-    let noteKey = linkedNote.key;
-    let linkText = linkedNote.getNoteTitle().trim();
+    const link = this.getNoteLink(linkedNote);
+    const linkText = linkedNote.getNoteTitle().trim();
     this.addSubLineToNote(
       targetNote,
-      `<a href="zotero://note/${groupID}/${noteKey}/" rel="noopener noreferrer nofollow">${
-        linkText ? linkText : `zotero://note/${groupID}/${noteKey}/`
+      `<a href="${link}" rel="noopener noreferrer nofollow">${
+        linkText ? linkText : `${link}`
       }</a>`,
       lineIndex,
       true
@@ -380,6 +372,19 @@ class Knowledge extends AddonBase {
       "Better Notes",
       "Link is added to workspace"
     );
+  }
+
+  getNoteLink(note: ZoteroItem) {
+    let libraryID = note.libraryID;
+    let library = Zotero.Libraries.get(libraryID);
+    let groupID: string;
+    if (library.libraryType === "user") {
+      groupID = "u";
+    } else if (library.libraryType === "group") {
+      groupID = `${library.id}`;
+    }
+    let noteKey = note.key;
+    return `zotero://note/${groupID}/${noteKey}/`;
   }
 
   async modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {

@@ -2,6 +2,7 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.import "Import Notes...">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">

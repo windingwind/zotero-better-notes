@@ -2,6 +2,7 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "创建新主笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.import "导入笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">

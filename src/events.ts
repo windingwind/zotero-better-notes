@@ -667,6 +667,48 @@ class AddonEvents extends AddonBase {
         -1,
         node.model.lineIndex
       );
+    } else if (message.type === "import") {
+      /*
+        message.content = {}
+      */
+      const io = {
+        // Not working
+        singleSelection: true,
+        dataIn: null,
+        dataOut: null,
+        deferred: Zotero.Promise.defer(),
+      };
+
+      (window as unknown as XULWindow).openDialog(
+        "chrome://zotero/content/selectItemsDialog.xul",
+        "",
+        "chrome,dialog=no,centerscreen,resizable=yes",
+        io
+      );
+      await io.deferred.promise;
+
+      const ids = io.dataOut;
+      const notes = Zotero.Items.get(ids).filter((item: ZoteroItem) =>
+        item.isNote()
+      );
+      if (notes.length === 0) {
+        return;
+      }
+
+      const newLines = [];
+      newLines.push("<h1>Imported Notes</h1>");
+      newLines.push("<p> </p>");
+
+      for (const note of notes) {
+        const linkURL = this._Addon.knowledge.getNoteLink(note);
+        const linkText = note.getNoteTitle().trim();
+        newLines.push(
+          `<p><a href="${linkURL}">${linkText ? linkText : linkURL}</a></p>`
+        );
+        newLines.push("<p> </p>");
+      }
+      // End of line
+      await this._Addon.knowledge.addLinesToNote(undefined, newLines, 65535);
     } else if (message.type === "export") {
       /*
         message.content = {
