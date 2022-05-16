@@ -15,6 +15,7 @@
 
 <!ENTITY zotero.__addonRef__.export.title "Export">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to file(MarkDown/HTML/RDF)">
+<!ENTITY zotero.__addonRef__.export.link.enable.label "Embed Linked Notes">
 <!ENTITY zotero.__addonRef__.export.image.enable.label "Embed Images(MarkDown file only)">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">

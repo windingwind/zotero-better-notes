@@ -690,7 +690,7 @@ class AddonEvents extends AddonBase {
       const options = io.dataOut;
       await this._Addon.knowledge.exportNoteToFile(
         message.content.editorInstance._item,
-        true,
+        options.embedLink,
         options.embedImage,
         options.exportFile,
         options.exportNote,
