@@ -783,6 +783,10 @@ class AddonEvents extends AddonBase {
           `<div data-schema-version="8"><p>${annotationItem.annotationComment}</p>\n</div>`
         );
       }
+      const tags = annotationItem.getTags();
+      for (const tag of tags) {
+        note.addTag(tag.tag, tag.type);
+      }
       await note.saveTx();
       let libraryID = note.libraryID;
       let library = Zotero.Libraries.get(libraryID);
