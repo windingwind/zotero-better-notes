@@ -18,66 +18,46 @@ The knowledge workspace window contains an outline area(left side⬅️), the ma
 
 ![workspace](./image/README/workspace.png)
 
-Open workspace by clicking the 'Open Workspace' line above the 'My Library' line in Zotero main window. 
+Open workspace by clicking the 'Open Workspace' line above the 'My Library' line in Zotero main window.
 
 ![Open workspace](./image/README/openworkspace.png)
 
 Alternatively, open it with the '🏠home' button on the top-left of note editors.
 
 ![main page](./image/README/mainpage.png)
+
 ### 1.2 Main note
 
 This addon uses a Zotero note item as the main note. It will show up on the main area of the workspace window.
 
 All links will be added to the main note.
 
-Set current note as the main note:
+Set a note as the main note in the right-click popup menu.
 
-* Select the current note
-
-* Use right mouse button to set it as the main note
-
-![workspace-usage](./image/README/workspace-usage.png)
-
-### 1.3 Menu
+### 1.3 Workspace Menu
 
 **File menu**:
 
-* Create a new main notes [shortcut key Ctrl N]
-
-* Open the main note [shortcut key Ctrl O]
-
-* Import notes [shortcut key Ctrl I]
-
-* Export notes [shortcut key Ctrl E]
-
-* Close [shortcut key CTRL W]
-
+- Create new main note(Ctrl/Cmd+N)
+- Open main note(Ctrl/Cmd+O)
+- Import notes(Ctrl/Cmd+I)
+- Export notes(Ctrl/Cmd+E)
+- Close workspace window(Ctrl/Cmd+W)
 
 **Edit menu**:
 
-* Insert the title
-
-* Reduce the title level
-
-* Improve the title level
+- Insert heading
+- Decrease selected heading level(Tab)
+- Increase selected heading level(Shift+Tab)
 
 **View menu**:
 
-* Tree view
-
-* mind Mapping
-
-* Bubble map
-
-
-You can also click the icon below to switch view :
-
-![changeview](./image/README/changeview.png)
+- Outline Views
 
 **Help menu**:
 
-* Open the user guidance
+- Open user guide
+
 ## 2 Gather Ideas to Main Note
 
 ### 2.1 From Note
@@ -86,7 +66,7 @@ Select a note outside the workspace window(in Zotero items view or PDF viewer), 
 
 Click it, the current note link will be inserted into the main note's cursor position;
 
-Select a heading, the note's link will be inserted into the end of this heading.
+Select a heading, and the note's link will be inserted into the end of this heading.
 
 ![insert-link-from-note](./image/README/from-note.png)
 
@@ -94,29 +74,28 @@ Select a heading, the note's link will be inserted into the end of this heading.
 >
 > Open a PDF and open/create a note(in the right side bar of PDF viewer). Add a link below.
 
-
 ### 2.2 From Annotation (including highlight and picture)
 
 You can find a button with the addon's icon on every annotation(in the left sidebar of PDF viewer).
 
-
 ![insert-link-from-annotation](./image/README/from-annotation.png)
 
-Click it, and a new note with this annotation will be created under the PDF item, and the tag will be shown in the annotation. You can also add the link to the main note in the note editor.
-
-![noteunderitem](./image/README/noteunderitem.png)
-
+Click it, and a new note containing this annotation will be created under the PDF item. Annotation tags are copied to the new note.  
+You can then add its link to the main note in the note editor.
 
 > **💡 Try it now!**
 >
-> Open a PDF and open/create an annotation(in the left sidebar of PDF viewer). 
+> Open a PDF and open/create an annotation(in the left sidebar of PDF viewer).
 
-### 2.3 Import notes from the menu area
+### 2.3 Import Existing Notes
 
-Support to import the notes into the main notes in batches from the existing notes.
+You can import notes into the main note.
 
-* File menu >> Import notes
-* or shortcut key cmd/ctrl+I
+- In workspace window, File -> Import Notes;
+- Select notes and confirm.
+
+Notes' links will be appended to the end of the main note.
+
 ## 3 Check Linked Notes in Workspace Window
 
 ### 3.1 View Linked Notes
@@ -125,7 +104,7 @@ Suppose you have added a lot of links to the main note. Now, it's time to view w
 
 Go back to the workspace window.
 
-Click links with Ctrl, the linked note will show up in the preview area(right side➡️).
+Open a note link, the linked note will show up in the preview area(right side➡️).
 
 ![preview-link](./image/README/preview-note.png)
 
@@ -143,25 +122,36 @@ Click the '📄PDF' button on the top-left of the preview area.
 >
 > Open a linked note's PDF.
 
-### 3.3 Inserts a reference format for the parent entry of the current note
+### 3.3 Insert Citation
 
 Click the "Insert Citation" button in the middle of the preview area.
 
 ![insertCitation](./image/README/insertCitation.png)
 
-If you can not quickly insert the citation, you need to set the citation style in the option settings, instead of export format!
+Currently, the quick copy format must be a citation format, otherwise, this function will not work. See Edit->Preferences->Export in Zotero main window.
 
-![citationstyle](./image/README/citationstyle.png)
+### 3.4 Import Linked Note
 
-### 3.4 Insert the current note to the main note and update in real time
-
-Click the note link, there will be four functions.
+Import the selected linked note's context to the main note by clicking the 'import note' button in the link popup.
 
 ![importnoteandupdate](./image/README/importnoteandupdate.png)
 
-After insertion:
+Example:
 
 ![insertnote](./image/README/insertnote.png)
+
+> **💡 Try it now!**
+>
+> Import one linked note.
+
+### 3.5 Update Note Link Text
+
+Update the link text in main note by clicking the 'update link text' button  in the link popup.
+
+> **💡 Try it now!**
+>
+> Modify the first line of a linked note in the preview area. Then update its link text in the main note.
+
 ## 4 Outline Mode
 
 Switch the outline mode with the '📊mode' button on the bottom of the outline area.
@@ -174,7 +164,7 @@ Switch the outline mode with the '📊mode' button on the bottom of the outline 
 
 ## 5 Export
 
-Click the '⬆️export' button on the top-right of the main note area. Choose a format to export, e.g. MarkDown.
+Click the '⬆️export' button on the top-right of the main note area. Choose a format to export, i.e. MarkDown.
 
 ![export](./image/README/export.png)
 
@@ -190,7 +180,7 @@ After the export, you may want to start a new job with a new empty main note.
 
 Create a note and right-click to set it as the main note, or just create a new main note.
 
-Switch between different main notes by **Open the main note** under the file menu or **Ctrl O**.
+Open different main note in workspace window->File->Open Main Note.
 
 > **✨ Hint**
 >
