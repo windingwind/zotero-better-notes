@@ -52,8 +52,7 @@ Set current note as the main note:
 * Export notes [shortcut key Ctrl E]
 
 * Close [shortcut key CTRL W]
-* 
-![filemenu](./image/README/filemenu.png)
+
 
 **Edit menu**:
 
@@ -71,8 +70,6 @@ Set current note as the main note:
 
 * Bubble map
 
-
-![viewmenu](./image/README/viewmenu.png)
 
 You can also click the icon below to switch view :
 
@@ -109,7 +106,6 @@ Click it, and a new note with this annotation will be created under the PDF item
 
 ![noteunderitem](./image/README/noteunderitem.png)
 
-In addition, you can also click the translation to translate the notes.
 
 > **💡 Try it now!**
 >
@@ -170,7 +166,7 @@ After insertion:
 
 Switch the outline mode with the '📊mode' button on the bottom of the outline area.
 
-![outline](./image/README/outline-mode.png)
+![outline](./image/README/outline.png)
 
 > **💡 Try it now!**
 >
@@ -194,7 +190,7 @@ After the export, you may want to start a new job with a new empty main note.
 
 Create a note and right-click to set it as the main note, or just create a new main note.
 
-Switch between different main notes with the '📂folder' button on the bottom of the outline area.
+Switch between different main notes by **Open the main note** under the file menu or **Ctrl O**.
 
 > **✨ Hint**
 >
