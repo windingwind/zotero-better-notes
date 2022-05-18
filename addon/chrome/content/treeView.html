@@ -275,7 +275,8 @@
               lineIndex: node.model.lineIndex,
               endIndex: node.model.endIndex,
               isDirectory: node.children.length > 0,
-              expanded: true,
+              expanded:
+                node.children.filter((n) => n.model.rank < 7).length !== 0,
               parentId:
                 node.model.rank > 1 ? String(node.parent.model.id) : undefined,
             });
