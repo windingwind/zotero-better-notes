@@ -334,7 +334,7 @@ class AddonEvents extends AddonBase {
             null,
             0
           );
-          this._Addon.knowledge.addLineToNote(noteItem, cite.html, 65535);
+          this._Addon.knowledge.addLineToNote(noteItem, cite.html, -1);
         });
       }
 
@@ -696,7 +696,7 @@ class AddonEvents extends AddonBase {
         -1,
         node.model.lineIndex
       );
-    } else if (message.type === "import") {
+    } else if (message.type === "insertNotes") {
       /*
         message.content = {}
       */
@@ -736,8 +736,157 @@ class AddonEvents extends AddonBase {
         );
         newLines.push("<p> </p>");
       }
+      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+    } else if (message.type === "insertTextUsingTemplate") {
+      /*
+        message.content = {
+          params: {templateName}
+        }
+      */
+      const newLines = [];
+
+      const templateText = this._Addon.template.getTemplateByName(
+        message.content.params.templateName
+      ).text;
+
+      let _newLine: string = "";
+      try {
+        eval("_newLine = `" + templateText + "`");
+      } catch (e) {
+        alert(e);
+        return;
+      }
+      newLines.push(_newLine);
+      newLines.push("<p> </p>");
       // End of line
-      await this._Addon.knowledge.addLinesToNote(undefined, newLines, 65535);
+      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+    } else if (message.type === "insertItemUsingTemplate") {
+      /*
+        message.content = {
+          params: {templateName}
+        }
+      */
+      const io = {
+        // Not working
+        singleSelection: true,
+        dataIn: null,
+        dataOut: null,
+        deferred: Zotero.Promise.defer(),
+      };
+
+      (window as unknown as XULWindow).openDialog(
+        "chrome://zotero/content/selectItemsDialog.xul",
+        "",
+        "chrome,dialog=no,centerscreen,resizable=yes",
+        io
+      );
+      await io.deferred.promise;
+
+      const ids = io.dataOut;
+      const items = Zotero.Items.get(ids).filter((item: ZoteroItem) =>
+        item.isRegularItem()
+      );
+      if (items.length === 0) {
+        return;
+      }
+
+      const newLines = [];
+      newLines.push("<h1>Imported Items</h1>");
+      newLines.push("<p> </p>");
+
+      const templateText = this._Addon.template.getTemplateByName(
+        message.content.params.templateName
+      ).text;
+
+      for (const topItem of items) {
+        /*
+            Available variables:
+            topItem
+          */
+
+        let _newLine: string = "";
+        try {
+          eval("_newLine = `" + templateText + "`");
+        } catch (e) {
+          alert(e);
+          continue;
+        }
+        newLines.push(_newLine);
+        newLines.push("<p> </p>");
+      }
+      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+    } else if (message.type === "insertNoteUsingTemplate") {
+      /*
+        message.content = {
+          params: {templateName}
+        }
+      */
+      const io = {
+        // Not working
+        singleSelection: true,
+        dataIn: null,
+        dataOut: null,
+        deferred: Zotero.Promise.defer(),
+      };
+
+      (window as unknown as XULWindow).openDialog(
+        "chrome://zotero/content/selectItemsDialog.xul",
+        "",
+        "chrome,dialog=no,centerscreen,resizable=yes",
+        io
+      );
+      await io.deferred.promise;
+
+      const ids = io.dataOut;
+      const notes = Zotero.Items.get(ids).filter((item: ZoteroItem) =>
+        item.isNote()
+      );
+      if (notes.length === 0) {
+        return;
+      }
+
+      const newLines = [];
+      newLines.push("<h1>Imported Notes</h1>");
+      newLines.push("<p> </p>");
+
+      const templateText = this._Addon.template.getTemplateByName(
+        message.content.params.templateName
+      ).text;
+
+      for (const noteItem of notes) {
+        /*
+          Available variables:
+          noteItem, topItem, link
+        */
+        let topItem = noteItem.parentItem;
+        while (topItem && !topItem.isRegularItem()) {
+          topItem = topItem.parentItem;
+        }
+        const linkURL = this._Addon.knowledge.getNoteLink(noteItem);
+        const linkText = noteItem.getNoteTitle().trim();
+        const link = `<p><a href="${linkURL}">${
+          linkText ? linkText : linkURL
+        }</a></p>`;
+        let _newLine: string = "";
+        try {
+          eval("_newLine = `" + templateText + "`");
+        } catch (e) {
+          alert(e);
+          continue;
+        }
+        newLines.push(_newLine);
+        newLines.push("<p> </p>");
+      }
+      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+    } else if (message.type === "editTemplate") {
+      /*
+        message.content = {}
+      */
+      window.open(
+        "chrome://Knowledge4Zotero/content/template.xul",
+        "_blank",
+        "chrome,extrachrome,centerscreen,width=800,height=400,resizable=yes"
+      );
     } else if (message.type === "export") {
       /*
         message.content = {

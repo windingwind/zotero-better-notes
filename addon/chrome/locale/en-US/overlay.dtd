@@ -2,8 +2,12 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
-<!ENTITY zotero.__addonRef__.workspace.menu.import "Import Notes...">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "Insert Notes...">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Template">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "Insert Notes Using Template">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "Insert Items Using Template">
+<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "Edit Templates...">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">
@@ -44,6 +48,14 @@
 <!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Auto Setup">
 <!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection for main notes:">
 <!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a 'Zotero Better Notes User Guide: Workflow' note">
+
+<!ENTITY zotero.__addonRef__.template.title "Template Editor">
+<!ENTITY zotero.__addonRef__.template.header.label "Template Name">
+<!ENTITY zotero.__addonRef__.template.list.label "Template List">
+<!ENTITY zotero.__addonRef__.template.create.label "Create">
+<!ENTITY zotero.__addonRef__.template.import.label "Create from Note">
+<!ENTITY zotero.__addonRef__.template.save.label "Save">
+<!ENTITY zotero.__addonRef__.template.delete.label "Delete">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

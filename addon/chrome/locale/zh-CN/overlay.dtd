@@ -2,8 +2,12 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "创建新主笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
-<!ENTITY zotero.__addonRef__.workspace.menu.import "导入笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "使用模板插入多条笔记">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "使用模板插入多个条目">
+<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "编辑笔记模板...">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "提升标题层级">
@@ -44,6 +48,14 @@
 <!ENTITY zotero.__addonRef__.wizard.setup.enable.label "启用快速配置">
 <!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "创建新的分类用来存放主笔记：">
 <!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建 'Zotero Better Notes 用户指引：工作流' 笔记">
+
+<!ENTITY zotero.__addonRef__.template.title "模板编辑器">
+<!ENTITY zotero.__addonRef__.template.header.label "模板名称">
+<!ENTITY zotero.__addonRef__.template.list.label "模板列表">
+<!ENTITY zotero.__addonRef__.template.create.label "新建">
+<!ENTITY zotero.__addonRef__.template.import.label "从笔记新建...">
+<!ENTITY zotero.__addonRef__.template.save.label "保存">
+<!ENTITY zotero.__addonRef__.template.delete.label "删除">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

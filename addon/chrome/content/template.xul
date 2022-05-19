@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/standalone.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+
+<!DOCTYPE window [
+    <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+    %globalDTD;
+    <!ENTITY % standaloneDTD SYSTEM "chrome://zotero/locale/standalone.dtd">
+    %standaloneDTD;
+    <!ENTITY % zoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %zoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
+
+<window id="zotero-knowledge-template-editor" onload="Zotero.Knowledge4Zotero.template.initTemplates(window);" orient="vertical" width="600" height="350" title="&zotero.__addonRef__.template.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeTemplateEditor" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+    <script src="chrome://zotero/content/include.js" />
+
+    <keyset>
+        <key id="key_save" key="S" modifiers="accel" command="cmd_save" />
+        <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
+    </keyset>
+    <command id="cmd_save" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();" />
+    <command id="cmd_close" oncommand="window.close();" />
+
+    <hbox flex="1">
+        <vbox id="template-container" flex="1" minwidth="200px">
+            <listbox id="template-list" flex="1" seltype="single" onselect="Zotero.Knowledge4Zotero.template.updateEditorView();">
+                <listhead>
+                    <listheader id="name" label="&zotero.__addonRef__.template.list.label;" flex="1" />
+                </listhead>
+                <listcols>
+                    <listcol flex="1" />
+                </listcols>
+            </listbox>
+        </vbox>
+        <splitter></splitter>
+        <rows>
+            <row style="margin: 10px 0 10px 0;">
+                <label value="&zotero.__addonRef__.template.header.label;"></label>
+                <textbox id="editor-name" disabled="true"></textbox>
+            </row>
+            <row flex="1">
+                <textbox id="editor-textbox" flex="1" multiline="true" disabled="true"></textbox>
+            </row>
+            <row style="margin: 10px 0 10px 0;">
+                <button id="create-template" label="&zotero.__addonRef__.template.create.label;" oncommand="Zotero.Knowledge4Zotero.template.createTemplate();"></button>
+                <button id="import-template" label="&zotero.__addonRef__.template.import.label;" oncommand="Zotero.Knowledge4Zotero.template.importNoteTemplate();"></button>
+                <button id="save-template" label="&zotero.__addonRef__.template.save.label;" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();"></button>
+                <button id="delete-template" label="&zotero.__addonRef__.template.delete.label;" oncommand="Zotero.Knowledge4Zotero.template.deleteSelectedTemplate();"></button>
+                <!-- <button id="help" label="&helpMenu.label;"></button> -->
+            </row>
+        </rows>
+    </hbox>
+
+</window>

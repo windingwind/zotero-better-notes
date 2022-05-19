@@ -11,7 +11,7 @@
     %knowledgeDTD;
 ]>
 
-<dialog id="zotero-select-items-dialog" windowtype="knowledge-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.export.doAccept();" onload="Zotero.Knowledge4Zotero.export.doLoad(window);" onunload="Zotero.Knowledge4Zotero.export.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
+<dialog id="betternotes-export-dialog" windowtype="betternotes-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.export.doAccept();" onload="Zotero.Knowledge4Zotero.export.doLoad(window);" onunload="Zotero.Knowledge4Zotero.export.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
     <script src="chrome://zotero/content/include.js" />
     <box flex="1">
         <rows flex="1">

@@ -661,7 +661,7 @@ class Knowledge extends AddonBase {
           sourceNote.libraryID,
           attachmentKey
         );
-        const attachmentURL = await attachmentItem.getFilePathAsync();
+        let attachmentURL = await attachmentItem.getFilePathAsync();
         if (attachmentURL) {
           Zotero.debug("convert image");
           // const imageData = await editorInstance._getDataURL(
@@ -670,6 +670,9 @@ class Knowledge extends AddonBase {
           Zotero.debug(line);
           Zotero.debug(lineStart);
           Zotero.debug(lineEnd);
+          if (Zotero.isMac) {
+            attachmentURL = "file://" + attachmentURL;
+          }
           newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
           newLines.push(`${lineStart}${lineEnd}`);
           return true;

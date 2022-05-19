@@ -621,6 +621,43 @@ class AddonViews extends AddonBase {
       : bubblemap.removeAttribute("checked");
   }
 
+  updateTemplateMenu(type: "Note" | "Item" | "Text") {
+    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
+    let templates = this._Addon.template
+      .getTemplates()
+      .filter((e) => e.name.indexOf(type) !== -1);
+    const popup = _window.document.getElementById(
+      `menu_insert${type}TemplatePopup`
+    );
+    popup.innerHTML = "";
+    if (templates.length === 0) {
+      templates = [
+        {
+          name: "No Template",
+          text: "",
+          disabled: true,
+        },
+      ];
+    }
+    for (const template of templates) {
+      const menuitem = _window.document.createElement("menuitem");
+      menuitem.setAttribute("id", template.name);
+      menuitem.setAttribute("label", template.name);
+      menuitem.addEventListener("click", (e) => {
+        this._Addon.events.onEditorEvent(
+          new EditorMessage(`insert${type}UsingTemplate`, {
+            params: { templateName: template.name },
+          })
+        );
+      });
+      if (template.disabled) {
+        menuitem.setAttribute("disabled", true);
+      }
+      popup.append(menuitem);
+    }
+  }
+
   showProgressWindow(
     header: string,
     context: string,

@@ -5,7 +5,6 @@
 <?xml-stylesheet href="chrome://zotero/skin/standalone.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
 <?xml-stylesheet href="chrome://__addonRef__/skin/workspace.css" type="text/css"?>
-<?xml-stylesheet href="chrome://__addonRef__/content/lib/css/dx.light.css" type="text/css"?>
 <?xul-overlay href="chrome://zotero/content/standalone/editMenuOverlay.xul"?>
 
 <!DOCTYPE window [
@@ -21,7 +20,7 @@
     %knowledgeDTD;
 ]>
 
-<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height sizemode" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
 
     <script src="chrome://zotero/content/include.js" />
     <script src="chrome://zotero/content/note.js" />
@@ -29,17 +28,18 @@
     <keyset>
         <key id="key_new" key="N" modifiers="accel" command="cmd_new" />
         <key id="key_open" key="O" modifiers="accel" command="cmd_open" />
-        <key id="key_import" key="I" modifiers="accel" command="cmd_import" />
         <key id="key_export" key="E" modifiers="accel" command="cmd_export" />
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
+        <key id="key_insertNotes" key="I" modifiers="accel" command="cmd_insertNotes" />
         <key id="key_indent" keycode="VK_TAB" command="cmd_indent" />
         <key id="key_unindent" keycode="VK_TAB" modifiers="shift" command="cmd_unindent" />
     </keyset>
     <command id="cmd_new" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'createWorkspace'});" />
     <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainKnowledge'});" />
-    <command id="cmd_import" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'import'});" />
     <command id="cmd_export" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
     <command id="cmd_close" oncommand="window.close();" />
+    <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" />
+    <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
     <command id="cmd_addheading" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
     <command id="cmd_indent" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
     <command id="cmd_unindent" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'unindentHeading'});" />
@@ -57,7 +57,6 @@
                         <menupopup id="menu_FilePopup">
                             <menuitem id="menu_new" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new" accesskey="N" command="cmd_new" />
                             <menuitem id="menu_open" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open" accesskey="O" command="cmd_open" />
-                            <menuitem id="menu_import" label="&zotero.__addonRef__.workspace.menu.import;" key="key_import" accesskey="I" command="cmd_import" />
                             <menuitem id="menu_export" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export" accesskey="E" command="cmd_export" />
                             <menuitem id="menu_close" label="&closeCmd.label;" key="key_close" accesskey="&closeCmd.accesskey;" command="cmd_close" />
                         </menupopup>
@@ -65,6 +64,18 @@
 
                     <menu id="menu_edit" label="&editMenu.label;" accesskey="&editMenu.accesskey;">
                         <menupopup id="menu_EditPopup">
+                            <menuitem id="menu_insertNotes" label="&zotero.__addonRef__.workspace.menu.insertNotes;" key="key_insertNotes" accesskey="I" command="cmd_insertNotes" />
+                            <menu id="menu_insertTextTemplate" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
+                                <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
+                            </menu>
+                            <menu id="menu_insertNoteTemplate" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
+                                <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
+                            </menu>
+                            <menu id="menu_insertItemTemplate" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
+                                <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
+                            </menu>
+                            <menuitem id="menu_editTemplate" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate" />
+                            <menuseparator />
                             <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
                             <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent" key="key_indent" />
                             <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent" key="key_unindent" />

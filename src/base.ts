@@ -24,4 +24,10 @@ enum OutlineType {
   bubbleMap,
 }
 
-export { AddonBase, EditorMessage, OutlineType };
+class NoteTemplate {
+  name: string;
+  text: string;
+  disabled: boolean;
+}
+
+export { AddonBase, EditorMessage, OutlineType, NoteTemplate };

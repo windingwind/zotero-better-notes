@@ -59,6 +59,10 @@ declare namespace XUL {
     public type?: string;
     public tooltiptext?: string;
   }
+
+  class ListItem extends XUL.Element {
+    public selectedItem?: XUL.Element;
+  }
 }
 
 declare class ClassList {
