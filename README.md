@@ -16,6 +16,10 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 - Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
 
+## Test Features
+
+- Note template(v0.3.0), doc & discussion [here](https://github.com/windingwind/zotero-better-notes/issues/23)
+
 # Quick Start Guide
 
 ## Install
