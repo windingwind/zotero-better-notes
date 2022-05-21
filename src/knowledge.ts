@@ -609,25 +609,32 @@ class Knowledge extends AddonBase {
     }
     note = note || this.getWorkspaceNote();
     const noteID = await ZoteroPane_Local.newNote();
-    const item = Zotero.Items.get(noteID);
+    const newNote = Zotero.Items.get(noteID);
     const rootNoteIds = [note.id];
 
-    const newLines = await this.convertNoteLines(
+    const convertResult = await this.convertNoteLines(
       note,
       rootNoteIds,
       convertNoteLinks,
       convertNoteImages
     );
 
-    this.setLinesToNote(item, newLines);
+    this.setLinesToNote(newNote, convertResult.lines);
+    Zotero.debug(convertResult.subNotes);
+
+    await Zotero.DB.executeTransaction(async () => {
+      for (const subNote of convertResult.subNotes) {
+        await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
+      }
+    });
     if (saveFile) {
       const exporter = new Zotero_File_Exporter();
-      exporter.items = [item];
+      exporter.items = [newNote];
       await exporter.save();
     }
     if (saveCopy) {
       Zotero_File_Interface.exportItemsToClipboard(
-        [item],
+        [newNote],
         Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
       );
       this._Addon.views.showProgressWindow("Better Notes", "Note Copied");
@@ -637,7 +644,9 @@ class Knowledge extends AddonBase {
         // Wait copy finish
         await Zotero.Promise.delay(500);
       }
-      await Zotero.Items.erase(item.id);
+      await Zotero.Items.erase(newNote.id);
+    } else {
+      ZoteroPane.openNoteWindow(newNote.id);
     }
   }
 
@@ -687,9 +696,10 @@ class Knowledge extends AddonBase {
     rootNoteIds: number[],
     convertNoteLinks: boolean = true,
     convertNoteImages: boolean = true
-  ) {
+  ): Promise<{ lines: string[]; subNotes: ZoteroItem[] }> {
     Zotero.debug(`convert note ${currentNote.id}`);
 
+    let subNotes = [];
     const [..._rootNoteIds] = rootNoteIds;
     _rootNoteIds.push(currentNote.id);
     let newLines = [];
@@ -718,15 +728,16 @@ class Knowledge extends AddonBase {
             Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
             newLines.push("<blockquote>");
             newLines.push(`<p><strong>Linked Note:</strong></p>`);
-            newLines = newLines.concat(
-              await this.convertNoteLines(
-                subNote,
-                _rootNoteIds,
-                convertNoteLinks,
-                convertNoteImages
-              )
+            const convertResult = await this.convertNoteLines(
+              subNote,
+              _rootNoteIds,
+              convertNoteLinks,
+              convertNoteImages
             );
+            newLines = newLines.concat(convertResult.lines);
             newLines.push("</blockquote>");
+            subNotes.push(subNote);
+            subNotes = subNotes.concat(convertResult.subNotes);
           }
           noteLines[i] = noteLines[i].substring(
             noteLines[i].search(/zotero:\/\/note\//g)
@@ -738,7 +749,8 @@ class Knowledge extends AddonBase {
         }
       }
     }
-    return newLines;
+    Zotero.debug(subNotes);
+    return { lines: newLines, subNotes: subNotes };
   }
 
   getLinkFromText(text: string) {

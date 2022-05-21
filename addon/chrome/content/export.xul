@@ -36,6 +36,9 @@
                 <checkbox id="__addonRef__-export-enablecopy" checked="false" />
                 <label value="&zotero.__addonRef__.export.copy.enable.label;" />
             </row>
+            <row>
+                <html:div style="position: fixed">&zotero.__addonRef__.export.help.label;</html:div>
+            </row>
         </rows>
     </box>
 </dialog>

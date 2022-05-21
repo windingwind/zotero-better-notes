@@ -24,6 +24,7 @@
 <!ENTITY zotero.__addonRef__.export.image.enable.label "Embed Images(MarkDown file only)">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
+<!ENTITY zotero.__addonRef__.export.help.label "To export to MS Word/OneNote with sub-note images, use[Embed Linked Notes + Export to new note]. Select all and copy-paste the new note context. After that, you may delete the new note.">
 
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes User Guide">

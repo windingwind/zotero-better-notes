@@ -24,6 +24,7 @@
 <!ENTITY zotero.__addonRef__.export.image.enable.label "嵌入图片(只在MarkDown文件导出时勾选)">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
+<!ENTITY zotero.__addonRef__.export.help.label "要导出到MS Word/OneNote并带有子笔记图片, 使用[嵌入链接的子笔记 + 导出到新笔记]。在新笔记中全选(ctrl/cmd+A)并复制内容，粘贴完毕后可删除该新笔记。">
 
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">

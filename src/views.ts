@@ -302,9 +302,13 @@ class AddonViews extends AddonBase {
         let newLines = [];
         newLines.push("<blockquote>");
         newLines.push(`<p><strong>Linked Note:</strong></p>`);
-        newLines = newLines.concat(
-          await this._Addon.knowledge.convertNoteLines(note, [], true, false)
+        const convertResult = await this._Addon.knowledge.convertNoteLines(
+          note,
+          [],
+          true,
+          false
         );
+        newLines = newLines.concat(convertResult.lines);
         newLines.push("</blockquote>");
         Zotero.debug(newLines);
         await this._Addon.knowledge.addLinesToNote(
