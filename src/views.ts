@@ -648,13 +648,17 @@ class AddonViews extends AddonBase {
       const menuitem = _window.document.createElement("menuitem");
       menuitem.setAttribute("id", template.name);
       menuitem.setAttribute("label", template.name);
-      menuitem.addEventListener("click", (e) => {
-        this._Addon.events.onEditorEvent(
-          new EditorMessage(`insert${type}UsingTemplate`, {
-            params: { templateName: template.name },
-          })
-        );
-      });
+      menuitem.setAttribute(
+        "oncommand",
+        `
+        Zotero.Knowledge4Zotero.events.onEditorEvent({
+          type: "insert${type}UsingTemplate",
+          content: {
+            params: { templateName: "${template.name}" },
+          },
+        });`
+      );
+
       if (template.disabled) {
         menuitem.setAttribute("disabled", true);
       }
