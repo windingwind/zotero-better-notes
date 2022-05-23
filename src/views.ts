@@ -124,7 +124,10 @@ class AddonViews extends AddonBase {
       );
       button.setAttribute("id", buttonParam.id);
       button.setAttribute("eventType", buttonParam.eventType);
-      button.innerHTML = buttonParam.text;
+      button.innerHTML =
+        buttonParam.text.length > 30
+          ? `${buttonParam.text.slice(0, 30)}...`
+          : buttonParam.text;
       popup.append(button);
       const message = new EditorMessage("", {
         itemID: editorInstances._item.id,

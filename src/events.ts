@@ -751,7 +751,7 @@ class AddonEvents extends AddonBase {
 
       let _newLine: string = "";
       try {
-        eval("_newLine = `" + templateText + "`");
+        _newLine = new Function("return `" + templateText + "`")();
       } catch (e) {
         alert(e);
         return;
@@ -815,7 +815,10 @@ class AddonEvents extends AddonBase {
 
         let _newLine: string = "";
         try {
-          eval("_newLine = `" + templateText + "`");
+          _newLine = new Function(
+            "topItem, itemNotes, copyNoteImage",
+            "return `" + templateText + "`"
+          )(topItem, itemNotes, copyNoteImage);
         } catch (e) {
           alert(e);
           continue;
@@ -883,7 +886,10 @@ class AddonEvents extends AddonBase {
         }</a></p>`;
         let _newLine: string = "";
         try {
-          eval("_newLine = `" + templateText + "`");
+          _newLine = new Function(
+            "noteItem, topItem, link",
+            "return `" + templateText + "`"
+          )(noteItem, topItem, link);
         } catch (e) {
           alert(e);
           continue;
