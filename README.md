@@ -10,8 +10,8 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 
 ## Features
 
-- `LaTex` view supported(v0.4.0). Click the `Tex` button in the toolbar or `Ctrl/⌘+'/'` to switch between editor view & LaTex view!;
-![LaTex View](./image/README/LaTex.gif)
+- `LaTex` view supported(v0.4.0). Click the `Tex` button in the toolbar or `Ctrl/⌘+'/'` to switch between editor view & LaTex view!
+<img src="./image/README/LaTex.gif" width="400px"></img>
 - Archive notes/annotations in one place with just a click;
 - Foward-link to sub-notes and back-link to PDF attachments;
 - Export archived notes in MarkDown/rich-text format.
