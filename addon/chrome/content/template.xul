@@ -21,9 +21,11 @@
 
     <keyset>
         <key id="key_save" key="S" modifiers="accel" command="cmd_save" />
+        <key id="key_help" key="H" modifiers="accel" command="cmd_help" />
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
     </keyset>
     <command id="cmd_save" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();" />
+    <command id="cmd_help" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/Templates.md');" />
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
@@ -49,9 +51,9 @@
             <row style="margin: 10px 0 10px 0;">
                 <button id="create-template" label="&zotero.__addonRef__.template.create.label;" oncommand="Zotero.Knowledge4Zotero.template.createTemplate();"></button>
                 <button id="import-template" label="&zotero.__addonRef__.template.import.label;" oncommand="Zotero.Knowledge4Zotero.template.importNoteTemplate();"></button>
-                <button id="save-template" label="&zotero.__addonRef__.template.save.label;" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();"></button>
+                <button id="save-template" label="&zotero.__addonRef__.template.save.label;" command="command_save" key="key_save" accesskey="S"></button>
                 <button id="delete-template" label="&zotero.__addonRef__.template.delete.label;" oncommand="Zotero.Knowledge4Zotero.template.deleteSelectedTemplate();"></button>
-                <!-- <button id="help" label="&helpMenu.label;"></button> -->
+                <button id="help" label="&helpMenu.label;" command="cmd_help" key="key_help" accesskey="H"></button>
             </row>
         </rows>
     </hbox>

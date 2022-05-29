@@ -13,32 +13,41 @@
 
 <dialog id="betternotes-export-dialog" windowtype="betternotes-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.export.doAccept();" onload="Zotero.Knowledge4Zotero.export.doLoad(window);" onunload="Zotero.Knowledge4Zotero.export.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
     <script src="chrome://zotero/content/include.js" />
-    <box flex="1">
-        <rows flex="1">
-            <row>
-                <checkbox id="__addonRef__-export-enablefile" checked="true" />
-                <label value="&zotero.__addonRef__.export.file.enable.label;" />
-            </row>
-            <row>
-                <checkbox id="__addonRef__-export-embedLink" checked="true" />
-                <label value="&zotero.__addonRef__.export.link.enable.label;" />
-            </row>
-            <row>
-                <checkbox id="__addonRef__-export-embedImage" checked="true" />
-                <label value="&zotero.__addonRef__.export.image.enable.label;" />
-            </row>
-            <separator></separator>
-            <row>
-                <checkbox id="__addonRef__-export-enablenote" checked="false" />
-                <label value="&zotero.__addonRef__.export.note.enable.label;" />
-            </row>
-            <row>
-                <checkbox id="__addonRef__-export-enablecopy" checked="false" />
-                <label value="&zotero.__addonRef__.export.copy.enable.label;" />
-            </row>
-            <row>
-                <html:div style="position: fixed">&zotero.__addonRef__.export.help.label;</html:div>
-            </row>
-        </rows>
-    </box>
+    <vbox flex="1">
+        <groupbox flex="1">
+            <caption label="&zotero.__addonRef__.export.option.label;"></caption>
+            <rows flex="1">
+                <row>
+                    <checkbox id="__addonRef__-export-embedLink" checked="true" />
+                    <label value="&zotero.__addonRef__.export.link.enable.label;" />
+                </row>
+                <row>
+                    <checkbox id="__addonRef__-export-enablenote" checked="false" />
+                    <label value="&zotero.__addonRef__.export.note.enable.label;" />
+                </row>
+            </rows>
+        </groupbox>
+        <groupbox flex="1">
+            <caption label="&zotero.__addonRef__.export.markdown.label;"></caption>
+            <rows flex="1">
+                <row>
+                    <checkbox id="__addonRef__-export-enablefile" checked="true" />
+                    <label value="&zotero.__addonRef__.export.file.enable.label;" />
+                </row>
+                <row>
+                    <checkbox id="__addonRef__-export-embedImage" checked="true" />
+                    <label value="&zotero.__addonRef__.export.image.enable.label;" />
+                </row>
+            </rows>
+        </groupbox>
+        <groupbox flex="1">
+            <caption label="&zotero.__addonRef__.export.richtext.label;"></caption>
+            <rows flex="1">
+                <row>
+                    <checkbox id="__addonRef__-export-enablecopy" checked="false" />
+                    <label value="&zotero.__addonRef__.export.copy.enable.label;" />
+                </row>
+            </rows>
+        </groupbox>
+    </vbox>
 </dialog>

@@ -30,7 +30,7 @@
         <key id="key_open" key="O" modifiers="accel" command="cmd_open" />
         <key id="key_export" key="E" modifiers="accel" command="cmd_export" />
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
-        <key id="key_insertNotes" key="I" modifiers="accel" command="cmd_insertNotes" />
+        <!-- <key id="key_insertNotes" key="I" modifiers="accel" command="cmd_insertNotes" /> -->
         <key id="key_indent" keycode="VK_TAB" command="cmd_indent" />
         <key id="key_unindent" keycode="VK_TAB" modifiers="shift" command="cmd_unindent" />
     </keyset>
@@ -38,7 +38,7 @@
     <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainKnowledge'});" />
     <command id="cmd_export" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
     <command id="cmd_close" oncommand="window.close();" />
-    <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" />
+    <!-- <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" /> -->
     <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
     <command id="cmd_addheading" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
     <command id="cmd_indent" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
@@ -64,7 +64,7 @@
 
                     <menu id="menu_edit" label="&editMenu.label;" accesskey="&editMenu.accesskey;">
                         <menupopup id="menu_EditPopup">
-                            <menuitem id="menu_insertNotes" label="&zotero.__addonRef__.workspace.menu.insertNotes;" key="key_insertNotes" accesskey="I" command="cmd_insertNotes" />
+                            <!-- <menuitem id="menu_insertNotes" label="&zotero.__addonRef__.workspace.menu.insertNotes;" key="key_insertNotes" accesskey="I" command="cmd_insertNotes" /> -->
                             <menu id="menu_insertTextTemplate" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
                                 <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
                             </menu>

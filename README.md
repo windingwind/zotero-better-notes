@@ -15,6 +15,7 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 - Foward-link to sub-notes and back-link to PDF attachments;  
 - Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
+- Use templates to customize your note! [Document](./Template.md)
 
 ## Test Features
 

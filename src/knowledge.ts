@@ -339,14 +339,18 @@ class Knowledge extends AddonBase {
     }
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
-    this.addLineToNote(
-      targetNote,
-      `<a href="${link}" rel="noopener noreferrer nofollow">${
-        linkText ? linkText : `${link}`
-      }</a>`,
-      lineIndex,
-      true
-    );
+    let _newLine: string = "";
+    const templateText =
+      this._Addon.template.getTemplateByName("[QuickInsert]").text;
+    try {
+      _newLine = new Function(
+        "link, subNoteItem, noteItem",
+        "return `" + templateText + "`"
+      )(link, linkedNote, targetNote);
+    } catch (e) {
+      alert(e);
+    }
+    this.addLineToNote(targetNote, _newLine, lineIndex, true);
     this._Addon.views.showProgressWindow(
       "Better Notes",
       "Link is added to workspace"
@@ -633,16 +637,26 @@ class Knowledge extends AddonBase {
       await exporter.save();
     }
     if (saveCopy) {
-      Zotero_File_Interface.exportItemsToClipboard(
-        [newNote],
-        Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
-      );
-      this._Addon.views.showProgressWindow("Better Notes", "Note Copied");
+      if (!convertNoteLinks) {
+        Zotero_File_Interface.exportItemsToClipboard(
+          [newNote],
+          Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
+        );
+        this._Addon.views.showProgressWindow("Better Notes", "Note Copied");
+      } else {
+        alert(
+          "Select all in the new note window and copy-paste to other applications."
+        );
+        ZoteroPane.openNoteWindow(newNote.id);
+        alert(
+          "Waiting for paste finish...\nImages may not be copied correctly if OK is pressed before paste."
+        );
+      }
     }
     if (!saveNote) {
-      if (saveCopy) {
-        // Wait copy finish
-        await Zotero.Promise.delay(500);
+      const _w: Window = ZoteroPane.findNoteWindow(newNote.id);
+      if (_w) {
+        _w.close();
       }
       await Zotero.Items.erase(newNote.id);
     } else {
@@ -726,16 +740,26 @@ class Knowledge extends AddonBase {
           const subNote = res.item;
           if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
             Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
-            newLines.push("<blockquote>");
-            newLines.push(`<p><strong>Linked Note:</strong></p>`);
             const convertResult = await this.convertNoteLines(
               subNote,
               _rootNoteIds,
               convertNoteLinks,
               convertNoteImages
             );
-            newLines = newLines.concat(convertResult.lines);
-            newLines.push("</blockquote>");
+            const subNoteLines = convertResult.lines;
+            let _newLine: string = "";
+            const templateText =
+              this._Addon.template.getTemplateByName("[QuickImport]").text;
+            try {
+              _newLine = new Function(
+                "subNoteLines, subNoteItem, noteItem",
+                "return `" + templateText + "`"
+              )(subNoteLines, subNote, currentNote);
+            } catch (e) {
+              alert(e);
+              continue;
+            }
+            newLines.push(_newLine);
             subNotes.push(subNote);
             subNotes = subNotes.concat(convertResult.subNotes);
           }
