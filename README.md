@@ -10,16 +10,13 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 
 ## Features
 
-- Note as you go;
-- Archive notes/annotations in one place with just a click;  
-- Foward-link to sub-notes and back-link to PDF attachments;  
+- `LaTex` view supported(v0.4.0). Click the `Tex` button in the toolbar or `Ctrl/⌘+'/'` to switch between editor view & LaTex view!;
+![LaTex View](./image/README/LaTex.gif)
+- Archive notes/annotations in one place with just a click;
+- Foward-link to sub-notes and back-link to PDF attachments;
 - Export archived notes in MarkDown/rich-text format.
   - Export markdown with images is supported in v0.1.1
-- Use templates to customize your note! [Document](./Template.md)
-
-## Test Features
-
-- Note template(v0.3.0), doc & discussion [here](https://github.com/windingwind/zotero-better-notes/issues/23)
+- Use templates to customize your note! [Document](./Template.md). Discuss & contribute your template [here](https://github.com/windingwind/zotero-better-notes/issues/23)
 
 # Quick Start Guide
 

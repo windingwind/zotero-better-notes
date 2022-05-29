@@ -1,3 +1,4 @@
+import renderMathInElement from "katex/contrib/auto-render";
 import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
@@ -337,6 +338,36 @@ class AddonEvents extends AddonBase {
         });
       }
 
+      const switchTexButton: Element = await this._Addon.views.addEditorButton(
+        message.content.editorInstance,
+        "knowledge-switchTex",
+        "switchTex",
+        `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`,
+        "switchTex",
+        "middle",
+        "builtin"
+      );
+      switchTexButton.addEventListener("click", (e) => {
+        this.onEditorEvent(
+          new EditorMessage("switchEditorTex", {
+            editorInstance: message.content.editorInstance,
+          })
+        );
+      });
+
+      message.content.editorInstance._iframeWindow.document.addEventListener(
+        "keyup",
+        (e) => {
+          if (e.ctrlKey && e.key === "/") {
+            this.onEditorEvent(
+              new EditorMessage("switchEditorTex", {
+                editorInstance: message.content.editorInstance,
+              })
+            );
+          }
+        }
+      );
+
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-end",
@@ -364,6 +395,15 @@ class AddonEvents extends AddonBase {
         h6 {text-indent: 50px}
       `;
       _window.document.body.append(style);
+
+      const texStyle = _window.document.createElement("link");
+      texStyle.setAttribute("rel", "stylesheet");
+      texStyle.setAttribute(
+        "href",
+        "chrome://Knowledge4Zotero/content/lib/css/katex.min.css"
+      );
+      _window.document.body.append(texStyle);
+
       message.content.editorInstance._knowledgeUIInitialized = true;
     } else if (message.type === "enterWorkspace") {
       /*
@@ -437,6 +477,50 @@ class AddonEvents extends AddonBase {
           "close",
           "Close Preview",
           "closePreview"
+        );
+      }
+    } else if (message.type === "switchEditorTex") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const instance = message.content.editorInstance;
+      if (!instance._viewTex) {
+        const editorElement =
+          instance._iframeWindow.document.getElementsByClassName(
+            "primary-editor"
+          )[0];
+        if (!editorElement) {
+          return;
+        }
+        const viewNode = editorElement.cloneNode(true) as HTMLElement;
+        renderMathInElement(viewNode, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true },
+          ],
+          // • rendering keys, e.g.:
+          throwOnError: false,
+        });
+        instance._viewTex = true;
+        this._Addon.views.switchEditorTexView(instance, true, viewNode);
+        this._Addon.views.changeEditorButtonView(
+          instance._iframeWindow.document.getElementById("knowledge-switchTex"),
+          "switchEditor",
+          `Editor View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
+        );
+      } else {
+        instance._viewTex = false;
+        this._Addon.views.switchEditorTexView(instance, false);
+        this._Addon.views.changeEditorButtonView(
+          instance._iframeWindow.document.getElementById("knowledge-switchTex"),
+          "switchTex",
+          `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
         );
       }
     } else if (message.type === "addToKnowledge") {
