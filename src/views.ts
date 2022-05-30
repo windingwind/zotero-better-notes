@@ -191,7 +191,7 @@ class AddonViews extends AddonBase {
       viewNode.setAttribute("id", "texView");
       viewNode.style.height = "100%";
       viewNode.style.padding = "20px 30px 20px 30px";
-      viewNode.style.overflowY = "scroll";
+      viewNode.style.overflowY = "auto";
       viewNode.removeAttribute("contentEditable");
       editorCore.after(viewNode);
       editorCore.style.visibility = "hidden";

@@ -25,7 +25,7 @@
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
     </keyset>
     <command id="cmd_save" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();" />
-    <command id="cmd_help" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/Templates.md');" />
+    <command id="cmd_help" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/blob/master/Template.md');" />
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
