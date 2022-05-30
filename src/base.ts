@@ -26,8 +26,8 @@ enum OutlineType {
 
 class NoteTemplate {
   name: string;
-  text: string;
   disabled: boolean;
+  text?: string;
 }
 
 export { AddonBase, EditorMessage, OutlineType, NoteTemplate };

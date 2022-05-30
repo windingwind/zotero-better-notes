@@ -200,7 +200,7 @@ class AddonViews extends AddonBase {
       }
       viewNode.setAttribute("id", "texView");
       viewNode.style.height = "100%";
-      viewNode.style.padding = "20px 30px 20px 30px";
+      viewNode.style.padding = "10px 30px 20px 30px";
       viewNode.style.overflowY = "auto";
       viewNode.removeAttribute("contentEditable");
       Array.prototype.forEach.call(
@@ -378,7 +378,7 @@ class AddonViews extends AddonBase {
         const subNoteLines = convertResult.lines;
         let _newLine: string = "";
         const templateText =
-          this._Addon.template.getTemplateByName("[QuickImport]").text;
+          this._Addon.template.getTemplateText("[QuickImport]");
         try {
           _newLine = new Function(
             "subNoteLines, subNoteItem, noteItem",
@@ -706,7 +706,7 @@ class AddonViews extends AddonBase {
     const _window = this._Addon.knowledge.getWorkspaceWindow();
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
-      .getTemplates()
+      .getTemplateKeys()
       .filter((e) => e.name.indexOf(type) !== -1);
     const popup = _window.document.getElementById(
       `menu_insert${type}TemplatePopup`

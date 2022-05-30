@@ -853,9 +853,9 @@ class AddonEvents extends AddonBase {
       */
       const newLines = [];
 
-      const templateText = this._Addon.template.getTemplateByName(
+      const templateText = this._Addon.template.getTemplateText(
         message.content.params.templateName
-      ).text;
+      );
 
       let _newLine: string = "";
       try {
@@ -901,9 +901,9 @@ class AddonEvents extends AddonBase {
       const newLines = [];
       newLines.push("<p> </p>");
 
-      const templateText = this._Addon.template.getTemplateByName(
+      const templateText = this._Addon.template.getTemplateText(
         message.content.params.templateName
-      ).text;
+      );
 
       const toCopyImage = [];
 
@@ -974,9 +974,9 @@ class AddonEvents extends AddonBase {
       const newLines = [];
       newLines.push("<p> </p>");
 
-      const templateText = this._Addon.template.getTemplateByName(
+      const templateText = this._Addon.template.getTemplateText(
         message.content.params.templateName
-      ).text;
+      );
 
       for (const noteItem of notes) {
         /*

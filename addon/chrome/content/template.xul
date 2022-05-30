@@ -51,7 +51,7 @@
             <row style="margin: 10px 0 10px 0;">
                 <button id="create-template" label="&zotero.__addonRef__.template.create.label;" oncommand="Zotero.Knowledge4Zotero.template.createTemplate();"></button>
                 <button id="import-template" label="&zotero.__addonRef__.template.import.label;" oncommand="Zotero.Knowledge4Zotero.template.importNoteTemplate();"></button>
-                <button id="save-template" label="&zotero.__addonRef__.template.save.label;" command="command_save" key="key_save" accesskey="S"></button>
+                <button id="save-template" label="&zotero.__addonRef__.template.save.label;" command="cmd_save" key="key_save" accesskey="S"></button>
                 <button id="delete-template" label="&zotero.__addonRef__.template.delete.label;" oncommand="Zotero.Knowledge4Zotero.template.deleteSelectedTemplate();"></button>
                 <button id="help" label="&helpMenu.label;" command="cmd_help" key="key_help" accesskey="H"></button>
             </row>

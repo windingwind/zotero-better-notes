@@ -341,7 +341,7 @@ class Knowledge extends AddonBase {
     const linkText = linkedNote.getNoteTitle().trim();
     let _newLine: string = "";
     const templateText =
-      this._Addon.template.getTemplateByName("[QuickInsert]").text;
+      this._Addon.template.getTemplateText("[QuickInsert]");
     try {
       _newLine = new Function(
         "link, subNoteItem, noteItem",
@@ -749,7 +749,7 @@ class Knowledge extends AddonBase {
             const subNoteLines = convertResult.lines;
             let _newLine: string = "";
             const templateText =
-              this._Addon.template.getTemplateByName("[QuickImport]").text;
+              this._Addon.template.getTemplateText("[QuickImport]");
             try {
               _newLine = new Function(
                 "subNoteLines, subNoteItem, noteItem",

@@ -3,7 +3,6 @@ import { AddonBase, NoteTemplate } from "./base";
 class AddonTemplate extends AddonBase {
   private _window: Window;
   _defaultTemplates: NoteTemplate[];
-  _templates: NoteTemplate[];
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this._defaultTemplates = [
@@ -33,7 +32,6 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
     ];
-    this._templates = this.getTemplates();
   }
 
   initTemplates(_window: Window) {
@@ -42,26 +40,32 @@ class AddonTemplate extends AddonBase {
   }
 
   resetTemplates() {
-    let templatesRaw: string = Zotero.Prefs.get(
+    let oldTemplatesRaw: string = Zotero.Prefs.get(
       "Knowledge4Zotero.noteTemplate"
     );
-    if (!templatesRaw) {
-      Zotero.Prefs.set(
-        "Knowledge4Zotero.noteTemplate",
-        JSON.stringify(this._defaultTemplates)
-      );
-    } else {
-      const templates = JSON.parse(templatesRaw);
-      let modified = false;
-      for (const defaultTemplate of this._defaultTemplates) {
-        if (!this.getTemplateByName(defaultTemplate.name, templates)) {
-          templates.push(defaultTemplate);
-          modified = true;
-        }
+    // Convert old version
+    if (oldTemplatesRaw) {
+      // Zotero.Prefs.set(
+      //   "Knowledge4Zotero.noteTemplate",
+      //   JSON.stringify(this._defaultTemplates)
+      // );
+      const templates: NoteTemplate[] = JSON.parse(oldTemplatesRaw);
+      for (const template of templates) {
+        this.setTemplate(template);
       }
-      if (modified) {
-        this.setTemplates(templates);
+      Zotero.Prefs.clear("Knowledge4Zotero.noteTemplate");
+    }
+    let templateKeys = this.getTemplateKeys();
+    const currentNames = templateKeys.map((t) => t.name);
+    let modified = false;
+    for (const defaultTemplate of this._defaultTemplates) {
+      if (!currentNames.includes(defaultTemplate.name)) {
+        templateKeys.push(defaultTemplate);
+        modified = true;
       }
+    }
+    if (modified) {
+      this.setTemplateKeys(templateKeys);
     }
   }
 
@@ -77,7 +81,7 @@ class AddonTemplate extends AddonBase {
   }
 
   updateTemplateView() {
-    const templates = this._templates;
+    const templates = this.getTemplateKeys();
     const listbox = this._window.document.getElementById("template-list");
     let e,
       es = this._window.document.getElementsByTagName("listitem");
@@ -100,7 +104,7 @@ class AddonTemplate extends AddonBase {
     Zotero.debug("update editor");
     console.log("update editor");
     const name = this.getSelectedTemplateName();
-    const template = this.getTemplateByName(name);
+    const templateText = this.getTemplateText(name);
 
     const header: XUL.Textbox =
       this._window.document.getElementById("editor-name");
@@ -109,7 +113,7 @@ class AddonTemplate extends AddonBase {
     const saveTemplate = this._window.document.getElementById("save-template");
     const deleteTemplate =
       this._window.document.getElementById("delete-template");
-    if (!template) {
+    if (!name) {
       header.value = "";
       header.setAttribute("disabled", "true");
       text.value = "";
@@ -117,9 +121,9 @@ class AddonTemplate extends AddonBase {
       saveTemplate.setAttribute("disabled", "true");
       deleteTemplate.setAttribute("disabled", "true");
     } else {
-      header.value = template.name;
+      header.value = name;
       header.removeAttribute("disabled");
-      text.value = template.text;
+      text.value = templateText;
       text.removeAttribute("disabled");
       saveTemplate.removeAttribute("disabled");
       deleteTemplate.removeAttribute("disabled");
@@ -132,7 +136,7 @@ class AddonTemplate extends AddonBase {
       text: "",
       disabled: false,
     };
-    this.saveTemplate(template);
+    this.setTemplate(template);
     this.updateTemplateView();
   }
 
@@ -165,29 +169,29 @@ class AddonTemplate extends AddonBase {
       text: note.getNote(),
       disabled: false,
     };
-    this.saveTemplate(template);
+    this.setTemplate(template);
     this.updateTemplateView();
   }
 
   saveSelectedTemplate() {
     const name = this.getSelectedTemplateName();
-    const template = this.getTemplateByName(name);
     const header: XUL.Textbox =
       this._window.document.getElementById("editor-name");
     const text: XUL.Textbox =
       this._window.document.getElementById("editor-textbox");
-    if (!template) {
-      this.updateEditorView();
-    } else {
-      const oldName = template.name;
-      template.name = header.value;
-      template.text = text.value;
-      this.replaceTemplate(template, oldName);
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Template ${template.name} saved.`
-      );
+
+    const template = this.getTemplateKey(name);
+    template.name = header.value;
+    template.text = text.value;
+    this.setTemplate(template);
+    if (name !== template.name) {
+      this.removeTemplate(name);
     }
+    this._Addon.views.showProgressWindow(
+      "Better Notes",
+      `Template ${template.name} saved.`
+    );
+
     this.updateTemplateView();
   }
 
@@ -197,70 +201,68 @@ class AddonTemplate extends AddonBase {
     this.updateTemplateView();
   }
 
-  getTemplates() {
-    let templatesRaw: string = Zotero.Prefs.get(
-      "Knowledge4Zotero.noteTemplate"
+  getTemplateKeys(): NoteTemplate[] {
+    let templateKeys: string = Zotero.Prefs.get(
+      "Knowledge4Zotero.templateKeys"
     );
-    let templates: NoteTemplate[] = [];
-    if (templatesRaw) {
-      templates = JSON.parse(templatesRaw);
-    }
-    Zotero.debug(templates);
-    console.log(templates);
-    return templates;
+    return templateKeys ? JSON.parse(templateKeys) : [];
   }
 
-  getTemplateByName(
-    name: string,
-    templates: NoteTemplate[] = []
-  ): NoteTemplate {
-    templates = templates.length ? templates : this._templates;
-    return templates.filter((e) => e.name === name)[0];
+  getTemplateKey(keyName: string): NoteTemplate {
+    return this.getTemplateKeys().filter((t) => t.name === keyName)[0];
   }
 
-  getTemplateIdByName(name: string, templates: NoteTemplate[] = []): number {
-    templates = templates || this._templates;
-    return templates.findIndex((e) => e.name === name);
-  }
-
-  setTemplates(templates: NoteTemplate[]) {
-    this._templates = templates;
+  setTemplateKeys(templateKeys: NoteTemplate[]): void {
     Zotero.Prefs.set(
-      "Knowledge4Zotero.noteTemplate",
-      JSON.stringify(templates)
+      "Knowledge4Zotero.templateKeys",
+      JSON.stringify(templateKeys)
     );
   }
 
-  saveTemplate(template: NoteTemplate) {
-    const templates = this._templates;
-    const idx = this.getTemplateIdByName(template.name, templates);
-    if (idx !== -1) {
-      templates[idx] = template;
-      this.setTemplates(templates);
-      return;
+  addTemplateKey(key: NoteTemplate): boolean {
+    const templateKeys = this.getTemplateKeys();
+    if (templateKeys.map((t) => t.name).includes(key.name)) {
+      return false;
     }
-    templates.push(template);
-    this.setTemplates(templates);
+    templateKeys.push(key);
+    this.setTemplateKeys(templateKeys);
+    return true;
   }
 
-  replaceTemplate(template: NoteTemplate, oldName: string) {
-    const templates = this.getTemplates();
-    const idx = this.getTemplateIdByName(oldName, templates);
-    if (idx !== -1) {
-      templates.splice(idx, 1, template);
-      this.setTemplates(templates);
+  removeTemplateKey(keyName: string): boolean {
+    const templateKeys = this.getTemplateKeys();
+    if (!templateKeys.map((t) => t.name).includes(keyName)) {
+      return false;
     }
+    templateKeys.splice(templateKeys.map((t) => t.name).indexOf(keyName), 1);
+    this.setTemplateKeys(templateKeys);
+    return true;
   }
 
-  removeTemplate(name: string): boolean {
-    const templates = this._templates;
-    const idx = this.getTemplateIdByName(name, templates);
-    if (idx !== -1) {
-      templates.splice(idx, 1);
-      this.setTemplates(templates);
-      return true;
+  getTemplateText(keyName: string): string {
+    let template: string = Zotero.Prefs.get(
+      `Knowledge4Zotero.template.${keyName}`
+    );
+    if (!template) {
+      template = "";
+      Zotero.Prefs.set(`Knowledge4Zotero.template.${keyName}`, template);
     }
-    return false;
+    return template;
+  }
+
+  setTemplate(key: NoteTemplate, template: string = ""): void {
+    let _key = JSON.parse(JSON.stringify(key));
+    if (_key.text) {
+      template = _key.text;
+      delete _key.text;
+    }
+    this.addTemplateKey(_key);
+    Zotero.Prefs.set(`Knowledge4Zotero.template.${_key.name}`, template);
+  }
+
+  removeTemplate(keyName: string): void {
+    this.removeTemplateKey(keyName);
+    Zotero.Prefs.clear(`Knowledge4Zotero.template.${keyName}`);
   }
 }
 
