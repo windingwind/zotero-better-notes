@@ -5,6 +5,7 @@ class AddonViews extends AddonBase {
   editorIcon: object;
   currentOutline: OutlineType;
   _initIframe: any;
+  _texNotes: number[];
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -28,6 +29,7 @@ class AddonViews extends AddonBase {
     };
     this.currentOutline = OutlineType.treeView;
     this._initIframe = Zotero.Promise.defer();
+    this._texNotes = [];
   }
 
   getEditor(_document: Document) {
@@ -188,15 +190,35 @@ class AddonViews extends AddonBase {
       "editor-core"
     )[0] as HTMLElement;
     if (showView) {
+      if (!this._texNotes.includes(instance._item.id)) {
+        this._texNotes.push(instance._item.id);
+      }
+      let oldView = instance._iframeWindow.document.getElementById("texView");
+      while (oldView) {
+        oldView.remove();
+        oldView = instance._iframeWindow.document.getElementById("texView");
+      }
       viewNode.setAttribute("id", "texView");
       viewNode.style.height = "100%";
       viewNode.style.padding = "20px 30px 20px 30px";
       viewNode.style.overflowY = "auto";
       viewNode.removeAttribute("contentEditable");
+      Array.prototype.forEach.call(
+        viewNode.getElementsByTagName("a"),
+        (e: HTMLElement) => {
+          e.addEventListener("click", (ev) => {
+            ZoteroPane.loadURI(e.getAttribute("href"));
+          });
+        }
+      );
+
       editorCore.after(viewNode);
       editorCore.style.visibility = "hidden";
       viewNode.scrollTop = editorCore.scrollTop;
     } else {
+      if (this._texNotes.includes(instance._item.id)) {
+        this._texNotes.splice(this._texNotes.indexOf(instance._item.id), 1);
+      }
       const texView = instance._iframeWindow.document.getElementById("texView");
       if (texView) {
         editorCore.scrollTop = texView.scrollTop;
@@ -243,7 +265,13 @@ class AddonViews extends AddonBase {
     }
 
     // @ts-ignore
-    editor.parentNode.scrollTo(0, editor.children[lineIndex].offsetTop);
+    const scrollNum = editor.children[lineIndex].offsetTop;
+    (editor.parentNode as HTMLElement).scrollTo(0, scrollNum);
+
+    const texView = instance._iframeWindow.document.getElementById("texView");
+    if (texView) {
+      texView.scrollTo(0, scrollNum);
+    }
   }
 
   addNewKnowledgeButton() {

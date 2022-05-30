@@ -9,7 +9,7 @@ class AddonEvents extends AddonBase {
       notify: async (
         event: string,
         type: string,
-        ids: Array<string>,
+        ids: Array<number>,
         extraData: object
       ) => {
         if (event === "modify" && type === "item") {
@@ -338,22 +338,15 @@ class AddonEvents extends AddonBase {
         });
       }
 
-      const switchTexButton: Element = await this._Addon.views.addEditorButton(
+      await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-switchTex",
         "switchTex",
         `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`,
-        "switchTex",
+        "switchEditorTex",
         "middle",
         "builtin"
       );
-      switchTexButton.addEventListener("click", (e) => {
-        this.onEditorEvent(
-          new EditorMessage("switchEditorTex", {
-            editorInstance: message.content.editorInstance,
-          })
-        );
-      });
 
       message.content.editorInstance._iframeWindow.document.addEventListener(
         "keyup",
@@ -404,7 +397,35 @@ class AddonEvents extends AddonBase {
       );
       _window.document.body.append(texStyle);
 
+      const copytexStyle = _window.document.createElement("link");
+      copytexStyle.setAttribute("rel", "stylesheet");
+      copytexStyle.setAttribute(
+        "href",
+        "chrome://Knowledge4Zotero/content/lib/css/copy-tex.css"
+      );
+      _window.document.body.append(copytexStyle);
+
+      const copytexScript = _window.document.createElement("script");
+      copytexScript.setAttribute(
+        "src",
+        "chrome://Knowledge4Zotero/content/lib/js/copy-tex.min.js"
+      );
+      _window.document.head.append(copytexScript);
+
       message.content.editorInstance._knowledgeUIInitialized = true;
+
+      if (
+        this._Addon.views._texNotes.includes(
+          message.content.editorInstance._item.id
+        )
+      ) {
+        this.onEditorEvent(
+          new EditorMessage("switchEditorTex", {
+            editorInstance: message.content.editorInstance,
+            params: { viewTex: true },
+          })
+        );
+      }
     } else if (message.type === "enterWorkspace") {
       /*
         message.content = {
@@ -482,11 +503,15 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "switchEditorTex") {
       /*
         message.content = {
-          editorInstance
+          editorInstance, params: {viewTex: boolean}
         }
       */
       const instance = message.content.editorInstance;
-      if (!instance._viewTex) {
+      let viewTex = false;
+      if (message.content.params && message.content.params.viewTex) {
+        viewTex = true;
+      }
+      if (!this._Addon.views._texNotes.includes(instance._item.id) || viewTex) {
         const editorElement =
           instance._iframeWindow.document.getElementsByClassName(
             "primary-editor"
@@ -494,6 +519,7 @@ class AddonEvents extends AddonBase {
         if (!editorElement) {
           return;
         }
+        Zotero.debug("Knowledge4Zotero: latex view on.");
         const viewNode = editorElement.cloneNode(true) as HTMLElement;
         renderMathInElement(viewNode, {
           // customised options
@@ -507,7 +533,6 @@ class AddonEvents extends AddonBase {
           // • rendering keys, e.g.:
           throwOnError: false,
         });
-        instance._viewTex = true;
         this._Addon.views.switchEditorTexView(instance, true, viewNode);
         this._Addon.views.changeEditorButtonView(
           instance._iframeWindow.document.getElementById("knowledge-switchTex"),
@@ -515,7 +540,7 @@ class AddonEvents extends AddonBase {
           `Editor View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
         );
       } else {
-        instance._viewTex = false;
+        Zotero.debug("Knowledge4Zotero: latex view off.");
         this._Addon.views.switchEditorTexView(instance, false);
         this._Addon.views.changeEditorButtonView(
           instance._iframeWindow.document.getElementById("knowledge-switchTex"),
