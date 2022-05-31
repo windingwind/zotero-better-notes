@@ -45,10 +45,6 @@ class AddonTemplate extends AddonBase {
     );
     // Convert old version
     if (oldTemplatesRaw) {
-      // Zotero.Prefs.set(
-      //   "Knowledge4Zotero.noteTemplate",
-      //   JSON.stringify(this._defaultTemplates)
-      // );
       const templates: NoteTemplate[] = JSON.parse(oldTemplatesRaw);
       for (const template of templates) {
         this.setTemplate(template);
@@ -57,15 +53,10 @@ class AddonTemplate extends AddonBase {
     }
     let templateKeys = this.getTemplateKeys();
     const currentNames = templateKeys.map((t) => t.name);
-    let modified = false;
     for (const defaultTemplate of this._defaultTemplates) {
       if (!currentNames.includes(defaultTemplate.name)) {
-        templateKeys.push(defaultTemplate);
-        modified = true;
+        this.setTemplate(defaultTemplate);
       }
-    }
-    if (modified) {
-      this.setTemplateKeys(templateKeys);
     }
   }
 
