@@ -1,4 +1,6 @@
 import { AddonBase, EditorMessage, OutlineType } from "./base";
+import { loadTranslator, TRANSLATOR_ID_BETTER_MARKDOWN } from "./exportMD";
+import { pick } from "./file_picker";
 
 const TreeModel = require("./treemodel");
 
@@ -6,6 +8,8 @@ class Knowledge extends AddonBase {
   currentLine: number;
   currentNodeID: number;
   workspaceWindow: Window;
+  _exportNote: ZoteroItem;
+  _exportPath: string;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this.currentLine = -1;
@@ -623,7 +627,6 @@ class Knowledge extends AddonBase {
   async exportNoteToFile(
     note: ZoteroItem,
     convertNoteLinks: boolean = true,
-    convertNoteImages: boolean = true,
     saveFile: boolean = true,
     saveNote: boolean = false,
     saveCopy: boolean = false
@@ -632,29 +635,67 @@ class Knowledge extends AddonBase {
       return;
     }
     note = note || this.getWorkspaceNote();
-    const noteID = await ZoteroPane_Local.newNote();
-    const newNote = Zotero.Items.get(noteID);
-    const rootNoteIds = [note.id];
+    let newNote: ZoteroItem;
+    if (convertNoteLinks || saveNote) {
+      const noteID = await ZoteroPane_Local.newNote();
+      newNote = Zotero.Items.get(noteID);
+      const rootNoteIds = [note.id];
 
-    const convertResult = await this.convertNoteLines(
-      note,
-      rootNoteIds,
-      convertNoteLinks,
-      convertNoteImages
-    );
+      const convertResult = await this.convertNoteLines(
+        note,
+        rootNoteIds,
+        convertNoteLinks
+      );
 
-    this.setLinesToNote(newNote, convertResult.lines);
-    Zotero.debug(convertResult.subNotes);
+      this.setLinesToNote(newNote, convertResult.lines);
+      Zotero.debug(convertResult.subNotes);
 
-    await Zotero.DB.executeTransaction(async () => {
-      for (const subNote of convertResult.subNotes) {
-        await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
-      }
-    });
+      await Zotero.DB.executeTransaction(async () => {
+        for (const subNote of convertResult.subNotes) {
+          await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
+        }
+      });
+    } else {
+      newNote = note;
+    }
+
     if (saveFile) {
-      const exporter = new Zotero_File_Exporter();
-      exporter.items = [newNote];
-      await exporter.save();
+      if (
+        (await new Zotero.Translate.Export().getTranslators()).filter(
+          (e) => e.translatorID === TRANSLATOR_ID_BETTER_MARKDOWN
+        )
+      ) {
+        await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+      }
+
+      const filename = await pick(
+        Zotero.getString("fileInterface.export"),
+        "save",
+        [["MarkDown File(*.md)", "*.md"]],
+        `${newNote.getNoteTitle()}.md`
+      );
+      if (!filename) {
+        return;
+      }
+
+      this._exportNote = newNote;
+      this._exportPath =
+        Zotero.File.pathToFile(filename).parent.path + "\\attachments";
+
+      const hasImage = newNote.getNote().includes("<img");
+      if (hasImage) {
+        await Zotero.File.createDirectoryIfMissingAsync(this._exportPath);
+      }
+
+      const translator = new Zotero.Translate.Export();
+      translator.setItems([newNote]);
+      translator.setLocation(Zotero.File.pathToFile(filename));
+      translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+      translator.translate();
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `Note Saved to ${filename}`
+      );
     }
     if (saveCopy) {
       if (!convertNoteLinks) {
@@ -674,115 +715,22 @@ class Knowledge extends AddonBase {
       }
     }
     if (!saveNote) {
-      const _w: Window = ZoteroPane.findNoteWindow(newNote.id);
-      if (_w) {
-        _w.close();
+      if (newNote.id !== note.id) {
+        const _w: Window = ZoteroPane.findNoteWindow(newNote.id);
+        if (_w) {
+          _w.close();
+        }
+        await Zotero.Items.erase(newNote.id);
       }
-      await Zotero.Items.erase(newNote.id);
     } else {
       ZoteroPane.openNoteWindow(newNote.id);
     }
   }
 
-  async convertImage(line: string, newLines: string[], sourceNote: ZoteroItem) {
-    const imageReg = new RegExp("<img");
-    const imageBrReg = new RegExp("<br>");
-    const imageKeyReg = new RegExp(`data-attachment-key="`);
-    const imageAnnotationReg = new RegExp(`data-annotation="`);
-
-    const imageIndex = line.search(imageReg);
-    if (imageIndex !== -1) {
-      const lineStart = line.slice(0, imageIndex);
-      const imageLine = line.slice(imageIndex);
-      const lineEnd = imageLine.slice(imageLine.search(imageBrReg));
-      const attachmentKeyIndex = imageLine.search(imageKeyReg);
-      const annotationIndex = imageLine.search(imageAnnotationReg);
-
-      if (attachmentKeyIndex !== -1) {
-        let attachmentKey = imageLine.slice(
-          attachmentKeyIndex + imageKeyReg.source.length
-        );
-        attachmentKey = attachmentKey.slice(0, attachmentKey.search(/"/g));
-        const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
-          sourceNote.libraryID,
-          attachmentKey
-        );
-        let attachmentURL = await attachmentItem.getFilePathAsync();
-        if (attachmentURL) {
-          Zotero.debug("convert image");
-          // const imageData = await editorInstance._getDataURL(
-          //   attachmentItem
-          // );
-          Zotero.debug(line);
-          Zotero.debug(lineStart);
-          Zotero.debug(lineEnd);
-          if (Zotero.isMac) {
-            attachmentURL = "file://" + attachmentURL;
-          }
-          newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
-
-          // Export annotation link
-          if (annotationIndex !== -1) {
-            let annotationContentRaw = imageLine.slice(
-              annotationIndex + imageAnnotationReg.source.length
-            );
-            annotationContentRaw = annotationContentRaw.slice(
-              0,
-              annotationContentRaw.search('"')
-            );
-            if (annotationContentRaw) {
-              Zotero.debug("convert image annotation");
-              Zotero.debug(annotationContentRaw);
-              try {
-                let annotation = JSON.parse(
-                  decodeURIComponent(annotationContentRaw)
-                );
-                if (annotation) {
-                  // annotation.uri was used before note-editor v4
-                  let uri = annotation.attachmentURI || annotation.uri;
-                  let position = annotation.position;
-                  if (typeof uri === "string" && typeof position === "object") {
-                    let annotationURL;
-                    let uriParts = uri.split("/");
-                    let libraryType = uriParts[3];
-                    let key = uriParts[6];
-                    if (libraryType === "users") {
-                      annotationURL = "zotero://open-pdf/library/items/" + key;
-                    }
-                    // groups
-                    else {
-                      let groupID = uriParts[4];
-                      annotationURL =
-                        "zotero://open-pdf/groups/" + groupID + "/items/" + key;
-                    }
-
-                    annotationURL +=
-                      "?page=" +
-                      (position.pageIndex + 1) +
-                      (annotation.annotationKey
-                        ? "&annotation=" + annotation.annotationKey
-                        : "");
-                    newLines.push(`<p><a href="${annotationURL}">pdf</a></p>`);
-                  }
-                }
-              } catch (e) {
-                Zotero.debug(e);
-              }
-            }
-          }
-          newLines.push(`${lineStart}${lineEnd}`);
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   async convertNoteLines(
     currentNote: ZoteroItem,
     rootNoteIds: number[],
-    convertNoteLinks: boolean = true,
-    convertNoteImages: boolean = true
+    convertNoteLinks: boolean = true
   ): Promise<{ lines: string[]; subNotes: ZoteroItem[] }> {
     Zotero.debug(`convert note ${currentNote.id}`);
 
@@ -792,17 +740,6 @@ class Knowledge extends AddonBase {
     let newLines = [];
     const noteLines = this.getLinesInNote(currentNote);
     for (let i in noteLines) {
-      // Embed Image
-      if (convertNoteImages) {
-        const hasImage = await this.convertImage(
-          noteLines[i],
-          newLines,
-          currentNote
-        );
-        if (hasImage) {
-          continue;
-        }
-      }
       newLines.push(noteLines[i]);
       // Convert Link
       if (convertNoteLinks) {
@@ -816,8 +753,7 @@ class Knowledge extends AddonBase {
             const convertResult = await this.convertNoteLines(
               subNote,
               _rootNoteIds,
-              convertNoteLinks,
-              convertNoteImages
+              convertNoteLinks
             );
             const subNoteLines = convertResult.lines;
             let _newLine: string = "";

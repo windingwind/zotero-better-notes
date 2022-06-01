@@ -45,6 +45,9 @@ class AddonEvents extends AddonBase {
   public async onInit() {
     Zotero.debug("Knowledge4Zotero: init called");
     await Zotero.uiReadyPromise;
+    // Init translator
+    // await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+    // Init UI
     this._Addon.views.addOpenWorkspaceButton();
     this._Addon.views.addNewKnowledgeButton();
     this.addEditorInstanceListener();
@@ -1039,7 +1042,6 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.exportNoteToFile(
         message.content.editorInstance._item,
         options.embedLink,
-        options.embedImage,
         options.exportFile,
         options.exportNote,
         options.exportCopy

@@ -157,6 +157,11 @@ copyFileSync(
   path.join(buildDir, "addon/components/zotero-protocol-handler.js")
 );
 
+copyFileSync(
+  "src/Better Note Markdown.js",
+  path.join(buildDir, "addon/chrome/content/translators/Better Note Markdown.js")
+);
+
 compressing.zip.compressDir(
   path.join(buildDir, "addon"),
   path.join(buildDir, `${name}.xpi`),

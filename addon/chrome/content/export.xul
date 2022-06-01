@@ -34,10 +34,6 @@
                     <checkbox id="__addonRef__-export-enablefile" checked="true" />
                     <label value="&zotero.__addonRef__.export.file.enable.label;" />
                 </row>
-                <row>
-                    <checkbox id="__addonRef__-export-embedImage" checked="true" />
-                    <label value="&zotero.__addonRef__.export.image.enable.label;" />
-                </row>
             </rows>
         </groupbox>
         <groupbox flex="1">
