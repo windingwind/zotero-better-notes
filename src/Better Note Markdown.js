@@ -1616,6 +1616,7 @@ let bundle;
         turndownService.use(turndownPluginGfm.gfm);
 
         async function convert(_Zotero, doc) {
+          Components.utils.import("resource://gre/modules/osfile.jsm");
           // Transform `style="text-decoration: line-through"` nodes to <s> (TinyMCE doesn't support <s>)
           doc.querySelectorAll("span").forEach(function (span) {
             if (span.style.textDecoration === "line-through") {
@@ -1704,12 +1705,15 @@ let bundle;
             let ext = oldFile.split(".").pop();
             let newFile = _Zotero.File.copyToUnique(
               oldFile,
-              `${_Zotero.Knowledge4Zotero.knowledge._exportPath}\\${imgKey}.${ext}`
+              OS.Path.join(
+                ...`${_Zotero.Knowledge4Zotero.knowledge._exportPath}/${imgKey}.${ext}`.split(
+                  /\//
+                )
+              )
             );
             Zotero.debug(newFile.path);
-            const newFilePath = `attachments\\${newFile.path
-              .split("\\")
-              .pop()}`;
+            let newPath = newFile.path.replace(/\\/g, "/");
+            const newFilePath = `attachments/${newPath.split(/\//).pop()}`;
 
             img.setAttribute("src", newFilePath);
             img.setAttribute("alt", "image");

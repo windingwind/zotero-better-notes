@@ -674,11 +674,17 @@ class Knowledge extends AddonBase {
 
       this._exportNote = newNote;
       this._exportPath =
-        Zotero.File.pathToFile(filename).parent.path + "\\attachments";
+        Zotero.File.pathToFile(filename).parent.path + "/attachments";
+      // Convert to unix format
+      this._exportPath = this._exportPath.replace(/\\/g, "/");
+
+      Components.utils.import("resource://gre/modules/osfile.jsm");
 
       const hasImage = newNote.getNote().includes("<img");
       if (hasImage) {
-        await Zotero.File.createDirectoryIfMissingAsync(this._exportPath);
+        await Zotero.File.createDirectoryIfMissingAsync(
+          OS.Path.join(...this._exportPath.split(/\//))
+        );
       }
 
       const translator = new Zotero.Translate.Export();
