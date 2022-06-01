@@ -340,8 +340,7 @@ class Knowledge extends AddonBase {
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
     let _newLine: string = "";
-    const templateText =
-      this._Addon.template.getTemplateText("[QuickInsert]");
+    const templateText = this._Addon.template.getTemplateText("[QuickInsert]");
     try {
       _newLine = new Function(
         "link, subNoteItem, noteItem",
@@ -368,6 +367,27 @@ class Knowledge extends AddonBase {
     }
     let noteKey = note.key;
     return `zotero://note/${groupID}/${noteKey}/`;
+  }
+
+  getAnnotationLink(annotation: ZoteroItem) {
+    let position = JSON.parse(annotation.annotationPosition);
+    let openURI: string;
+
+    const attachment = annotation.parentItem;
+    let libraryID = attachment.libraryID;
+    let library = Zotero.Libraries.get(libraryID);
+    if (library.libraryType === "user") {
+      openURI = `zotero://open-pdf/library/items/${attachment.key}`;
+    } else if (library.libraryType === "group") {
+      openURI = `zotero://open-pdf/groups/${library.id}/items/${attachment.key}`;
+    }
+
+    openURI +=
+      "?page=" +
+      (position.pageIndex + 1) +
+      (annotation.key ? "&annotation=" + annotation.key : "");
+
+    return openURI;
   }
 
   async modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {
@@ -668,12 +688,15 @@ class Knowledge extends AddonBase {
     const imageReg = new RegExp("<img");
     const imageBrReg = new RegExp("<br>");
     const imageKeyReg = new RegExp(`data-attachment-key="`);
+    const imageAnnotationReg = new RegExp(`data-annotation="`);
+
     const imageIndex = line.search(imageReg);
     if (imageIndex !== -1) {
       const lineStart = line.slice(0, imageIndex);
       const imageLine = line.slice(imageIndex);
       const lineEnd = imageLine.slice(imageLine.search(imageBrReg));
       const attachmentKeyIndex = imageLine.search(imageKeyReg);
+      const annotationIndex = imageLine.search(imageAnnotationReg);
 
       if (attachmentKeyIndex !== -1) {
         let attachmentKey = imageLine.slice(
@@ -697,6 +720,56 @@ class Knowledge extends AddonBase {
             attachmentURL = "file://" + attachmentURL;
           }
           newLines.push(`<p>!<a href="${attachmentURL}">image</a></p>`);
+
+          // Export annotation link
+          if (annotationIndex !== -1) {
+            let annotationContentRaw = imageLine.slice(
+              annotationIndex + imageAnnotationReg.source.length
+            );
+            annotationContentRaw = annotationContentRaw.slice(
+              0,
+              annotationContentRaw.search('"')
+            );
+            if (annotationContentRaw) {
+              Zotero.debug("convert image annotation");
+              Zotero.debug(annotationContentRaw);
+              try {
+                let annotation = JSON.parse(
+                  decodeURIComponent(annotationContentRaw)
+                );
+                if (annotation) {
+                  // annotation.uri was used before note-editor v4
+                  let uri = annotation.attachmentURI || annotation.uri;
+                  let position = annotation.position;
+                  if (typeof uri === "string" && typeof position === "object") {
+                    let annotationURL;
+                    let uriParts = uri.split("/");
+                    let libraryType = uriParts[3];
+                    let key = uriParts[6];
+                    if (libraryType === "users") {
+                      annotationURL = "zotero://open-pdf/library/items/" + key;
+                    }
+                    // groups
+                    else {
+                      let groupID = uriParts[4];
+                      annotationURL =
+                        "zotero://open-pdf/groups/" + groupID + "/items/" + key;
+                    }
+
+                    annotationURL +=
+                      "?page=" +
+                      (position.pageIndex + 1) +
+                      (annotation.annotationKey
+                        ? "&annotation=" + annotation.annotationKey
+                        : "");
+                    newLines.push(`<p><a href="${annotationURL}">pdf</a></p>`);
+                  }
+                }
+              } catch (e) {
+                Zotero.debug(e);
+              }
+            }
+          }
           newLines.push(`${lineStart}${lineEnd}`);
           return true;
         }

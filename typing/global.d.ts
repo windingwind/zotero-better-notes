@@ -120,6 +120,7 @@ declare interface ZoteroItem {
   annotationType?: string;
   annotationComment?: string;
   annotationText?: string;
+  annotationPosition: string;
   saveTx: () => Promise<void>;
 }
 
