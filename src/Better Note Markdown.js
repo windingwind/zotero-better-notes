@@ -1707,11 +1707,11 @@ let bundle;
               `${_Zotero.Knowledge4Zotero.knowledge._exportPath}\\${imgKey}.${ext}`
             );
             Zotero.debug(newFile.path);
+            const newFilePath = `attachments\\${newFile.path
+              .split("\\")
+              .pop()}`;
 
-            img.setAttribute(
-              "src",
-              _Zotero.isMac ? "file://" + newFile.path : newFile.path
-            );
+            img.setAttribute("src", newFilePath);
             img.setAttribute("alt", "image");
           }
 

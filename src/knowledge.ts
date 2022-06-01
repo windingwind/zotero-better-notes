@@ -660,13 +660,7 @@ class Knowledge extends AddonBase {
     }
 
     if (saveFile) {
-      if (
-        (await new Zotero.Translate.Export().getTranslators()).filter(
-          (e) => e.translatorID === TRANSLATOR_ID_BETTER_MARKDOWN
-        )
-      ) {
-        await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-      }
+      await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
 
       const filename = await pick(
         Zotero.getString("fileInterface.export"),

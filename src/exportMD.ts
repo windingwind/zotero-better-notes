@@ -18,7 +18,7 @@ configs[TRANSLATOR_ID_BETTER_MARKDOWN] = {
   },
   inRepository: true,
   translatorType: 2,
-  lastUpdated: "2022-06-01 10:26:46",
+  lastUpdated: "2022-06-01 23:26:46",
   _codePath:
     "chrome://Knowledge4Zotero/content/translators/Better Note Markdown.js",
 };
