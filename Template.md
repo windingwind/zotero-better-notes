@@ -143,6 +143,83 @@ return noteLine;
 }).join("\n")}
 ```
 
+### [Item] metadata for CS
+Modified on the previous template. Auto-ajust metadata according to item type.  
+![image](https://user-images.githubusercontent.com/33902321/171443309-1cb54d09-8e8a-40ae-8465-96f2f808c96d.png)
+
+```js
+<h2>${topItem.getField('title')}</h2>
+<table>
+    <tr>
+        <th style="background-color:#dbeedd;">
+            <p style="text-align: right">Title </p>
+        </th>
+        <td style="background-color:#dbeedd;">
+            ${topItem.getField('title')}
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#f3faf4;">
+            <p style="text-align: right">${(()=>{
+              if(topItem.itemType === "conferencePaper") return "Conference";
+              if(topItem.itemType === "journalArticle") return "Journal";
+              if(topItem.itemType === "report") return "Publisher";
+              return "Publisher";})()}</p>
+        </th>
+        <td style="background-color:#f3faf4;">${(()=>{
+              if(topItem.itemType === "conferencePaper") {
+                const res =  topItem.getField("conferenceName");
+                return res?res:topItem.getField("proceedingsTitle");
+              };
+              if(topItem.itemType === "journalArticle") return topItem.getField("publicationTitle");
+              if(topItem.itemType === "report") return topItem.getField("institution");
+              return topItem.getField("publicationTitle");})()}
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#dbeedd;">
+            <p style="text-align: right">Authors </p>
+        </th>
+        <td style="background-color:#dbeedd;">
+            ${topItem.getCreators().map((v)=>v.firstName+" "+v.lastName).join("; ")}
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#f3faf4;">
+            <p style="text-align: right">Pub. date </p>
+        </th>
+        <td style="background-color:#f3faf4;">
+            ${topItem.getField('date')}
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#dbeedd;">
+            <p style="text-align: right">DOI </p>
+        </th>
+        <td style="background-color:#dbeedd;">
+            <a href="https://doi.org/${topItem.getField('DOI')}">${topItem.getField('DOI')}</a>
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#f3faf4;">
+            <p style="text-align: right">URL</p>
+        </th>
+        <td style="background-color:#f3faf4;">
+            ${topItem.getField('url')}
+        </td>
+    </tr>
+    <tr>
+        <th style="background-color:#dbeedd;">
+            <p style="text-align: right">CitationKey</p>
+        </th>
+        <td style="background-color:#dbeedd;">
+            ${topItem.citationKey?topItem.citationKey:''}
+        </td>
+    </tr>
+</table>
+```
+
+
 ### [Text] today
 
 ```js
