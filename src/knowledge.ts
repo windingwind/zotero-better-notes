@@ -394,7 +394,11 @@ class Knowledge extends AddonBase {
     return openURI;
   }
 
-  async modifyLineInNote(note: ZoteroItem, text: string, lineIndex: number) {
+  async modifyLineInNote(
+    note: ZoteroItem,
+    text: string | Function,
+    lineIndex: number
+  ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return;
@@ -403,7 +407,11 @@ class Knowledge extends AddonBase {
     if (lineIndex < 0 || lineIndex >= noteLines.length) {
       return;
     }
-    noteLines[lineIndex] = text;
+    if (typeof text === "string") {
+      noteLines[lineIndex] = text;
+    } else if (typeof text === "function") {
+      noteLines[lineIndex] = text(noteLines[lineIndex]);
+    }
     this.setLinesToNote(note, noteLines);
     await this.scrollWithRefresh(lineIndex);
   }
@@ -745,6 +753,11 @@ class Knowledge extends AddonBase {
       if (convertNoteLinks) {
         let link = this.getLinkFromText(noteLines[i]);
         while (link) {
+          const params = this.getParamsFromLink(link);
+          if (params.ignore) {
+            Zotero.debug("ignore link");
+            continue;
+          }
           Zotero.debug("convert link");
           let res = await this.getNoteFromLink(link);
           const subNote = res.item;
@@ -797,25 +810,45 @@ class Knowledge extends AddonBase {
     return link;
   }
 
-  async getNoteFromLink(uri: string) {
-    let [groupID, noteKey] = uri.substring("zotero://note/".length).split("/");
-
-    // User libraryID by defaultx
-    let libraryID = 1;
-
-    if (groupID !== "u") {
-      // Not a user item
-      let _groupID = parseInt(groupID);
-      libraryID = Zotero.Groups.getLibraryIDFromGroupID(_groupID);
+  getLinkIndexFromText(text: string): [number, number] {
+    // Must end with "
+    const linkIndex = text.search(/zotero:\/\/note\//g);
+    if (linkIndex === -1) {
+      return [-1, -1];
     }
+    let link = text.substring(linkIndex);
+    return [linkIndex, linkIndex + link.search('"')];
+  }
 
-    if (!libraryID) {
+  getParamsFromLink(uri: string) {
+    uri = uri.split("//").pop();
+    let params = {
+      libraryID: "",
+      noteKey: 0,
+      ignore: 0,
+    };
+    const router = new Zotero.Router(params);
+    router.add("note/:libraryID/:noteKey", function () {
+      if (params.libraryID === "u") {
+        params.libraryID = Zotero.Libraries.userLibraryID;
+      }
+    });
+    router.run(uri);
+    return params;
+  }
+
+  async getNoteFromLink(uri: string) {
+    const params = this.getParamsFromLink(uri);
+    if (!params.libraryID) {
       return {
         item: false,
         infoText: "Library does not exist or access denied.",
       };
     }
-    let item = await Zotero.Items.getByLibraryAndKeyAsync(libraryID, noteKey);
+    let item = await Zotero.Items.getByLibraryAndKeyAsync(
+      params.libraryID,
+      params.noteKey
+    );
     if (!item || !item.isNote()) {
       return {
         item: false,

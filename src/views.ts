@@ -388,10 +388,25 @@ class AddonViews extends AddonBase {
           alert(e);
         }
         newLines.push(_newLine);
-        await this._Addon.knowledge.addLinesToNote(
+        const newLineString = newLines.join("\n");
+        await this._Addon.knowledge.modifyLineInNote(
           undefined,
-          newLines,
-          this._Addon.knowledge.currentLine + 1
+          (oldLine: string) => {
+            Zotero.debug(oldLine);
+            const params = this._Addon.knowledge.getParamsFromLink(link);
+            if (!params.ignore) {
+              const newLink =
+                link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
+              const linkIndex =
+                this._Addon.knowledge.getLinkIndexFromText(oldLine);
+              Zotero.debug(linkIndex);
+              return `${oldLine.slice(
+                0,
+                linkIndex[0]
+              )}${newLink}${oldLine.slice(linkIndex[1])}\n${newLineString}`;
+            }
+          },
+          this._Addon.knowledge.currentLine
         );
         await Zotero.DB.executeTransaction(async () => {
           await Zotero.Notes.copyEmbeddedImages(

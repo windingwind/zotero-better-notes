@@ -1722,7 +1722,7 @@ let bundle;
             }
             Zotero.debug(newFile);
 
-            img.setAttribute("src", newFile);
+            img.setAttribute("src", newFile ? newFile : oldFile);
             img.setAttribute("alt", "image");
           }
 
