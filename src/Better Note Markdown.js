@@ -1703,19 +1703,26 @@ let bundle;
             let oldFile = String(await attachmentItem.getFilePathAsync());
             Zotero.debug(oldFile);
             let ext = oldFile.split(".").pop();
-            let newFile = _Zotero.File.copyToUnique(
-              oldFile,
-              OS.Path.join(
-                ...`${_Zotero.Knowledge4Zotero.knowledge._exportPath}/${imgKey}.${ext}`.split(
-                  /\//
-                )
+            let newAbsPath = OS.Path.join(
+              ...`${_Zotero.Knowledge4Zotero.knowledge._exportPath}/${imgKey}.${ext}`.split(
+                /\//
               )
             );
-            Zotero.debug(newFile.path);
-            let newPath = newFile.path.replace(/\\/g, "/");
-            const newFilePath = `attachments/${newPath.split(/\//).pop()}`;
+            Zotero.debug(newAbsPath);
+            if (!Zotero.isWin && newAbsPath.charAt(0) !== "/") {
+              newAbsPath = "/" + newAbsPath;
+            }
+            let newFile = oldFile;
+            try {
+              newFile = _Zotero.File.copyToUnique(oldFile, newAbsPath).path;
+              newFile = newFile.replace(/\\/g, "/");
+              newFile = `attachments/${newFile.split(/\//).pop()}`;
+            } catch (e) {
+              Zotero.debug(e);
+            }
+            Zotero.debug(newFile);
 
-            img.setAttribute("src", newFilePath);
+            img.setAttribute("src", newFile);
             img.setAttribute("alt", "image");
           }
 
