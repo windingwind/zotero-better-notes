@@ -1708,10 +1708,10 @@ let bundle;
                 /\//
               )
             );
-            Zotero.debug(newAbsPath);
-            if (!Zotero.isWin && newAbsPath.charAt(0) !== "/") {
+            if (!_Zotero.isWin && newAbsPath.charAt(0) !== "/") {
               newAbsPath = "/" + newAbsPath;
             }
+            Zotero.debug(newAbsPath);
             let newFile = oldFile;
             try {
               newFile = _Zotero.File.copyToUnique(oldFile, newAbsPath).path;
