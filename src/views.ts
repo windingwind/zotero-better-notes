@@ -215,6 +215,7 @@ class AddonViews extends AddonBase {
       editorCore.after(viewNode);
       editorCore.style.visibility = "hidden";
       viewNode.scrollTop = editorCore.scrollTop;
+      instance._iframeWindow.postMessage({ type: "renderLaTex" }, "*");
     } else {
       if (this._texNotes.includes(instance._item.id)) {
         this._texNotes.splice(this._texNotes.indexOf(instance._item.id), 1);

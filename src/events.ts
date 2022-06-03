@@ -1,4 +1,3 @@
-import renderMathInElement from "katex/contrib/auto-render";
 import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
@@ -392,28 +391,39 @@ class AddonEvents extends AddonBase {
       `;
       _window.document.body.append(style);
 
-      const texStyle = _window.document.createElement("link");
-      texStyle.setAttribute("rel", "stylesheet");
-      texStyle.setAttribute(
-        "href",
-        "chrome://Knowledge4Zotero/content/lib/css/katex.min.css"
-      );
-      _window.document.body.append(texStyle);
+      if (!_window.document.getElementById("MathJax-script")) {
+        const messageScript = _window.document.createElement("script");
+        messageScript.innerHTML = `
+          window.addEventListener('message', (e)=>{
+            if(e.data.type === "renderLaTex"){
+              console.log("renderLaTex");
+              MathJax.typeset([window.document.getElementById("texView")])
+            }
+          }, false)
+          MathJax = {
+            tex: {
+              inlineMath: [              // start/end delimiter pairs for in-line math
+                ['$', '$']
+              ],
+              displayMath: [             // start/end delimiter pairs for display math
+                ['$$', '$$']
+              ],
+            },
+            startup: {
+              typeset: false,           // Perform initial typeset?
+            }
+          };
+        `;
+        _window.document.head.append(messageScript);
 
-      const copytexStyle = _window.document.createElement("link");
-      copytexStyle.setAttribute("rel", "stylesheet");
-      copytexStyle.setAttribute(
-        "href",
-        "chrome://Knowledge4Zotero/content/lib/css/copy-tex.css"
-      );
-      _window.document.body.append(copytexStyle);
-
-      const copytexScript = _window.document.createElement("script");
-      copytexScript.setAttribute(
-        "src",
-        "chrome://Knowledge4Zotero/content/lib/js/copy-tex.min.js"
-      );
-      _window.document.head.append(copytexScript);
+        const mathScript = _window.document.createElement("script");
+        mathScript.setAttribute("id", "MathJax-script");
+        mathScript.setAttribute(
+          "src",
+          "chrome://Knowledge4Zotero/content/lib/js/tex-svg.js"
+        );
+        _window.document.head.append(mathScript);
+      }
 
       message.content.editorInstance._knowledgeUIInitialized = true;
 
@@ -524,18 +534,7 @@ class AddonEvents extends AddonBase {
         }
         Zotero.debug("Knowledge4Zotero: latex view on.");
         const viewNode = editorElement.cloneNode(true) as HTMLElement;
-        renderMathInElement(viewNode, {
-          // customised options
-          // • auto-render specific keys, e.g.:
-          delimiters: [
-            { left: "$$", right: "$$", display: true },
-            { left: "$", right: "$", display: false },
-            { left: "\\(", right: "\\)", display: false },
-            { left: "\\[", right: "\\]", display: true },
-          ],
-          // • rendering keys, e.g.:
-          throwOnError: false,
-        });
+
         this._Addon.views.switchEditorTexView(instance, true, viewNode);
         this._Addon.views.changeEditorButtonView(
           instance._iframeWindow.document.getElementById("knowledge-switchTex"),
