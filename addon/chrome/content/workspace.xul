@@ -47,6 +47,7 @@
     <command id="cmd_mindmap" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
     <command id="cmd_bubblemap" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
     <command id="cmd_guide" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openUserGuide'});" />
+    <command id="cmd_about" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openAbout'});" />
 
     <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons" defaultmode="icons">
         <!-- Menu -->
@@ -87,12 +88,31 @@
                             <menuitem id="menu_treeview" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview" />
                             <menuitem id="menu_mindmap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap" />
                             <menuitem id="menu_bubblemap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap" />
+                            <menuseparator />
+                            <menu id="note-font-size-menu" label="&noteFontSize.label;">
+                                <menupopup oncommand="Zotero.Prefs.set('note.fontSize', event.originalTarget.getAttribute('label'));">
+                                    <menuitem label="11" type="checkbox" />
+                                    <menuitem label="12" type="checkbox" />
+                                    <menuitem label="13" type="checkbox" />
+                                    <menuitem label="14" type="checkbox" />
+                                    <menuitem label="18" type="checkbox" />
+                                    <menuitem label="24" type="checkbox" />
+                                    <menuitem label="36" type="checkbox" />
+                                    <menuitem label="48" type="checkbox" />
+                                    <menuitem label="64" type="checkbox" />
+                                    <menuitem label="72" type="checkbox" />
+                                    <menuitem label="96" type="checkbox" />
+                                    <menuseparator />
+                                    <menuitem id="view-menuitem-note-font-size-reset" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
+                                </menupopup>
+                            </menu>
                         </menupopup>
                     </menu>
 
                     <menu id="helpMenu" label="&helpMenu.label;" accesskey="&helpMenu.accesskey;">
                         <menupopup id="menu_HelpPopup">
                             <menuitem id="menu_guide" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide" />
+                            <menuitem id="menu_about" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about" />
                         </menupopup>
                     </menu>
                 </menubar>

@@ -716,6 +716,17 @@ class AddonViews extends AddonBase {
     this.currentOutline === OutlineType.bubbleMap
       ? bubblemap.setAttribute("checked", true)
       : bubblemap.removeAttribute("checked");
+
+    const noteFontSize = Zotero.Prefs.get("note.fontSize");
+    for (let menuitem of _window.document.querySelectorAll(
+      `#note-font-size-menu menuitem`
+    )) {
+      if (parseInt(menuitem.getAttribute("label")) == noteFontSize) {
+        menuitem.setAttribute("checked", true);
+      } else {
+        menuitem.removeAttribute("checked");
+      }
+    }
   }
 
   updateTemplateMenu(type: "Note" | "Item" | "Text") {

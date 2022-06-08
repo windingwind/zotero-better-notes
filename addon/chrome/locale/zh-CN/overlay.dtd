@@ -15,6 +15,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "大纲: 思维导图">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "大纲: 气泡导图">
 <!ENTITY zotero.__addonRef__.workspace.menu.guide "打开用户指引">
+<!ENTITY zotero.__addonRef__.workspace.menu.about "关于Better Notes">
 
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "设置为主笔记">
 
@@ -61,5 +62,5 @@
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
-<!ENTITY zotero.__addonRef__.help.version.label "__addonName__ VERSION __buildVersion__">
+<!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">

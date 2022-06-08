@@ -15,6 +15,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">
 <!ENTITY zotero.__addonRef__.workspace.menu.guide "Open User Guide">
+<!ENTITY zotero.__addonRef__.workspace.menu.about "About Better Notes">
 
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Note">
 
@@ -61,5 +62,5 @@
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
-<!ENTITY zotero.__addonRef__.help.version.label "__addonName__ VERSION __buildVersion__">
+<!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">

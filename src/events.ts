@@ -130,6 +130,16 @@ class AddonEvents extends AddonBase {
         // margin=44+44/32+10+10+53, final space is 700*500
         "chrome,extrachrome,centerscreen,width=650,height=608"
       );
+    } else if (message.type === "openAbout") {
+      /*
+        message.content = {}
+      */
+      // @ts-ignore
+      window.openDialog(
+        "chrome://Knowledge4Zotero/content/about.xul",
+        "about",
+        "chrome,centerscreen"
+      );
     } else if (message.type === "openWorkspace") {
       /*
         message.content = {}
