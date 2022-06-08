@@ -1647,15 +1647,19 @@ let bundle;
                 // annotation.uri was used before note-editor v4
                 let uri = annotation.attachmentURI || annotation.uri;
                 let position = annotation.position;
+                Zotero.debug("----Debug Link----");
+                Zotero.debug(annotation);
                 if (
                   Zotero.getOption("includeAppLinks") &&
                   typeof uri === "string" &&
                   typeof position === "object"
                 ) {
+                  Zotero.debug(uri);
                   let openURI;
                   let uriParts = uri.split("/");
                   let libraryType = uriParts[3];
-                  let key = uriParts[6];
+                  let key = uri.split("/").pop();
+                  Zotero.debug(key);
                   if (libraryType === "users") {
                     openURI = "zotero://open-pdf/library/items/" + key;
                   }
