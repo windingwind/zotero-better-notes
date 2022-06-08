@@ -659,6 +659,7 @@ class Knowledge extends AddonBase {
       Zotero.debug(convertResult.subNotes);
 
       await Zotero.DB.executeTransaction(async () => {
+        await Zotero.Notes.copyEmbeddedImages(note, newNote);
         for (const subNote of convertResult.subNotes) {
           await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
         }
