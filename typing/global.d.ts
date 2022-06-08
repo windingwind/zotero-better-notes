@@ -207,6 +207,17 @@ declare class Annotation {
 }
 
 declare const Zotero_Tabs: {
+  _getTab(tabId: string);
+  jump(workspaceTabId: Number);
+  close(tabId: string);
+  select(tabId: string);
+  add(arg0: {
+    type: string;
+    title: any;
+    index: any;
+    data: object;
+    select: boolean;
+  });
   _tabs: Array<any>;
   selectedID: string;
 };

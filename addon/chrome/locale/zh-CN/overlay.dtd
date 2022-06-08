@@ -2,6 +2,7 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "创建新主笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.openWindow "在新窗口中打开">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">

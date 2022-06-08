@@ -36,8 +36,9 @@
     </keyset>
     <command id="cmd_new" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'createWorkspace'});" />
     <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainKnowledge'});" />
+    <command id="cmd_openWindow" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openWorkspaceInWindow'});" />
     <command id="cmd_export" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
-    <command id="cmd_close" oncommand="window.close();" />
+    <command id="cmd_close" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'closeWorkspace'});" />
     <!-- <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" /> -->
     <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
     <command id="cmd_addheading" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
@@ -58,6 +59,7 @@
                         <menupopup id="menu_FilePopup">
                             <menuitem id="menu_new" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new" accesskey="N" command="cmd_new" />
                             <menuitem id="menu_open" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open" accesskey="O" command="cmd_open" />
+                            <menuitem id="menu_openWindow" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_openWindow" />
                             <menuitem id="menu_export" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export" accesskey="E" command="cmd_export" />
                             <menuitem id="menu_close" label="&closeCmd.label;" key="key_close" accesskey="&closeCmd.accesskey;" command="cmd_close" />
                         </menupopup>

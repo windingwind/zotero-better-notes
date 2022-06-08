@@ -145,6 +145,16 @@ class AddonEvents extends AddonBase {
         message.content = {}
       */
       await this._Addon.knowledge.openWorkspaceWindow();
+    } else if (message.type === "openWorkspaceInWindow") {
+      /*
+        message.content = {}
+      */
+      await this._Addon.knowledge.openWorkspaceWindow("window", true);
+    } else if (message.type === "closeWorkspace") {
+      /*
+        message.content = {}
+      */
+      this._Addon.knowledge.closeWorkspaceWindow();
     } else if (message.type === "createWorkspace") {
       /*
         message.content = {}

@@ -2,6 +2,7 @@
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.openWindow "Open in New Window">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "Insert Notes...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Template">

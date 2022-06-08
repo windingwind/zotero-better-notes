@@ -8,6 +8,7 @@ class Knowledge extends AddonBase {
   currentLine: number;
   currentNodeID: number;
   workspaceWindow: Window;
+  workspaceTabId: string;
   _exportNote: ZoteroItem;
   _exportPath: string;
   constructor(parent: Knowledge4Zotero) {
@@ -29,10 +30,23 @@ class Knowledge extends AddonBase {
     return false;
   }
 
-  async openWorkspaceWindow() {
+  async openWorkspaceWindow(
+    type: "window" | "tab" = "tab",
+    reopen: boolean = false
+  ) {
     if (this.getWorkspaceWindow()) {
-      (this.getWorkspaceWindow() as Window).focus();
-    } else {
+      if (!reopen) {
+        if (this.workspaceTabId) {
+          Zotero_Tabs.select(this.workspaceTabId);
+        } else {
+          (this.getWorkspaceWindow() as Window).focus();
+        }
+        return;
+      } else {
+        this.closeWorkspaceWindow();
+      }
+    }
+    if (type === "window") {
       this._Addon.views._initIframe = Zotero.Promise.defer();
       let win = window.open(
         "chrome://Knowledge4Zotero/content/workspace.xul",
@@ -40,12 +54,67 @@ class Knowledge extends AddonBase {
         "chrome,extrachrome,menubar,resizable,scrollbars,status,width=1000,height=600"
       );
       this.workspaceWindow = win;
+      this.workspaceTabId = "";
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
       this.currentLine = -1;
       this._Addon.views.initKnowledgeWindow(win);
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
+    } else {
+      this._Addon.views._initIframe = Zotero.Promise.defer();
+      // Avoid sidebar show up
+      Zotero_Tabs.jump(0);
+      let { id, container } = Zotero_Tabs.add({
+        type: "library",
+        title: "Better Notes Workspace",
+        index: 1,
+        data: {
+          _item: this.getWorkspaceNote(),
+        },
+        select: true,
+      });
+      this.workspaceTabId = id;
+      const _iframe = window.document.createElement("browser");
+      _iframe.setAttribute("class", "reader");
+      _iframe.setAttribute("flex", "1");
+      _iframe.setAttribute("type", "content");
+      _iframe.setAttribute(
+        "src",
+        "chrome://Knowledge4Zotero/content/workspace.xul"
+      );
+      container.appendChild(_iframe);
+      // @ts-ignore
+      window.addEventListener("DOMContentLoaded", async (event) => {
+        if (
+          _iframe &&
+          // @ts-ignore
+          _iframe.contentWindow &&
+          // @ts-ignore
+          _iframe.contentWindow.document === event.target
+        ) {
+          // @ts-ignore
+          this.workspaceWindow = _iframe.contentWindow;
+          await this.waitWorkspaceReady();
+
+          // Need reinit
+          this.setWorkspaceNote("main");
+          this.currentLine = -1;
+          this._Addon.views.initKnowledgeWindow(this.workspaceWindow);
+          this._Addon.views.switchView(OutlineType.treeView);
+          this._Addon.views.updateOutline();
+        }
+      });
+    }
+  }
+
+  closeWorkspaceWindow() {
+    if (this.getWorkspaceWindow()) {
+      if (this.workspaceTabId) {
+        Zotero_Tabs.close(this.workspaceTabId);
+      } else {
+        (this.getWorkspaceWindow() as Window).close();
+      }
     }
   }
 
@@ -106,6 +175,9 @@ class Knowledge extends AddonBase {
     noteEditor.viewMode = "library";
     noteEditor.parent = null;
     noteEditor.item = note;
+    if (this.workspaceTabId) {
+      noteEditor.initEditor();
+    }
 
     await noteEditor._initPromise;
     let t = 0;
