@@ -388,6 +388,9 @@ class AddonEvents extends AddonBase {
         h4 {text-indent: 30px}
         h5 {text-indent: 40px}
         h6 {text-indent: 50px}
+        .primary-editor > p, .primary-editor h1, .primary-editor h2, .primary-editor h3, .primary-editor h4, .primary-editor h5, .primary-editor h6, .primary-editor pre, .primary-editor blockquote, .primary-editor table, .primary-editor ul, .primary-editor ol, .primary-editor hr{
+          max-width: unset
+        }
       `;
       _window.document.body.append(style);
 
