@@ -681,6 +681,7 @@ class AddonViews extends AddonBase {
     // Clear stored node id
     this._Addon.knowledge.currentNodeID = -1;
     this.updateEditCommand();
+    this.updateViewMenu();
   }
 
   async updateOutline() {
@@ -711,25 +712,31 @@ class AddonViews extends AddonBase {
   }
 
   updateEditCommand() {
-    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this._Addon.knowledge.workspaceTabId
+      ? window
+      : this._Addon.knowledge.getWorkspaceWindow();
     Zotero.debug(`updateEditMenu, ${this._Addon.knowledge.currentNodeID}`);
     if (this._Addon.knowledge.currentNodeID < 0) {
       _window.document
-        .getElementById("cmd_indent")
+        .getElementById("cmd_indent_betternotes")
         .setAttribute("disabled", true);
       _window.document
-        .getElementById("cmd_unindent")
+        .getElementById("cmd_unindent_betternotes")
         .setAttribute("disabled", true);
     } else {
-      _window.document.getElementById("cmd_indent").removeAttribute("disabled");
       _window.document
-        .getElementById("cmd_unindent")
+        .getElementById("cmd_indent_betternotes")
+        .removeAttribute("disabled");
+      _window.document
+        .getElementById("cmd_unindent_betternotes")
         .removeAttribute("disabled");
     }
   }
 
   updateViewMenu() {
-    const _window = this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this._Addon.knowledge.workspaceTabId
+      ? window
+      : this._Addon.knowledge.getWorkspaceWindow();
     Zotero.debug(`updateViewMenu, ${this.currentOutline}`);
     const treeview = _window.document.getElementById("menu_treeview");
     this.currentOutline === OutlineType.treeView
@@ -756,12 +763,10 @@ class AddonViews extends AddonBase {
     }
   }
 
-  updateTemplateMenu(
-    type: "Note" | "Item" | "Text",
-    from: "tab" | "window" = "window"
-  ) {
-    const _window =
-      from === "window" ? this._Addon.knowledge.getWorkspaceWindow() : window;
+  updateTemplateMenu(type: "Note" | "Item" | "Text") {
+    const _window = this._Addon.knowledge.workspaceTabId
+      ? window
+      : this._Addon.knowledge.getWorkspaceWindow();
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()

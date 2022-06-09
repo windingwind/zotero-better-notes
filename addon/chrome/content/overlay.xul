@@ -57,13 +57,13 @@
     <menupopup id="menu_EditPopup">
         <menuseparator class="menu-type-betternotes" />
         <menu id="menu_insertTextTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
-            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text', 'tab');" />
+            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
         </menu>
         <menu id="menu_insertNoteTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
-            <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note', 'tab');" />
+            <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
         </menu>
         <menu id="menu_insertItemTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
-            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item', 'tab');" />
+            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
         </menu>
         <menuitem id="menu_editTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
         <menuseparator class="menu-type-betternotes" />
@@ -72,29 +72,11 @@
         <menuitem id="menu_unindent_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent_betternotes" key="key_unindent_betternotes" />
     </menupopup>
 
-    <menupopup id="menu_ViewPopup">
+    <menupopup id="menu_viewPopup">
         <menuseparator class="menu-type-betternotes" />
-        <menuitem id="menu_treeview_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview_betternotes" />
-        <menuitem id="menu_mindmap_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap_betternotes" />
-        <menuitem id="menu_bubblemap_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />
-        <menuseparator class="menu-type-betternotes" />
-        <menu id="note-font-size-menu_betternotes" class="menu-type-betternotes" label="&noteFontSize.label;">
-            <menupopup oncommand="Zotero.Prefs.set('note.fontSize', event.originalTarget.getAttribute('label'));">
-                <menuitem label="11" type="checkbox" />
-                <menuitem label="12" type="checkbox" />
-                <menuitem label="13" type="checkbox" />
-                <menuitem label="14" type="checkbox" />
-                <menuitem label="18" type="checkbox" />
-                <menuitem label="24" type="checkbox" />
-                <menuitem label="36" type="checkbox" />
-                <menuitem label="48" type="checkbox" />
-                <menuitem label="64" type="checkbox" />
-                <menuitem label="72" type="checkbox" />
-                <menuitem label="96" type="checkbox" />
-                <menuseparator />
-                <menuitem id="view-menuitem-note-font-size-reset_betternotes" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
-            </menupopup>
-        </menu>
+        <menuitem id="menu_treeview" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview_betternotes" />
+        <menuitem id="menu_mindmap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap_betternotes" />
+        <menuitem id="menu_bubblemap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />        
     </menupopup>
 
     <menupopup id="menu_HelpPopup">
