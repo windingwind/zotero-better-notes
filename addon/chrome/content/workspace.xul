@@ -50,77 +50,72 @@
     <command id="cmd_guide" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openUserGuide'});" />
     <command id="cmd_about" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openAbout'});" />
 
-    <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons" defaultmode="icons">
-        <!-- Menu -->
-        <toolbar type="menubar" id="toolbar-menubar" class="chromeclass-menubar" customizable="true" defaultset="menubar-items" mode="icons" iconsize="small" defaulticonsize="small" context="toolbar-context-menu">
-            <toolbaritem id="menubar-items" align="center">
-                <menubar id="main-menubar" style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
-                    <menu id="fileMenu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
-                        <menupopup id="menu_FilePopup">
-                            <menuitem id="menu_new" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new" accesskey="N" command="cmd_new" />
-                            <menuitem id="menu_open" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open" accesskey="O" command="cmd_open" />
-                            <menuitem id="menu_openWindow" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_openWindow" />
-                            <menuitem id="menu_export" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export" accesskey="E" command="cmd_export" />
-                            <menuitem id="menu_close" label="&closeCmd.label;" key="key_close" accesskey="&closeCmd.accesskey;" command="cmd_close" />
-                        </menupopup>
-                    </menu>
+    <!-- Menu -->
+    <menubar id="better-notes-menu">
+        <menu id="fileMenu" label="&fileMenu.label;" accesskey="&fileMenu.accesskey;">
+            <menupopup id="menu_FilePopup">
+                <menuitem id="menu_new" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new" accesskey="N" command="cmd_new" />
+                <menuitem id="menu_open" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open" accesskey="O" command="cmd_open" />
+                <menuitem id="menu_openWindow" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_openWindow" />
+                <menuitem id="menu_export" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export" accesskey="E" command="cmd_export" />
+                <menuitem id="menu_close" label="&closeCmd.label;" key="key_close" accesskey="&closeCmd.accesskey;" command="cmd_close" />
+            </menupopup>
+        </menu>
 
-                    <menu id="menu_edit" label="&editMenu.label;" accesskey="&editMenu.accesskey;">
-                        <menupopup id="menu_EditPopup">
-                            <!-- <menuitem id="menu_insertNotes" label="&zotero.__addonRef__.workspace.menu.insertNotes;" key="key_insertNotes" accesskey="I" command="cmd_insertNotes" /> -->
-                            <menu id="menu_insertTextTemplate" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
-                                <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
-                            </menu>
-                            <menu id="menu_insertNoteTemplate" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
-                                <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
-                            </menu>
-                            <menu id="menu_insertItemTemplate" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
-                                <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
-                            </menu>
-                            <menuitem id="menu_editTemplate" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate" />
-                            <menuseparator />
-                            <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
-                            <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent" key="key_indent" />
-                            <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent" key="key_unindent" />
-                        </menupopup>
-                    </menu>
+        <menu id="menu_edit" label="&editMenu.label;" accesskey="&editMenu.accesskey;">
+            <menupopup id="menu_EditPopup">
+                <!-- <menuitem id="menu_insertNotes" label="&zotero.__addonRef__.workspace.menu.insertNotes;" key="key_insertNotes" accesskey="I" command="cmd_insertNotes" /> -->
+                <menu id="menu_insertTextTemplate" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
+                    <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
+                </menu>
+                <menu id="menu_insertNoteTemplate" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
+                    <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
+                </menu>
+                <menu id="menu_insertItemTemplate" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
+                    <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
+                </menu>
+                <menuitem id="menu_editTemplate" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate" />
+                <menuseparator />
+                <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
+                <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent" key="key_indent" />
+                <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent" key="key_unindent" />
+            </menupopup>
+        </menu>
 
-                    <menu id="view-menu" label="&viewMenu.label;" accesskey="&viewMenu.accesskey;" onpopupshowing="Zotero.Knowledge4Zotero.views.updateViewMenu();">
-                        <menupopup id="menu_ViewPopup">
-                            <menuitem id="menu_treeview" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview" />
-                            <menuitem id="menu_mindmap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap" />
-                            <menuitem id="menu_bubblemap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap" />
-                            <menuseparator />
-                            <menu id="note-font-size-menu" label="&noteFontSize.label;">
-                                <menupopup oncommand="Zotero.Prefs.set('note.fontSize', event.originalTarget.getAttribute('label'));">
-                                    <menuitem label="11" type="checkbox" />
-                                    <menuitem label="12" type="checkbox" />
-                                    <menuitem label="13" type="checkbox" />
-                                    <menuitem label="14" type="checkbox" />
-                                    <menuitem label="18" type="checkbox" />
-                                    <menuitem label="24" type="checkbox" />
-                                    <menuitem label="36" type="checkbox" />
-                                    <menuitem label="48" type="checkbox" />
-                                    <menuitem label="64" type="checkbox" />
-                                    <menuitem label="72" type="checkbox" />
-                                    <menuitem label="96" type="checkbox" />
-                                    <menuseparator />
-                                    <menuitem id="view-menuitem-note-font-size-reset" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
-                                </menupopup>
-                            </menu>
-                        </menupopup>
-                    </menu>
+        <menu id="view-menu" label="&viewMenu.label;" accesskey="&viewMenu.accesskey;" onpopupshowing="Zotero.Knowledge4Zotero.views.updateViewMenu();">
+            <menupopup id="menu_ViewPopup">
+                <menuitem id="menu_treeview" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview" />
+                <menuitem id="menu_mindmap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap" />
+                <menuitem id="menu_bubblemap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap" />
+                <menuseparator />
+                <menu id="note-font-size-menu" label="&noteFontSize.label;">
+                    <menupopup oncommand="Zotero.Prefs.set('note.fontSize', event.originalTarget.getAttribute('label'));">
+                        <menuitem label="11" type="checkbox" />
+                        <menuitem label="12" type="checkbox" />
+                        <menuitem label="13" type="checkbox" />
+                        <menuitem label="14" type="checkbox" />
+                        <menuitem label="18" type="checkbox" />
+                        <menuitem label="24" type="checkbox" />
+                        <menuitem label="36" type="checkbox" />
+                        <menuitem label="48" type="checkbox" />
+                        <menuitem label="64" type="checkbox" />
+                        <menuitem label="72" type="checkbox" />
+                        <menuitem label="96" type="checkbox" />
+                        <menuseparator />
+                        <menuitem id="view-menuitem-note-font-size-reset" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
+                    </menupopup>
+                </menu>
+            </menupopup>
+        </menu>
 
-                    <menu id="helpMenu" label="&helpMenu.label;" accesskey="&helpMenu.accesskey;">
-                        <menupopup id="menu_HelpPopup">
-                            <menuitem id="menu_guide" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide" />
-                            <menuitem id="menu_about" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about" />
-                        </menupopup>
-                    </menu>
-                </menubar>
-            </toolbaritem>
-        </toolbar>
-    </toolbox>
+        <menu id="helpMenu" label="&helpMenu.label;" accesskey="&helpMenu.accesskey;">
+            <menupopup id="menu_HelpPopup">
+                <menuitem id="menu_guide" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide" />
+                <menuitem id="menu_about" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about" />
+            </menupopup>
+        </menu>
+    </menubar>
+
 
     <hbox flex="1">
         <vbox id="zotero-knowledge-outline" flex="1" width="330" minwidth="300" style="overflow: hidden;">

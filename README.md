@@ -34,6 +34,11 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
 
 For new users, a **User Guide** will help you get started quickly and create a user guide note for you. Use it as a playground and explore your own workflow!
 
+### Important Changes
+
+- Since v0.2.0, most of the workspace bottom-left buttons are moved to menu bar.
+- Since v0.5.0, workspace will open as a Zotero tab by default. `Menu -> File -> Open in New Window` or press `shift` while clicking the Open Workspace button to use the standalone mode.
+
 Documentation:  
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 

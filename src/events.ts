@@ -37,18 +37,55 @@ class AddonEvents extends AddonBase {
             new EditorMessage("buildReaderAnnotationButton", {})
           );
         }
+        if (event == "add" && type == "tab") {
+          if (ids[0] === this._Addon.knowledge.workspaceTabId) {
+            const tabTitle = document
+              .querySelector(`.tab[data-id=${ids[0]}]`)
+              .querySelector(".tab-name");
+            tabTitle.innerHTML = `${this._Addon.views.editorIcon.tabIcon}${tabTitle.innerHTML}`;
+          }
+        }
+        if (event == "select" && type == "tab") {
+          if (extraData[ids[0]].type == "betternotes") {
+            let t = 0;
+            await this._Addon.knowledge.waitWorkspaceReady();
+            while (
+              !(await this._Addon.knowledge.getWorkspaceEditorInstance(
+                "main",
+                false
+              )) &&
+              t < 100
+            ) {
+              t += 1;
+              this._Addon.knowledge.setWorkspaceNote();
+              await Zotero.Promise.delay(100);
+            }
+
+            const _tabCover = document.getElementById("zotero-tab-cover");
+            const _contextPane = document.getElementById(
+              "zotero-context-pane"
+            ) as XUL.Element;
+            const _contextPaneSplitter = document.getElementById(
+              "zotero-context-splitter"
+            ) as XUL.Element;
+            const _tabToolbar = document.getElementById("zotero-tab-toolbar");
+            _contextPaneSplitter.setAttribute("hidden", true);
+            _contextPane.setAttribute("collapsed", true);
+            _tabToolbar.hidden = true;
+            _tabCover.hidden = true;
+            this._Addon.views.switchKey(false);
+          } else {
+            this._Addon.views.switchRealMenuBar(true);
+            this._Addon.views.switchKey(true);
+          }
+        }
       },
     };
   }
 
   public async onInit() {
     Zotero.debug("Knowledge4Zotero: init called");
-    await Zotero.uiReadyPromise;
-    // Init translator
-    // await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-    // Init UI
-    this._Addon.views.addOpenWorkspaceButton();
-    this._Addon.views.addNewKnowledgeButton();
+
     this.addEditorInstanceListener();
     // Register the callback in Zotero as an item observer
     let notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, [
@@ -60,15 +97,54 @@ class AddonEvents extends AddonBase {
     // Unregister callback when the window closes (important to avoid a memory leak)
     window.addEventListener(
       "unload",
-      function (e) {
+      (e) => {
         Zotero.Notifier.unregisterObserver(notifierID);
       },
       false
     );
+
+    await Zotero.uiReadyPromise;
+    this._Addon.views.addOpenWorkspaceButton();
+    this._Addon.views.addNewKnowledgeButton();
+
     if (!Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
       this.onEditorEvent(new EditorMessage("openUserGuide", {}));
     }
     this.resetState();
+
+    this.initWorkspaceTab();
+    this._Addon.views.switchRealMenuBar(true);
+    this._Addon.views.switchKey(true);
+  }
+
+  private async initWorkspaceTab() {
+    let state = Zotero.Session.state.windows.find((x) => x.type === "pane");
+    Zotero.debug("initWorkspaceTab");
+    Zotero.debug(state);
+    if (state) {
+      const noteTab = state.tabs.find((t) => t.type === "betternotes");
+      Zotero.debug(noteTab);
+      if (noteTab) {
+        let t = 0;
+        while (t < 5) {
+          t += 1;
+          try {
+            await this._Addon.knowledge.openWorkspaceWindow(
+              "tab",
+              false,
+              noteTab.selected
+            );
+            break;
+          } catch (e) {
+            this._Addon.views.showProgressWindow(
+              "Recovering Note Workspace Failed",
+              e
+            );
+          }
+          await Zotero.Promise.delay(1000);
+        }
+      }
+    }
   }
 
   public addEditorInstanceListener() {
@@ -142,9 +218,16 @@ class AddonEvents extends AddonBase {
       );
     } else if (message.type === "openWorkspace") {
       /*
-        message.content = {}
+        message.content = {event?}
       */
-      await this._Addon.knowledge.openWorkspaceWindow();
+      if (
+        message.content.event &&
+        (message.content.event as unknown as MouseEvent).shiftKey
+      ) {
+        await this._Addon.knowledge.openWorkspaceWindow("window", true);
+      } else {
+        await this._Addon.knowledge.openWorkspaceWindow();
+      }
     } else if (message.type === "openWorkspaceInWindow") {
       /*
         message.content = {}
@@ -159,8 +242,16 @@ class AddonEvents extends AddonBase {
       /*
         message.content = {}
       */
+      const currentCollection = ZoteroPane_Local.getSelectedCollection();
+      if (!currentCollection) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "Please select a collection before creating a new main note."
+        );
+        return;
+      }
       const res = confirm(
-        `Will create a new note under collection '${ZoteroPane_Local.getSelectedCollection().getName()}' and set it the main note. Continue?`
+        `Will create a new note under collection '${currentCollection.getName()}' and set it the main note. Continue?`
       );
       if (!res) {
         return;

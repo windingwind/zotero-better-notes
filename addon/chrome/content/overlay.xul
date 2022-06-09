@@ -1,11 +1,105 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://__addonRef__/skin/overlay.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+
+<!DOCTYPE window [
+    <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+    %globalDTD;
+    <!ENTITY % standaloneDTD SYSTEM "chrome://zotero/locale/standalone.dtd">
+    %standaloneDTD;
+    <!ENTITY % editMenuOverlayDTD SYSTEM "chrome://zotero/locale/mozilla/editMenuOverlay.dtd">
+    %editMenuOverlayDTD;
+    <!ENTITY % zoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %zoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
 
 <overlay id="__addonRef__" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script src="chrome://__addonRef__/content/scripts/index.js" />
+
+    <keyset id="mainKeyset">
+        <key id="key_new_betternotes" class="key-type-betternotes" key="N" modifiers="accel" command="cmd_new_betternotes" />
+        <key id="key_open_betternotes" class="key-type-betternotes" key="O" modifiers="accel" command="cmd_open_betternotes" />
+        <key id="key_export_betternotes" class="key-type-betternotes" key="E" modifiers="accel" command="cmd_export_betternotes" />
+        <key id="key_indent_betternotes" class="key-type-betternotes" keycode="VK_TAB" command="cmd_indent_betternotes" />
+        <key id="key_unindent_betternotes" class="key-type-betternotes" keycode="VK_TAB" modifiers="shift" command="cmd_unindent_betternotes" />
+    </keyset>
+
+    <commandset id="mainCommandSet">
+        <command id="cmd_new_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'createWorkspace'});" />
+        <command id="cmd_open_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainKnowledge'});" />
+        <command id="cmd_open_betternotesWindow" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openWorkspaceInWindow'});" />
+        <command id="cmd_export_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
+        <command id="cmd_editTemplate_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
+        <command id="cmd_addheading_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
+        <command id="cmd_indent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
+        <command id="cmd_unindent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'unindentHeading'});" />
+        <command id="cmd_treeview_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(1);" />
+        <command id="cmd_mindmap_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
+        <command id="cmd_bubblemap_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
+        <command id="cmd_guide_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openUserGuide'});" />
+        <command id="cmd_about_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openAbout'});" />
+    </commandset>
+
     <popup id="zotero-itemmenu">
         <menuseparator />
         <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setMainKnowledge', content: {params: {itemID: ZoteroPane.getSelectedItems()[0].id}}})" class="menuitem-iconic" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
     </popup>
+
+    <menupopup id="menu_FilePopup">
+        <menuseparator class="menu-type-betternotes" />
+        <menuitem id="menu_new_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new_betternotes" accesskey="N" command="cmd_new_betternotes" />
+        <menuitem id="menu_open_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open_betternotes" accesskey="O" command="cmd_open_betternotes" />
+        <menuitem id="menu_openWindow_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_open_betternotesWindow" />
+        <menuitem id="menu_export_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export_betternotes" accesskey="E" command="cmd_export_betternotes" />
+    </menupopup>
+
+    <menupopup id="menu_EditPopup">
+        <menuseparator class="menu-type-betternotes" />
+        <menu id="menu_insertTextTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
+            <menupopup id="menu_insertTextTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
+        </menu>
+        <menu id="menu_insertNoteTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
+            <menupopup id="menu_insertNoteTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
+        </menu>
+        <menu id="menu_insertItemTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
+            <menupopup id="menu_insertItemTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
+        </menu>
+        <menuitem id="menu_editTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
+        <menuseparator class="menu-type-betternotes" />
+        <menuitem id="menu_addheading_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading_betternotes" />
+        <menuitem id="menu_indent_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent_betternotes" key="key_indent_betternotes" />
+        <menuitem id="menu_unindent_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent_betternotes" key="key_unindent_betternotes" />
+    </menupopup>
+
+    <menupopup id="menu_ViewPopup">
+        <menuseparator class="menu-type-betternotes" />
+        <menuitem id="menu_treeview_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview_betternotes" />
+        <menuitem id="menu_mindmap_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap_betternotes" />
+        <menuitem id="menu_bubblemap_betternotes" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />
+        <menuseparator class="menu-type-betternotes" />
+        <menu id="note-font-size-menu_betternotes" class="menu-type-betternotes" label="&noteFontSize.label;">
+            <menupopup oncommand="Zotero.Prefs.set('note.fontSize', event.originalTarget.getAttribute('label'));">
+                <menuitem label="11" type="checkbox" />
+                <menuitem label="12" type="checkbox" />
+                <menuitem label="13" type="checkbox" />
+                <menuitem label="14" type="checkbox" />
+                <menuitem label="18" type="checkbox" />
+                <menuitem label="24" type="checkbox" />
+                <menuitem label="36" type="checkbox" />
+                <menuitem label="48" type="checkbox" />
+                <menuitem label="64" type="checkbox" />
+                <menuitem label="72" type="checkbox" />
+                <menuitem label="96" type="checkbox" />
+                <menuseparator />
+                <menuitem id="view-menuitem-note-font-size-reset_betternotes" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
+            </menupopup>
+        </menu>
+    </menupopup>
+
+    <menupopup id="menu_HelpPopup">
+        <menuseparator class="menu-type-betternotes" />
+        <menuitem id="menu_guide_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide_betternotes" />
+        <menuitem id="menu_about_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about_betternotes" />
+    </menupopup>
 </overlay>

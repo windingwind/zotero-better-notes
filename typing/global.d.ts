@@ -217,6 +217,7 @@ declare const Zotero_Tabs: {
     index: any;
     data: object;
     select: boolean;
+    onClose: Function;
   });
   _tabs: Array<any>;
   selectedID: string;

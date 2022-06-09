@@ -32,10 +32,13 @@ class Knowledge extends AddonBase {
 
   async openWorkspaceWindow(
     type: "window" | "tab" = "tab",
-    reopen: boolean = false
+    reopen: boolean = false,
+    select: boolean = true
   ) {
+    // this._Addon.views.showProgressWindow("Recovering Note", "4");
     if (this.getWorkspaceWindow()) {
       if (!reopen) {
+        Zotero.debug("openWorkspaceWindow: reopen");
         if (this.workspaceTabId) {
           Zotero_Tabs.select(this.workspaceTabId);
         } else {
@@ -47,6 +50,7 @@ class Knowledge extends AddonBase {
       }
     }
     if (type === "window") {
+      Zotero.debug("openWorkspaceWindow: as window");
       this._Addon.views._initIframe = Zotero.Promise.defer();
       let win = window.open(
         "chrome://Knowledge4Zotero/content/workspace.xul",
@@ -62,17 +66,17 @@ class Knowledge extends AddonBase {
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
     } else {
+      Zotero.debug("openWorkspaceWindow: as tab");
       this._Addon.views._initIframe = Zotero.Promise.defer();
       // Avoid sidebar show up
       Zotero_Tabs.jump(0);
       let { id, container } = Zotero_Tabs.add({
-        type: "library",
-        title: "Better Notes Workspace",
+        type: "betternotes",
+        title: Zotero.locale.includes("zh") ? "工作区" : "Workspace",
         index: 1,
-        data: {
-          _item: this.getWorkspaceNote(),
-        },
-        select: true,
+        data: {},
+        select: select,
+        onClose: undefined,
       });
       this.workspaceTabId = id;
       const _iframe = window.document.createElement("browser");
@@ -84,27 +88,17 @@ class Knowledge extends AddonBase {
         "chrome://Knowledge4Zotero/content/workspace.xul"
       );
       container.appendChild(_iframe);
-      // @ts-ignore
-      window.addEventListener("DOMContentLoaded", async (event) => {
-        if (
-          _iframe &&
-          // @ts-ignore
-          _iframe.contentWindow &&
-          // @ts-ignore
-          _iframe.contentWindow.document === event.target
-        ) {
-          // @ts-ignore
-          this.workspaceWindow = _iframe.contentWindow;
-          await this.waitWorkspaceReady();
 
-          // Need reinit
-          this.setWorkspaceNote("main");
-          this.currentLine = -1;
-          this._Addon.views.initKnowledgeWindow(this.workspaceWindow);
-          this._Addon.views.switchView(OutlineType.treeView);
-          this._Addon.views.updateOutline();
-        }
-      });
+      // @ts-ignore
+      this.workspaceWindow = _iframe.contentWindow;
+      await this.waitWorkspaceReady();
+
+      this._Addon.views.hideMenuBar(this.workspaceWindow.document);
+
+      this.currentLine = -1;
+      this._Addon.views.initKnowledgeWindow(this.workspaceWindow);
+      this._Addon.views.switchView(OutlineType.treeView);
+      this._Addon.views.updateOutline();
     }
   }
 
@@ -141,11 +135,12 @@ class Knowledge extends AddonBase {
   }
 
   async getWorkspaceEditorInstance(
-    type: "main" | "preview" = "main"
+    type: "main" | "preview" = "main",
+    wait: boolean = true
   ): Promise<EditorInstance> {
     let noteEditor = (await this.getWorkspaceEditor(type)) as any;
     let t = 0;
-    while (!noteEditor.getCurrentInstance() && t < 500) {
+    while (wait && !noteEditor.getCurrentInstance() && t < 500) {
       t += 1;
       await Zotero.Promise.delay(10);
     }
@@ -749,34 +744,32 @@ class Knowledge extends AddonBase {
         [["MarkDown File(*.md)", "*.md"]],
         `${newNote.getNoteTitle()}.md`
       );
-      if (!filename) {
-        return;
-      }
+      if (filename) {
+        this._exportNote = newNote;
+        this._exportPath =
+          Zotero.File.pathToFile(filename).parent.path + "/attachments";
+        // Convert to unix format
+        this._exportPath = this._exportPath.replace(/\\/g, "/");
 
-      this._exportNote = newNote;
-      this._exportPath =
-        Zotero.File.pathToFile(filename).parent.path + "/attachments";
-      // Convert to unix format
-      this._exportPath = this._exportPath.replace(/\\/g, "/");
+        Components.utils.import("resource://gre/modules/osfile.jsm");
 
-      Components.utils.import("resource://gre/modules/osfile.jsm");
+        const hasImage = newNote.getNote().includes("<img");
+        if (hasImage) {
+          await Zotero.File.createDirectoryIfMissingAsync(
+            OS.Path.join(...this._exportPath.split(/\//))
+          );
+        }
 
-      const hasImage = newNote.getNote().includes("<img");
-      if (hasImage) {
-        await Zotero.File.createDirectoryIfMissingAsync(
-          OS.Path.join(...this._exportPath.split(/\//))
+        const translator = new Zotero.Translate.Export();
+        translator.setItems([newNote]);
+        translator.setLocation(Zotero.File.pathToFile(filename));
+        translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+        translator.translate();
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          `Note Saved to ${filename}`
         );
       }
-
-      const translator = new Zotero.Translate.Export();
-      translator.setItems([newNote]);
-      translator.setLocation(Zotero.File.pathToFile(filename));
-      translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-      translator.translate();
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Note Saved to ${filename}`
-      );
     }
     if (saveCopy) {
       if (!convertNoteLinks) {
