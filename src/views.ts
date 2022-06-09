@@ -756,8 +756,12 @@ class AddonViews extends AddonBase {
     }
   }
 
-  updateTemplateMenu(type: "Note" | "Item" | "Text") {
-    const _window = this._Addon.knowledge.getWorkspaceWindow();
+  updateTemplateMenu(
+    type: "Note" | "Item" | "Text",
+    from: "tab" | "window" = "window"
+  ) {
+    const _window =
+      from === "window" ? this._Addon.knowledge.getWorkspaceWindow() : window;
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()

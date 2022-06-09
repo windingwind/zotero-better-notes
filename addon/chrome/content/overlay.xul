@@ -57,13 +57,13 @@
     <menupopup id="menu_EditPopup">
         <menuseparator class="menu-type-betternotes" />
         <menu id="menu_insertTextTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
-            <menupopup id="menu_insertTextTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text');" />
+            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Text', 'tab');" />
         </menu>
         <menu id="menu_insertNoteTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
-            <menupopup id="menu_insertNoteTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note');" />
+            <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Note', 'tab');" />
         </menu>
         <menu id="menu_insertItemTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
-            <menupopup id="menu_insertItemTemplatePopup_betternotes" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
+            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item', 'tab');" />
         </menu>
         <menuitem id="menu_editTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
         <menuseparator class="menu-type-betternotes" />
