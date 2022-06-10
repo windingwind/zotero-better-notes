@@ -1247,21 +1247,25 @@ class AddonEvents extends AddonBase {
       note.parentID = Zotero.Items.get(
         annotations[0].attachmentItemID
       ).parentID;
-      if (annotationItem.annotationComment) {
-        note.setNote(
-          `<div data-schema-version="8"><p>${annotationItem.annotationComment}</p>\n</div>`
-        );
+
+      let _newLine: string = "";
+      const templateText = this._Addon.template.getTemplateText("[QuickNote]");
+      try {
+        _newLine = new Function(
+          "annotationItem, topItem",
+          "return `" + templateText + "`"
+        )(annotationItem, annotationItem.parentItem.parentItem);
+      } catch (e) {
+        alert(e);
       }
+      note.setNote(`<div data-schema-version="8">${_newLine}\n</div>`);
+
       const tags = annotationItem.getTags();
       for (const tag of tags) {
         note.addTag(tag.tag, tag.type);
       }
       await note.saveTx();
 
-      annotationItem.annotationComment = `${
-        annotationItem.annotationComment ? annotationItem.annotationComment : ""
-      }\nnote link: "${this._Addon.knowledge.getNoteLink(note)}"`;
-      await annotationItem.saveTx();
       ZoteroPane.openNoteWindow(note.id);
       let t = 0;
       while (t < 100 && !ZoteroPane.findNoteWindow(note.id)) {
@@ -1283,6 +1287,11 @@ class AddonEvents extends AddonBase {
       const editorInstance = noteEditor.getCurrentInstance();
       editorInstance.focus();
       await editorInstance.insertAnnotations(annotations);
+
+      annotationItem.annotationComment = `${
+        annotationItem.annotationComment ? annotationItem.annotationComment : ""
+      }\nnote link: "${this._Addon.knowledge.getNoteLink(note)}"`;
+      await annotationItem.saveTx();
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }

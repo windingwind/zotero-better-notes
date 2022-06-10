@@ -50,7 +50,6 @@
         <menuseparator class="menu-type-betternotes" />
         <menuitem id="menu_new_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new_betternotes" accesskey="N" command="cmd_new_betternotes" />
         <menuitem id="menu_open_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open_betternotes" accesskey="O" command="cmd_open_betternotes" />
-        <menuitem id="menu_openWindow_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_open_betternotesWindow" />
         <menuitem id="menu_export_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export_betternotes" accesskey="E" command="cmd_export_betternotes" />
     </menupopup>
 
@@ -73,10 +72,11 @@
     </menupopup>
 
     <menupopup id="menu_viewPopup">
+        <menuitem id="menu_openWindow_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_open_betternotesWindow" />
         <menuseparator class="menu-type-betternotes" />
         <menuitem id="menu_treeview" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview_betternotes" />
         <menuitem id="menu_mindmap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap_betternotes" />
-        <menuitem id="menu_bubblemap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />        
+        <menuitem id="menu_bubblemap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />
     </menupopup>
 
     <menupopup id="menu_HelpPopup">

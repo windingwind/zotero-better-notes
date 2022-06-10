@@ -56,7 +56,6 @@
             <menupopup id="menu_FilePopup">
                 <menuitem id="menu_new" label="&zotero.__addonRef__.workspace.menu.new;" key="key_new" accesskey="N" command="cmd_new" />
                 <menuitem id="menu_open" label="&zotero.__addonRef__.workspace.menu.open;" key="key_open" accesskey="O" command="cmd_open" />
-                <menuitem id="menu_openWindow" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_openWindow" />
                 <menuitem id="menu_export" label="&zotero.__addonRef__.workspace.menu.export;" key="key_export" accesskey="E" command="cmd_export" />
                 <menuitem id="menu_close" label="&closeCmd.label;" key="key_close" accesskey="&closeCmd.accesskey;" command="cmd_close" />
             </menupopup>
@@ -84,6 +83,8 @@
 
         <menu id="view-menu" label="&viewMenu.label;" accesskey="&viewMenu.accesskey;" onpopupshowing="Zotero.Knowledge4Zotero.views.updateViewMenu();">
             <menupopup id="menu_ViewPopup">
+                <menuitem id="menu_openWindow" label="&zotero.__addonRef__.workspace.menu.openWindow;" command="cmd_openWindow" />
+                <menuseparator />
                 <menuitem id="menu_treeview" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview" />
                 <menuitem id="menu_mindmap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap" />
                 <menuitem id="menu_bubblemap" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap" />
