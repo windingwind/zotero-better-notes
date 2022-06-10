@@ -66,7 +66,7 @@
         <menu id="menu_insertItemTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
             <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
         </menu>
-        <menuitem id="menu_editTemplate_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
+        <menuitem id="menu_editTemplate_betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
         <menuseparator class="menu-type-betternotes" />
         <menuitem id="menu_addheading_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading_betternotes" />
         <menuitem id="menu_indent_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent_betternotes" key="key_indent_betternotes" />

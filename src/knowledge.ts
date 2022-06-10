@@ -854,11 +854,9 @@ class Knowledge extends AddonBase {
 
         this._exportNote = newNote;
 
-        let filename = `${Zotero.File.pathToFile(filepath).path}/${
-          newNote.getNoteTitle
-            ? newNote.getNoteTitle().replace(/[/\\?%*:|"<>]/g, "-") + "-"
-            : ""
-        }${note.key}.md`;
+        let filename = `${
+          Zotero.File.pathToFile(filepath).path
+        }/${this._getFileName(note)}`;
         filename = filename.replace(/\\/g, "/");
 
         this._export(newNote, filename, newNote.id !== note.id);
@@ -888,12 +886,7 @@ class Knowledge extends AddonBase {
           link: this.getNoteLink(_note),
           id: _note.id,
           note: _note,
-          filename:
-            (_note.getNoteTitle
-              ? _note.getNoteTitle().replace(/[/\\?%*:|"<> ]/g, "-") + "-"
-              : "") +
-            _note.key +
-            ".md",
+          filename: this._getFileName(_note),
         };
       });
       this._exportFileDict = noteLinkDict;
@@ -909,7 +902,7 @@ class Knowledge extends AddonBase {
     }
   }
 
-  async _export(
+  private async _export(
     note: ZoteroItem,
     filename: string,
     deleteAfterExport: boolean
@@ -940,6 +933,27 @@ class Knowledge extends AddonBase {
       }
       await Zotero.Items.erase(note.id);
     }
+  }
+
+  private _getFileName(noteItem: ZoteroItem) {
+    let _newLine: string = "";
+    const templateText =
+      this._Addon.template.getTemplateText("[ExportMDFileName]");
+    try {
+      _newLine = new Function("noteItem", "return `" + templateText + "`")(
+        noteItem
+      );
+    } catch (e) {
+      alert(e);
+      return (
+        (noteItem.getNoteTitle
+          ? noteItem.getNoteTitle().replace(/[/\\?%*:|"<> ]/g, "-") + "-"
+          : "") +
+        noteItem.key +
+        ".md"
+      );
+    }
+    return _newLine;
   }
 
   async convertNoteLines(

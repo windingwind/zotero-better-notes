@@ -57,25 +57,28 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportCopy;
     }
+    this.doUpdate();
   }
   doUpdate(event: XULEvent) {
-    if (
-      event.target.getAttribute("id") === "Knowledge4Zotero-export-enablesingle"
-    ) {
-      (
-        this._window.document.getElementById(
-          "Knowledge4Zotero-export-embedLink"
-        ) as XUL.Checkbox
-      ).disabled = (event.target as XUL.Checkbox).checked;
-    } else if (
-      event.target.getAttribute("id") === "Knowledge4Zotero-export-enablefile"
-    ) {
-      (
-        this._window.document.getElementById(
-          "Knowledge4Zotero-export-enablesingle"
-        ) as XUL.Checkbox
-      ).disabled = !(event.target as XUL.Checkbox).checked;
-    }
+    (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-embedLink"
+      ) as XUL.Checkbox
+    ).disabled = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablesingle"
+      ) as XUL.Checkbox
+    ).checked;
+
+    (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablesingle"
+      ) as XUL.Checkbox
+    ).disabled = !(
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablefile"
+      ) as XUL.Checkbox
+    ).checked;
   }
   doUnload() {
     this.io.deferred && this.io.deferred.resolve();
