@@ -16,11 +16,23 @@ Copy The Name & template text to a new template and save it!
 
 **Template Name must include one of these keywords:**
 
+### Custom Templates
+
+These templates can have different names. The keyword must be incluede in the template name.
+
 - Text: indicate it's a normal template
 - Note: indicate it's a note template. Must select notes before inserting
 - Item: indicate it's an item template. Must select items before inserting
-- QuickInsert: The template used when insert a note link to main note. Only the template with name `[QuickInsert]` is used.
-- QuickImport: The template used when import a sub-note to main note. Only the template with name `[QuickImport]` is used.
+
+### System Templates
+
+Only the template with specific name will be called.
+
+- QuickInsert: Called when inserting a note link to main note.
+- QuickBackLink: Called when inserting a note link to main note. The template will be inserted to the end of the sub-note and point to the main note by default.
+- QuickImport: Called when importing a sub-note to main note.
+- QuickNote: Called when creating a note from an annotation.
+- ExportMDFileName: Called when exporting notes to markdown in batch/linked notes to markdown mode. The rendered template will be file name.
 
 ## Templates
 
@@ -144,6 +156,7 @@ return noteLine;
 ```
 
 ### [Item] metadata for CS
+
 Modified on the previous template. Auto-ajust metadata according to item type.  
 ![image](https://user-images.githubusercontent.com/33902321/171443309-1cb54d09-8e8a-40ae-8465-96f2f808c96d.png)
 
@@ -219,7 +232,6 @@ Modified on the previous template. Auto-ajust metadata according to item type.
 </table>
 ```
 
-
 ### [Text] today
 
 ```js
@@ -292,9 +304,21 @@ Will be compiled to:
 
 > variables: link: string, subNoteItem, noteItem
 
+### QuickBackLink
+
+> variables: subNoteItem, noteItem
+
 ### QuickImport
 
 > variables: subNoteLines: string[], subNoteItem, noteItem
+
+### QuickNote
+
+> variables: annotationItem, topItem
+
+### ExportMDFileName
+
+> variables: noteItem
 
 ## API and Variables
 
