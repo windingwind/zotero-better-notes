@@ -31,8 +31,12 @@
             <caption label="&zotero.__addonRef__.export.markdown.label;"></caption>
             <rows flex="1">
                 <row>
-                    <checkbox id="__addonRef__-export-enablefile" checked="true" />
+                    <checkbox id="__addonRef__-export-enablefile" checked="true"  oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.file.enable.label;" />
+                </row>
+                <row>
+                    <checkbox id="__addonRef__-export-enablesingle" checked="false" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
+                    <label value="&zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>
             </rows>
         </groupbox>

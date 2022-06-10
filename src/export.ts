@@ -23,6 +23,16 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportFile;
     }
+    let exportSingleFile = Zotero.Prefs.get(
+      "Knowledge4Zotero.exportSingleFile"
+    );
+    if (typeof exportSingleFile !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-enablesingle"
+        ) as XUL.Checkbox
+      ).checked = exportSingleFile;
+    }
     let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink");
     if (typeof embedLink !== "undefined") {
       (
@@ -48,6 +58,25 @@ class AddonExport extends AddonBase {
       ).checked = exportCopy;
     }
   }
+  doUpdate(event: XULEvent) {
+    if (
+      event.target.getAttribute("id") === "Knowledge4Zotero-export-enablesingle"
+    ) {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-embedLink"
+        ) as XUL.Checkbox
+      ).disabled = (event.target as XUL.Checkbox).checked;
+    } else if (
+      event.target.getAttribute("id") === "Knowledge4Zotero-export-enablefile"
+    ) {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-enablesingle"
+        ) as XUL.Checkbox
+      ).disabled = !(event.target as XUL.Checkbox).checked;
+    }
+  }
   doUnload() {
     this.io.deferred && this.io.deferred.resolve();
   }
@@ -56,6 +85,11 @@ class AddonExport extends AddonBase {
     let exportFile = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablefile"
+      ) as XUL.Checkbox
+    ).checked;
+    let exportSingleFile = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablesingle"
       ) as XUL.Checkbox
     ).checked;
     let embedLink = (
@@ -74,6 +108,7 @@ class AddonExport extends AddonBase {
       ) as XUL.Checkbox
     ).checked;
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
+    Zotero.Prefs.set("Knowledge4Zotero.exportSingleFile", exportSingleFile);
     Zotero.Prefs.set("Knowledge4Zotero.embedLink", embedLink);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
     Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);
@@ -81,6 +116,7 @@ class AddonExport extends AddonBase {
     Zotero.debug(this.io.dataOut);
     this.io.dataOut = {
       exportFile: exportFile,
+      exportSingleFile: exportSingleFile,
       embedLink: embedLink,
       exportNote: exportNote,
       exportCopy: exportCopy,

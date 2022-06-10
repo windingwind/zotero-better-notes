@@ -11,6 +11,7 @@ class Knowledge extends AddonBase {
   workspaceTabId: string;
   _exportNote: ZoteroItem;
   _exportPath: string;
+  _exportFileDict: object;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this.currentLine = -1;
@@ -712,6 +713,8 @@ class Knowledge extends AddonBase {
     if (!saveFile && !saveNote && !saveCopy) {
       return;
     }
+    this._exportFileDict = [];
+
     note = note || this.getWorkspaceNote();
     let newNote: ZoteroItem;
     if (convertNoteLinks || saveNote) {
@@ -804,8 +807,9 @@ class Knowledge extends AddonBase {
     }
   }
 
-  async exportNotesToFile(notes: ZoteroItem[]) {
+  async exportNotesToFile(notes: ZoteroItem[], useEmbed: boolean) {
     Components.utils.import("resource://gre/modules/osfile.jsm");
+    this._exportFileDict = [];
     const filepath = await pick(
       Zotero.getString("fileInterface.export"),
       "folder"
@@ -821,68 +825,120 @@ class Knowledge extends AddonBase {
     // Convert to unix format
     this._exportPath = this._exportPath.replace(/\\/g, "/");
 
-    let attachmentCreated = false;
+    if (useEmbed) {
+      for (const note of notes) {
+        let newNote: ZoteroItem;
+        if (this.getLinkFromText(note.getNote())) {
+          const noteID = await ZoteroPane_Local.newNote();
+          newNote = Zotero.Items.get(noteID);
+          const rootNoteIds = [note.id];
 
-    for (const note of notes) {
-      let newNote: ZoteroItem;
-      if (this.getLinkFromText(note.getNote())) {
-        const noteID = await ZoteroPane_Local.newNote();
-        newNote = Zotero.Items.get(noteID);
-        const rootNoteIds = [note.id];
+          const convertResult = await this.convertNoteLines(
+            note,
+            rootNoteIds,
+            true
+          );
 
-        const convertResult = await this.convertNoteLines(
-          note,
-          rootNoteIds,
-          true
-        );
+          this.setLinesToNote(newNote, convertResult.lines);
+          Zotero.debug(convertResult.subNotes);
 
-        this.setLinesToNote(newNote, convertResult.lines);
-        Zotero.debug(convertResult.subNotes);
-
-        await Zotero.DB.executeTransaction(async () => {
-          await Zotero.Notes.copyEmbeddedImages(note, newNote);
-          for (const subNote of convertResult.subNotes) {
-            await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
-          }
-        });
-      } else {
-        newNote = note;
-      }
-
-      this._exportNote = newNote;
-
-      const hasImage = newNote.getNote().includes("<img");
-      if (hasImage && !attachmentCreated) {
-        await Zotero.File.createDirectoryIfMissingAsync(
-          OS.Path.join(...this._exportPath.split(/\//))
-        );
-        attachmentCreated = true;
-      }
-
-      let filename = `${Zotero.File.pathToFile(filepath).path}/${
-        newNote.getNoteTitle
-          ? newNote.getNoteTitle().replace(/[/\\?%*:|"<>]/g, "-") + "-"
-          : ""
-      }${note.key}.md`;
-      filename = filename.replace(/\\/g, "/");
-      const translator = new Zotero.Translate.Export();
-      translator.setItems([newNote]);
-      translator.setLocation(
-        Zotero.File.pathToFile(OS.Path.join(...filename.split(/\//)))
-      );
-      translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-      translator.translate();
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Note Saved to ${filename}`
-      );
-      if (newNote.id !== note.id) {
-        const _w: Window = ZoteroPane.findNoteWindow(newNote.id);
-        if (_w) {
-          _w.close();
+          await Zotero.DB.executeTransaction(async () => {
+            await Zotero.Notes.copyEmbeddedImages(note, newNote);
+            for (const subNote of convertResult.subNotes) {
+              await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
+            }
+          });
+        } else {
+          newNote = note;
         }
-        await Zotero.Items.erase(newNote.id);
+
+        this._exportNote = newNote;
+
+        let filename = `${Zotero.File.pathToFile(filepath).path}/${
+          newNote.getNoteTitle
+            ? newNote.getNoteTitle().replace(/[/\\?%*:|"<>]/g, "-") + "-"
+            : ""
+        }${note.key}.md`;
+        filename = filename.replace(/\\/g, "/");
+
+        this._export(newNote, filename, newNote.id !== note.id);
       }
+    } else {
+      // Export every linked note as a markdown file
+      // Find all linked notes that need to be exported
+      let allNoteIds: number[] = [].concat(notes.map((n) => n.id));
+      for (const note of notes) {
+        const subNoteIds = (
+          await Promise.all(
+            note
+              .getNote()
+              .match(/zotero:\/\/note\/\w+\/\w+\//g)
+              .map(async (link) => this.getNoteFromLink(link))
+          )
+        )
+          .filter((res) => res.item)
+          .map((res) => res.item.id);
+        allNoteIds = allNoteIds.concat(subNoteIds);
+      }
+      allNoteIds = new Array(...new Set(allNoteIds));
+      // console.log(allNoteIds);
+      const allNoteItems: ZoteroItem[] = Zotero.Items.get(allNoteIds);
+      const noteLinkDict = allNoteItems.map((_note) => {
+        return {
+          link: this.getNoteLink(_note),
+          id: _note.id,
+          note: _note,
+          filename:
+            (_note.getNoteTitle
+              ? _note.getNoteTitle().replace(/[/\\?%*:|"<> ]/g, "-") + "-"
+              : "") +
+            _note.key +
+            ".md",
+        };
+      });
+      this._exportFileDict = noteLinkDict;
+
+      for (const noteInfo of noteLinkDict) {
+        this._exportNote = noteInfo.note;
+        this._export(
+          noteInfo.note,
+          `${Zotero.File.pathToFile(filepath).path}/${noteInfo.filename}`,
+          false
+        );
+      }
+    }
+  }
+
+  async _export(
+    note: ZoteroItem,
+    filename: string,
+    deleteAfterExport: boolean
+  ) {
+    const hasImage = note.getNote().includes("<img");
+    if (hasImage) {
+      await Zotero.File.createDirectoryIfMissingAsync(
+        OS.Path.join(...this._exportPath.split(/\//))
+      );
+    }
+
+    filename = filename.replace(/\\/g, "/");
+    const translator = new Zotero.Translate.Export();
+    translator.setItems([note]);
+    translator.setLocation(
+      Zotero.File.pathToFile(OS.Path.join(...filename.split(/\//)))
+    );
+    translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+    translator.translate();
+    this._Addon.views.showProgressWindow(
+      "Better Notes",
+      `Note Saved to ${filename}`
+    );
+    if (deleteAfterExport) {
+      const _w: Window = ZoteroPane.findNoteWindow(note.id);
+      if (_w) {
+        _w.close();
+      }
+      await Zotero.Items.erase(note.id);
     }
   }
 

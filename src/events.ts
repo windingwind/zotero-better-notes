@@ -126,7 +126,6 @@ class AddonEvents extends AddonBase {
     if (state) {
       const noteTab = state.tabs.find((t) => t.type === "betternotes");
       Zotero.debug(noteTab);
-      this._Addon.views.showProgressWindow("1", noteTab.select);
       if (noteTab) {
         let t = 0;
         while (t < 5) {
@@ -1177,18 +1176,20 @@ class AddonEvents extends AddonBase {
       await io.deferred.promise;
 
       const options = io.dataOut;
-      await this._Addon.knowledge.exportNoteToFile(
-        item,
-        options.embedLink,
-        options.exportFile,
-        options.exportNote,
-        options.exportCopy
-      );
+      if (options.exportFile && options.exportSingleFile) {
+        await this._Addon.knowledge.exportNotesToFile([item], false);
+      } else {
+        await this._Addon.knowledge.exportNoteToFile(
+          item,
+          options.embedLink,
+          options.exportFile,
+          options.exportNote,
+          options.exportCopy
+        );
+      }
     } else if (message.type === "exportNotes") {
       /*
-        message.content = {
-          editorInstance
-        }
+        message.content = {}
       */
       const items = ZoteroPane.getSelectedItems();
       const noteItems = [];
@@ -1210,7 +1211,11 @@ class AddonEvents extends AddonBase {
           new EditorMessage("export", { params: { item: noteItems[0] } })
         );
       } else {
-        await this._Addon.knowledge.exportNotesToFile(noteItems);
+        const useSingleFile = confirm("Export linked notes to markdown files?");
+        await this._Addon.knowledge.exportNotesToFile(
+          noteItems,
+          !useSingleFile
+        );
       }
     } else if (message.type === "openAttachment") {
       /*

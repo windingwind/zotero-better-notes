@@ -774,6 +774,22 @@ let bundle;
                   var href = node.getAttribute("href");
                   var title = cleanAttribute(node.getAttribute("title"));
                   if (title) title = ' "' + title + '"';
+                  if (href.search(/zotero:\/\/note\/\w+\/\w+\//g) !== -1) {
+                    // A note link should be converted if it is in the _exportFileDict
+                    var _Zotero = Components.classes[
+                      "@zotero.org/Zotero;1"
+                    ].getService(
+                      Components.interfaces.nsISupports
+                    ).wrappedJSObject;
+                    const noteInfo =
+                      _Zotero.Knowledge4Zotero.knowledge._exportFileDict &&
+                      _Zotero.Knowledge4Zotero.knowledge._exportFileDict.find(
+                        (i) => href.includes(i.link)
+                      );
+                    if (noteInfo) {
+                      href = `./${noteInfo.filename}`;
+                    }
+                  }
                   return "[" + content + "](" + href + title + ")";
                 },
               };
@@ -1800,7 +1816,7 @@ let bundle;
 );
 
 async function doExport() {
-  const _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
+  var _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
     Components.interfaces.nsISupports
   ).wrappedJSObject;
   Zotero.setCharacterSet("utf-8");

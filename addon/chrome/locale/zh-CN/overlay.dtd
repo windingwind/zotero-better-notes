@@ -28,6 +28,7 @@
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
 <!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown设置">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "导出为MarkDown文件">
+<!ENTITY zotero.__addonRef__.export.singlefile.enable.label "导出链接的子笔记为MarkDown文件">
 <!ENTITY zotero.__addonRef__.export.richtext.label "富文本(MS Word)设置">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
 
