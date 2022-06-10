@@ -124,6 +124,7 @@ class AddonEvents extends AddonBase {
     if (state) {
       const noteTab = state.tabs.find((t) => t.type === "betternotes");
       Zotero.debug(noteTab);
+      this._Addon.views.showProgressWindow("1", noteTab.select);
       if (noteTab) {
         let t = 0;
         while (t < 5) {
@@ -132,7 +133,7 @@ class AddonEvents extends AddonBase {
             await this._Addon.knowledge.openWorkspaceWindow(
               "tab",
               false,
-              noteTab.selected
+              false
             );
             break;
           } catch (e) {
@@ -775,7 +776,7 @@ class AddonEvents extends AddonBase {
             message.content.params.item
           );
         }
-        (_window as Window).focus();
+        this._Addon.knowledge.openWorkspaceWindow();
       } else {
         ZoteroPane.openNoteWindow(message.content.params.item.id);
       }

@@ -170,7 +170,7 @@ class Knowledge extends AddonBase {
     noteEditor.viewMode = "library";
     noteEditor.parent = null;
     noteEditor.item = note;
-    if (this.workspaceTabId) {
+    if (!noteEditor || !noteEditor.getCurrentInstance()) {
       noteEditor.initEditor();
     }
 
@@ -186,7 +186,9 @@ class Knowledge extends AddonBase {
         params: type,
       })
     );
-    this._Addon.views.updateOutline();
+    if (type === "main") {
+      this._Addon.views.updateOutline();
+    }
   }
 
   getLinesInNote(note: ZoteroItem): string[] {
