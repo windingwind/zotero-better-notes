@@ -115,6 +115,8 @@ class AddonEvents extends AddonBase {
     this.initWorkspaceTab();
     this._Addon.views.switchRealMenuBar(true);
     this._Addon.views.switchKey(true);
+
+    this.initItemSelectListener();
   }
 
   private async initWorkspaceTab() {
@@ -146,6 +148,25 @@ class AddonEvents extends AddonBase {
         }
       }
     }
+  }
+
+  private initItemSelectListener() {
+    ZoteroPane.itemsView.onSelect.addListener(() => {
+      const items = ZoteroPane.getSelectedItems();
+      const hasNote = items.filter((i) => i.isNote()).length > 0;
+      const singleItem = items.length === 1;
+      document
+        .querySelectorAll(".popup-type-single")
+        .forEach((el) => ((el as HTMLElement).hidden = !singleItem));
+      document
+        .querySelectorAll(".popup-type-multiple")
+        .forEach((el) => ((el as HTMLElement).hidden = singleItem));
+      document
+        .querySelectorAll(".popup-type-single-note")
+        .forEach(
+          (el) => ((el as HTMLElement).hidden = !(singleItem && hasNote))
+        );
+    });
   }
 
   public addEditorInstanceListener() {
@@ -1135,9 +1156,12 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "export") {
       /*
         message.content = {
-          editorInstance
+          editorInstance?, params?: {item}
         }
       */
+      const item = message.content.editorInstance
+        ? message.content.editorInstance._item
+        : message.content.params.item;
       const io = {
         dataIn: null,
         dataOut: null,
@@ -1154,12 +1178,40 @@ class AddonEvents extends AddonBase {
 
       const options = io.dataOut;
       await this._Addon.knowledge.exportNoteToFile(
-        message.content.editorInstance._item,
+        item,
         options.embedLink,
         options.exportFile,
         options.exportNote,
         options.exportCopy
       );
+    } else if (message.type === "exportNotes") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const items = ZoteroPane.getSelectedItems();
+      const noteItems = [];
+      items.forEach((item) => {
+        if (item.isNote()) {
+          noteItems.push(item);
+        }
+        if (item.isRegularItem()) {
+          noteItems.splice(0, 0, Zotero.Items.get(item.getNotes()));
+        }
+      });
+      if (noteItems.length === 0) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "No standalone/item note selected."
+        );
+      } else if (noteItems.length === 1) {
+        this.onEditorEvent(
+          new EditorMessage("export", { params: { item: noteItems[0] } })
+        );
+      } else {
+        await this._Addon.knowledge.exportNotesToFile(noteItems);
+      }
     } else if (message.type === "openAttachment") {
       /*
         message.content = {

@@ -19,6 +19,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.about "关于Better Notes">
 
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "设置为主笔记">
+<!ENTITY zotero.__addonRef__.itemmenu.exportNote.label "导出笔记及条目子笔记">
+<!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "导出笔记及条目子笔记为Markdown">
 
 <!ENTITY zotero.__addonRef__.export.title "导出笔记">
 <!ENTITY zotero.__addonRef__.export.option.label "通用">

@@ -43,7 +43,9 @@
 
     <popup id="zotero-itemmenu">
         <menuseparator />
-        <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setMainKnowledge', content: {params: {itemID: ZoteroPane.getSelectedItems()[0].id}}})" class="menuitem-iconic" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-setMainKnowledge" class="menuitem-iconic popup-type-single-note" label="&zotero.__addonRef__.itemmenu.setMainKnowledge.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setMainKnowledge', content: {params: {itemID: ZoteroPane.getSelectedItems()[0].id}}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-exportNote" class="menuitem-iconic popup-type-single" label="&zotero.__addonRef__.itemmenu.exportNote.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-exportNotes" class="menuitem-iconic popup-type-multiple" label="&zotero.__addonRef__.itemmenu.exportNotes.label;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
     </popup>
 
     <menupopup id="menu_FilePopup">

@@ -19,6 +19,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.about "About Better Notes">
 
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Note">
+<!ENTITY zotero.__addonRef__.itemmenu.exportNote.label "Export Note and SubNotes">
+<!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "Export Notes and SubNotes to Markdown">
 
 <!ENTITY zotero.__addonRef__.export.title "Export">
 <!ENTITY zotero.__addonRef__.export.option.label "General">
