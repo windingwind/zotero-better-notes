@@ -59,7 +59,7 @@ class AddonExport extends AddonBase {
     }
     this.doUpdate();
   }
-  doUpdate(event: XULEvent) {
+  doUpdate() {
     (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-embedLink"

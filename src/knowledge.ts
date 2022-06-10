@@ -415,16 +415,32 @@ class Knowledge extends AddonBase {
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
     let _newLine: string = "";
-    const templateText = this._Addon.template.getTemplateText("[QuickInsert]");
+    const insertTemplateText =
+      this._Addon.template.getTemplateText("[QuickInsert]");
     try {
       _newLine = new Function(
         "link, subNoteItem, noteItem",
-        "return `" + templateText + "`"
+        "return `" + insertTemplateText + "`"
       )(link, linkedNote, targetNote);
     } catch (e) {
       alert(e);
     }
     this.addLineToNote(targetNote, _newLine, lineIndex, true);
+
+    const backLinkTemplateText =
+      this._Addon.template.getTemplateText("[QuickBackLink]");
+    if (backLinkTemplateText) {
+      try {
+        _newLine = new Function(
+          "subNoteItem, noteItem",
+          "return `" + backLinkTemplateText + "`"
+        )(linkedNote, targetNote);
+      } catch (e) {
+        alert(e);
+      }
+      this.addLineToNote(linkedNote, _newLine, -1, true);
+    }
+
     this._Addon.views.showProgressWindow(
       "Better Notes",
       "Link is added to workspace"

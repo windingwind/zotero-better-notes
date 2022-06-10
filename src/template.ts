@@ -12,6 +12,11 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
       {
+        name: "[QuickBackLink]",
+        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}</a></p>',
+        disabled: false,
+      },
+      {
         name: "[QuickImport]",
         text: '<blockquote>\n<p><strong>Linked Note:</strong></p>\n${subNoteLines.join("")}\n</blockquote>',
         disabled: false,
