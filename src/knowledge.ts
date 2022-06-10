@@ -859,9 +859,11 @@ class Knowledge extends AddonBase {
         attachmentCreated = true;
       }
 
-      let filename = `${Zotero.File.pathToFile(filepath).path}/${newNote
-        .getNoteTitle()
-        .replace(/[/\\?%*:|"<>]/g, "-")}-${note.key}.md`;
+      let filename = `${Zotero.File.pathToFile(filepath).path}/${
+        newNote.getNoteTitle
+          ? newNote.getNoteTitle().replace(/[/\\?%*:|"<>]/g, "-") + "-"
+          : ""
+      }${note.key}.md`;
       filename = filename.replace(/\\/g, "/");
       const translator = new Zotero.Translate.Export();
       translator.setItems([newNote]);
