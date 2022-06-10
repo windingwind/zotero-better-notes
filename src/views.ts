@@ -93,6 +93,9 @@ class AddonViews extends AddonBase {
     await editorInstances._initPromise;
 
     const _document = editorInstances._iframeWindow.document;
+    if (_document.getElementById(id)) {
+      return;
+    }
     let knowledgeToolBar = _document.getElementById("knowledge-tools");
     if (!knowledgeToolBar) {
       await this.addEditorKnowledgeToolBar(editorInstances);

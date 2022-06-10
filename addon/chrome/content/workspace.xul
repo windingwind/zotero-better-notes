@@ -31,8 +31,8 @@
         <key id="key_export" key="E" modifiers="accel" command="cmd_export" />
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
         <!-- <key id="key_insertNotes" key="I" modifiers="accel" command="cmd_insertNotes" /> -->
-        <key id="key_indent" keycode="VK_TAB" command="cmd_indent" />
-        <key id="key_unindent" keycode="VK_TAB" modifiers="shift" command="cmd_unindent" />
+        <key id="key_indent" keycode="VK_TAB" command="cmd_indent_betternotes" />
+        <key id="key_unindent" keycode="VK_TAB" modifiers="shift" command="cmd_unindent_betternotes" />
     </keyset>
     <command id="cmd_new" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'createWorkspace'});" />
     <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainKnowledge'});" />
@@ -42,8 +42,8 @@
     <!-- <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" /> -->
     <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
     <command id="cmd_addheading" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
-    <command id="cmd_indent" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
-    <command id="cmd_unindent" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'unindentHeading'});" />
+    <command id="cmd_indent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
+    <command id="cmd_unindent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'unindentHeading'});" />
     <command id="cmd_treeview" oncommand="Zotero.Knowledge4Zotero.views.switchView(1);" />
     <command id="cmd_mindmap" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
     <command id="cmd_bubblemap" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
@@ -76,8 +76,8 @@
                 <menuitem id="menu_editTemplate" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate" />
                 <menuseparator />
                 <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
-                <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent" key="key_indent" />
-                <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent" key="key_unindent" />
+                <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent_betternotes" key="key_indent" />
+                <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent_betternotes" key="key_unindent" />
             </menupopup>
         </menu>
 

@@ -35,10 +35,9 @@ class Knowledge extends AddonBase {
     reopen: boolean = false,
     select: boolean = true
   ) {
-    // this._Addon.views.showProgressWindow("Recovering Note", "4");
     if (this.getWorkspaceWindow()) {
       if (!reopen) {
-        Zotero.debug("openWorkspaceWindow: reopen");
+        Zotero.debug("openWorkspaceWindow: focus");
         if (this.workspaceTabId) {
           Zotero_Tabs.select(this.workspaceTabId);
         } else {
@@ -46,6 +45,7 @@ class Knowledge extends AddonBase {
         }
         return;
       } else {
+        Zotero.debug("openWorkspaceWindow: reopen");
         this.closeWorkspaceWindow();
       }
     }
@@ -110,6 +110,7 @@ class Knowledge extends AddonBase {
         (this.getWorkspaceWindow() as Window).close();
       }
     }
+    this.workspaceTabId = "";
   }
 
   async waitWorkspaceReady() {
