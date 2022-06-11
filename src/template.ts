@@ -2,9 +2,17 @@ import { AddonBase, NoteTemplate } from "./base";
 
 class AddonTemplate extends AddonBase {
   private _window: Window;
+  _systemTemplateNames: string[];
   _defaultTemplates: NoteTemplate[];
   constructor(parent: Knowledge4Zotero) {
     super(parent);
+    this._systemTemplateNames = [
+      "[QuickInsert]",
+      "[QuickBackLink]",
+      "[QuickImport]",
+      "[QuickNote]",
+      "[ExportMDFileName]",
+    ];
     this._defaultTemplates = [
       {
         name: "[QuickInsert]",
@@ -128,11 +136,16 @@ class AddonTemplate extends AddonBase {
       deleteTemplate.setAttribute("disabled", "true");
     } else {
       header.value = name;
-      header.removeAttribute("disabled");
+      if (!this._systemTemplateNames.includes(name)) {
+        header.removeAttribute("disabled");
+        deleteTemplate.removeAttribute("disabled");
+      } else {
+        header.setAttribute("disabled", "true");
+        deleteTemplate.setAttribute("disabled", "true");
+      }
       text.value = templateText;
       text.removeAttribute("disabled");
       saveTemplate.removeAttribute("disabled");
-      deleteTemplate.removeAttribute("disabled");
     }
   }
 
@@ -186,6 +199,14 @@ class AddonTemplate extends AddonBase {
     const text: XUL.Textbox =
       this._window.document.getElementById("editor-textbox");
 
+    if (this._systemTemplateNames.includes(name) && header.value !== name) {
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `Template ${name} is a system template. Modifying template name is not allowed.`
+      );
+      return;
+    }
+
     const template = this.getTemplateKey(name);
     template.name = header.value;
     template.text = text.value;
@@ -203,6 +224,13 @@ class AddonTemplate extends AddonBase {
 
   deleteSelectedTemplate() {
     const name = this.getSelectedTemplateName();
+    if (this._systemTemplateNames.includes(name)) {
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `Template ${name} is a system template. Removing system template is note allowed.`
+      );
+      return;
+    }
     this.removeTemplate(name);
     this.updateTemplateView();
   }

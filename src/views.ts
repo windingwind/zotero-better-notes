@@ -47,6 +47,10 @@ class AddonViews extends AddonBase {
     document
       .querySelectorAll(".menu-type-betternotes")
       .forEach((el) => ((el as HTMLElement).hidden = hidden));
+
+    // Disable Zotero pdf export
+    (document.getElementById("menu_export_files") as XUL.Element).disabled =
+      !hidden;
   }
 
   switchKey(disabled: boolean) {

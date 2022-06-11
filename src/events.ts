@@ -73,6 +73,7 @@ class AddonEvents extends AddonBase {
             _contextPane.setAttribute("collapsed", true);
             _tabToolbar.hidden = true;
             _tabCover.hidden = true;
+            this._Addon.views.switchRealMenuBar(false);
             this._Addon.views.switchKey(false);
           } else {
             this._Addon.views.switchRealMenuBar(true);
