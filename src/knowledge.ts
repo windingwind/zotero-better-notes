@@ -1061,7 +1061,6 @@ class Knowledge extends AddonBase {
         let link = this.getLinkFromText(noteLines[i]);
         while (link) {
           const params = this.getParamsFromLink(link);
-          alert(params);
           if (params.ignore) {
             Zotero.debug("ignore link");
             noteLines[i] = noteLines[i].substring(
@@ -1076,7 +1075,6 @@ class Knowledge extends AddonBase {
           Zotero.debug("convert link");
           let res = await this.getNoteFromLink(link);
           const subNote = res.item;
-          alert(`${subNote.id}, ${_rootNoteIds}`);
           if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
             Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
             const convertResult = await this.convertNoteLines(
