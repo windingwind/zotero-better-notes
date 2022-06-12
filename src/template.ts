@@ -21,7 +21,7 @@ class AddonTemplate extends AddonBase {
       },
       {
         name: "[QuickBackLink]",
-        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}</a></p>',
+        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}?ignore=1" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}</a></p>',
         disabled: false,
       },
       {
@@ -251,7 +251,7 @@ class AddonTemplate extends AddonBase {
     if (this._systemTemplateNames.includes(name)) {
       const text: XUL.Textbox =
         this._window.document.getElementById("editor-textbox");
-      text.value = this.getTemplateText(name);
+      text.value = this._defaultTemplates.find((t) => t.name === name).text;
       this._Addon.views.showProgressWindow(
         "Better Notes",
         `Template ${name} is reset. Please save before leaving.`
@@ -268,7 +268,7 @@ class AddonTemplate extends AddonBase {
     Zotero.debug(`renderTemplate: ${key}`);
     let templateText = this.getTemplateText(key);
     if (useDefault && !templateText) {
-      templateText = this._defaultTemplates[key];
+      templateText = this._defaultTemplates.find((t) => t.name === key).text;
       if (!templateText) {
         return "";
       }
