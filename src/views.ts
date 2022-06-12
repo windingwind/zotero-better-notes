@@ -406,18 +406,12 @@ class AddonViews extends AddonBase {
           false
         );
         const subNoteLines = convertResult.lines;
-        let _newLine: string = "";
-        const templateText =
-          this._Addon.template.getTemplateText("[QuickImport]");
-        try {
-          _newLine = new Function(
-            "subNoteLines, subNoteItem, noteItem",
-            "return `" + templateText + "`"
-          )(subNoteLines, note, this._Addon.knowledge.getWorkspaceNote());
-        } catch (e) {
-          alert(e);
-        }
-        newLines.push(_newLine);
+        const templateText = this._Addon.template.renderTemplate(
+          "[QuickImport]",
+          "subNoteLines, subNoteItem, noteItem",
+          [subNoteLines, note, this._Addon.knowledge.getWorkspaceNote()]
+        );
+        newLines.push(templateText);
         const newLineString = newLines.join("\n");
         await this._Addon.knowledge.modifyLineInNote(
           undefined,

@@ -57,6 +57,19 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportCopy;
     }
+    let exportPDF = Zotero.Prefs.get("Knowledge4Zotero.exportPDF");
+    if (typeof exportPDF !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-enablepdf"
+        ) as XUL.Checkbox
+      ).checked = false;
+    }
+    (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablepdf"
+      ) as XUL.Checkbox
+    ).disabled = true;
     this.doUpdate();
   }
   doUpdate() {
@@ -110,11 +123,17 @@ class AddonExport extends AddonBase {
         "Knowledge4Zotero-export-enablecopy"
       ) as XUL.Checkbox
     ).checked;
+    let exportPDF = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablepdf"
+      ) as XUL.Checkbox
+    ).checked;
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportSingleFile", exportSingleFile);
     Zotero.Prefs.set("Knowledge4Zotero.embedLink", embedLink);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
     Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);
+    Zotero.Prefs.set("Knowledge4Zotero.exportPDF", exportPDF);
     Zotero.debug(this.io);
     Zotero.debug(this.io.dataOut);
     this.io.dataOut = {
@@ -123,6 +142,7 @@ class AddonExport extends AddonBase {
       embedLink: embedLink,
       exportNote: exportNote,
       exportCopy: exportCopy,
+      exportPDF: exportPDF,
     };
   }
 }

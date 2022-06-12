@@ -414,31 +414,24 @@ class Knowledge extends AddonBase {
     }
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
-    let _newLine: string = "";
-    const insertTemplateText =
-      this._Addon.template.getTemplateText("[QuickInsert]");
-    try {
-      _newLine = new Function(
-        "link, subNoteItem, noteItem",
-        "return `" + insertTemplateText + "`"
-      )(link, linkedNote, targetNote);
-    } catch (e) {
-      alert(e);
-    }
-    this.addLineToNote(targetNote, _newLine, lineIndex, true);
 
-    const backLinkTemplateText =
-      this._Addon.template.getTemplateText("[QuickBackLink]");
-    if (backLinkTemplateText) {
-      try {
-        _newLine = new Function(
-          "subNoteItem, noteItem",
-          "return `" + backLinkTemplateText + "`"
-        )(linkedNote, targetNote);
-      } catch (e) {
-        alert(e);
-      }
-      this.addLineToNote(linkedNote, _newLine, -1, true);
+    const linkTemplate = this._Addon.template.renderTemplate(
+      "[QuickInsert]",
+      "link, subNoteItem, noteItem",
+      [link, linkedNote, targetNote]
+    );
+
+    this.addLineToNote(targetNote, linkTemplate, lineIndex, true);
+
+    const backLinkTemplate = this._Addon.template.renderTemplate(
+      "[QuickBackLink]",
+      "subNoteItem, noteItem",
+      [linkedNote, targetNote],
+      false
+    );
+
+    if (backLinkTemplate) {
+      this.addLineToNote(linkedNote, backLinkTemplate, -1, true);
     }
 
     this._Addon.views.showProgressWindow(
@@ -724,9 +717,10 @@ class Knowledge extends AddonBase {
     convertNoteLinks: boolean = true,
     saveFile: boolean = true,
     saveNote: boolean = false,
-    saveCopy: boolean = false
+    saveCopy: boolean = false,
+    savePDF: boolean = false
   ) {
-    if (!saveFile && !saveNote && !saveCopy) {
+    if (!saveFile && !saveNote && !saveCopy && !savePDF) {
       return;
     }
     this._exportFileDict = [];
@@ -809,6 +803,94 @@ class Knowledge extends AddonBase {
           "Waiting for paste finish...\nImages may not be copied correctly if OK is pressed before paste."
         );
       }
+    }
+    if (savePDF) {
+      console.log(newNote);
+      let _w: Window;
+      let t = 0;
+      do {
+        ZoteroPane.openNoteWindow(newNote.id);
+        _w = ZoteroPane.findNoteWindow(newNote.id);
+        console.log(_w);
+        await Zotero.Promise.delay(10);
+        t += 1;
+      } while (!_w && t < 500);
+      _w.resizeTo(900, 650);
+      const editor: EditorInstance = Zotero.Notes._editorInstances.find(
+        (e) => e._item.id === newNote.id
+      );
+      await editor._initPromise;
+
+      const noteEditor = _w.document.getElementById(
+        "zotero-note-editor"
+      ) as any;
+
+      let _editor: EditorInstance = noteEditor.getCurrentInstance();
+      t = 0;
+      while (!_editor && t < 500) {
+        t += 1;
+        await Zotero.Promise.delay(10);
+        _editor = noteEditor.getCurrentInstance();
+      }
+      await Zotero.Promise.delay(3000);
+
+      await this._Addon.events.onEditorEvent(
+        new EditorMessage("switchEditorTex", {
+          editorInstance: _editor,
+          params: {
+            viewTex: true,
+          },
+        })
+      );
+      await Zotero.Promise.delay(3000);
+
+      _editor._iframeWindow.document
+        .querySelectorAll(".toolbar")
+        .forEach((e) => e.remove());
+      _editor._iframeWindow.document
+        .getElementById("texView")
+        .removeAttribute("style");
+      const fullPageStyle =
+        _editor._iframeWindow.document.createElement("style");
+      fullPageStyle.innerHTML =
+        "@page { margin: 0; } @media print{ body { height : auto}}";
+      _editor._iframeWindow.document
+        .getElementById("texView")
+        .before(fullPageStyle);
+      _editor._iframeWindow.print();
+      // const doc = new jsPDF();
+      // const source = editor._iframeWindow.document.getElementById("texView");
+      // console.log(source);
+      // doc.html(source, {
+      //   callback: function (doc) {
+      //     doc.save();
+      //   },
+      //   x: 10,
+      //   y: 10,
+      // });
+      // // doc.text("123", 10, 10);
+      // const blob = doc.output("blob");
+      // console.log(blob);
+      // let filename = await pick(
+      //   Zotero.getString("fileInterface.export"),
+      //   "save",
+      //   [["PDF File(*.pdf)", "*.pdf"]],
+      //   `${newNote.getNoteTitle()}.pdf`
+      // );
+      // if (filename) {
+      //   filename = Zotero.File.pathToFile(filename).path.replace(/\\/g, "/");
+      //   const file = OS.Path.join(...filename.split(/\//));
+      //   // const d = document.createElement("a");
+      //   // d.href = window.URL.createObjectURL(blob);
+      //   // d.download = file;
+      //   // d.style.display = "none";
+      //   // document.appendChild(d);
+      //   // d.click();
+      //   // d.remove();
+      //   // window.URL.revokeObjectURL(d.href);
+      //   await Zotero.File.putContentsAsync(file, blob);
+      //   await Zotero.File.setNormalFilePermissions(file);
+      // }
     }
     if (!saveNote) {
       if (newNote.id !== note.id) {
@@ -952,24 +1034,11 @@ class Knowledge extends AddonBase {
   }
 
   private _getFileName(noteItem: ZoteroItem) {
-    let _newLine: string = "";
-    const templateText =
-      this._Addon.template.getTemplateText("[ExportMDFileName]");
-    try {
-      _newLine = new Function("noteItem", "return `" + templateText + "`")(
-        noteItem
-      );
-    } catch (e) {
-      alert(e);
-      return (
-        (noteItem.getNoteTitle
-          ? noteItem.getNoteTitle().replace(/[/\\?%*:|"<> ]/g, "-") + "-"
-          : "") +
-        noteItem.key +
-        ".md"
-      );
-    }
-    return _newLine;
+    return this._Addon.template.renderTemplate(
+      "[ExportMDFileName]",
+      "noteItem",
+      [noteItem]
+    );
   }
 
   async convertNoteLines(
@@ -982,6 +1051,7 @@ class Knowledge extends AddonBase {
     let subNotes = [];
     const [..._rootNoteIds] = rootNoteIds;
     _rootNoteIds.push(currentNote.id);
+
     let newLines = [];
     const noteLines = this.getLinesInNote(currentNote);
     for (let i in noteLines) {
@@ -991,13 +1061,22 @@ class Knowledge extends AddonBase {
         let link = this.getLinkFromText(noteLines[i]);
         while (link) {
           const params = this.getParamsFromLink(link);
+          alert(params);
           if (params.ignore) {
             Zotero.debug("ignore link");
+            noteLines[i] = noteLines[i].substring(
+              noteLines[i].search(/zotero:\/\/note\//g)
+            );
+            noteLines[i] = noteLines[i].substring(
+              noteLines[i].search(/<\/a>/g) + "</a>".length
+            );
+            link = this.getLinkFromText(noteLines[i]);
             continue;
           }
           Zotero.debug("convert link");
           let res = await this.getNoteFromLink(link);
           const subNote = res.item;
+          alert(`${subNote.id}, ${_rootNoteIds}`);
           if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
             Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
             const convertResult = await this.convertNoteLines(
@@ -1006,19 +1085,13 @@ class Knowledge extends AddonBase {
               convertNoteLinks
             );
             const subNoteLines = convertResult.lines;
-            let _newLine: string = "";
-            const templateText =
-              this._Addon.template.getTemplateText("[QuickImport]");
-            try {
-              _newLine = new Function(
-                "subNoteLines, subNoteItem, noteItem",
-                "return `" + templateText + "`"
-              )(subNoteLines, subNote, currentNote);
-            } catch (e) {
-              alert(e);
-              continue;
-            }
-            newLines.push(_newLine);
+
+            const templateText = this._Addon.template.renderTemplate(
+              "[QuickImport]",
+              "subNoteLines, subNoteItem, noteItem",
+              [subNoteLines, subNote, currentNote]
+            );
+            newLines.push(templateText);
             subNotes.push(subNote);
             subNotes = subNotes.concat(convertResult.subNotes);
           }
@@ -1059,15 +1132,28 @@ class Knowledge extends AddonBase {
 
   getParamsFromLink(uri: string) {
     uri = uri.split("//").pop();
-    let params = {
+    const extraParams = {};
+    uri
+      .split("?")
+      .pop()
+      .split("&")
+      .forEach((p) => {
+        extraParams[p.split("=")[0]] = p.split("=")[1];
+      });
+    uri = uri.split("?")[0];
+    let params: any = {
       libraryID: "",
       noteKey: 0,
-      ignore: 0,
     };
+    Object.assign(params, extraParams);
     const router = new Zotero.Router(params);
     router.add("note/:libraryID/:noteKey", function () {
       if (params.libraryID === "u") {
         params.libraryID = Zotero.Libraries.userLibraryID;
+      } else {
+        params.libraryID = Zotero.Groups.getLibraryIDFromGroupID(
+          params.libraryID
+        );
       }
     });
     router.run(uri);
@@ -1082,6 +1168,7 @@ class Knowledge extends AddonBase {
         infoText: "Library does not exist or access denied.",
       };
     }
+    Zotero.debug(params);
     let item = await Zotero.Items.getByLibraryAndKeyAsync(
       params.libraryID,
       params.noteKey

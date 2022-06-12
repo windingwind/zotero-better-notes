@@ -108,6 +108,9 @@ class AddonTemplate extends AddonBase {
       listitem.setAttribute("id", template.name);
       const name = this._window.document.createElement("listcell");
       name.setAttribute("label", template.name);
+      if (this._systemTemplateNames.includes(template.name)) {
+        listitem.style.color = "#f2ac46";
+      }
       listitem.append(name);
       listbox.append(listitem);
     }
@@ -127,6 +130,8 @@ class AddonTemplate extends AddonBase {
     const saveTemplate = this._window.document.getElementById("save-template");
     const deleteTemplate =
       this._window.document.getElementById("delete-template");
+    const resetTemplate =
+      this._window.document.getElementById("reset-template");
     if (!name) {
       header.value = "";
       header.setAttribute("disabled", "true");
@@ -134,18 +139,24 @@ class AddonTemplate extends AddonBase {
       text.setAttribute("disabled", "true");
       saveTemplate.setAttribute("disabled", "true");
       deleteTemplate.setAttribute("disabled", "true");
+      deleteTemplate.hidden = false;
+      resetTemplate.hidden = true;
     } else {
       header.value = name;
       if (!this._systemTemplateNames.includes(name)) {
         header.removeAttribute("disabled");
-        deleteTemplate.removeAttribute("disabled");
+        deleteTemplate.hidden = false;
+        resetTemplate.hidden = true;
       } else {
         header.setAttribute("disabled", "true");
         deleteTemplate.setAttribute("disabled", "true");
+        deleteTemplate.hidden = true;
+        resetTemplate.hidden = false;
       }
       text.value = templateText;
       text.removeAttribute("disabled");
       saveTemplate.removeAttribute("disabled");
+      deleteTemplate.removeAttribute("disabled");
     }
   }
 
@@ -233,6 +244,46 @@ class AddonTemplate extends AddonBase {
     }
     this.removeTemplate(name);
     this.updateTemplateView();
+  }
+
+  resetSelectedTemplate() {
+    const name = this.getSelectedTemplateName();
+    if (this._systemTemplateNames.includes(name)) {
+      const text: XUL.Textbox =
+        this._window.document.getElementById("editor-textbox");
+      text.value = this.getTemplateText(name);
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `Template ${name} is reset. Please save before leaving.`
+      );
+    }
+  }
+
+  renderTemplate(
+    key: string,
+    argString: string = "",
+    argList: any[] = [],
+    useDefault: boolean = true
+  ) {
+    Zotero.debug(`renderTemplate: ${key}`);
+    let templateText = this.getTemplateText(key);
+    if (useDefault && !templateText) {
+      templateText = this._defaultTemplates[key];
+      if (!templateText) {
+        return "";
+      }
+    }
+
+    let _newLine: string = "";
+    try {
+      _newLine = new Function(argString, "return `" + templateText + "`")(
+        ...argList
+      );
+    } catch (e) {
+      alert(`Template ${key} Error: ${e}`);
+      return "";
+    }
+    return _newLine;
   }
 
   getTemplateKeys(): NoteTemplate[] {

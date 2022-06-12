@@ -49,5 +49,14 @@
                 </row>
             </rows>
         </groupbox>
+        <groupbox flex="1">
+            <caption label="&zotero.__addonRef__.export.pdf.label;"></caption>
+            <rows flex="1">
+                <row>
+                    <checkbox id="__addonRef__-export-enablepdf" checked="false" />
+                    <label value="&zotero.__addonRef__.export.pdf.enable.label;" />
+                </row>
+            </rows>
+        </groupbox>
     </vbox>
 </dialog>

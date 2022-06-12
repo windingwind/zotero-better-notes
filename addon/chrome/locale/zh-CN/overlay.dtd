@@ -31,6 +31,8 @@
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "导出链接的子笔记为MarkDown文件">
 <!ENTITY zotero.__addonRef__.export.richtext.label "富文本(MS Word)设置">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
+<!ENTITY zotero.__addonRef__.export.pdf.label "PDF设置">
+<!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF">
 
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">
@@ -63,6 +65,7 @@
 <!ENTITY zotero.__addonRef__.template.import.label "从笔记新建...">
 <!ENTITY zotero.__addonRef__.template.save.label "保存">
 <!ENTITY zotero.__addonRef__.template.delete.label "删除">
+<!ENTITY zotero.__addonRef__.template.reset.label "重置">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

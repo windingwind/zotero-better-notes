@@ -991,21 +991,16 @@ class AddonEvents extends AddonBase {
       */
       const newLines = [];
 
-      const templateText = this._Addon.template.getTemplateText(
+      const renderredTemplate = this._Addon.template.renderTemplate(
         message.content.params.templateName
       );
 
-      let _newLine: string = "";
-      try {
-        _newLine = new Function("return `" + templateText + "`")();
-      } catch (e) {
-        alert(e);
-        return;
+      if (renderredTemplate) {
+        newLines.push(renderredTemplate);
+        newLines.push("<p> </p>");
+        // End of line
+        await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
       }
-      newLines.push(_newLine);
-      newLines.push("<p> </p>");
-      // End of line
-      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
     } else if (message.type === "insertItemUsingTemplate") {
       /*
         message.content = {
@@ -1039,10 +1034,6 @@ class AddonEvents extends AddonBase {
       const newLines = [];
       newLines.push("<p> </p>");
 
-      const templateText = this._Addon.template.getTemplateText(
-        message.content.params.templateName
-      );
-
       const toCopyImage = [];
 
       const copyNoteImage = (noteItem: ZoteroItem) => {
@@ -1059,18 +1050,16 @@ class AddonEvents extends AddonBase {
           .getNotes()
           .map((e) => Zotero.Items.get(e));
 
-        let _newLine: string = "";
-        try {
-          _newLine = new Function(
-            "topItem, itemNotes, copyNoteImage",
-            "return `" + templateText + "`"
-          )(topItem, itemNotes, copyNoteImage);
-        } catch (e) {
-          alert(e);
-          continue;
+        const renderredTemplate = this._Addon.template.renderTemplate(
+          message.content.params.templateName,
+          "topItem, itemNotes, copyNoteImage",
+          [topItem, itemNotes, copyNoteImage]
+        );
+
+        if (renderredTemplate) {
+          newLines.push(renderredTemplate);
+          newLines.push("<p> </p>");
         }
-        newLines.push(_newLine);
-        newLines.push("<p> </p>");
       }
       await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
       const mainNote = this._Addon.knowledge.getWorkspaceNote();
@@ -1112,10 +1101,6 @@ class AddonEvents extends AddonBase {
       const newLines = [];
       newLines.push("<p> </p>");
 
-      const templateText = this._Addon.template.getTemplateText(
-        message.content.params.templateName
-      );
-
       for (const noteItem of notes) {
         /*
           Available variables:
@@ -1130,18 +1115,17 @@ class AddonEvents extends AddonBase {
         const link = `<p><a href="${linkURL}">${
           linkText ? linkText : linkURL
         }</a></p>`;
-        let _newLine: string = "";
-        try {
-          _newLine = new Function(
-            "noteItem, topItem, link",
-            "return `" + templateText + "`"
-          )(noteItem, topItem, link);
-        } catch (e) {
-          alert(e);
-          continue;
+
+        const renderredTemplate = this._Addon.template.renderTemplate(
+          message.content.params.templateName,
+          "noteItem, topItem, link",
+          [noteItem, topItem, link]
+        );
+
+        if (renderredTemplate) {
+          newLines.push(renderredTemplate);
+          newLines.push("<p> </p>");
         }
-        newLines.push(_newLine);
-        newLines.push("<p> </p>");
       }
       await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
     } else if (message.type === "editTemplate") {
@@ -1185,7 +1169,8 @@ class AddonEvents extends AddonBase {
           options.embedLink,
           options.exportFile,
           options.exportNote,
-          options.exportCopy
+          options.exportCopy,
+          options.exportPDF
         );
       }
     } else if (message.type === "exportNotes") {
@@ -1307,17 +1292,13 @@ class AddonEvents extends AddonBase {
         annotations[0].attachmentItemID
       ).parentID;
 
-      let _newLine: string = "";
-      const templateText = this._Addon.template.getTemplateText("[QuickNote]");
-      try {
-        _newLine = new Function(
-          "annotationItem, topItem",
-          "return `" + templateText + "`"
-        )(annotationItem, annotationItem.parentItem.parentItem);
-      } catch (e) {
-        alert(e);
-      }
-      note.setNote(`<div data-schema-version="8">${_newLine}\n</div>`);
+      const renderredTemplate = this._Addon.template.renderTemplate(
+        "[QuickNote]",
+        "annotationItem, topItem",
+        [annotationItem, annotationItem.parentItem.parentItem]
+      );
+
+      note.setNote(`<div data-schema-version="8">${renderredTemplate}\n</div>`);
 
       const tags = annotationItem.getTags();
       for (const tag of tags) {
