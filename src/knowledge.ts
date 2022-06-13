@@ -1060,8 +1060,13 @@ class Knowledge extends AddonBase {
       if (convertNoteLinks) {
         let link = this.getLinkFromText(noteLines[i]);
         while (link) {
+          const linkIndex = noteLines[i].indexOf(link);
           const params = this.getParamsFromLink(link);
-          if (params.ignore) {
+          if (
+            params.ignore ||
+            // Ignore links that are not in <a>
+            !noteLines[i].slice(linkIndex - 8, linkIndex).includes("href")
+          ) {
             Zotero.debug("ignore link");
             noteLines[i] = noteLines[i].substring(
               noteLines[i].search(/zotero:\/\/note\//g)
