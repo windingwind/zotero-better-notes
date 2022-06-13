@@ -530,10 +530,52 @@ class AddonEvents extends AddonBase {
       if (!_window.document.getElementById("MathJax-script")) {
         const messageScript = _window.document.createElement("script");
         messageScript.innerHTML = `
-          window.addEventListener('message', (e)=>{
+          window.addEventListener('message', async (e)=>{
             if(e.data.type === "renderLaTex"){
               console.log("renderLaTex");
-              MathJax.typeset([window.document.getElementById("texView")])
+              await MathJax.typesetPromise([document.getElementById("texView")])
+            } else if(e.data.type === "exportPDF"){
+              console.log("exportPDF");
+              const container = document.getElementById("editor-container");
+              container.style.display = "none";
+
+              const fullPageStyle = document.createElement("style");
+              fullPageStyle.innerHTML =
+                "@page { margin: 0; } @media print{ body { height : auto}}";
+              document.body.append(fullPageStyle);
+
+              let t = 0;
+              let imageFlag = false;
+              while(!(imageFlag && MathJax.typesetPromise) && t < 500){
+                await new Promise(function (resolve) {
+                  setTimeout(resolve, 10);
+                });
+                imageFlag = !Array.prototype.find.call(document.querySelectorAll('img'), e=>(!e.getAttribute('src') || e.style.display === 'none'));
+                t += 1;
+              }
+
+              const editNode = document.querySelector(".primary-editor");
+              const printNode = editNode.cloneNode(true);
+              printNode.style.padding = "20px";
+              document.body.append(printNode);
+
+              await MathJax.typesetPromise([printNode]);
+              let printFlag = false;
+              window.onafterprint = (e) => {
+                console.log('Print Dialog Closed..');
+                printFlag = true;
+                document.title = "Printed";
+              };
+              window.onmouseover = (e) => {
+                if (printFlag) {
+                  document.title = "Printed";
+                  printNode.remove();
+                  container.style.removeProperty('display');
+                }
+              };
+              document.title = printNode.firstChild.innerText;
+              console.log(document.title);
+              window.print();
             }
           }, false)
           MathJax = {
@@ -562,6 +604,18 @@ class AddonEvents extends AddonBase {
       }
 
       message.content.editorInstance._knowledgeUIInitialized = true;
+
+      if (
+        this._Addon.knowledge._pdfNoteId ===
+        message.content.editorInstance._item.id
+      ) {
+        message.content.editorInstance._iframeWindow.postMessage(
+          { type: "exportPDF" },
+          "*"
+        );
+        this._Addon.knowledge._pdfNoteId = -1;
+        return;
+      }
 
       if (
         this._Addon.views._texNotes.includes(

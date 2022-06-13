@@ -63,13 +63,8 @@ class AddonExport extends AddonBase {
         this._window.document.getElementById(
           "Knowledge4Zotero-export-enablepdf"
         ) as XUL.Checkbox
-      ).checked = false;
+      ).checked = exportPDF;
     }
-    (
-      this._window.document.getElementById(
-        "Knowledge4Zotero-export-enablepdf"
-      ) as XUL.Checkbox
-    ).disabled = true;
     this.doUpdate();
   }
   doUpdate() {

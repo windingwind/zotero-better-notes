@@ -12,10 +12,13 @@ class Knowledge extends AddonBase {
   _exportNote: ZoteroItem;
   _exportPath: string;
   _exportFileDict: object;
+  _pdfNoteId: number;
+  _pdfPrintPromise: any;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this.currentLine = -1;
     this.currentNodeID = -1;
+    this._pdfNoteId = -1;
   }
 
   getWorkspaceNote(): ZoteroItem {
@@ -808,6 +811,9 @@ class Knowledge extends AddonBase {
       console.log(newNote);
       let _w: Window;
       let t = 0;
+      this._pdfNoteId = newNote.id;
+      this._pdfPrintPromise = Zotero.Promise.defer();
+      ZoteroPane.selectItem(note.id);
       do {
         ZoteroPane.openNoteWindow(newNote.id);
         _w = ZoteroPane.findNoteWindow(newNote.id);
@@ -815,82 +821,29 @@ class Knowledge extends AddonBase {
         await Zotero.Promise.delay(10);
         t += 1;
       } while (!_w && t < 500);
+      ZoteroPane.selectItem(note.id);
       _w.resizeTo(900, 650);
-      const editor: EditorInstance = Zotero.Notes._editorInstances.find(
-        (e) => e._item.id === newNote.id
+      const checkPrint = () => {
+        try {
+          const editor: any = _w.document.querySelector("#zotero-note-editor");
+          const instance: EditorInstance = editor.getCurrentInstance();
+          console.log(instance._iframeWindow.document.title);
+          if (instance._iframeWindow.document.title === "Printed") {
+            this._pdfPrintPromise.resolve();
+            return;
+          }
+        } catch (e) {}
+        setTimeout(checkPrint, 300);
+      };
+      checkPrint();
+      await this._pdfPrintPromise.promise;
+      console.log("print finish detected");
+      const closeFlag = _w.confirm(
+        "Printing finished. Do you want to close the preview window?"
       );
-      await editor._initPromise;
-
-      const noteEditor = _w.document.getElementById(
-        "zotero-note-editor"
-      ) as any;
-
-      let _editor: EditorInstance = noteEditor.getCurrentInstance();
-      t = 0;
-      while (!_editor && t < 500) {
-        t += 1;
-        await Zotero.Promise.delay(10);
-        _editor = noteEditor.getCurrentInstance();
+      if (closeFlag) {
+        _w.close();
       }
-      await Zotero.Promise.delay(3000);
-
-      await this._Addon.events.onEditorEvent(
-        new EditorMessage("switchEditorTex", {
-          editorInstance: _editor,
-          params: {
-            viewTex: true,
-          },
-        })
-      );
-      await Zotero.Promise.delay(3000);
-
-      _editor._iframeWindow.document
-        .querySelectorAll(".toolbar")
-        .forEach((e) => e.remove());
-      _editor._iframeWindow.document
-        .getElementById("texView")
-        .removeAttribute("style");
-      const fullPageStyle =
-        _editor._iframeWindow.document.createElement("style");
-      fullPageStyle.innerHTML =
-        "@page { margin: 0; } @media print{ body { height : auto}}";
-      _editor._iframeWindow.document
-        .getElementById("texView")
-        .before(fullPageStyle);
-      _editor._iframeWindow.print();
-      // const doc = new jsPDF();
-      // const source = editor._iframeWindow.document.getElementById("texView");
-      // console.log(source);
-      // doc.html(source, {
-      //   callback: function (doc) {
-      //     doc.save();
-      //   },
-      //   x: 10,
-      //   y: 10,
-      // });
-      // // doc.text("123", 10, 10);
-      // const blob = doc.output("blob");
-      // console.log(blob);
-      // let filename = await pick(
-      //   Zotero.getString("fileInterface.export"),
-      //   "save",
-      //   [["PDF File(*.pdf)", "*.pdf"]],
-      //   `${newNote.getNoteTitle()}.pdf`
-      // );
-      // if (filename) {
-      //   filename = Zotero.File.pathToFile(filename).path.replace(/\\/g, "/");
-      //   const file = OS.Path.join(...filename.split(/\//));
-      //   // const d = document.createElement("a");
-      //   // d.href = window.URL.createObjectURL(blob);
-      //   // d.download = file;
-      //   // d.style.display = "none";
-      //   // document.appendChild(d);
-      //   // d.click();
-      //   // d.remove();
-      //   // window.URL.revokeObjectURL(d.href);
-      //   await Zotero.File.putContentsAsync(file, blob);
-      //   await Zotero.File.setNormalFilePermissions(file);
-      // }
     }
     if (!saveNote) {
       if (newNote.id !== note.id) {
