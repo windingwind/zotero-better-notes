@@ -75,11 +75,14 @@ class AddonTemplate extends AddonBase {
       Zotero.Prefs.clear("Knowledge4Zotero.noteTemplate");
     }
     // Convert buggy template
-    if (
-      this.getTemplateText("[QuickBackLink]") ===
-      '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}</a></p>'
-    ) {
-      this.setTemplate(this._defaultTemplates["[QuickBackLink]"]);
+    if (!this.getTemplateText("[QuickBackLink]").includes("ignore=1")) {
+      this.setTemplate(
+        this._defaultTemplates.find((t) => t.name === "[QuickBackLink]")
+      );
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        "The [QuickBackLink] is reset because of missing ignore=1 in link."
+      );
     }
     let templateKeys = this.getTemplateKeys();
     const currentNames = templateKeys.map((t) => t.name);
