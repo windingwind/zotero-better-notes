@@ -1,22 +1,41 @@
 # Zotero Better Notes
 
+![teaser](./image/README/teaser.png)
+
 Everything about note management. All in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+## Easy to Use
 
-## All in Zotero: Best Note Practice
+New to note-taking? Install and start now!
 
-https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
+Already an Obsidian/Logseq/... user? Archive annotations with double chain and export with just one click!
 
-## Features
+It works out of the box. No complicated and annoying configuration!
 
-- `LaTex` view supported(v0.4.0). Click the `Tex` button in the toolbar or `Ctrl/⌘+'/'` to switch between editor view & LaTex view!  
+## Double Chain Support
+
+Link your notes inside Zotero with just one click!
+
+Export with its' linked sub-notes to Obsidian:
+![Obsidian example](./image/README/markdown-ob.png)
+
+## Templates
+
+Use customized templates to import data from items/notes!
+![template](./image/README/template.gif)
+
+[Template Document](./Template.md)
+
+Discuss & contribute your templates [here](https://github.com/windingwind/zotero-better-notes/issues/23)
+
+## Note Enhancements
+
+- `LaTex` view
   <img src="./image/README/LaTex.gif" width="400px"></img>
-- Archive notes/annotations in one place with just a click;
-- Foward-link to sub-notes and back-link to PDF attachments;
-- Export archived notes in MarkDown/rich-text format.
-  - Export markdown with images is supported in v0.1.1
-- Use templates to customize your note! [Document](./Template.md). Discuss & contribute your template [here](https://github.com/windingwind/zotero-better-notes/issues/23)
+
+- Heading indent
+- Image resizing(comming soon)
 
 # Quick Start Guide
 
@@ -31,6 +50,10 @@ https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-
   Zotero PDF Translate plugin is now listed.
 
 ## Usage
+
+### All in Zotero: Best Note Practice
+
+https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
 
 For new users, a **User Guide** will help you get started quickly and create a user guide note for you. Use it as a playground and explore your own workflow!
 
