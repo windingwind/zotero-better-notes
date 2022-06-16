@@ -13,9 +13,9 @@ Already an Obsidian/Logseq/... user? Archive annotations with double chain and e
 
 It works out of the box. No complicated and annoying configuration!
 
-## Double Chain Support
+## Bi-directional Link Support
 
-Link your notes inside Zotero with just one click!
+Bi-directional link note(双链笔记) is supported! Link your notes inside Zotero with just one click.
 
 Export with its' linked sub-notes to Obsidian:
 ![Obsidian example](./image/README/markdown-ob.png)
