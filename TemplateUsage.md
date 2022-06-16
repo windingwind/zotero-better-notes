@@ -1,8 +1,10 @@
-# Template
+# Template Usage
 
-v0.3.0 supports a new feature called _Template_
+This documentation is for beginners.
 
-You can find it under the Workspace Window->Edit:
+If you want to customize your own template, see [template doc](./TemplateDoc.md). Post an issue if you need help.
+
+You can find templates under the Workspace Tab/Window->Edit:
 ![image](https://user-images.githubusercontent.com/33902321/169189492-ab27b5ef-d6b2-4e4b-9035-2c11a91d53a1.png)
 
 ## Add a template
@@ -34,7 +36,7 @@ Only the template with specific name will be called.
 - QuickNote: Called when creating a note from an annotation.
 - ExportMDFileName: Called when exporting notes to markdown in batch/linked notes to markdown mode. The rendered template will be file name.
 
-## Templates
+## Template Examples
 
 Welcome to share & contribute your template!
 
@@ -254,128 +256,4 @@ Do some experiments
 <h2>Todo Tomorrow</h2>
 <p></p>
 </div>
-```
-
-## Use a template
-
-You can insert templates in 3 ways: `Text`, `Note`, and `Item`.
-
-Templates with these keywords will show in the corresponding menu popup.
-
-## Create a template
-
-### Text
-
-> variables: no special variables
-> A pure text template.
-
-### Item
-
-> variables: topItem
-> Select items and use `topItem`(a Zotero Item Object) to access its metadata. For example:
-
-```js
-<p>${topItem.getField("title")}</p>
-```
-
-Will be compiled to:
-
-> YOLO-LITE: A Real-Time Object Detection Algorithm Optimized for Non-GPU Computers
-
-### Note
-
-> variables: topItem, noteItem, link
-> Select notes and use `topItem`(a Zotero Item Object) to access its metadata, `noteItem` to access the note. For example:
-
-```js
-<h1>Note: ${noteItem.getNoteTitle()}</h1>
-${link}
-<p>${topItem.getField('title')}</p>
-```
-
-Will be compiled to:
-
-> # Note: Sensors in Papers
->
-> [Sensors in Papers](http://:zotero://note/u/GCY9G2PZ/)
-> YOLO-LITE: A Real-Time Object Detection Algorithm Optimized for Non-GPU Computers
-
-### QuickInsert
-
-> variables: link: string, subNoteItem, noteItem
-
-### QuickBackLink
-
-> variables: subNoteItem, noteItem
-
-### QuickImport
-
-> variables: subNoteLines: string[], subNoteItem, noteItem
-
-### QuickNote
-
-> variables: annotationItem, topItem
-
-### ExportMDFileName
-
-> variables: noteItem
-
-## API and Variables
-
-This section is for developers who want to create a new template. Basic coding knowledge is required.
-To test & run scripts quickly, open Tools->Developer->Run Javascript.
-
-### Item Fields
-
-The `noteItem` and `topItem` is a Zotero Item object. The general data can be accessed using the `getField()` method.
-
-For example: `topItem.getField('title')` will return the title of the `topItem`.
-
-```ts
-// Get Item Fields
-getField: (void)=>string;
-
-// Get Authors
-getCreators: (void)=>{
-        fieldMode: number,
-        firstName: string, // may be empty
-        lastName: string,
-        creatorTypeID: number,
-    }[];
-```
-
-Find available fields of the selected item with the code below:
-
-```js
-const item = ZoteroPane.getSelectedItems().shift();
-const usedFields = item.getUsedFields();
-Zotero.ItemFields.getAll()
-  .filter((e) => usedFields.indexOf(e.id) >= 0)
-  .map((e) => e.name);
-```
-
-The result is like this (depending on the item you select):
-
-```JSON
-[
-    "0": "title"
-    "1": "date"
-    "2": "language"
-    "3": "shortTitle"
-    "4": "libraryCatalog"
-    "5": "url"
-    "6": "accessDate"
-    "7": "pages"
-    "8": "conferenceName"
-]
-```
-
-### Note Fields
-
-```ts
-// Get Note Text in HTML
-getNote: (void)=>string;
-
-// Get Note Title
-getNoteTitle: (void)=>string;
 ```

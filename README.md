@@ -25,7 +25,7 @@ Export with its' linked sub-notes to Obsidian:
 Use customized templates to import data from items/notes!
 ![template](./image/README/template.gif)
 
-[Template Document](./Template.md)
+[Template Usage](./TemplateUsage.md)
 
 Discuss & contribute your templates [here](https://github.com/windingwind/zotero-better-notes/issues/23)
 
