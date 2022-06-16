@@ -32,7 +32,7 @@ Discuss & contribute your templates [here](https://github.com/windingwind/zotero
 ## Note Enhancements
 
 - `LaTex` view
-  <img src="./image/README/LaTex.gif" width="400px"></img>
+  <img src="./image/README/latex.gif" width="400px"></img>
 
 - Heading indent
 - Image resizing(comming soon)
