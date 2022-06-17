@@ -406,7 +406,7 @@ class AddonViews extends AddonBase {
           false
         );
         const subNoteLines = convertResult.lines;
-        const templateText = this._Addon.template.renderTemplate(
+        const templateText = await this._Addon.template.renderTemplateAsync(
           "[QuickImport]",
           "subNoteLines, subNoteItem, noteItem",
           [subNoteLines, note, this._Addon.knowledge.getWorkspaceNote()]

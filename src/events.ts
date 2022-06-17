@@ -1045,7 +1045,7 @@ class AddonEvents extends AddonBase {
       */
       const newLines = [];
 
-      const renderredTemplate = this._Addon.template.renderTemplate(
+      const renderredTemplate = await this._Addon.template.renderTemplateAsync(
         message.content.params.templateName
       );
 
@@ -1094,6 +1094,8 @@ class AddonEvents extends AddonBase {
         toCopyImage.push(noteItem);
       };
 
+      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance();
+
       for (const topItem of items) {
         /*
             Available variables:
@@ -1104,11 +1106,12 @@ class AddonEvents extends AddonBase {
           .getNotes()
           .map((e) => Zotero.Items.get(e));
 
-        const renderredTemplate = this._Addon.template.renderTemplate(
-          message.content.params.templateName,
-          "topItem, itemNotes, copyNoteImage",
-          [topItem, itemNotes, copyNoteImage]
-        );
+        const renderredTemplate =
+          await this._Addon.template.renderTemplateAsync(
+            message.content.params.templateName,
+            "topItem, itemNotes, copyNoteImage, editor",
+            [topItem, itemNotes, copyNoteImage, editor]
+          );
 
         if (renderredTemplate) {
           newLines.push(renderredTemplate);
@@ -1170,11 +1173,12 @@ class AddonEvents extends AddonBase {
           linkText ? linkText : linkURL
         }</a></p>`;
 
-        const renderredTemplate = this._Addon.template.renderTemplate(
-          message.content.params.templateName,
-          "noteItem, topItem, link",
-          [noteItem, topItem, link]
-        );
+        const renderredTemplate =
+          await this._Addon.template.renderTemplateAsync(
+            message.content.params.templateName,
+            "noteItem, topItem, link",
+            [noteItem, topItem, link]
+          );
 
         if (renderredTemplate) {
           newLines.push(renderredTemplate);
@@ -1346,7 +1350,7 @@ class AddonEvents extends AddonBase {
         annotations[0].attachmentItemID
       ).parentID;
 
-      const renderredTemplate = this._Addon.template.renderTemplate(
+      const renderredTemplate = await this._Addon.template.renderTemplateAsync(
         "[QuickNote]",
         "annotationItem, topItem",
         [annotationItem, annotationItem.parentItem.parentItem]

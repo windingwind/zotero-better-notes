@@ -296,6 +296,37 @@ class AddonTemplate extends AddonBase {
     return _newLine;
   }
 
+  async renderTemplateAsync(
+    key: string,
+    argString: string = "",
+    argList: any[] = [],
+    useDefault: boolean = true
+  ) {
+    Zotero.debug(`renderTemplateAsync: ${key}`);
+    let templateText = this.getTemplateText(key);
+    if (useDefault && !templateText) {
+      templateText = this._defaultTemplates.find((t) => t.name === key).text;
+      if (!templateText) {
+        return "";
+      }
+    }
+
+    let _newLine: string = "";
+    try {
+      const AsyncFunction = Object.getPrototypeOf(
+        async function () {}
+      ).constructor;
+      const _ = new AsyncFunction(argString, "return `" + templateText + "`");
+      console.log(_);
+      _newLine = await _(...argList);
+    } catch (e) {
+      // alert(`Template ${key} Error: ${e}`);
+      console.log(e);
+      return "";
+    }
+    return _newLine;
+  }
+
   getTemplateKeys(): NoteTemplate[] {
     let templateKeys: string = Zotero.Prefs.get(
       "Knowledge4Zotero.templateKeys"

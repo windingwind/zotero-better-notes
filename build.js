@@ -101,6 +101,7 @@ esbuild
     // Entry should be the same as addon/chrome/content/overlay.xul
     outfile: path.join(buildDir, "addon/chrome/content/scripts/index.js"),
     // minify: true,
+    target: ['firefox60']
   })
   .catch(() => process.exit(1));
 

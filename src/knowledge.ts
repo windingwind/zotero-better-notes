@@ -1042,7 +1042,7 @@ class Knowledge extends AddonBase {
             );
             const subNoteLines = convertResult.lines;
 
-            const templateText = this._Addon.template.renderTemplate(
+            const templateText = await this._Addon.template.renderTemplateAsync(
               "[QuickImport]",
               "subNoteLines, subNoteItem, noteItem",
               [subNoteLines, subNote, currentNote]
