@@ -876,6 +876,8 @@ class Knowledge extends AddonBase {
     // Convert to unix format
     this._exportPath = this._exportPath.replace(/\\/g, "/");
 
+    notes = notes.filter((n) => n && n.getNote);
+
     if (useEmbed) {
       for (const note of notes) {
         let newNote: ZoteroItem;
@@ -966,11 +968,13 @@ class Knowledge extends AddonBase {
     }
 
     filename = filename.replace(/\\/g, "/");
+    filename = OS.Path.join(...filename.split(/\//));
+    if (!Zotero.isWin && filename.charAt(0) !== "/") {
+      filename = "/" + filename;
+    }
     const translator = new Zotero.Translate.Export();
     translator.setItems([note]);
-    translator.setLocation(
-      Zotero.File.pathToFile(OS.Path.join(...filename.split(/\//)))
-    );
+    translator.setLocation(Zotero.File.pathToFile(filename));
     translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
     translator.translate();
     this._Addon.views.showProgressWindow(

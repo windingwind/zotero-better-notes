@@ -1201,9 +1201,13 @@ class AddonEvents extends AddonBase {
           editorInstance?, params?: {item}
         }
       */
-      const item = message.content.editorInstance
+      let item = message.content.editorInstance
         ? message.content.editorInstance._item
         : message.content.params.item;
+
+      if (!item) {
+        item = this._Addon.knowledge.getWorkspaceNote();
+      }
       const io = {
         dataIn: null,
         dataOut: null,
@@ -1213,7 +1217,7 @@ class AddonEvents extends AddonBase {
       (window as unknown as XULWindow).openDialog(
         "chrome://Knowledge4Zotero/content/export.xul",
         "",
-        "chrome,centerscreen,width=300,height=300",
+        "chrome,centerscreen,width=300,height=450",
         io
       );
       await io.deferred.promise;
