@@ -79,6 +79,8 @@ declare const OS: {
   };
 };
 
+declare const NetUtil: { [attr: string]: any };
+
 declare interface ZoteroItem {
   id: number;
   isRegularItem: () => boolean;

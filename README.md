@@ -5,6 +5,7 @@
 Everything about note management. All in Zotero.
 
 [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+
 ## Easy to Use
 
 New to note-taking? Install and start now!
@@ -31,8 +32,11 @@ Discuss & contribute your templates [here](https://github.com/windingwind/zotero
 
 ## Note Enhancements
 
-- `LaTex` view
+- `LaTex` view  
   <img src="./image/README/latex.gif" width="400px"></img>
+
+- Copy annotation image to clipboard  
+  <img src="./image/README/copyimage.png" width="400px"></img>
 
 - Heading indent
 - Image resizing(comming soon)

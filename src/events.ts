@@ -1390,6 +1390,63 @@ class AddonEvents extends AddonBase {
         annotationItem.annotationComment ? annotationItem.annotationComment : ""
       }\nnote link: "${this._Addon.knowledge.getNoteLink(note)}"`;
       await annotationItem.saveTx();
+    } else if (message.type === "copyImageAnnotation") {
+      /*
+        message.content = {
+          params: { src: string }
+        }
+      */
+      var image = message.content.params.src;
+
+      var io = Components.classes[
+        "@mozilla.org/network/io-service;1"
+      ].getService(Components.interfaces.nsIIOService);
+      var channel = io.newChannel(image, null, null);
+      var input = channel.open();
+      var imgTools = Components.classes[
+        "@mozilla.org/image/tools;1"
+      ].getService(Components.interfaces.imgITools);
+
+      var buffer = NetUtil.readInputStreamToString(input, input.available());
+      var container = imgTools.decodeImageFromBuffer(
+        buffer,
+        buffer.length,
+        channel.contentType
+      );
+
+      var trans = Components.classes[
+        "@mozilla.org/widget/transferable;1"
+      ].createInstance(Components.interfaces.nsITransferable);
+      // Add Blob
+      trans.addDataFlavor(channel.contentType);
+      trans.setTransferData(channel.contentType, container, -1);
+
+      // // Add Text
+      // let str = Components.classes[
+      //   "@mozilla.org/supports-string;1"
+      // ].createInstance(Components.interfaces.nsISupportsString);
+      // str.data = text;
+      // trans.addDataFlavor("text/unicode");
+      // trans.setTransferData("text/unicode", str, text.length * 2);
+
+      // // Add HTML
+      // str = Components.classes["@mozilla.org/supports-string;1"].createInstance(
+      //   Components.interfaces.nsISupportsString
+      // );
+      // str.data = html;
+      // trans.addDataFlavor("text/html");
+      // trans.setTransferData("text/html", str, html.length * 2);
+
+      var clipid = Components.interfaces.nsIClipboard;
+      var clip =
+        Components.classes["@mozilla.org/widget/clipboard;1"].getService(
+          clipid
+        );
+      clip.setData(trans, null, clipid.kGlobalClipboard);
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        "Image copied to clipboard."
+      );
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }
