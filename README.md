@@ -39,6 +39,7 @@ Discuss & contribute your templates [here](https://github.com/windingwind/zotero
   <img src="./image/README/copyimage.png" width="400px"></img>
 
 - Heading indent
+- Cite Items
 - Image resizing(comming soon)
 
 # Quick Start Guide
