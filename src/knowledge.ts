@@ -860,7 +860,11 @@ class Knowledge extends AddonBase {
     }
   }
 
-  async exportNotesToFile(notes: ZoteroItem[], useEmbed: boolean) {
+  async exportNotesToFile(
+    notes: ZoteroItem[],
+    useEmbed: boolean,
+    useSync: boolean = false
+  ) {
     Components.utils.import("resource://gre/modules/osfile.jsm");
     this._exportFileDict = [];
     const filepath = await pick(
@@ -948,12 +952,63 @@ class Knowledge extends AddonBase {
 
       for (const noteInfo of noteLinkDict) {
         this._exportNote = noteInfo.note;
-        this._export(
-          noteInfo.note,
-          `${Zotero.File.pathToFile(filepath).path}/${noteInfo.filename}`,
-          false
-        );
+        let exportPath = `${Zotero.File.pathToFile(filepath).path}/${
+          noteInfo.filename
+        }`;
+        this._export(noteInfo.note, exportPath, false);
+        if (useSync) {
+          this._Addon.sync.updateNoteSyncStatus(
+            noteInfo.note,
+            Zotero.File.pathToFile(filepath).path,
+            noteInfo.filename
+          );
+        }
       }
+    }
+  }
+
+  async syncNotesToFile(notes: ZoteroItem[], filepath: string) {
+    this._exportPath = Zotero.File.pathToFile(filepath).path + "/attachments";
+    // Convert to unix format
+    this._exportPath = this._exportPath.replace(/\\/g, "/");
+
+    // Export every linked note as a markdown file
+    // Find all linked notes that need to be exported
+    let allNoteIds: number[] = [].concat(notes.map((n) => n.id));
+    for (const note of notes) {
+      const subNoteIds = (
+        await Promise.all(
+          note
+            .getNote()
+            .match(/zotero:\/\/note\/\w+\/\w+\//g)
+            .map(async (link) => this.getNoteFromLink(link))
+        )
+      )
+        .filter((res) => res.item)
+        .map((res) => res.item.id);
+      allNoteIds = allNoteIds.concat(subNoteIds);
+    }
+    allNoteIds = new Array(...new Set(allNoteIds));
+    // console.log(allNoteIds);
+    const allNoteItems: ZoteroItem[] = Zotero.Items.get(allNoteIds);
+    const noteLinkDict = allNoteItems.map((_note) => {
+      return {
+        link: this.getNoteLink(_note),
+        id: _note.id,
+        note: _note,
+        filename: this._getFileName(_note),
+      };
+    });
+    this._exportFileDict = noteLinkDict;
+
+    for (const note of notes) {
+      this._exportNote = note;
+      const syncInfo = this._Addon.sync.getNoteSyncStatus(note);
+      let exportPath = `${decodeURIComponent(
+        syncInfo.path
+      )}/${decodeURIComponent(syncInfo.filename)}`;
+      this._export(note, exportPath, false);
+      this._Addon.sync.updateNoteSyncStatus(note);
     }
   }
 

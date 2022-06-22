@@ -1734,8 +1734,13 @@ let bundle;
             Zotero.debug(newAbsPath);
             let newFile = oldFile;
             try {
-              newFile = _Zotero.File.copyToUnique(oldFile, newAbsPath).path;
-              newFile = newFile.replace(/\\/g, "/");
+              // Don't overwrite
+              if (await OS.File.exists(newAbsPath)) {
+                newFile = newAbsPath.replace(/\\/g, "/");
+              } else {
+                newFile = _Zotero.File.copyToUnique(oldFile, newAbsPath).path;
+                newFile = newFile.replace(/\\/g, "/");
+              }
               newFile = `attachments/${newFile.split(/\//).pop()}`;
             } catch (e) {
               Zotero.debug(e);

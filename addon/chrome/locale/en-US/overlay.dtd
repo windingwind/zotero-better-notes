@@ -30,10 +30,18 @@
 <!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown Settings">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to MarkDown File">
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "Export Linked Notes to MarkDown File">
+<!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "Auto Sync to Export Path">
 <!ENTITY zotero.__addonRef__.export.richtext.label "RichText(MS Word) Settings">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
 <!ENTITY zotero.__addonRef__.export.pdf.label "PDF Settings">
 <!ENTITY zotero.__addonRef__.export.pdf.enable.label "Export to PDF">
+
+<!ENTITY zotero.__addonRef__.sync.title "Sync Status">
+<!ENTITY zotero.__addonRef__.sync.export.label "Export to...">
+<!ENTITY zotero.__addonRef__.sync.path.label "Sync to:">
+<!ENTITY zotero.__addonRef__.sync.lastsync.label "Last sync:">
+<!ENTITY zotero.__addonRef__.sync.enable.label "Keep in sync">
+<!ENTITY zotero.__addonRef__.sync.dosync.label "Sync Now">
 
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes User Guide">

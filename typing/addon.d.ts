@@ -3,6 +3,7 @@ declare interface Knowledge4Zotero {
   views: import("../src/view");
   wizard: import("../src/wizard");
   export: import("../src/export");
-  template:import("../src/template");
+  sync: import("../src/sync");
+  template: import("../src/template");
   knowledge: import("../src/knowledge");
 }

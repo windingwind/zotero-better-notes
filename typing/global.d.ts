@@ -92,11 +92,13 @@ declare interface ZoteroItem {
   isAnnotation: () => boolean;
   isPDFAttachment: () => boolean;
   addTag: (name: string, type: number) => boolean;
+  removeTag(tag: string): boolean;
   itemTypeID: number;
   libraryID: number;
   parentID: number;
   parentItem: ZoteroItem;
   key: string;
+  _version: any;
   getField: (
     name: string,
     unformatted?: boolean,

@@ -19,6 +19,12 @@ class AddonEvents extends AddonBase {
             Zotero.debug("Knowledge4Zotero: main knowledge modify check.");
             this._Addon.views.updateOutline();
           }
+          // Check Note Sync
+          const syncIds = this._Addon.sync.getSyncNoteIds();
+          if (ids.filter((id) => syncIds.includes(id)).length > 0) {
+            this._Addon.sync.setSync();
+            Zotero.debug("Better Notes: sync planned.");
+          }
         }
         if (
           (event == "select" &&
@@ -118,6 +124,9 @@ class AddonEvents extends AddonBase {
     this._Addon.views.switchKey(true);
 
     this.initItemSelectListener();
+
+    // Set a init sync
+    this._Addon.sync.setSync();
   }
 
   private async initWorkspaceTab() {
@@ -1292,6 +1301,25 @@ class AddonEvents extends AddonBase {
       if (!item) {
         item = this._Addon.knowledge.getWorkspaceNote();
       }
+      // If this note is in sync list, open sync window
+      if (this._Addon.sync.getSyncNoteIds().includes(item.id)) {
+        const io = {
+          dataIn: item,
+          dataOut: {} as any,
+          deferred: Zotero.Promise.defer(),
+        };
+
+        (window as unknown as XULWindow).openDialog(
+          "chrome://Knowledge4Zotero/content/sync.xul",
+          "",
+          "chrome,centerscreen,width=500,height=200",
+          io
+        );
+        await io.deferred.promise;
+        if (!io.dataOut.export) {
+          return;
+        }
+      }
       const io = {
         dataIn: null,
         dataOut: null,
@@ -1301,14 +1329,18 @@ class AddonEvents extends AddonBase {
       (window as unknown as XULWindow).openDialog(
         "chrome://Knowledge4Zotero/content/export.xul",
         "",
-        "chrome,centerscreen,width=300,height=450",
+        "chrome,centerscreen,width=400,height=400",
         io
       );
       await io.deferred.promise;
 
       const options = io.dataOut;
       if (options.exportFile && options.exportSingleFile) {
-        await this._Addon.knowledge.exportNotesToFile([item], false);
+        await this._Addon.knowledge.exportNotesToFile(
+          [item],
+          false,
+          options.exportAutoSync
+        );
       } else {
         await this._Addon.knowledge.exportNoteToFile(
           item,
@@ -1545,6 +1577,8 @@ class AddonEvents extends AddonBase {
     this._Addon.template.resetTemplates();
     // Initialize citation style
     this._Addon.template.getCitationStyle();
+    // Initialize sync notes
+    this._Addon.sync.getSyncNoteIds();
   }
 }
 

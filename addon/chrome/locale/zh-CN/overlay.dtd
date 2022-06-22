@@ -30,10 +30,18 @@
 <!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown设置">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "导出为MarkDown文件">
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "导出链接的子笔记为MarkDown文件">
+<!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "修改时自动同步到导出路径">
 <!ENTITY zotero.__addonRef__.export.richtext.label "富文本(MS Word)设置">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
 <!ENTITY zotero.__addonRef__.export.pdf.label "PDF设置">
 <!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF">
+
+<!ENTITY zotero.__addonRef__.sync.title "同步状态">
+<!ENTITY zotero.__addonRef__.sync.export.label "导出为...">
+<!ENTITY zotero.__addonRef__.sync.path.label "同步到：">
+<!ENTITY zotero.__addonRef__.sync.lastsync.label "最近同步：">
+<!ENTITY zotero.__addonRef__.sync.enable.label "保持同步">
+<!ENTITY zotero.__addonRef__.sync.dosync.label "立刻同步">
 
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">

@@ -33,6 +33,14 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportSingleFile;
     }
+    let exportAutoSync = Zotero.Prefs.get("Knowledge4Zotero.exportAutoSync");
+    if (typeof exportAutoSync !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-enableautosync"
+        ) as XUL.Checkbox
+      ).checked = exportAutoSync;
+    }
     let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink");
     if (typeof embedLink !== "undefined") {
       (
@@ -67,26 +75,49 @@ class AddonExport extends AddonBase {
     }
     this.doUpdate();
   }
-  doUpdate() {
-    (
-      this._window.document.getElementById(
-        "Knowledge4Zotero-export-embedLink"
-      ) as XUL.Checkbox
-    ).disabled = (
-      this._window.document.getElementById(
-        "Knowledge4Zotero-export-enablesingle"
-      ) as XUL.Checkbox
-    ).checked;
+  doUpdate(event: XULEvent = undefined) {
+    let embedLink = this._window.document.getElementById(
+      "Knowledge4Zotero-export-embedLink"
+    ) as XUL.Checkbox;
 
-    (
-      this._window.document.getElementById(
-        "Knowledge4Zotero-export-enablesingle"
-      ) as XUL.Checkbox
-    ).disabled = !(
-      this._window.document.getElementById(
-        "Knowledge4Zotero-export-enablefile"
-      ) as XUL.Checkbox
-    ).checked;
+    let exportFile = this._window.document.getElementById(
+      "Knowledge4Zotero-export-enablefile"
+    ) as XUL.Checkbox;
+    let exportSingleFile = this._window.document.getElementById(
+      "Knowledge4Zotero-export-enablesingle"
+    ) as XUL.Checkbox;
+    let exportAutoSync = this._window.document.getElementById(
+      "Knowledge4Zotero-export-enableautosync"
+    ) as XUL.Checkbox;
+
+    if (event) {
+      if (
+        event.target.id === "Knowledge4Zotero-export-embedLink" &&
+        embedLink.checked
+      ) {
+        exportSingleFile.checked = false;
+        exportAutoSync.checked = false;
+      }
+      if (event.target.id === "Knowledge4Zotero-export-enablesingle") {
+        if (exportSingleFile.checked) {
+          embedLink.checked = false;
+        } else {
+          exportAutoSync.checked = false;
+        }
+      }
+    }
+
+    if (exportFile.checked && !embedLink.checked) {
+      exportSingleFile.disabled = false;
+    } else {
+      exportSingleFile.disabled = true;
+    }
+
+    if (exportFile.checked && exportSingleFile.checked) {
+      exportAutoSync.disabled = false;
+    } else {
+      exportAutoSync.disabled = true;
+    }
   }
   doUnload() {
     this.io.deferred && this.io.deferred.resolve();
@@ -101,6 +132,11 @@ class AddonExport extends AddonBase {
     let exportSingleFile = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablesingle"
+      ) as XUL.Checkbox
+    ).checked;
+    let exportAutoSync = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enableautosync"
       ) as XUL.Checkbox
     ).checked;
     let embedLink = (
@@ -125,6 +161,7 @@ class AddonExport extends AddonBase {
     ).checked;
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportSingleFile", exportSingleFile);
+    Zotero.Prefs.set("Knowledge4Zotero.exportAutoSync", exportAutoSync);
     Zotero.Prefs.set("Knowledge4Zotero.embedLink", embedLink);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
     Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);
@@ -134,6 +171,7 @@ class AddonExport extends AddonBase {
     this.io.dataOut = {
       exportFile: exportFile,
       exportSingleFile: exportSingleFile,
+      exportAutoSync: exportAutoSync,
       embedLink: embedLink,
       exportNote: exportNote,
       exportCopy: exportCopy,
