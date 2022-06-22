@@ -837,6 +837,42 @@ class AddonViews extends AddonBase {
     }
   }
 
+  updateCitationStyleMenu() {
+    const _window = this._Addon.knowledge.workspaceTabId
+      ? window
+      : this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug(`updateCitationStyleMenu, ${this.currentOutline}`);
+
+    const popup = _window.document.getElementById("menu_citeSettingPopup");
+    popup.innerHTML = "";
+
+    let format = this._Addon.template.getCitationStyle();
+
+    // add styles to list
+    const styles = Zotero.Styles.getVisible();
+    styles.forEach(function (style) {
+      const val = JSON.stringify({
+        mode: "bibliography",
+        contentType: "html",
+        id: style.styleID,
+        locale: "",
+      });
+      const itemNode: XUL.Element = document.createElement("menuitem");
+      itemNode.setAttribute("value", val);
+      itemNode.setAttribute("label", style.title);
+      itemNode.setAttribute("type", "checkbox");
+      itemNode.setAttribute(
+        "oncommand",
+        "Zotero.Prefs.set('Knowledge4Zotero.citeFormat', event.target.value)"
+      );
+      popup.appendChild(itemNode);
+
+      if (format.id == style.styleID) {
+        itemNode.setAttribute("checked", true);
+      }
+    });
+  }
+
   showProgressWindow(
     header: string,
     context: string,

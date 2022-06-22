@@ -45,6 +45,16 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
       {
+        name: "[Item] collect annotations by color",
+        text: '${await new Promise(async (r) => {\n  async function getAnnotation(item) {\n    try {\n      if (!item || !item.isAnnotation()) {\n        return null;\n      }\n      let json = await Zotero.Annotations.toJSON(item);\n      json.id = item.key;\n      delete json.key;\n      for (let key in json) {\n        json[key] = json[key] || "";\n      }\n      json.tags = json.tags || [];\n      return json;\n    } catch (e) {\n      Zotero.logError(e);\n      return null;\n    }\n  }\n\n  async function getAnnotationsByColor(_item, color) {\n    const annots = _item\n      .getAnnotations()\n      .filter((_annot) => _annot.annotationColor === color);\n    let annotations = [];\n    for (let annot of annots) {\n      const annotJson = await getAnnotation(annot);\n      annotJson.attachmentItemID = _item.id;\n      annotations.push(annotJson);\n    }\n\n    const editor =\n      await Zotero.Knowledge4Zotero.knowledge.getWorkspaceEditorInstance();\n    await editor.importImages(annotations);\n    return Zotero.EditorInstanceUtilities.serializeAnnotations(annotations);\n  }\n\n  const attachments = Zotero.Items.get(topItem.getAttachments()).filter((i) =>\n    i.isPDFAttachment()\n  );\n  let res = "";\n  let colorYellow = "#ffd400";\n  let colorRed = "#ff6666";\n  let colorGreen = "#5fb236";\n  let colorBlue = "#2ea8e5";\n  let colorPerple = "#a28ae5";\n  for (let attachment of attachments) {\n    res += `<h2><p style="background-color:${colorYellow};">Yellow Heading</p></h2>\n    ${(await getAnnotationsByColor(attachment, colorYellow)).html}\n    `;\n    res += `<h2><p style="background-color:${colorRed };">Red Heading</p></h2>\n    ${(await getAnnotationsByColor(attachment, colorRed )).html}\n    `;\n    res += `<h2><p style="background-color:${colorGreen };">Green Heading</p></h2>\n    ${(await getAnnotationsByColor(attachment, colorGreen )).html}\n    `;\n    res += `<h2><p style="background-color:${colorBlue };">Blue Heading</p></h2>\n    ${(await getAnnotationsByColor(attachment, colorBlue )).html}\n    `;\n    res += `<h2><p style="background-color:${colorPerple };">Perple Heading</p></h2>\n    ${(await getAnnotationsByColor(attachment, colorPerple )).html}\n    `;\n  }\n  r(res);\n})}',
+        disabled: false,
+      },
+      // {
+      //   name: "[Item] cite items",
+      //   text: '<div>${(()=>{let format = Zotero.Knowledge4Zotero.template.getCitationStyle();\nconst cite = Zotero.QuickCopy.getContentFromItems([topItem], format, null, 0);\nreturn cite.html;})()}${(()=>{\n    let libraryID = topItem.libraryID;\n    let library = Zotero.Libraries.get(libraryID);\n    let itemKey = topItem.key;\n    let itemLink = "";\n    if (library.libraryType === "user") {\n      itemLink = `zotero://select/library/items/${itemKey}`\n    } else if (library.libraryType === "group") {\n      itemLink = `zotero://select/groups/${library.id}/items/${itemKey}`\n    }\n    return `<a href="${itemLink}" rel="noopener noreferrer nofollow">${itemLink}</a>`\n  })()}</div>',
+      //   disabled: false,
+      // },
+      {
         name: "[Note] with metadata",
         text: "<p><span style=\"background-color: #ffd40080\">Note: ${link}</span></p>\n${topItem?`<p>Title: ${topItem.getField('title')}</p>\\n<p>Author: ${topItem.getField('firstCreator')}</p>\\n<p>Date: ${topItem.getField('date')}</p>`:''}",
         disabled: false,
@@ -91,6 +101,24 @@ class AddonTemplate extends AddonBase {
         this.setTemplate(defaultTemplate);
       }
     }
+  }
+
+  getCitationStyle(): Object {
+    let format = Zotero.Prefs.get("Knowledge4Zotero.citeFormat");
+    try {
+      if (format) {
+        format = JSON.parse(format);
+      } else {
+        throw Error("format not initialized");
+      }
+    } catch (e) {
+      format = Zotero.QuickCopy.getFormatFromURL(
+        Zotero.QuickCopy.lastActiveURL
+      );
+      format = Zotero.QuickCopy.unserializeSetting(format);
+      Zotero.Prefs.set("Knowledge4Zotero.citeFormat", JSON.stringify(format));
+    }
+    return format;
   }
 
   getSelectedTemplateName(): string {
@@ -320,7 +348,7 @@ class AddonTemplate extends AddonBase {
       console.log(_);
       _newLine = await _(...argList);
     } catch (e) {
-      // alert(`Template ${key} Error: ${e}`);
+      alert(`Template ${key} Error: ${e}`);
       console.log(e);
       return "";
     }

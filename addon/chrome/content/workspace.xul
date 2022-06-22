@@ -74,6 +74,9 @@
                     <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateTemplateMenu('Item');" />
                 </menu>
                 <menuitem id="menu_editTemplate" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate" />
+                <menu id="menu_citeSetting_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.citeSetting;">
+                    <menupopup id="menu_citeSettingPopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateCitationStyleMenu();" />
+                </menu>
                 <menuseparator />
                 <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
                 <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent_betternotes" key="key_indent" />

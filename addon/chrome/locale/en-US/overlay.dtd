@@ -8,7 +8,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Template">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "Insert Notes Using Template">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "Insert Items Using Template">
-<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "Edit Templates...">
+<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "Note Template Editor">
+<!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "Citation Style in Notes">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">

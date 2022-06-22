@@ -373,7 +373,9 @@ class Knowledge extends AddonBase {
     }
     noteLines.splice(lineIndex, 0, text);
     this.setLinesToNote(note, noteLines);
-    await this.scrollWithRefresh(lineIndex);
+    if (this.getWorkspaceNote().id === note.id) {
+      await this.scrollWithRefresh(lineIndex);
+    }
   }
 
   async addLinesToNote(

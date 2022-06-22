@@ -444,34 +444,57 @@ class AddonEvents extends AddonBase {
           popup.remove();
         });
       });
+
+      const addCitationButton = await this._Addon.views.addEditorButton(
+        message.content.editorInstance,
+        "knowledge-addcitation",
+        "addCitation",
+        "Insert Citations",
+        "addCitation",
+        "middle",
+        "builtin"
+      );
+
       let topItem = noteItem.parentItem;
       while (topItem && !topItem.isRegularItem()) {
         topItem = topItem.parentItem;
       }
       if (topItem) {
-        const addCitationButton: Element =
-          await this._Addon.views.addEditorButton(
+        addCitationButton.addEventListener("mouseover", async (e) => {
+          if (addCitationButton.getElementsByClassName("popup").length > 0) {
+            return;
+          }
+          const popup: Element = await this._Addon.views.addEditorPopup(
             message.content.editorInstance,
-            "knowledge-addcitation",
-            "addCitation",
-            "Insert Note's Parent Citation",
-            "addCitation",
-            "middle"
+            "knowledge-addcitation-popup",
+            [
+              {
+                id: `knowledge-addcitation-popup-${topItem.id}`,
+                rank: 0,
+                text: topItem.getField("title"),
+                eventType: "insertCitation",
+              },
+            ],
+            addCitationButton
           );
-        addCitationButton.addEventListener("click", async (e) => {
-          let format = Zotero.QuickCopy.getFormatFromURL(
-            Zotero.QuickCopy.lastActiveURL
-          );
-          format = Zotero.QuickCopy.unserializeSetting(format);
-          const cite = Zotero.QuickCopy.getContentFromItems(
-            [topItem],
-            format,
-            null,
-            0
-          );
-          this._Addon.knowledge.addLineToNote(noteItem, cite.html, -1);
+          addCitationButton.addEventListener("mouseleave", (e) => {
+            popup.remove();
+          });
+          addCitationButton.addEventListener("click", (e) => {
+            popup.remove();
+          });
         });
       }
+
+      addCitationButton.addEventListener("click", async (e) => {
+        this.onEditorEvent(
+          new EditorMessage("insertCitation", {
+            params: {
+              noteItem: noteItem,
+            },
+          })
+        );
+      });
 
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
@@ -740,6 +763,67 @@ class AddonEvents extends AddonBase {
           `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
         );
       }
+    } else if (message.type === "insertCitation") {
+      /*
+        message.content = {
+          editorInstance?, event?, params?: {
+              noteItem: noteItem,
+              topItem: topItem,
+            },
+        }
+      */
+      let noteItem = message.content.editorInstance
+        ? message.content.editorInstance._item
+        : message.content.params.noteItem;
+      let topItems: ZoteroItem[] = [];
+      console.log(message);
+      if (message.content.event) {
+        const topItemID = Number(
+          message.content.event.target.id.split("-").pop()
+        );
+        topItems = Zotero.Items.get([topItemID]);
+      }
+      if (!topItems.length) {
+        const io = {
+          // Not working
+          singleSelection: false,
+          dataIn: null,
+          dataOut: null,
+          deferred: Zotero.Promise.defer(),
+        };
+
+        (window as unknown as XULWindow).openDialog(
+          "chrome://zotero/content/selectItemsDialog.xul",
+          "",
+          "chrome,dialog=no,centerscreen,resizable=yes",
+          io
+        );
+        await io.deferred.promise;
+
+        const ids = io.dataOut;
+        topItems = Zotero.Items.get(ids).filter((item: ZoteroItem) =>
+          item.isRegularItem()
+        );
+        if (topItems.length === 0) {
+          return;
+        }
+      }
+      let format = this._Addon.template.getCitationStyle();
+      const cite = Zotero.QuickCopy.getContentFromItems(
+        topItems,
+        format,
+        null,
+        0
+      );
+      this._Addon.knowledge.addLineToNote(noteItem, cite.html, -1);
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `${
+          topItems.length > 3
+            ? topItems.length + "items"
+            : topItems.map((i) => i.getField("title")).join("\n")
+        } cited.`
+      );
     } else if (message.type === "addToKnowledge") {
       /*
         message.content = {
@@ -1459,6 +1543,8 @@ class AddonEvents extends AddonBase {
   private resetState(): void {
     // Reset preferrence state.
     this._Addon.template.resetTemplates();
+    // Initialize citation style
+    this._Addon.template.getCitationStyle();
   }
 }
 

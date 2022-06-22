@@ -8,7 +8,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "使用模板插入多条笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "使用模板插入多个条目">
-<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "编辑笔记模板...">
+<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "笔记模板编辑器">
+<!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "笔记引用格式">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "提升标题层级">
