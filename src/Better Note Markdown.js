@@ -1856,4 +1856,6 @@ async function doExport() {
       Zotero.write(await bundle.convert(_Zotero, item, doc));
     }
   }
+  // Resolve promise
+  _Zotero.Knowledge4Zotero.knowledge._exportPromise.resolve();
 }

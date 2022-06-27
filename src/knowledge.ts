@@ -9,9 +9,9 @@ class Knowledge extends AddonBase {
   currentNodeID: number;
   workspaceWindow: Window;
   workspaceTabId: string;
-  _exportNote: ZoteroItem;
   _exportPath: string;
   _exportFileDict: object;
+  _exportPromise: any;
   _pdfNoteId: number;
   _pdfPrintPromise: any;
   constructor(parent: Knowledge4Zotero) {
@@ -766,7 +766,6 @@ class Knowledge extends AddonBase {
         `${newNote.getNoteTitle()}.md`
       );
       if (filename) {
-        this._exportNote = newNote;
         this._exportPath =
           Zotero.File.pathToFile(filename).parent.path + "/attachments";
         // Convert to unix format
@@ -911,14 +910,12 @@ class Knowledge extends AddonBase {
           newNote = note;
         }
 
-        this._exportNote = newNote;
-
         let filename = `${
           Zotero.File.pathToFile(filepath).path
         }/${this._getFileName(note)}`;
         filename = filename.replace(/\\/g, "/");
 
-        this._export(newNote, filename, newNote.id !== note.id);
+        await this._export(newNote, filename, newNote.id !== note.id);
       }
     } else {
       // Export every linked note as a markdown file
@@ -954,11 +951,10 @@ class Knowledge extends AddonBase {
       this._exportFileDict = noteLinkDict;
 
       for (const noteInfo of noteLinkDict) {
-        this._exportNote = noteInfo.note;
         let exportPath = `${Zotero.File.pathToFile(filepath).path}/${
           noteInfo.filename
         }`;
-        this._export(noteInfo.note, exportPath, false);
+        await this._export(noteInfo.note, exportPath, false);
         if (useSync) {
           this._Addon.sync.updateNoteSyncStatus(
             noteInfo.note,
@@ -1005,12 +1001,11 @@ class Knowledge extends AddonBase {
     this._exportFileDict = noteLinkDict;
 
     for (const note of notes) {
-      this._exportNote = note;
       const syncInfo = this._Addon.sync.getNoteSyncStatus(note);
       let exportPath = `${decodeURIComponent(
         syncInfo.path
       )}/${decodeURIComponent(syncInfo.filename)}`;
-      this._export(note, exportPath, false);
+      await this._export(note, exportPath, false);
       this._Addon.sync.updateNoteSyncStatus(note);
     }
   }
@@ -1036,7 +1031,9 @@ class Knowledge extends AddonBase {
     translator.setItems([note]);
     translator.setLocation(Zotero.File.pathToFile(filename));
     translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
+    this._exportPromise = Zotero.Promise.defer();
     translator.translate();
+    await this._exportPromise.promise;
     this._Addon.views.showProgressWindow(
       "Better Notes",
       `Note Saved to ${filename}`
