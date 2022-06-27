@@ -925,20 +925,23 @@ class Knowledge extends AddonBase {
       // Find all linked notes that need to be exported
       let allNoteIds: number[] = [].concat(notes.map((n) => n.id));
       for (const note of notes) {
+        const linkMatches = note
+          .getNote()
+          .match(/zotero:\/\/note\/\w+\/\w+\//g);
+        if (!linkMatches) {
+          continue;
+        }
         const subNoteIds = (
           await Promise.all(
-            note
-              .getNote()
-              .match(/zotero:\/\/note\/\w+\/\w+\//g)
-              .map(async (link) => this.getNoteFromLink(link))
+            linkMatches.map(async (link) => this.getNoteFromLink(link))
           )
         )
           .filter((res) => res.item)
           .map((res) => res.item.id);
         allNoteIds = allNoteIds.concat(subNoteIds);
       }
-      allNoteIds = new Array(...new Set(allNoteIds));
-      // console.log(allNoteIds);
+      allNoteIds = Array.from(new Set(allNoteIds));
+      console.log(allNoteIds);
       const allNoteItems: ZoteroItem[] = Zotero.Items.get(allNoteIds);
       const noteLinkDict = allNoteItems.map((_note) => {
         return {
