@@ -1466,9 +1466,8 @@ class AddonEvents extends AddonBase {
       }
 
       const note: ZoteroItem = new Zotero.Item("note");
-      note.parentID = Zotero.Items.get(
-        annotations[0].attachmentItemID
-      ).parentID;
+      note.libraryID = annotationItem.libraryID;
+      note.parentID = annotationItem.parentItem.parentID;
 
       const renderredTemplate = await this._Addon.template.renderTemplateAsync(
         "[QuickNote]",

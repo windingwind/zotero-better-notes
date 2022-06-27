@@ -1631,7 +1631,7 @@ let bundle;
 
         turndownService.use(turndownPluginGfm.gfm);
 
-        async function convert(_Zotero, doc) {
+        async function convert(_Zotero, item, doc) {
           Components.utils.import("resource://gre/modules/osfile.jsm");
           // Transform `style="text-decoration: line-through"` nodes to <s> (TinyMCE doesn't support <s>)
           doc.querySelectorAll("span").forEach(function (span) {
@@ -1653,6 +1653,7 @@ let bundle;
           doc
             .querySelectorAll('span[class="highlight"], img[data-annotation]')
             .forEach(function (node) {
+              Zotero.debug(node.outerHTML);
               try {
                 var annotation = JSON.parse(
                   decodeURIComponent(node.getAttribute("data-annotation"))
@@ -1714,8 +1715,21 @@ let bundle;
 
           for (img of doc.querySelectorAll("img[data-attachment-key]")) {
             let imgKey = img.getAttribute("data-attachment-key");
+            const params = {};
+            const router = new _Zotero.Router(params);
+            router.add("zotero.org/users/:libKey/items/:itemKey", () => {
+              params.libKey = 1;
+            });
+            router.add("zotero.org/groups/:libKey/items/:itemKey", () => {
+              params.libKey = _Zotero.Groups.getLibraryIDFromGroupID(
+                params.libKey
+              );
+            });
+            router.run(item.uri.split("://").pop());
+            console.log(params);
+
             const attachmentItem = await _Zotero.Items.getByLibraryAndKeyAsync(
-              _Zotero.Knowledge4Zotero.knowledge._exportNote.libraryID,
+              params.libKey,
               imgKey
             );
             Zotero.debug(attachmentItem);
@@ -1839,7 +1853,7 @@ async function doExport() {
         Zotero.write("\n\n---\n\n");
       }
       first = false;
-      Zotero.write(await bundle.convert(_Zotero, doc));
+      Zotero.write(await bundle.convert(_Zotero, item, doc));
     }
   }
 }
