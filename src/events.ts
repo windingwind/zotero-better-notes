@@ -1283,11 +1283,7 @@ class AddonEvents extends AddonBase {
       /*
         message.content = {}
       */
-      window.open(
-        "chrome://Knowledge4Zotero/content/template.xul",
-        "_blank",
-        "chrome,extrachrome,centerscreen,width=800,height=400,resizable=yes"
-      );
+      this._Addon.template.openEditor();
     } else if (message.type === "export") {
       /*
         message.content = {

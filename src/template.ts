@@ -67,6 +67,18 @@ class AddonTemplate extends AddonBase {
     ];
   }
 
+  openEditor() {
+    if (this._window && !this._window.closed) {
+      this._window.focus();
+    } else {
+      window.open(
+        "chrome://Knowledge4Zotero/content/template.xul",
+        "_blank",
+        "chrome,extrachrome,centerscreen,width=800,height=400,resizable=yes"
+      );
+    }
+  }
+
   initTemplates(_window: Window) {
     this._window = _window;
     this.updateTemplateView();
