@@ -174,6 +174,55 @@ Required Variable: None.
 <pre>Text</pre>
 ```
 
+### Table
+
+Description: 
+| Table | Column1 | Column2 |
+| ---- | ---- | ---- |
+| 00 | 01 | 02 |
+| 10 | 11 | 12 |
+
+Template Type: None.  
+Required Variable: None.
+
+```html
+<table>
+  <tr>
+      <th style="background-color:#dbeedd;">
+          <p style="text-align: right">Table</p>
+      </th>
+      <th style="background-color:#dbeedd;">
+          Column1
+      </th>
+      <th style="background-color:#dbeedd;">
+          Column2
+      </th>
+  </tr>
+  <tr>
+      <td>
+          00
+      </td>
+      <td>
+          01
+      </td>
+      <td>
+          02
+      </td>
+  </tr>
+   <tr>
+      <td>
+          10
+      </td>
+      <td>
+          11
+      </td>
+      <td>
+          12
+      </td>
+  </tr>
+</table>
+```
+
 ## General Fields
 
 ### Current Date
