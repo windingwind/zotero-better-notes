@@ -4,6 +4,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.openWindow "在独立窗口中打开工作区">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes同步管理">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "使用模板插入多条笔记">
@@ -24,6 +25,8 @@
 <!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "导出笔记及条目子笔记为Markdown">
 
 <!ENTITY zotero.__addonRef__.export.title "导出笔记">
+<!ENTITY zotero.__addonRef__.export.cannotworkwith.label "无法一起使用：">
+<!ENTITY zotero.__addonRef__.export.workwith.label "只在此时有效：">
 <!ENTITY zotero.__addonRef__.export.option.label "通用">
 <!ENTITY zotero.__addonRef__.export.link.enable.label "嵌入链接的子笔记">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
@@ -39,9 +42,21 @@
 <!ENTITY zotero.__addonRef__.sync.title "同步状态">
 <!ENTITY zotero.__addonRef__.sync.export.label "导出为...">
 <!ENTITY zotero.__addonRef__.sync.path.label "同步到：">
+<!ENTITY zotero.__addonRef__.sync.changesync.label "修改路径">
 <!ENTITY zotero.__addonRef__.sync.lastsync.label "最近同步：">
 <!ENTITY zotero.__addonRef__.sync.enable.label "保持同步">
 <!ENTITY zotero.__addonRef__.sync.dosync.label "立刻同步">
+<!ENTITY zotero.__addonRef__.sync.synclist.label "同步管理">
+
+<!ENTITY zotero.__addonRef__.syncList.title "同步管理">
+<!ENTITY zotero.__addonRef__.syncList.notename.label "名称">
+<!ENTITY zotero.__addonRef__.syncList.syncpath.label "同步到">
+<!ENTITY zotero.__addonRef__.syncList.lastsync.label "最近同步">
+<!ENTITY zotero.__addonRef__.syncList.doupdate.label "刷新">
+<!ENTITY zotero.__addonRef__.syncList.dosync.label "同步">
+<!ENTITY zotero.__addonRef__.syncList.changesync.label "修改路径">
+<!ENTITY zotero.__addonRef__.syncList.removesync.label "取消同步">
+<!ENTITY zotero.__addonRef__.syncList.related.label "应用于关联笔记">
 
 <!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">

@@ -4,6 +4,7 @@ declare interface Knowledge4Zotero {
   wizard: import("../src/wizard");
   export: import("../src/export");
   sync: import("../src/sync");
+  syncList: import("../src/syncList");
   template: import("../src/template");
   knowledge: import("../src/knowledge");
 }

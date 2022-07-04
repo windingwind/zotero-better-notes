@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/standalone.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
+
+<!DOCTYPE window [
+    <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+    %globalDTD;
+    <!ENTITY % standaloneDTD SYSTEM "chrome://zotero/locale/standalone.dtd">
+    %standaloneDTD;
+    <!ENTITY % zoteroDTD SYSTEM "chrome://zotero/locale/zotero.dtd">
+    %zoteroDTD;
+    <!ENTITY % knowledgeDTD SYSTEM "chrome://__addonRef__/locale/overlay.dtd">
+    %knowledgeDTD;
+]>
+
+<window id="zotero-knowledge-sync-list" onload="Zotero.Knowledge4Zotero.syncList.doLoad(window);" onresize="Zotero.Knowledge4Zotero.syncList.doUpdate();" orient="vertical" width="600" height="350" title="&zotero.__addonRef__.syncList.title;" persist="screenX screenY width height" windowtype="zotero:knowledgeSyncList" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+    <script src="chrome://zotero/content/include.js" />
+
+    <keyset>
+        <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
+        <key id="key_selectall" key="A" modifiers="accel" command="cmd_selectall" />
+    </keyset>
+    <command id="cmd_close" oncommand="window.close();" />
+    <command id="cmd_selectall" oncommand="window.document.getElementById('sync-list').selectAll();" />
+
+    <vbox flex="1">
+        <listbox id="sync-list" flex="1" seltype="multiple">
+            <listhead>
+                <listheader id="icon" label="#" flex="1" />
+                <listheader id="notename" label="&zotero.__addonRef__.syncList.notename.label;" flex="1" />
+                <listheader id="lastsync" label="&zotero.__addonRef__.syncList.lastsync.label;" flex="1" />
+                <listheader id="syncpath" label="&zotero.__addonRef__.syncList.syncpath.label;" flex="1" />
+            </listhead>
+            <listcols>
+                <listcol flex="1" />
+            </listcols>
+        </listbox>
+        <hbox flex="0">
+            <button id="doupdate" label="&zotero.__addonRef__.syncList.doupdate.label;" oncommand="Zotero.Knowledge4Zotero.syncList.doUpdate();"></button>
+            <button id="dosync" label="&zotero.__addonRef__.syncList.dosync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.doSync();"></button>
+            <button id="changesync" label="&zotero.__addonRef__.syncList.changesync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.changeSync();"></button>
+            <button id="removesync" label="&zotero.__addonRef__.syncList.removesync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.removeSync();"></button>
+            <checkbox id="related" label="&zotero.__addonRef__.syncList.related.label;"></checkbox>
+        </hbox>
+    </vbox>
+
+</window>

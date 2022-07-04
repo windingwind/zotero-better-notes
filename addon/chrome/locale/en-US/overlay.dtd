@@ -4,6 +4,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
 <!ENTITY zotero.__addonRef__.workspace.menu.openWindow "Open Workspace in Standalone Window">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
+<!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes Sync Manager">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "Insert Notes...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Template">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "Insert Notes Using Template">
@@ -24,6 +25,8 @@
 <!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "Export Notes and SubNotes to Markdown">
 
 <!ENTITY zotero.__addonRef__.export.title "Export">
+<!ENTITY zotero.__addonRef__.export.cannotworkwith.label "Cannot work with ">
+<!ENTITY zotero.__addonRef__.export.workwith.label "Only work with ">
 <!ENTITY zotero.__addonRef__.export.option.label "General">
 <!ENTITY zotero.__addonRef__.export.link.enable.label "Embed Linked Notes">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
@@ -39,9 +42,21 @@
 <!ENTITY zotero.__addonRef__.sync.title "Sync Status">
 <!ENTITY zotero.__addonRef__.sync.export.label "Export to...">
 <!ENTITY zotero.__addonRef__.sync.path.label "Sync to:">
+<!ENTITY zotero.__addonRef__.sync.changesync.label "Change Folder">
 <!ENTITY zotero.__addonRef__.sync.lastsync.label "Last sync:">
 <!ENTITY zotero.__addonRef__.sync.enable.label "Keep in sync">
 <!ENTITY zotero.__addonRef__.sync.dosync.label "Sync Now">
+<!ENTITY zotero.__addonRef__.sync.synclist.label "Sync Manager">
+
+<!ENTITY zotero.__addonRef__.syncList.title "Sync Manager">
+<!ENTITY zotero.__addonRef__.syncList.notename.label "Name">
+<!ENTITY zotero.__addonRef__.syncList.syncpath.label "Sync To">
+<!ENTITY zotero.__addonRef__.syncList.lastsync.label "Last Sync">
+<!ENTITY zotero.__addonRef__.syncList.doupdate.label "Refresh">
+<!ENTITY zotero.__addonRef__.syncList.dosync.label "Sync">
+<!ENTITY zotero.__addonRef__.syncList.changesync.label "Change Folder">
+<!ENTITY zotero.__addonRef__.syncList.removesync.label "Remove This">
+<!ENTITY zotero.__addonRef__.syncList.related.label "Apply to Related Notes">
 
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">
 <!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes User Guide">
@@ -54,9 +69,9 @@
 <!ENTITY zotero.__addonRef__.wizard.page4.description1 "Modify/jump to headings inside main Note with the Outline;">
 <!ENTITY zotero.__addonRef__.wizard.page4.description2 "Add links to the main note while reading. Export to MarkDown/HTML with full text supported;">
 <!ENTITY zotero.__addonRef__.wizard.page4.description3 "Open and edit linked notes in the preview.">
-<!ENTITY zotero.__addonRef__.wizard.link "Add Note's Link">
+<!ENTITY zotero.__addonRef__.wizard.link "Add Note Link">
 <!ENTITY zotero.__addonRef__.wizard.page5.header "Note as you go, and open the links as your will.">
-<!ENTITY zotero.__addonRef__.wizard.page5.description1 "Click to insert the current note's link after the current line in main note.">
+<!ENTITY zotero.__addonRef__.wizard.page5.description1 "Click to insert the current note link after the current line in main note.">
 <!ENTITY zotero.__addonRef__.wizard.page5.description2 "Jump to notes even from other Apps via a note link!">
 <!ENTITY zotero.__addonRef__.wizard.setup "Setup Workspace">
 <!ENTITY zotero.__addonRef__.wizard.page6.header "Almost there. Please follow the user guide before starting.">

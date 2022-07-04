@@ -5,6 +5,7 @@ import AddonExport from "./export";
 import Knowledge from "./knowledge";
 import AddonTemplate from "./template";
 import AddonSync from "./sync";
+import AddonSyncList from "./syncList";
 
 class Knowledge4Zotero {
   public events: AddonEvents;
@@ -12,6 +13,7 @@ class Knowledge4Zotero {
   public wizard: AddonWizard;
   public export: AddonExport;
   public sync: AddonSync;
+  public syncList: AddonSyncList;
   public template: AddonTemplate;
   public knowledge: Knowledge;
 
@@ -21,6 +23,7 @@ class Knowledge4Zotero {
     this.wizard = new AddonWizard(this);
     this.export = new AddonExport(this);
     this.sync = new AddonSync(this);
+    this.syncList = new AddonSyncList(this);
     this.template = new AddonTemplate(this);
     this.knowledge = new Knowledge(this);
   }

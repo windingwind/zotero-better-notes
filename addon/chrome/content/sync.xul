@@ -20,7 +20,8 @@
         <label id="__addonRef__-sync-lastsync" />
         <hbox>
             <checkbox id="__addonRef__-sync-enable" label="&zotero.__addonRef__.sync.enable.label;" checked="true" />
-            <button flex="0" label="&zotero.__addonRef__.sync.dosync.label;" oncommand="Zotero.Knowledge4Zotero.sync.doSync(true)"></button>
+            <button flex="0" label="&zotero.__addonRef__.sync.dosync.label;" oncommand="Zotero.Knowledge4Zotero.sync.doSync(null, true)"></button>
+            <button flex="0" label="&zotero.__addonRef__.sync.synclist.label;" oncommand="Zotero.Knowledge4Zotero.syncList.openSyncList()"></button>
         </hbox>
     </vbox>
 </dialog>
