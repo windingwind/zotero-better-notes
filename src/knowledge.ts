@@ -867,7 +867,8 @@ class Knowledge extends AddonBase {
     Components.utils.import("resource://gre/modules/osfile.jsm");
     this._exportFileDict = [];
     const filepath = await pick(
-      Zotero.getString("fileInterface.export"),
+      Zotero.getString(useSync ? "sync.sync" : "fileInterface.export") +
+        " MarkDown",
       "folder"
     );
 

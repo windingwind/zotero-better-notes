@@ -110,6 +110,11 @@ class AddonSync extends AddonBase {
     return ids.split(",").map((id: string) => Number(id));
   }
 
+  isSyncNote(note: ZoteroItem): boolean {
+    const syncNoteIds = this._Addon.sync.getSyncNoteIds();
+    return syncNoteIds.includes(note.id);
+  }
+
   async getRelatedNoteIds(note: ZoteroItem): Promise<Number[]> {
     let allNoteIds: Number[] = [note.id];
     const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);

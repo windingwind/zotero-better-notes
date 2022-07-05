@@ -1377,6 +1377,18 @@ class AddonEvents extends AddonBase {
           !useSingleFile
         );
       }
+    } else if (message.type === "sync") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      const note = this._Addon.knowledge.getWorkspaceNote();
+      if (this._Addon.sync.isSyncNote(note)) {
+        this._Addon.sync.doSync([note], true, false);
+      } else {
+        await this._Addon.knowledge.exportNotesToFile([note], false, true);
+      }
     } else if (message.type === "openAttachment") {
       /*
         message.content = {

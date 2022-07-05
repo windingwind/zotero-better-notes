@@ -4,6 +4,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.openWindow "在独立窗口中打开工作区">
 <!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
+<!ENTITY zotero.__addonRef__.workspace.menu.sync "同步主笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes同步管理">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">
