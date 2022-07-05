@@ -210,7 +210,7 @@ class AddonSync extends AddonBase {
       if (this.triggerTime === _t) {
         this.doSync();
       }
-    }, 30000);
+    }, 10000);
   }
 
   async doSync(
