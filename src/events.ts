@@ -877,8 +877,8 @@ class AddonEvents extends AddonBase {
       this._Addon.views.updateEditCommand();
       this._Addon.views.scrollToLine(
         editorInstance,
-        // Scroll to 1 lines before the inserted line
-        message.content.params.lineIndex - 1
+        // Scroll to line
+        message.content.params.lineIndex
       );
     } else if (message.type === "moveNode") {
       /*
