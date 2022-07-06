@@ -193,7 +193,7 @@ class AddonSync extends AddonBase {
       noteItem.removeTag(sycnTag.tag);
     }
     noteItem.addTag(
-      `sync://note/?version=${noteItem._version}&path=${
+      `sync://note/?version=${noteItem._version + 1}&path=${
         path ? encodeURIComponent(path) : syncInfo["path"]
       }&filename=${
         filename ? encodeURIComponent(filename) : syncInfo["filename"]
@@ -206,11 +206,14 @@ class AddonSync extends AddonBase {
   setSync() {
     const _t = new Date().getTime();
     this.triggerTime = _t;
-    setTimeout(() => {
-      if (this.triggerTime === _t) {
-        this.doSync();
-      }
-    }, 10000);
+    const syncPeriod = Number(Zotero.Prefs.get("Knowledge4Zotero.syncPeriod"));
+    if (syncPeriod > 0) {
+      setTimeout(() => {
+        if (this.triggerTime === _t) {
+          this.doSync();
+        }
+      }, syncPeriod);
+    }
   }
 
   async doSync(
@@ -229,7 +232,7 @@ class AddonSync extends AddonBase {
       const filepath = decodeURIComponent(syncInfo.path);
       const filename = decodeURIComponent(syncInfo.filename);
       if (
-        Number(syncInfo.version) < item._version - 1 ||
+        Number(syncInfo.version) < item._version ||
         !(await OS.File.exists(`${filepath}/${filename}`)) ||
         forceNoteIds.includes(item.id)
       ) {

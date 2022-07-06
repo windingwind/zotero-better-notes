@@ -40,6 +40,7 @@
         </listbox>
         <hbox flex="0">
             <button id="doupdate" label="&zotero.__addonRef__.syncList.doupdate.label;" oncommand="Zotero.Knowledge4Zotero.syncList.doUpdate();"></button>
+            <button id="changesyncperiod" label="&zotero.__addonRef__.syncList.changesyncperiod.label;" oncommand="Zotero.Knowledge4Zotero.syncList.changeSyncPeriod();"></button>
             <button id="dosync" label="&zotero.__addonRef__.syncList.dosync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.doSync();"></button>
             <button id="changesync" label="&zotero.__addonRef__.syncList.changesync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.changeSync();"></button>
             <button id="removesync" label="&zotero.__addonRef__.syncList.removesync.label;" oncommand="Zotero.Knowledge4Zotero.syncList.removeSync();"></button>

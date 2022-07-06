@@ -54,6 +54,7 @@
 <!ENTITY zotero.__addonRef__.syncList.syncpath.label "同步到">
 <!ENTITY zotero.__addonRef__.syncList.lastsync.label "最近同步">
 <!ENTITY zotero.__addonRef__.syncList.doupdate.label "刷新">
+<!ENTITY zotero.__addonRef__.syncList.changesyncperiod.label "同步周期:">
 <!ENTITY zotero.__addonRef__.syncList.dosync.label "同步">
 <!ENTITY zotero.__addonRef__.syncList.changesync.label "修改路径">
 <!ENTITY zotero.__addonRef__.syncList.removesync.label "取消同步">

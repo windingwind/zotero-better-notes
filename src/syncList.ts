@@ -14,7 +14,7 @@ class AddonSyncList extends AddonBase {
       window.open(
         "chrome://Knowledge4Zotero/content/syncList.xul",
         "",
-        "chrome,centerscreen,resizable,status,width=500,height=400"
+        "chrome,centerscreen,resizable,status,width=600,height=400"
       );
     }
   }
@@ -25,6 +25,9 @@ class AddonSyncList extends AddonBase {
   }
 
   doUpdate() {
+    if (!this._window || this._window.closed) {
+      return;
+    }
     const notes = Zotero.Items.get(this._Addon.sync.getSyncNoteIds());
     const listbox = this._window.document.getElementById("sync-list");
     let e,
@@ -77,6 +80,19 @@ class AddonSyncList extends AddonBase {
       });
       listbox.append(listitem);
     }
+
+    const periodButton = this._window.document.getElementById(
+      "changesyncperiod"
+    ) as XUL.Button;
+    const period =
+      Number(Zotero.Prefs.get("Knowledge4Zotero.syncPeriod")) / 1000;
+    periodButton.setAttribute(
+      "label",
+      periodButton.getAttribute("label").split(":")[0] +
+        ":" +
+        (period > 0 ? period + "s" : "disabled")
+    );
+    this._window.focus();
   }
 
   getSelectedItems(): ZoteroItem[] {
@@ -109,6 +125,22 @@ class AddonSyncList extends AddonBase {
       return;
     }
     await this._Addon.knowledge.exportNotesToFile(selectedItems, false, true);
+    this.doUpdate();
+  }
+
+  changeSyncPeriod(period: number = -1) {
+    if (period < 0) {
+      const inputPeriod = prompt("Enter synchronization period in seconds:");
+      if (inputPeriod) {
+        period = Number(inputPeriod);
+      } else {
+        return;
+      }
+    }
+    if (period < 0) {
+      period = 0;
+    }
+    Zotero.Prefs.set("Knowledge4Zotero.syncPeriod", Math.round(period) * 1000);
     this.doUpdate();
   }
 

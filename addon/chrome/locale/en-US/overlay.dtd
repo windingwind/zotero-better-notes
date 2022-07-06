@@ -54,6 +54,7 @@
 <!ENTITY zotero.__addonRef__.syncList.syncpath.label "Sync To">
 <!ENTITY zotero.__addonRef__.syncList.lastsync.label "Last Sync">
 <!ENTITY zotero.__addonRef__.syncList.doupdate.label "Refresh">
+<!ENTITY zotero.__addonRef__.syncList.changesyncperiod.label "Sync Period:">
 <!ENTITY zotero.__addonRef__.syncList.dosync.label "Sync">
 <!ENTITY zotero.__addonRef__.syncList.changesync.label "Change Folder">
 <!ENTITY zotero.__addonRef__.syncList.removesync.label "Remove This">
