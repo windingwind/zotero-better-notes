@@ -8603,14 +8603,17 @@
 }
 .dx-treeview-item.dx-state-hover {
   background-color: rgba(0,0,0,.04);
-  color: #333;
+  /* color: #333; */
+}
+.dx-treeview-item.dx-state-hover > .dx-treeview-item-content {
+  filter: invert(30%);
 }
 .dx-treeview-toggle-item-visibility {
   position: absolute;
   cursor: pointer;
   font: 22px/22px DXIcons;
   text-align: center;
-  color: #333;
+  /* color: #333; */
   width: 21px;
   height: 32px;
   top: 0;
