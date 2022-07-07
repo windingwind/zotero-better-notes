@@ -989,6 +989,7 @@ class AddonEvents extends AddonBase {
             return e.tagName === "UL" || e.tagName === "OL";
           }
         );
+        console.log(currentLineIndex, tableElements);
 
         for (const tableElement of tableElements) {
           currentLineIndex += tableElement.childElementCount - 1;
@@ -997,12 +998,18 @@ class AddonEvents extends AddonBase {
         const tagName = focusNode.tagName;
         if (tagName === "UL" || tagName === "OL") {
           let liElement = selection.focusNode as XUL.Element;
-          while (liElement.tagName !== "LI") {
+          while (
+            liElement.tagName !== "LI" ||
+            !liElement.parentElement.parentElement.className.includes(
+              "primary-editor"
+            )
+          ) {
             liElement = liElement.parentElement;
           }
           currentLineIndex += getChildIndex(liElement);
         }
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
+        console.log(currentLineIndex);
         this._Addon.knowledge.currentLine = currentLineIndex;
       }
     } else if (message.type === "addHeading") {

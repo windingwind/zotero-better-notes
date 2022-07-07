@@ -258,41 +258,40 @@ class AddonViews extends AddonBase {
   async scrollToLine(instance: EditorInstance, lineIndex: number) {
     await instance._initPromise;
     let editor = this.getEditor(instance._iframeWindow.document);
-    const indexMap = [];
+    const eleList = [];
     const diveTagNames = ["OL", "UL", "LI"];
 
     function dive(e: Element, targetIndex: string) {
       if (diveTagNames.indexOf(e.tagName) !== -1) {
-        if (e.tagName === "LI") {
-          indexMap.push(targetIndex);
+        if (
+          e.tagName === "LI" &&
+          e.parentElement.parentElement.className.includes("primary-editor")
+        ) {
+          eleList.push(e);
         }
         for (let i in e.children) {
           dive(e.children[i], targetIndex);
         }
       }
     }
-    for (let i in editor.children) {
-      const ele = editor.children[i];
+    const nodes = Array.from(editor.children);
+    for (let i in nodes) {
+      const ele = nodes[i];
       if (diveTagNames.indexOf(ele.tagName) !== -1) {
         dive(ele, i);
       } else {
-        indexMap.push(i);
+        eleList.push(ele);
       }
     }
-    if (lineIndex >= indexMap.length) {
-      lineIndex = indexMap.length - 1;
-    } else if (lineIndex < 0) {
-      lineIndex = 0;
-    }
-    lineIndex = indexMap[lineIndex];
-    if (lineIndex >= editor.children.length) {
-      lineIndex = editor.children.length - 1;
+    console.log(eleList, lineIndex);
+    if (lineIndex >= eleList.length) {
+      lineIndex = eleList.length - 1;
     } else if (lineIndex < 0) {
       lineIndex = 0;
     }
 
     // @ts-ignore
-    const scrollNum = editor.children[lineIndex].offsetTop;
+    const scrollNum = eleList[lineIndex].offsetTop;
     (editor.parentNode as HTMLElement).scrollTo(0, scrollNum);
 
     const texView = instance._iframeWindow.document.getElementById("texView");
