@@ -193,6 +193,7 @@ class Knowledge extends AddonBase {
     );
     if (type === "main") {
       this._Addon.views.updateOutline();
+      this._Addon.views.updateWordCount();
     }
   }
 
