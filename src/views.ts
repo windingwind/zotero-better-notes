@@ -872,6 +872,21 @@ class AddonViews extends AddonBase {
     });
   }
 
+  updateWordCount() {
+    const _window = this._Addon.knowledge.workspaceTabId
+      ? window
+      : this._Addon.knowledge.getWorkspaceWindow();
+    Zotero.debug("updateWordCount");
+
+    const menuitem = _window.document.getElementById(
+      "menu_wordcount_betternotes"
+    );
+    menuitem.setAttribute(
+      "label",
+      `Word Count: ${this._Addon.knowledge.parseNoteHTML().innerText.length}`
+    );
+  }
+
   showProgressWindow(
     header: string,
     context: string,

@@ -114,6 +114,8 @@
                         <menuitem id="view-menuitem-note-font-size-reset" label="&zotero.general.reset;" oncommand="Zotero.Prefs.clear('note.fontSize');" />
                     </menupopup>
                 </menu>
+                <menuseparator />
+                <menuitem id="menu_wordcount_betternotes" disabled="true" />
             </menupopup>
         </menu>
 

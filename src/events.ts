@@ -18,6 +18,7 @@ class AddonEvents extends AddonBase {
           ) {
             Zotero.debug("Knowledge4Zotero: main knowledge modify check.");
             this._Addon.views.updateOutline();
+            this._Addon.views.updateWordCount();
           }
           // Check Note Sync
           const syncIds = this._Addon.sync.getSyncNoteIds();
@@ -81,6 +82,7 @@ class AddonEvents extends AddonBase {
             _tabCover.hidden = true;
             this._Addon.views.switchRealMenuBar(false);
             this._Addon.views.switchKey(false);
+            this._Addon.views.updateWordCount();
           } else {
             this._Addon.views.switchRealMenuBar(true);
             this._Addon.views.switchKey(true);

@@ -87,6 +87,8 @@
         <menuitem id="menu_treeview" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.treeview;" command="cmd_treeview_betternotes" />
         <menuitem id="menu_mindmap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.mindmap;" command="cmd_mindmap_betternotes" />
         <menuitem id="menu_bubblemap" class="menu-type-betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.bubblemap;" command="cmd_bubblemap_betternotes" />
+        <menuseparator class="menu-type-betternotes" />
+        <menuitem id="menu_wordcount_betternotes" class="menu-type-betternotes" disabled="true" />
     </menupopup>
 
     <menupopup id="menu_HelpPopup">
