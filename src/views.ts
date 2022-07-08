@@ -255,26 +255,36 @@ class AddonViews extends AddonBase {
     }
   }
 
+  // TODO: move these parse functions to a seperate file
+  diveNode(
+    e: Element,
+    eleList: Element[] = undefined,
+    diveTagNames: string[] = ["OL", "UL", "LI"]
+  ) {
+    if (!eleList) {
+      eleList = [];
+    }
+    for (let _e of e.children) {
+      if (diveTagNames.includes(_e.tagName)) {
+        this.diveNode(_e, eleList);
+      } else {
+        eleList.push(e);
+      }
+    }
+    return eleList;
+  }
+
   async scrollToLine(instance: EditorInstance, lineIndex: number) {
     await instance._initPromise;
     let editorElement = this.getEditorElement(instance._iframeWindow.document);
     const eleList = [];
     const diveTagNames = ["OL", "UL", "LI"];
 
-    function dive(e: Element, targetIndex: string) {
-      for (let _e of e.children) {
-        if (diveTagNames.includes(_e.tagName)) {
-          dive(_e, targetIndex);
-        } else {
-          eleList.push(e);
-        }
-      }
-    }
     const nodes = Array.from(editorElement.children);
     for (let i in nodes) {
       const ele = nodes[i];
       if (diveTagNames.includes(ele.tagName)) {
-        dive(ele, i);
+        this.diveNode(ele, eleList, diveTagNames);
       } else {
         eleList.push(ele);
       }

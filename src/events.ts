@@ -981,34 +981,34 @@ class AddonEvents extends AddonBase {
 
         let currentLineIndex = getChildIndex(focusNode);
 
-        const tableElements = Array.prototype.filter.call(
+        // Parse list
+        const diveTagNames = ["OL", "UL", "LI"];
+
+        // Find list elements before current line
+        const listElements = Array.prototype.filter.call(
           Array.prototype.slice.call(
             focusNode.parentElement.childNodes,
             0,
             currentLineIndex
           ),
-          (e) => {
-            return e.tagName === "UL" || e.tagName === "OL";
-          }
+          (e) => diveTagNames.includes(e.tagName)
         );
-        console.log(currentLineIndex, tableElements);
 
-        for (const tableElement of tableElements) {
-          currentLineIndex += tableElement.childElementCount - 1;
+        for (const e of listElements) {
+          currentLineIndex += this._Addon.views.diveNode(e).length - 1;
         }
 
-        const tagName = focusNode.tagName;
-        if (tagName === "UL" || tagName === "OL") {
-          let liElement = selection.focusNode as XUL.Element;
-          while (
-            liElement.tagName !== "LI" ||
-            !liElement.parentElement.parentElement.className.includes(
-              "primary-editor"
-            )
-          ) {
-            liElement = liElement.parentElement;
+        // Find list index if current line is inside a list
+        if (diveTagNames.includes(focusNode.tagName)) {
+          const eleList = this._Addon.views.diveNode(focusNode);
+          for (const i in eleList) {
+            if (
+              selection.focusNode.parentElement.parentElement === eleList[i]
+            ) {
+              currentLineIndex += Number(i);
+              break;
+            }
           }
-          currentLineIndex += getChildIndex(liElement);
         }
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
         console.log(currentLineIndex);
