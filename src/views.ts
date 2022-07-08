@@ -255,25 +255,6 @@ class AddonViews extends AddonBase {
     }
   }
 
-  // TODO: move these parse functions to a seperate file
-  diveNode(
-    e: Element,
-    eleList: Element[] = undefined,
-    diveTagNames: string[] = ["OL", "UL", "LI"]
-  ) {
-    if (!eleList) {
-      eleList = [];
-    }
-    for (let _e of e.children) {
-      if (diveTagNames.includes(_e.tagName)) {
-        this.diveNode(_e, eleList);
-      } else {
-        eleList.push(e);
-      }
-    }
-    return eleList;
-  }
-
   async scrollToLine(instance: EditorInstance, lineIndex: number) {
     await instance._initPromise;
     let editorElement = this.getEditorElement(instance._iframeWindow.document);
@@ -284,7 +265,7 @@ class AddonViews extends AddonBase {
     for (let i in nodes) {
       const ele = nodes[i];
       if (diveTagNames.includes(ele.tagName)) {
-        this.diveNode(ele, eleList, diveTagNames);
+        this._Addon.parse.parseListElements(ele, eleList, diveTagNames);
       } else {
         eleList.push(ele);
       }
@@ -423,12 +404,12 @@ class AddonViews extends AddonBase {
           undefined,
           (oldLine: string) => {
             Zotero.debug(oldLine);
-            const params = this._Addon.knowledge.getParamsFromLink(link);
+            const params = this._Addon.parse.parseParamsFromLink(link);
             if (!params.ignore) {
               const newLink =
                 link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
               const linkIndex =
-                this._Addon.knowledge.getLinkIndexFromText(oldLine);
+                this._Addon.parse.parseLinkIndexInText(oldLine);
               Zotero.debug(linkIndex);
               return `${oldLine.slice(
                 0,
@@ -468,7 +449,7 @@ class AddonViews extends AddonBase {
         let beforeLink = line.slice(0, linkStart);
         let afterLink = line.slice(linkEnd);
         let linkPart = line.slice(linkStart, linkEnd);
-        let link = this._Addon.knowledge.getLinkFromText(linkPart);
+        let link = this._Addon.parse.parseLinkInText(linkPart);
         let currentNote: ZoteroItem;
         if (link) {
           currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
@@ -488,7 +469,7 @@ class AddonViews extends AddonBase {
           beforeLink = beforeLink + line.slice(0, linkStart);
           afterLink = line.slice(linkEnd);
           linkPart = line.slice(linkStart, linkEnd);
-          link = this._Addon.knowledge.getLinkFromText(linkPart);
+          link = this._Addon.parse.parseLinkInText(linkPart);
           if (link) {
             currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
               .item;
@@ -889,7 +870,7 @@ class AddonViews extends AddonBase {
     );
     menuitem.setAttribute(
       "label",
-      `Word Count: ${this._Addon.knowledge.parseNoteHTML().innerText.length}`
+      `Word Count: ${this._Addon.parse.parseNoteHTML().innerText.length}`
     );
   }
 

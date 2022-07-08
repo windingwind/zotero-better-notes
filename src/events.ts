@@ -995,12 +995,12 @@ class AddonEvents extends AddonBase {
         );
 
         for (const e of listElements) {
-          currentLineIndex += this._Addon.views.diveNode(e).length - 1;
+          currentLineIndex += this._Addon.parse.parseListElements(e).length - 1;
         }
 
         // Find list index if current line is inside a list
         if (diveTagNames.includes(focusNode.tagName)) {
-          const eleList = this._Addon.views.diveNode(focusNode);
+          const eleList = this._Addon.parse.parseListElements(focusNode);
           for (const i in eleList) {
             if (
               selection.focusNode.parentElement.parentElement === eleList[i]
@@ -1464,7 +1464,7 @@ class AddonEvents extends AddonBase {
 
       if (annotationItem.annotationComment) {
         const text = annotationItem.annotationComment;
-        let link = this._Addon.knowledge.getLinkFromText(text);
+        let link = this._Addon.parse.parseLinkInText(text);
 
         if (link) {
           const note = (await this._Addon.knowledge.getNoteFromLink(link)).item;

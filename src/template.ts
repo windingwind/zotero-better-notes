@@ -16,7 +16,7 @@ class AddonTemplate extends AddonBase {
     this._defaultTemplates = [
       {
         name: "[QuickInsert]",
-        text: '<a href="${link}" rel="noopener noreferrer nofollow">${subNoteItem.getNoteTitle().trim() ? subNoteItem.getNoteTitle().trim() : link}</a>',
+        text: '<p><a href="${link}" rel="noopener noreferrer nofollow">${subNoteItem.getNoteTitle().trim() ? subNoteItem.getNoteTitle().trim() : link}</a></p>',
         disabled: false,
       },
       {

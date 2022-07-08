@@ -2,8 +2,6 @@ import { AddonBase, EditorMessage, OutlineType } from "./base";
 import { loadTranslator, TRANSLATOR_ID_BETTER_MARKDOWN } from "./exportMD";
 import { pick } from "./file_picker";
 
-const TreeModel = require("./treemodel");
-
 class Knowledge extends AddonBase {
   currentLine: number;
   currentNodeID: number;
@@ -203,91 +201,7 @@ class Knowledge extends AddonBase {
       return [];
     }
     let noteText: string = note.getNote();
-    let containerIndex = noteText.search(/data-schema-version="8">/g);
-    if (containerIndex != -1) {
-      noteText = noteText.substring(
-        containerIndex + 'data-schema-version="8">'.length,
-        noteText.length - "</div>".length
-      );
-    }
-    let noteLines = noteText.split("\n").filter((e) => e);
-
-    // A cache for temporarily stored lines
-    let previousLineCache = [];
-    let nextLineCache = [];
-
-    const forceInline = ["table", "blockquote", "pre"];
-    const selfInline = ["ol", "ul", "li"];
-    let forceInlineStack = [];
-    let forceInlineFlag = false;
-    let selfInlineFlag = false;
-
-    const parsedLines = [];
-    for (let line of noteLines) {
-      // restore self inline flag
-      selfInlineFlag = false;
-
-      // For self inline tags, cache start as previous line and end as next line
-      for (const tag of forceInline) {
-        const startReg = `<${tag}>`;
-        const isStart = line.includes(startReg);
-        if (isStart) {
-          forceInlineStack.push(tag);
-          forceInlineFlag = true;
-          break;
-        }
-        const endReg = `</${tag}>`;
-        const isEnd = line.includes(endReg);
-        if (isEnd) {
-          forceInlineStack.pop();
-          // Exit force inline mode if the stack is empty
-          if (forceInlineStack.length === 0) {
-            forceInlineFlag = false;
-          }
-          break;
-        }
-      }
-
-      // For self inline tags, cache start as previous line and end as next line
-      for (const tag of selfInline) {
-        const isStart = line.includes(`<${tag}>`);
-        if (isStart) {
-          selfInlineFlag = true;
-          nextLineCache.push(line);
-          break;
-        }
-        const isEnd = line.includes(`</${tag}>`);
-        if (isEnd) {
-          selfInlineFlag = true;
-          previousLineCache.push(line);
-          break;
-        }
-      }
-
-      if (!selfInlineFlag && !forceInlineFlag) {
-        // Append cache to previous line
-        if (previousLineCache.length) {
-          parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
-            "\n"
-          )}`;
-          previousLineCache = [];
-        }
-        let nextLine = "";
-        // Append cache to next line
-        if (nextLineCache.length) {
-          nextLine = nextLineCache.join("\n");
-          nextLineCache = [];
-        }
-        if (nextLine) {
-          nextLine += "\n";
-        }
-        nextLine += `${line}`;
-        parsedLines.push(nextLine);
-      } else if (forceInlineFlag) {
-        nextLineCache.push(line);
-      }
-    }
-    return parsedLines;
+    return this._Addon.parse.parseHTMLLines(noteText);
   }
 
   setLinesToNote(note: ZoteroItem, noteLines: string[]) {
@@ -311,48 +225,10 @@ class Knowledge extends AddonBase {
     note.saveTx();
   }
 
-  getLineParentInNote(
-    note: ZoteroItem,
-    lineIndex: number = -1
-  ): TreeModel.Node<object> {
-    if (lineIndex < 0) {
-      lineIndex = this.currentLine;
-    }
-    let nodes = this.getNoteTreeAsList(note);
-    if (!nodes.length || nodes[0].model.lineIndex > lineIndex) {
-      // There is no parent node
-      return undefined;
-    } else if (nodes[nodes.length - 1].model.lineIndex <= lineIndex) {
-      return nodes[nodes.length - 1];
-    } else {
-      for (let i = 0; i < nodes.length - 1; i++) {
-        if (
-          nodes[i].model.lineIndex <= lineIndex &&
-          nodes[i + 1].model.lineIndex > lineIndex
-        ) {
-          return nodes[i];
-        }
-      }
-    }
-  }
-
-  async scrollWithRefresh(lineIndex: number) {
-    await Zotero.Promise.delay(500);
-    let editorInstance = await this.getWorkspaceEditorInstance();
-    this._Addon.views.scrollToLine(editorInstance, lineIndex);
-    this._Addon.events.onEditorEvent(
-      new EditorMessage("enterWorkspace", {
-        editorInstance: editorInstance,
-        params: "main",
-      })
-    );
-  }
-
   private async addLineToNote(
     note: ZoteroItem,
     text: string,
-    lineIndex: number,
-    newLine: boolean
+    lineIndex: number
   ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -370,16 +246,10 @@ class Knowledge extends AddonBase {
     Zotero.debug(
       `insert to ${lineIndex}, it used to be ${noteLines[lineIndex]}`
     );
-    // Force links not to appear in one line
-    if (lineIndex > 0 && noteLines[lineIndex - 1].search(/<a href/g) !== -1) {
-      text = `<p> </p>\n${text}`;
-    }
-    if (
-      lineIndex < noteLines.length &&
-      noteLines[lineIndex].search(/<a href/g)
-    ) {
-      text = `${text}\n<p> </p>`;
-    }
+    Zotero.debug(text);
+
+    // insert after current line
+    lineIndex += 1;
     noteLines.splice(lineIndex, 0, text);
     this.setLinesToNote(note, noteLines);
     if (this.getWorkspaceNote().id === note.id) {
@@ -412,6 +282,82 @@ class Knowledge extends AddonBase {
     await this.scrollWithRefresh(lineIndex);
   }
 
+  private _dataURLtoBlob(dataurl: string) {
+    let parts = dataurl.split(",");
+    let mime = parts[0].match(/:(.*?);/)[1];
+    if (parts[0].indexOf("base64") !== -1) {
+      let bstr = atob(parts[1]);
+      let n = bstr.length;
+      let u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new (Zotero.getMainWindow().Blob)([u8arr], { type: mime });
+    }
+    return null;
+  }
+
+  private async _importImage(note: ZoteroItem, src, download = false) {
+    let blob;
+    if (src.startsWith("data:")) {
+      blob = this._dataURLtoBlob(src);
+    } else if (download) {
+      let res;
+
+      try {
+        res = await Zotero.HTTP.request("GET", src, { responseType: "blob" });
+      } catch (e) {
+        return;
+      }
+      blob = res.response;
+    } else {
+      return;
+    }
+
+    let attachment = await Zotero.Attachments.importEmbeddedImage({
+      blob,
+      parentItemID: note.id,
+      saveOptions: {},
+    });
+
+    return attachment.key;
+  }
+
+  async importImagesToNote(note: ZoteroItem, annotations: any) {
+    for (let annotation of annotations) {
+      if (annotation.image) {
+        annotation.imageAttachmentKey = await this._importImage(
+          note,
+          annotation.image
+        );
+      }
+      delete annotation.image;
+    }
+  }
+
+  async addAnnotationsToNote(
+    note: ZoteroItem,
+    lineIndex: number,
+    annotations: ZoteroItem[]
+  ) {
+    note = note || this.getWorkspaceNote();
+    if (!note) {
+      return;
+    }
+    let annotationJSONList = [];
+    for (const annot of annotations) {
+      const annotJson = await this._Addon.parse.parseAnnotation(annot);
+      annotationJSONList.push(annotJson);
+    }
+    await this.importImagesToNote(note, annotations);
+    const html =
+      Zotero.EditorInstanceUtilities.serializeAnnotations(
+        annotationJSONList
+      ).html;
+    this.addLineToNote(note, html, lineIndex);
+  }
+
   addLinkToNote(
     targetNote: ZoteroItem,
     lineIndex: number,
@@ -435,7 +381,7 @@ class Knowledge extends AddonBase {
       [link, linkedNote, targetNote]
     );
 
-    this.addLineToNote(targetNote, linkTemplate, lineIndex, true);
+    this.addLineToNote(targetNote, linkTemplate, lineIndex);
 
     const backLinkTemplate = this._Addon.template.renderTemplate(
       "[QuickBackLink]",
@@ -445,7 +391,7 @@ class Knowledge extends AddonBase {
     );
 
     if (backLinkTemplate) {
-      this.addLineToNote(linkedNote, backLinkTemplate, -1, true);
+      this.addLineToNote(linkedNote, backLinkTemplate, -1);
     }
 
     this._Addon.views.showProgressWindow(
@@ -614,78 +560,7 @@ class Knowledge extends AddonBase {
     if (!note) {
       return undefined;
     }
-    const noteLines = this.getLinesInNote(note);
-    let tree = new TreeModel();
-    /*
-    tree-model/index.js: line 40
-    TreeModel.prototype.parse = function (model) {
-    var i, childCount, node;
-    Annotate the line 40 of:
-
-    // if (!(model instanceof Object)) {
-    //   throw new TypeError('Model must be of type object.');
-    // }
-    */
-    let root = tree.parse({
-      id: -1,
-      rank: 0,
-      lineIndex: -1,
-      endIndex: -1,
-    });
-    let id = 0;
-    let lastNode = root;
-    let headerStartReg = new RegExp("<h[1-6]>");
-    let headerStopReg = new RegExp("</h[1-6]>");
-    for (let i in noteLines) {
-      let currentRank = 7;
-      let lineElement = noteLines[i];
-      const isHeading = lineElement.search(headerStartReg) !== -1;
-      const isLink = lineElement.search(/zotero:\/\/note\//g) !== -1;
-      if (isHeading || isLink) {
-        let name = "";
-        let link = "";
-        if (isHeading) {
-          const startIndex = lineElement.search(headerStartReg);
-          currentRank = parseInt(
-            lineElement.slice(startIndex + 2, startIndex + 3)
-          );
-        } else {
-          link = lineElement.slice(lineElement.search(/href="/g) + 6);
-          link = link.slice(0, link.search(/"/g));
-        }
-        name = this.parseLineText(lineElement);
-
-        // Find parent node
-        let parentNode = lastNode;
-        while (parentNode.model.rank >= currentRank) {
-          parentNode = parentNode.parent;
-        }
-
-        const currentNode = tree.parse({
-          id: id++,
-          rank: currentRank,
-          name: name,
-          lineIndex: parseInt(i),
-          endIndex: noteLines.length,
-          link: link,
-        });
-        parentNode.addChild(currentNode);
-        const currentIndex = parentNode.children.indexOf(currentNode);
-        if (currentIndex > 0) {
-          const previousNode = parentNode.children[currentIndex - 1];
-          // Traverse the previous node tree and set the end index
-          previousNode.walk((node) => {
-            if (node.model.endIndex > parseInt(i)) {
-              node.model.endIndex = parseInt(i);
-            }
-            return true;
-          });
-          previousNode.model.endIndex = parseInt(i);
-        }
-        lastNode = currentNode;
-      }
-    }
-    return root;
+    return this._Addon.parse.parseNoteTree(note);
   }
 
   getNoteTreeAsList(
@@ -724,6 +599,43 @@ class Knowledge extends AddonBase {
     return root.all(function (node) {
       return node.model.rank === rank;
     });
+  }
+
+  getLineParentNode(
+    note: ZoteroItem,
+    lineIndex: number = -1
+  ): TreeModel.Node<object> {
+    if (lineIndex < 0) {
+      lineIndex = this.currentLine;
+    }
+    let nodes = this.getNoteTreeAsList(note);
+    if (!nodes.length || nodes[0].model.lineIndex > lineIndex) {
+      // There is no parent node
+      return undefined;
+    } else if (nodes[nodes.length - 1].model.lineIndex <= lineIndex) {
+      return nodes[nodes.length - 1];
+    } else {
+      for (let i = 0; i < nodes.length - 1; i++) {
+        if (
+          nodes[i].model.lineIndex <= lineIndex &&
+          nodes[i + 1].model.lineIndex > lineIndex
+        ) {
+          return nodes[i];
+        }
+      }
+    }
+  }
+
+  async scrollWithRefresh(lineIndex: number) {
+    await Zotero.Promise.delay(500);
+    let editorInstance = await this.getWorkspaceEditorInstance();
+    this._Addon.views.scrollToLine(editorInstance, lineIndex);
+    this._Addon.events.onEditorEvent(
+      new EditorMessage("enterWorkspace", {
+        editorInstance: editorInstance,
+        params: "main",
+      })
+    );
   }
 
   async exportNoteToFile(
@@ -896,7 +808,7 @@ class Knowledge extends AddonBase {
     if (useEmbed) {
       for (const note of notes) {
         let newNote: ZoteroItem;
-        if (this.getLinkFromText(note.getNote())) {
+        if (this._Addon.parse.parseLinkInText(note.getNote())) {
           const noteID = await ZoteroPane_Local.newNote();
           newNote = Zotero.Items.get(noteID);
           const rootNoteIds = [note.id];
@@ -1083,10 +995,10 @@ class Knowledge extends AddonBase {
       newLines.push(noteLines[i]);
       // Convert Link
       if (convertNoteLinks) {
-        let link = this.getLinkFromText(noteLines[i]);
+        let link = this._Addon.parse.parseLinkInText(noteLines[i]);
         while (link) {
           const linkIndex = noteLines[i].indexOf(link);
-          const params = this.getParamsFromLink(link);
+          const params = this._Addon.parse.parseParamsFromLink(link);
           if (
             params.ignore ||
             // Ignore links that are not in <a>
@@ -1099,7 +1011,7 @@ class Knowledge extends AddonBase {
             noteLines[i] = noteLines[i].substring(
               noteLines[i].search(/<\/a>/g) + "</a>".length
             );
-            link = this.getLinkFromText(noteLines[i]);
+            link = this._Addon.parse.parseLinkInText(noteLines[i]);
             continue;
           }
           Zotero.debug("convert link");
@@ -1129,7 +1041,7 @@ class Knowledge extends AddonBase {
           noteLines[i] = noteLines[i].substring(
             noteLines[i].search(/<\/a>/g) + "</a>".length
           );
-          link = this.getLinkFromText(noteLines[i]);
+          link = this._Addon.parse.parseLinkInText(noteLines[i]);
         }
       }
     }
@@ -1137,59 +1049,8 @@ class Knowledge extends AddonBase {
     return { lines: newLines, subNotes: subNotes };
   }
 
-  getLinkFromText(text: string) {
-    // Must end with "
-    const linkIndex = text.search(/zotero:\/\/note\//g);
-    if (linkIndex === -1) {
-      return "";
-    }
-    let link = text.substring(linkIndex);
-    link = link.substring(0, link.search('"'));
-    return link;
-  }
-
-  getLinkIndexFromText(text: string): [number, number] {
-    // Must end with "
-    const linkIndex = text.search(/zotero:\/\/note\//g);
-    if (linkIndex === -1) {
-      return [-1, -1];
-    }
-    let link = text.substring(linkIndex);
-    return [linkIndex, linkIndex + link.search('"')];
-  }
-
-  getParamsFromLink(uri: string) {
-    uri = uri.split("//").pop();
-    const extraParams = {};
-    uri
-      .split("?")
-      .pop()
-      .split("&")
-      .forEach((p) => {
-        extraParams[p.split("=")[0]] = p.split("=")[1];
-      });
-    uri = uri.split("?")[0];
-    let params: any = {
-      libraryID: "",
-      noteKey: 0,
-    };
-    Object.assign(params, extraParams);
-    const router = new Zotero.Router(params);
-    router.add("note/:libraryID/:noteKey", function () {
-      if (params.libraryID === "u") {
-        params.libraryID = Zotero.Libraries.userLibraryID;
-      } else {
-        params.libraryID = Zotero.Groups.getLibraryIDFromGroupID(
-          params.libraryID
-        );
-      }
-    });
-    router.run(uri);
-    return params;
-  }
-
   async getNoteFromLink(uri: string) {
-    const params = this.getParamsFromLink(uri);
+    const params = this._Addon.parse.parseParamsFromLink(uri);
     if (!params.libraryID) {
       return {
         item: false,
@@ -1211,43 +1072,6 @@ class Knowledge extends AddonBase {
       item: item,
       infoText: "OK",
     };
-  }
-
-  parseNoteHTML(note: ZoteroItem): Element {
-    note = note || this.getWorkspaceNote();
-    if (!note) {
-      return undefined;
-    }
-    let noteText = note.getNote();
-    if (noteText.search(/data-schema-version/g) === -1) {
-      noteText = `<div data-schema-version="8">${noteText}\n</div>`;
-    }
-    let parser = Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
-    let doc = parser.parseFromString(noteText, "text/html");
-
-    let metadataContainer: Element = doc.querySelector(
-      "body > div[data-schema-version]"
-    );
-    return metadataContainer;
-  }
-
-  parseLineText(line: string): string {
-    const parser = Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
-    try {
-      if (line.search(/data-schema-version/g) === -1) {
-        line = `<div data-schema-version="8">${line}</div>`;
-      }
-      return parser
-        .parseFromString(line, "text/html")
-        .querySelector("body > div[data-schema-version]")
-        .innerText.trim();
-    } catch (e) {
-      return "";
-    }
   }
 }
 
