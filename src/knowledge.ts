@@ -212,67 +212,79 @@ class Knowledge extends AddonBase {
     }
     let noteLines = noteText.split("\n").filter((e) => e);
 
-    let tagStack = [];
-    let toPush = [];
-    let toRemove = 0;
+    // A cache for temporarily stored lines
+    let previousLineCache = [];
+    let nextLineCache = [];
 
-    let nextAppend = false;
-
-    const forceInline = ["table", "blockquote", "pre", "li"];
-    const selfInline = ["ol", "ul"];
+    const forceInline = ["table", "blockquote", "pre"];
+    const selfInline = ["ol", "ul", "li"];
+    let forceInlineStack = [];
+    let forceInlineFlag = false;
+    let selfInlineFlag = false;
 
     const parsedLines = [];
     for (let line of noteLines) {
+      // restore self inline flag
+      selfInlineFlag = false;
+
+      // For self inline tags, cache start as previous line and end as next line
       for (const tag of forceInline) {
         const startReg = `<${tag}>`;
+        const isStart = line.includes(startReg);
+        if (isStart) {
+          forceInlineStack.push(tag);
+          forceInlineFlag = true;
+          break;
+        }
         const endReg = `</${tag}>`;
-        const startIdx = line.search(startReg);
-        const endIdx = line.search(endReg);
-        if (startIdx !== -1 && endIdx === -1) {
-          toPush.push(tag);
-        } else if (endIdx !== -1) {
-          toRemove += 1;
-        }
-      }
-
-      if (tagStack.filter((e) => forceInline.indexOf(e) !== -1).length === 0) {
-        let nextLoop = false;
-        for (const tag of selfInline) {
-          const startReg = new RegExp(`<${tag}>`);
-          const endReg = new RegExp(`</${tag}>`);
-          const startIdx = line.search(startReg);
-          const endIdx = line.search(endReg);
-          if (startIdx !== -1 && endIdx === -1) {
-            nextAppend = true;
-            nextLoop = true;
-            parsedLines.push(line);
-            break;
+        const isEnd = line.includes(endReg);
+        if (isEnd) {
+          forceInlineStack.pop();
+          // Exit force inline mode if the stack is empty
+          if (forceInlineStack.length === 0) {
+            forceInlineFlag = false;
           }
-          if (endIdx !== -1) {
-            parsedLines[parsedLines.length - 1] += `\n${line}`;
-            nextLoop = true;
-            break;
-          }
-        }
-        if (nextLoop) {
-          continue;
+          break;
         }
       }
 
-      if (tagStack.length === 0 && !nextAppend) {
-        parsedLines.push(line);
-      } else {
-        parsedLines[parsedLines.length - 1] += `\n${line}`;
-        nextAppend = false;
+      // For self inline tags, cache start as previous line and end as next line
+      for (const tag of selfInline) {
+        const isStart = line.includes(`<${tag}>`);
+        if (isStart) {
+          selfInlineFlag = true;
+          nextLineCache.push(line);
+          break;
+        }
+        const isEnd = line.includes(`</${tag}>`);
+        if (isEnd) {
+          selfInlineFlag = true;
+          previousLineCache.push(line);
+          break;
+        }
       }
 
-      if (toPush.length > 0) {
-        tagStack = tagStack.concat(toPush);
-        toPush = [];
-      }
-      while (toRemove > 0) {
-        tagStack.pop();
-        toRemove -= 1;
+      if (!selfInlineFlag && !forceInlineFlag) {
+        // Append cache to previous line
+        if (previousLineCache.length) {
+          parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
+            "\n"
+          )}`;
+          previousLineCache = [];
+        }
+        let nextLine = "";
+        // Append cache to next line
+        if (nextLineCache.length) {
+          nextLine = nextLineCache.join("\n");
+          nextLineCache = [];
+        }
+        if (nextLine) {
+          nextLine += "\n";
+        }
+        nextLine += `${line}`;
+        parsedLines.push(nextLine);
+      } else if (forceInlineFlag) {
+        nextLineCache.push(line);
       }
     }
     return parsedLines;
@@ -327,10 +339,7 @@ class Knowledge extends AddonBase {
   async scrollWithRefresh(lineIndex: number) {
     await Zotero.Promise.delay(500);
     let editorInstance = await this.getWorkspaceEditorInstance();
-    this._Addon.views.scrollToLine(
-      editorInstance,
-      lineIndex
-    );
+    this._Addon.views.scrollToLine(editorInstance, lineIndex);
     this._Addon.events.onEditorEvent(
       new EditorMessage("enterWorkspace", {
         editorInstance: editorInstance,

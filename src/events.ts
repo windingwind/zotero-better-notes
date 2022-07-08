@@ -202,10 +202,10 @@ class AddonEvents extends AddonBase {
     message: EditorMessage
   ) {
     await instance._initPromise;
-    let editor: Element = this._Addon.views.getEditor(
+    let editorElement: Element = this._Addon.views.getEditorElement(
       instance._iframeWindow.document
     );
-    editor.addEventListener(event, (e: XULEvent) => {
+    editorElement.addEventListener(event, (e: XULEvent) => {
       message.content.event = e;
       message.content.editorInstance = instance;
       this.onEditorEvent(message);
