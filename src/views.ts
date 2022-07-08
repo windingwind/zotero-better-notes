@@ -408,8 +408,7 @@ class AddonViews extends AddonBase {
             if (!params.ignore) {
               const newLink =
                 link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
-              const linkIndex =
-                this._Addon.parse.parseLinkIndexInText(oldLine);
+              const linkIndex = this._Addon.parse.parseLinkIndexInText(oldLine);
               Zotero.debug(linkIndex);
               return `${oldLine.slice(
                 0,
@@ -872,6 +871,36 @@ class AddonViews extends AddonBase {
       "label",
       `Word Count: ${this._Addon.parse.parseNoteHTML().innerText.length}`
     );
+  }
+
+  updateAutoInsertAnnotationsMenu(
+    _window: Window = undefined,
+    tryStandalone: boolean = true
+  ) {
+    _window = _window || window;
+
+    Zotero.debug("updateAutoInsertAnnotationsMenu");
+
+    let autoAnnotation = Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation");
+    if (typeof autoAnnotation === "undefined") {
+      autoAnnotation = false;
+      Zotero.Prefs.set("Knowledge4Zotero.autoAnnotation", autoAnnotation);
+    }
+
+    const menuitem: XUL.Element = _window.document.getElementById(
+      "menu_autoannotation_betternotes"
+    );
+    if (autoAnnotation) {
+      menuitem.setAttribute("checked", true);
+    } else {
+      menuitem.removeAttribute("checked");
+    }
+    if (tryStandalone) {
+      _window = this._Addon.knowledge.getWorkspaceWindow();
+      if (_window) {
+        this.updateAutoInsertAnnotationsMenu(_window, false);
+      }
+    }
   }
 
   showProgressWindow(

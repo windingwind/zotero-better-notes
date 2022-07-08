@@ -67,6 +67,7 @@ class Knowledge extends AddonBase {
       this._Addon.views.initKnowledgeWindow(win);
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
+      this._Addon.views.updateAutoInsertAnnotationsMenu();
     } else {
       Zotero.debug("openWorkspaceWindow: as tab");
       this._Addon.views._initIframe = Zotero.Promise.defer();
@@ -282,7 +283,7 @@ class Knowledge extends AddonBase {
     await this.scrollWithRefresh(lineIndex);
   }
 
-  private _dataURLtoBlob(dataurl: string) {
+  _dataURLtoBlob(dataurl: string) {
     let parts = dataurl.split(",");
     let mime = parts[0].match(/:(.*?);/)[1];
     if (parts[0].indexOf("base64") !== -1) {
@@ -298,7 +299,7 @@ class Knowledge extends AddonBase {
     return null;
   }
 
-  private async _importImage(note: ZoteroItem, src, download = false) {
+  async _importImage(note: ZoteroItem, src, download = false) {
     let blob;
     if (src.startsWith("data:")) {
       blob = this._dataURLtoBlob(src);
@@ -338,8 +339,8 @@ class Knowledge extends AddonBase {
 
   async addAnnotationsToNote(
     note: ZoteroItem,
-    lineIndex: number,
-    annotations: ZoteroItem[]
+    annotations: ZoteroItem[],
+    lineIndex: number
   ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -350,7 +351,7 @@ class Knowledge extends AddonBase {
       const annotJson = await this._Addon.parse.parseAnnotation(annot);
       annotationJSONList.push(annotJson);
     }
-    await this.importImagesToNote(note, annotations);
+    await this.importImagesToNote(note, annotationJSONList);
     const html =
       Zotero.EditorInstanceUtilities.serializeAnnotations(
         annotationJSONList

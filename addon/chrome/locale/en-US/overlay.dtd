@@ -15,6 +15,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">
+<!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "Auto Insert New Annotations to Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.treeview "Outline: Tree View">
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">

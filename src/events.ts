@@ -88,6 +88,24 @@ class AddonEvents extends AddonBase {
             this._Addon.views.switchKey(true);
           }
         }
+        if (
+          Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation") &&
+          event === "add" &&
+          type === "item" &&
+          Zotero.Items.get(ids).filter((item) => {
+            return item.isAnnotation();
+          }).length > 0
+        ) {
+          Zotero.debug("Knowledge4Zotero: autoAnnotation");
+          const annotations = Zotero.Items.get(ids).filter((item) => {
+            return item.isAnnotation();
+          });
+          this.onEditorEvent(
+            new EditorMessage("addAnnotationToNote", {
+              params: { annotations: annotations },
+            })
+          );
+        }
       },
     };
   }
@@ -865,6 +883,30 @@ class AddonEvents extends AddonBase {
         lineIndex,
         message.content.editorInstance._item.id
       );
+    } else if (message.type === "addAnnotationToNote") {
+      /*
+        message.content = {
+          params: {annotations}
+        }
+      */
+      const annotations = message.content.params.annotations;
+      await this._Addon.knowledge.addAnnotationsToNote(
+        undefined,
+        annotations,
+        -1
+      );
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `[Auto] Insert Annotation to ${
+          this._Addon.knowledge.currentLine >= 0
+            ? `line ${this._Addon.knowledge.currentLine} in`
+            : "end of"
+        } main note`
+      );
+      // Move cursor foward
+      if (this._Addon.knowledge.currentLine >= 0) {
+        this._Addon.knowledge.currentLine += annotations.length;
+      }
     } else if (message.type === "jumpNode") {
       /*
         message.content = {
@@ -1098,6 +1140,16 @@ class AddonEvents extends AddonBase {
         -1,
         node.model.lineIndex
       );
+    } else if (message.type === "updateAutoAnnotation") {
+      /*
+        message.content = {
+          editorInstance
+        }
+      */
+      let autoAnnotation = Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation");
+      autoAnnotation = !autoAnnotation;
+      Zotero.Prefs.set("Knowledge4Zotero.autoAnnotation", autoAnnotation);
+      this._Addon.views.updateAutoInsertAnnotationsMenu();
     } else if (message.type === "insertNotes") {
       /*
         message.content = {}
@@ -1602,6 +1654,7 @@ class AddonEvents extends AddonBase {
     ) {
       this._Addon.syncList.changeSyncPeriod(10);
     }
+    this._Addon.views.updateAutoInsertAnnotationsMenu();
   }
 }
 

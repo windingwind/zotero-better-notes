@@ -47,6 +47,7 @@
     <command id="cmd_addheading" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'addHeading'});" />
     <command id="cmd_indent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'indentHeading'});" />
     <command id="cmd_unindent_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'unindentHeading'});" />
+    <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateAutoAnnotation', content: {event: event}});" />
     <command id="cmd_treeview" oncommand="Zotero.Knowledge4Zotero.views.switchView(1);" />
     <command id="cmd_mindmap" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
     <command id="cmd_bubblemap" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
@@ -86,6 +87,8 @@
                 <menuitem id="menu_addheading" label="&zotero.__addonRef__.workspace.menu.addheading;" command="cmd_addheading" />
                 <menuitem id="menu_indent" label="&zotero.__addonRef__.workspace.menu.indent;" command="cmd_indent_betternotes" key="key_indent" />
                 <menuitem id="menu_unindent" label="&zotero.__addonRef__.workspace.menu.unindent;" command="cmd_unindent_betternotes" key="key_unindent" />
+                <menuseparator />
+                <menuitem id="menu_autoannotation_betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.autoannotation;" command="cmd_autoannotation_betternotes" />
             </menupopup>
         </menu>
 
