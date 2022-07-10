@@ -1190,7 +1190,11 @@ class AddonEvents extends AddonBase {
         );
         newLines.push("<p> </p>");
       }
-      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+      await this._Addon.knowledge.addLineToNote(
+        undefined,
+        newLines.join("\n"),
+        -1
+      );
     } else if (message.type === "insertTextUsingTemplate") {
       /*
         message.content = {
@@ -1207,7 +1211,11 @@ class AddonEvents extends AddonBase {
         newLines.push(renderredTemplate);
         newLines.push("<p> </p>");
         // End of line
-        await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+        await this._Addon.knowledge.addLineToNote(
+          undefined,
+          newLines.join("\n"),
+          -1
+        );
       }
     } else if (message.type === "insertItemUsingTemplate") {
       /*
@@ -1272,7 +1280,11 @@ class AddonEvents extends AddonBase {
           newLines.push("<p> </p>");
         }
       }
-      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+      await this._Addon.knowledge.addLineToNote(
+        undefined,
+        newLines.join("\n"),
+        -1
+      );
       const mainNote = this._Addon.knowledge.getWorkspaceNote();
       await Zotero.DB.executeTransaction(async () => {
         for (const subNote of toCopyImage) {
@@ -1339,7 +1351,11 @@ class AddonEvents extends AddonBase {
           newLines.push("<p> </p>");
         }
       }
-      await this._Addon.knowledge.addLinesToNote(undefined, newLines, -1);
+      await this._Addon.knowledge.addLineToNote(
+        undefined,
+        newLines.join("\n"),
+        -1
+      );
     } else if (message.type === "editTemplate") {
       /*
         message.content = {}

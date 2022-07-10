@@ -7,6 +7,7 @@ class Knowledge extends AddonBase {
   currentNodeID: number;
   workspaceWindow: Window;
   workspaceTabId: string;
+  workspaceNoteEditor: EditorInstance;
   _exportPath: string;
   _exportFileDict: object;
   _exportPromise: any;
@@ -17,6 +18,7 @@ class Knowledge extends AddonBase {
     this.currentLine = -1;
     this.currentNodeID = -1;
     this._pdfNoteId = -1;
+    this.workspaceNoteEditor = undefined;
   }
 
   getWorkspaceNote(): ZoteroItem {
@@ -148,7 +150,15 @@ class Knowledge extends AddonBase {
       t += 1;
       await Zotero.Promise.delay(10);
     }
-    return noteEditor.getCurrentInstance() as EditorInstance;
+    this.workspaceNoteEditor =
+      noteEditor.getCurrentInstance() as EditorInstance;
+    return this.workspaceNoteEditor;
+  }
+
+  getEditorInstance(note: ZoteroItem) {
+    return (Zotero.Notes._editorInstances as EditorInstance[]).find(
+      (e) => e._item.id === note.id
+    );
   }
 
   async setWorkspaceNote(
@@ -249,15 +259,44 @@ class Knowledge extends AddonBase {
     );
     Zotero.debug(text);
 
-    // insert after current line
-    lineIndex += 1;
-    noteLines.splice(lineIndex, 0, text);
-    this.setLinesToNote(note, noteLines);
-    if (this.getWorkspaceNote().id === note.id) {
-      await this.scrollWithRefresh(lineIndex);
+    const editorInstance = this.getEditorInstance(note);
+    if (editorInstance) {
+      // The note is opened. Add line via note editor
+      console.log("Add note line via note editor");
+      const _document = editorInstance._iframeWindow.document;
+      const currentElement = this._Addon.parse.parseHTMLLineElement(
+        _document.querySelector(".primary-editor"),
+        lineIndex
+      );
+      const frag = _document.createDocumentFragment();
+      const temp = _document.createElement("div");
+      temp.innerHTML = text;
+      while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+      }
+      currentElement.after(frag);
+      if (this.getWorkspaceNote().id === note.id) {
+        await this.scrollWithRefresh(lineIndex);
+      }
+      // this._Addon.views.scrollToElement(
+      //   editorInstance,
+      //   currentElement.offsetTop
+      // );
+    } else {
+      // The note editor does not exits yet. Fall back to modify the metadata
+      console.log("Add note line via note metadata");
+
+      // insert after current line
+      lineIndex += 1;
+      noteLines.splice(lineIndex, 0, text);
+      this.setLinesToNote(note, noteLines);
+      if (this.getWorkspaceNote().id === note.id) {
+        await this.scrollWithRefresh(lineIndex);
+      }
     }
   }
 
+  // Abandoned
   async addLinesToNote(
     note: ZoteroItem,
     newLines: string[],
@@ -276,10 +315,7 @@ class Knowledge extends AddonBase {
     } else if (lineIndex >= noteLines.length) {
       lineIndex = noteLines.length;
     }
-    this.setLinesToNote(
-      note,
-      noteLines.slice(0, lineIndex).concat(newLines, noteLines.slice(lineIndex))
-    );
+    await this.addLineToNote(note, newLines.join("\n"), lineIndex);
     await this.scrollWithRefresh(lineIndex);
   }
 

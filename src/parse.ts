@@ -164,6 +164,37 @@ class AddonParse extends AddonBase {
     return parsedLines;
   }
 
+  parseHTMLLineElement(doc: HTMLElement, lineIndex: number): Element {
+    let currentLineIndex = 0;
+    let currentElement: Element;
+
+    const diveTagNames = ["OL", "UL", "LI"];
+    for (const e of doc.children) {
+      if (currentLineIndex > lineIndex) {
+        break;
+      }
+      if (diveTagNames.includes(e.tagName)) {
+        const innerLines = this.parseListElements(e);
+        if (currentLineIndex + innerLines.length > lineIndex) {
+          // The target line is inside the line list
+          for (const _e of innerLines) {
+            if (currentLineIndex <= lineIndex) {
+              currentLineIndex += 1;
+              currentElement = _e;
+              console.log(currentLineIndex, _e);
+            }
+          }
+        }
+      } else {
+        currentLineIndex += 1;
+        currentElement = e;
+        console.log(currentLineIndex, e);
+      }
+    }
+    console.log(currentLineIndex);
+    return currentElement;
+  }
+
   async parseAnnotation(annotationItem: ZoteroItem) {
     try {
       if (!annotationItem || !annotationItem.isAnnotation()) {

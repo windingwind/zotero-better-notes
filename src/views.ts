@@ -35,7 +35,7 @@ class AddonViews extends AddonBase {
   }
 
   getEditorElement(_document: Document): Element {
-    let editor = _document.getElementsByClassName("primary-editor")[0];
+    let editor = _document.querySelector(".primary-editor");
     return editor;
   }
 
@@ -284,6 +284,17 @@ class AddonViews extends AddonBase {
     const texView = instance._iframeWindow.document.getElementById("texView");
     if (texView) {
       texView.scrollTo(0, scrollNum);
+    }
+  }
+
+  scrollToPosition(instance: EditorInstance, offset: number) {
+    let editorElement = this.getEditorElement(instance._iframeWindow.document);
+    // @ts-ignore
+    (editorElement.parentNode as HTMLElement).scrollTo(0, offset);
+
+    const texView = instance._iframeWindow.document.getElementById("texView");
+    if (texView) {
+      texView.scrollTo(0, offset);
     }
   }
 
