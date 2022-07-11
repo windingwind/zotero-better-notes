@@ -181,14 +181,17 @@ class AddonParse extends AddonBase {
             if (currentLineIndex <= lineIndex) {
               currentLineIndex += 1;
               currentElement = _e;
-              console.log(currentLineIndex, _e);
+              // console.log(currentLineIndex, _e);
             }
           }
+        } else {
+          currentLineIndex += innerLines.length;
+          currentElement = innerLines[innerLines.length - 1];
         }
       } else {
         currentLineIndex += 1;
         currentElement = e;
-        console.log(currentLineIndex, e);
+        // console.log(currentLineIndex, e);
       }
     }
     console.log(currentLineIndex);
