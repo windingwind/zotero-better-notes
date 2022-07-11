@@ -275,13 +275,10 @@ class Knowledge extends AddonBase {
         frag.appendChild(temp.firstChild);
       }
       currentElement.after(frag);
-      if (this.getWorkspaceNote().id === note.id) {
-        await this.scrollWithRefresh(lineIndex);
-      }
-      // this._Addon.views.scrollToElement(
-      //   editorInstance,
-      //   currentElement.offsetTop
-      // );
+      this._Addon.views.scrollToPosition(
+        editorInstance,
+        currentElement.offsetTop
+      );
     } else {
       // The note editor does not exits yet. Fall back to modify the metadata
       console.log("Add note line via note metadata");
@@ -489,8 +486,31 @@ class Knowledge extends AddonBase {
     } else if (typeof text === "function") {
       noteLines[lineIndex] = text(noteLines[lineIndex]);
     }
-    this.setLinesToNote(note, noteLines);
-    await this.scrollWithRefresh(lineIndex);
+    const editorInstance = this.getEditorInstance(note);
+    if (editorInstance) {
+      // The note is opened. Add line via note editor
+      console.log("Modify note line via note editor");
+      const _document = editorInstance._iframeWindow.document;
+      const currentElement: HTMLElement =
+        this._Addon.parse.parseHTMLLineElement(
+          _document.querySelector(".primary-editor"),
+          lineIndex
+        );
+      const frag = _document.createDocumentFragment();
+      const temp = _document.createElement("div");
+      temp.innerHTML = noteLines[lineIndex];
+      while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+      }
+      currentElement.replaceWith(frag);
+      this._Addon.views.scrollToPosition(
+        editorInstance,
+        currentElement.offsetTop
+      );
+    } else {
+      this.setLinesToNote(note, noteLines);
+      await this.scrollWithRefresh(lineIndex);
+    }
   }
 
   async changeHeadingLineInNote(
@@ -518,10 +538,13 @@ class Knowledge extends AddonBase {
     } else if (lineRank < 1) {
       lineRank = 1;
     }
-    noteLines[lineIndex] = noteLines[lineIndex]
-      .replace(headerStartReg, `<h${lineRank}>`)
-      .replace(headerStopReg, `</h${lineRank}>`);
-    this.setLinesToNote(note, noteLines);
+    this.modifyLineInNote(
+      note,
+      noteLines[lineIndex]
+        .replace(headerStartReg, `<h${lineRank}>`)
+        .replace(headerStopReg, `</h${lineRank}>`),
+      lineIndex
+    );
     await this.scrollWithRefresh(lineIndex);
   }
 

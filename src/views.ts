@@ -454,6 +454,25 @@ class AddonViews extends AddonBase {
         let line = noteLines[this._Addon.knowledge.currentLine];
         Zotero.debug(line);
 
+        // // #text
+        // const focusNode = _window.document.getSelection().focusNode;
+        // const linkElement = focusNode.parentElement as HTMLLinkElement;
+
+        // const currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
+        //   .item;
+
+        // if (!currentNote) {
+        //   return;
+        // }
+        // const newNode = _window.document.createElement("p");
+        // const newLink = _window.document.createElement("a");
+        // newLink.href = linkElement.href;
+        // newLink.innerHTML = currentNote.getNoteTitle();
+        // newNode.appendChild(newLink);
+        // console.log(linkElement, newLink);
+
+        // linkElement.parentElement.replaceChild(newNode, linkElement);
+
         let linkStart = line.search(/<a /g);
         let linkEnd = line.search(/<\/a>/g) + 4;
         let beforeLink = line.slice(0, linkStart);
