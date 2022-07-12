@@ -950,9 +950,26 @@ class AddonViews extends AddonBase {
     const menuitem = _window.document.getElementById(
       "menu_wordcount_betternotes"
     );
+    function fnGetCpmisWords(str) {
+      let sLen = 0;
+      try {
+        // replace break lines
+        str = str.replace(/(\r\n+|\s+|　+)/g, "龘");
+        // letter, numbers to 'm' letter
+        str = str.replace(/[\x00-\xff]/g, "m");
+        // make neighbor 'm' to be one letter
+        str = str.replace(/m+/g, "*");
+        // remove white space
+        str = str.replace(/龘+/g, "");
+        sLen = str.length;
+      } catch (e) {}
+      return sLen;
+    }
     menuitem.setAttribute(
       "label",
-      `Word Count: ${this._Addon.parse.parseNoteHTML().innerText.length}`
+      `Word Count: ${fnGetCpmisWords(
+        this._Addon.parse.parseNoteHTML().innerText
+      )}`
     );
   }
 
