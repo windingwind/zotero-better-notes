@@ -125,6 +125,7 @@ declare interface ZoteroItem {
   annotationComment?: string;
   annotationText?: string;
   annotationPosition: string;
+  save: (obj?: any) => Promise<void>;
   saveTx: (obj?: any) => Promise<void>;
   addToCollection(id: number);
 }

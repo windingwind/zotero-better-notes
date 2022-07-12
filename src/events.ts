@@ -2,6 +2,7 @@ import { AddonBase, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
   notifierCallback: object;
+  notifierCbkDict: any;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this.notifierCallback = {
@@ -106,8 +107,12 @@ class AddonEvents extends AddonBase {
             })
           );
         }
+        for (const cbk of Object.values(this.notifierCbkDict)) {
+          (cbk as Function)(event, type, ids, extraData);
+        }
       },
     };
+    this.notifierCbkDict = {};
   }
 
   public async onInit() {
@@ -243,6 +248,14 @@ class AddonEvents extends AddonBase {
       message.content.editorInstance = instance;
       this.onEditorEvent(message);
     });
+  }
+
+  addNotifyListener(name: string, cbk: Function) {
+    this.notifierCbkDict[name] = cbk;
+  }
+
+  removeNotifyListener(name: string) {
+    delete this.notifierCbkDict[name];
   }
 
   public async onEditorEvent(message: EditorMessage) {
@@ -1133,48 +1146,6 @@ class AddonEvents extends AddonBase {
         -1,
         node.model.lineIndex
       );
-    } else if (message.type === "importLink") {
-      /*
-        message.content = {}
-      */
-      // let newLines = [];
-      // const convertResult = await this._Addon.knowledge.convertNoteLines(
-      //   note,
-      //   [],
-      //   true,
-      //   false
-      // );
-      // const subNoteLines = convertResult.lines;
-      // const templateText = await this._Addon.template.renderTemplateAsync(
-      //   "[QuickImport]",
-      //   "subNoteLines, subNoteItem, noteItem",
-      //   [subNoteLines, note, this._Addon.knowledge.getWorkspaceNote()]
-      // );
-      // newLines.push(templateText);
-      // const newLineString = newLines.join("\n");
-      // await this._Addon.knowledge.modifyLineInNote(
-      //   undefined,
-      //   (oldLine: string) => {
-      //     Zotero.debug(oldLine);
-      //     const params = this._Addon.parse.parseParamsFromLink(link);
-      //     if (!params.ignore) {
-      //       const newLink =
-      //         link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
-      //       const linkIndex = this._Addon.parse.parseLinkIndexInText(oldLine);
-      //       Zotero.debug(linkIndex);
-      //       return `${oldLine.slice(0, linkIndex[0])}${newLink}${oldLine.slice(
-      //         linkIndex[1]
-      //       )}\n${newLineString}`;
-      //     }
-      //   },
-      //   this._Addon.knowledge.currentLine
-      // );
-      // await Zotero.DB.executeTransaction(async () => {
-      //   await Zotero.Notes.copyEmbeddedImages(
-      //     note,
-      //     this._Addon.knowledge.getWorkspaceNote()
-      //   );
-      // });
     } else if (message.type === "updateAutoAnnotation") {
       /*
         message.content = {

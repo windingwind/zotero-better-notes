@@ -402,10 +402,17 @@ class AddonViews extends AddonBase {
         const convertResult = await this._Addon.knowledge.convertNoteLines(
           note,
           [],
-          true,
-          false
+          true
         );
         const subNoteLines = convertResult.lines;
+        // Prevent note to be too long
+        if (subNoteLines.join("\n").length > 100000) {
+          this._Addon.views.showProgressWindow(
+            "Better Notes",
+            "The linked note is too long. Import ignored."
+          );
+          return;
+        }
         const templateText = await this._Addon.template.renderTemplateAsync(
           "[QuickImport]",
           "subNoteLines, subNoteItem, noteItem",
@@ -413,30 +420,63 @@ class AddonViews extends AddonBase {
         );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
+        const workspaceNote = this._Addon.knowledge.getWorkspaceNote();
+        const notifyFlag = Zotero.Promise.defer();
+        const notifierName = "insertLinkWait";
+        this._Addon.events.addNotifyListener(
+          notifierName,
+          (
+            event: string,
+            type: string,
+            ids: Array<number>,
+            extraData: object
+          ) => {
+            if (
+              event === "modify" &&
+              type === "item" &&
+              ids.includes(workspaceNote.id)
+            ) {
+              notifyFlag.resolve();
+              this._Addon.events.removeNotifyListener(notifierName);
+            }
+          }
+        );
         await this._Addon.knowledge.modifyLineInNote(
           undefined,
           (oldLine: string) => {
             Zotero.debug(oldLine);
             const params = this._Addon.parse.parseParamsFromLink(link);
-            if (!params.ignore) {
-              const newLink =
-                link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
-              const linkIndex = this._Addon.parse.parseLinkIndexInText(oldLine);
-              Zotero.debug(linkIndex);
-              return `${oldLine.slice(
-                0,
-                linkIndex[0]
-              )}${newLink}${oldLine.slice(linkIndex[1])}\n${newLineString}`;
-            }
+            const newLink = !params.ignore
+              ? link + (link.includes("?") ? "&ignore=1" : "?ignore=1")
+              : link;
+            const linkIndex = this._Addon.parse.parseLinkIndexInText(oldLine);
+            Zotero.debug(linkIndex);
+            return `${oldLine.slice(0, linkIndex[0])}${newLink}${oldLine.slice(
+              linkIndex[1]
+            )}\n${newLineString}`;
           },
           this._Addon.knowledge.currentLine
         );
-        await Zotero.DB.executeTransaction(async () => {
-          await Zotero.Notes.copyEmbeddedImages(
-            note,
-            this._Addon.knowledge.getWorkspaceNote()
+        // wait the first modify finish
+        await notifyFlag.promise;
+        let hasAttachemnts = false;
+        for (const _n of [note, ...convertResult.subNotes]) {
+          if (Zotero.Items.get(_n.getAttachments()).length) {
+            hasAttachemnts = true;
+            break;
+          }
+        }
+        if (hasAttachemnts) {
+          await Zotero.DB.executeTransaction(async () => {
+            await Zotero.Notes.copyEmbeddedImages(note, workspaceNote);
+            for (const subNote of convertResult.subNotes) {
+              await Zotero.Notes.copyEmbeddedImages(subNote, workspaceNote);
+            }
+          });
+          await this._Addon.knowledge.scrollWithRefresh(
+            this._Addon.knowledge.currentLine
           );
-        });
+        }
       });
 
       let updateButton = _window.document.getElementById("update-note-link");
@@ -520,9 +560,10 @@ class AddonViews extends AddonBase {
           this._Addon.knowledge.currentLine
         );
       });
-      _window.document
-        .querySelector(".link-popup")
-        .append(insertButton, updateButton);
+      const linkPopup = _window.document.querySelector(".link-popup");
+      if (linkPopup) {
+        linkPopup.append(insertButton, updateButton);
+      }
     } else {
       const insertLink = _window.document.querySelector("#insert-note-link");
       if (insertLink) {
