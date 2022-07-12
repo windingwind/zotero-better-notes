@@ -708,38 +708,6 @@ class AddonEvents extends AddonBase {
         header.innerHTML = "Main Note";
         header.setAttribute("style", "font-size: medium");
         middle.append(header);
-
-        // Link popup listener
-        const container =
-          _window.document.getElementsByClassName("relative-container")[0];
-        const containerObserver = new MutationObserver(async (mutations) => {
-          for (const mut of mutations) {
-            for (const node of mut.addedNodes) {
-              // wait for ui ready
-              await Zotero.Promise.delay(20);
-              const linkElement = (node as Element).getElementsByTagName(
-                "a"
-              )[0];
-              if (!linkElement) {
-                return;
-              }
-              const linkObserver = new MutationObserver(async (linkMuts) => {
-                this._Addon.views.updateEditorPopupButtons(
-                  _window,
-                  linkElement.getAttribute("href")
-                );
-              });
-              linkObserver.observe(linkElement, { attributes: true });
-              this._Addon.views.updateEditorPopupButtons(
-                _window,
-                linkElement.getAttribute("href")
-              );
-            }
-          }
-        });
-        containerObserver.observe(container, {
-          childList: true,
-        });
       } else {
         // This is a preview knowledge, hide openWorkspace button add show close botton
         this._Addon.views.changeEditorButtonView(
@@ -998,8 +966,9 @@ class AddonEvents extends AddonBase {
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
       ) {
         // Update current line index
-        let selection =
-          message.content.editorInstance._iframeWindow.document.getSelection();
+        const _window = message.content.editorInstance._iframeWindow;
+        const selection = _window.document.getSelection();
+        const realElement = selection.focusNode.parentElement;
         let focusNode = selection.focusNode as XUL.Element;
         if (!focusNode) {
           return;
@@ -1044,9 +1013,7 @@ class AddonEvents extends AddonBase {
         if (diveTagNames.includes(focusNode.tagName)) {
           const eleList = this._Addon.parse.parseListElements(focusNode);
           for (const i in eleList) {
-            if (
-              selection.focusNode.parentElement.parentElement === eleList[i]
-            ) {
+            if (realElement.parentElement === eleList[i]) {
               currentLineIndex += Number(i);
               break;
             }
@@ -1055,6 +1022,32 @@ class AddonEvents extends AddonBase {
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
         console.log(currentLineIndex);
         this._Addon.knowledge.currentLine = currentLineIndex;
+        if (realElement.tagName === "A") {
+          let link = (realElement as HTMLLinkElement).href;
+          let linkedNote = (await this._Addon.knowledge.getNoteFromLink(link))
+            .item;
+          if (linkedNote) {
+            let t = 0;
+            let linkPopup = _window.document.querySelector(".link-popup");
+            while (
+              !(linkPopup && linkPopup.querySelector("a").href === link) &&
+              t < 100
+            ) {
+              t += 1;
+              linkPopup = _window.document.querySelector(".link-popup");
+              await Zotero.Promise.delay(30);
+            }
+            this._Addon.views.updateEditorPopupButtons(
+              message.content.editorInstance._iframeWindow,
+              link
+            );
+          } else {
+            this._Addon.views.updateEditorPopupButtons(
+              message.content.editorInstance._iframeWindow,
+              undefined
+            );
+          }
+        }
       }
     } else if (message.type === "addHeading") {
       /*
@@ -1140,6 +1133,48 @@ class AddonEvents extends AddonBase {
         -1,
         node.model.lineIndex
       );
+    } else if (message.type === "importLink") {
+      /*
+        message.content = {}
+      */
+      // let newLines = [];
+      // const convertResult = await this._Addon.knowledge.convertNoteLines(
+      //   note,
+      //   [],
+      //   true,
+      //   false
+      // );
+      // const subNoteLines = convertResult.lines;
+      // const templateText = await this._Addon.template.renderTemplateAsync(
+      //   "[QuickImport]",
+      //   "subNoteLines, subNoteItem, noteItem",
+      //   [subNoteLines, note, this._Addon.knowledge.getWorkspaceNote()]
+      // );
+      // newLines.push(templateText);
+      // const newLineString = newLines.join("\n");
+      // await this._Addon.knowledge.modifyLineInNote(
+      //   undefined,
+      //   (oldLine: string) => {
+      //     Zotero.debug(oldLine);
+      //     const params = this._Addon.parse.parseParamsFromLink(link);
+      //     if (!params.ignore) {
+      //       const newLink =
+      //         link + (link.includes("?") ? "&ignore=1" : "?ignore=1");
+      //       const linkIndex = this._Addon.parse.parseLinkIndexInText(oldLine);
+      //       Zotero.debug(linkIndex);
+      //       return `${oldLine.slice(0, linkIndex[0])}${newLink}${oldLine.slice(
+      //         linkIndex[1]
+      //       )}\n${newLineString}`;
+      //     }
+      //   },
+      //   this._Addon.knowledge.currentLine
+      // );
+      // await Zotero.DB.executeTransaction(async () => {
+      //   await Zotero.Notes.copyEmbeddedImages(
+      //     note,
+      //     this._Addon.knowledge.getWorkspaceNote()
+      //   );
+      // });
     } else if (message.type === "updateAutoAnnotation") {
       /*
         message.content = {

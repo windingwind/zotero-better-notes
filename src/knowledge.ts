@@ -293,29 +293,6 @@ class Knowledge extends AddonBase {
     }
   }
 
-  // Abandoned
-  async addLinesToNote(
-    note: ZoteroItem,
-    newLines: string[],
-    lineIndex: number
-  ) {
-    note = note || this.getWorkspaceNote();
-    if (!note) {
-      return;
-    }
-    let noteLines = this.getLinesInNote(note);
-    if (lineIndex < 0) {
-      lineIndex =
-        this.getWorkspaceNote().id === note.id && this.currentLine >= 0
-          ? this.currentLine
-          : noteLines.length;
-    } else if (lineIndex >= noteLines.length) {
-      lineIndex = noteLines.length;
-    }
-    await this.addLineToNote(note, newLines.join("\n"), lineIndex);
-    await this.scrollWithRefresh(lineIndex);
-  }
-
   _dataURLtoBlob(dataurl: string) {
     let parts = dataurl.split(",");
     let mime = parts[0].match(/:(.*?);/)[1];
@@ -545,7 +522,6 @@ class Knowledge extends AddonBase {
         .replace(headerStopReg, `</h${lineRank}>`),
       lineIndex
     );
-    await this.scrollWithRefresh(lineIndex);
   }
 
   moveHeaderLineInNote(

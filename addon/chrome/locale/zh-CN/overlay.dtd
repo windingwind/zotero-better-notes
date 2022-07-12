@@ -15,6 +15,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "提升标题层级">
+<!ENTITY zotero.__addonRef__.workspace.menu.importLink "导入选中的笔记链接内容">
+<!ENTITY zotero.__addonRef__.workspace.menu.updateLink "更新选中的笔记链接文本">
 <!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "自动插入新注释到笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.treeview "大纲: 树视图">
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "大纲: 思维导图">

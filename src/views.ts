@@ -381,8 +381,10 @@ class AddonViews extends AddonBase {
   }
 
   async updateEditorPopupButtons(_window: Window, link: string) {
-    const note: ZoteroItem = (await this._Addon.knowledge.getNoteFromLink(link))
-      .item;
+    const note: ZoteroItem = link
+      ? (await this._Addon.knowledge.getNoteFromLink(link)).item
+      : undefined;
+    // If the note is invalid, we remove the buttons
     if (note) {
       let insertButton = _window.document.getElementById("insert-note-link");
       if (insertButton) {
@@ -519,8 +521,18 @@ class AddonViews extends AddonBase {
         );
       });
       _window.document
-        .getElementsByClassName("link-popup")[0]
+        .querySelector(".link-popup")
         .append(insertButton, updateButton);
+    } else {
+      const insertLink = _window.document.querySelector("#insert-note-link");
+      if (insertLink) {
+        insertLink.remove();
+      }
+
+      const updateLink = _window.document.querySelector("#update-note-link");
+      if (updateLink) {
+        updateLink.remove();
+      }
     }
   }
 
