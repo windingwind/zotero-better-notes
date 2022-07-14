@@ -455,7 +455,8 @@ class AddonViews extends AddonBase {
               linkIndex[1]
             )}\n${newLineString}`;
           },
-          this._Addon.knowledge.currentLine
+          this._Addon.knowledge.currentLine,
+          true
         );
         // wait the first modify finish
         await notifyFlag.promise;

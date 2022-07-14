@@ -239,7 +239,8 @@ class Knowledge extends AddonBase {
   private async addLineToNote(
     note: ZoteroItem,
     text: string,
-    lineIndex: number
+    lineIndex: number,
+    forceMetadata: boolean = false
   ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -260,7 +261,7 @@ class Knowledge extends AddonBase {
     Zotero.debug(text);
 
     const editorInstance = this.getEditorInstance(note);
-    if (editorInstance) {
+    if (editorInstance && !forceMetadata) {
       // The note is opened. Add line via note editor
       console.log("Add note line via note editor");
       const _document = editorInstance._iframeWindow.document;
@@ -448,7 +449,8 @@ class Knowledge extends AddonBase {
   async modifyLineInNote(
     note: ZoteroItem,
     text: string | Function,
-    lineIndex: number
+    lineIndex: number,
+    forceMetadata: boolean = false
   ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -464,7 +466,7 @@ class Knowledge extends AddonBase {
       noteLines[lineIndex] = text(noteLines[lineIndex]);
     }
     const editorInstance = this.getEditorInstance(note);
-    if (editorInstance) {
+    if (editorInstance && !forceMetadata) {
       // The note is opened. Add line via note editor
       console.log("Modify note line via note editor");
       const _document = editorInstance._iframeWindow.document;

@@ -29,7 +29,7 @@ declare const OS: {
     exists: (path: string) => boolean | Promise<boolean>;
     read: (
       path: string | BufferSource,
-      options?: { encoding: string }
+      options?: { encoding?: string }
     ) =>
       | string
       | Promise<string>
@@ -82,6 +82,7 @@ declare const OS: {
 declare const NetUtil: { [attr: string]: any };
 
 declare interface ZoteroItem {
+  getFilePathAsync(): any;
   id: number;
   isRegularItem: () => boolean;
   isNote: () => boolean;

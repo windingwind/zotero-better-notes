@@ -1034,6 +1034,9 @@ class AddonEvents extends AddonBase {
         }
         Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
         console.log(currentLineIndex);
+        Zotero.debug(
+          `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
+        );
         this._Addon.knowledge.currentLine = currentLineIndex;
         if (realElement.tagName === "A") {
           let link = (realElement as HTMLLinkElement).href;
@@ -1220,7 +1223,8 @@ class AddonEvents extends AddonBase {
         await this._Addon.knowledge.addLineToNote(
           undefined,
           newLines.join("\n"),
-          -1
+          -1,
+          true
         );
       }
     } else if (message.type === "insertItemUsingTemplate") {
@@ -1289,7 +1293,8 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.addLineToNote(
         undefined,
         newLines.join("\n"),
-        -1
+        -1,
+        true
       );
       const mainNote = this._Addon.knowledge.getWorkspaceNote();
       await Zotero.DB.executeTransaction(async () => {
@@ -1360,7 +1365,8 @@ class AddonEvents extends AddonBase {
       await this._Addon.knowledge.addLineToNote(
         undefined,
         newLines.join("\n"),
-        -1
+        -1,
+        true
       );
     } else if (message.type === "editTemplate") {
       /*
