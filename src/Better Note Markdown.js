@@ -1658,7 +1658,9 @@ let bundle;
                 var annotation = JSON.parse(
                   decodeURIComponent(node.getAttribute("data-annotation"))
                 );
-              } catch (e) {}
+              } catch (e) {
+                Zotero.debug(e);
+              }
 
               if (annotation) {
                 // annotation.uri was used before note-editor v4
@@ -1675,7 +1677,7 @@ let bundle;
                   let openURI;
                   let uriParts = uri.split("/");
                   let libraryType = uriParts[3];
-                  let key = uri.split("/").pop();
+                  let key = uriParts[6];
                   Zotero.debug(key);
                   if (libraryType === "users") {
                     openURI = "zotero://open-pdf/library/items/" + key;
@@ -1715,9 +1717,20 @@ let bundle;
 
           for (img of doc.querySelectorAll("img[data-attachment-key]")) {
             let imgKey = img.getAttribute("data-attachment-key");
+            try {
+              var annotation = JSON.parse(
+                decodeURIComponent(img.getAttribute("data-annotation"))
+              );
+            } catch (e) {
+              Zotero.debug(e);
+            }
+
             const params = {};
             const router = new _Zotero.Router(params);
             router.add("zotero.org/users/:libKey/items/:itemKey", () => {
+              params.libKey = 1;
+            });
+            router.add("zotero.org/users/local/:libKey/items/:itemKey", () => {
               params.libKey = 1;
             });
             router.add("zotero.org/groups/:libKey/items/:itemKey", () => {
@@ -1725,8 +1738,9 @@ let bundle;
                 params.libKey
               );
             });
-            router.run(item.uri.split("://").pop());
+            router.run(annotation.attachmentURI.split("://").pop());
             console.log(params);
+            console.log(item);
 
             const attachmentItem = await _Zotero.Items.getByLibraryAndKeyAsync(
               params.libKey,

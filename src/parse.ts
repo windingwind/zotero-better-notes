@@ -105,13 +105,13 @@ class AddonParse extends AddonBase {
       for (const tag of forceInline) {
         const startReg = `<${tag}>`;
         const isStart = line.includes(startReg);
-        if (isStart) {
+        const endReg = `</${tag}>`;
+        const isEnd = line.includes(endReg);
+        if (isStart && !isEnd) {
           forceInlineStack.push(tag);
           forceInlineFlag = true;
           break;
         }
-        const endReg = `</${tag}>`;
-        const isEnd = line.includes(endReg);
         if (isEnd) {
           forceInlineStack.pop();
           // Exit force inline mode if the stack is empty
