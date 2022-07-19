@@ -3,6 +3,12 @@ import { AddonBase, EditorMessage } from "./base";
 class AddonEvents extends AddonBase {
   notifierCallback: object;
   notifierCbkDict: any;
+  // Important!
+  // Due to unknown reasons, the DOMParser constructor fails after the tab is opened.
+  // We restore it from the preserved object constructor.
+  // We init this object when the addon is initialized for later use.
+  // See src/knowledge.ts
+  _DOMParser: DOMParser;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this.notifierCallback = {
@@ -113,6 +119,7 @@ class AddonEvents extends AddonBase {
       },
     };
     this.notifierCbkDict = {};
+    this._DOMParser = new DOMParser();
   }
 
   public async onInit() {
