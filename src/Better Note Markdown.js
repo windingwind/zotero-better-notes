@@ -1677,7 +1677,7 @@ let bundle;
                   let openURI;
                   let uriParts = uri.split("/");
                   let libraryType = uriParts[3];
-                  let key = uriParts[6];
+                  let key = uriParts[uriParts.length - 1];
                   Zotero.debug(key);
                   if (libraryType === "users") {
                     openURI = "zotero://open-pdf/library/items/" + key;
