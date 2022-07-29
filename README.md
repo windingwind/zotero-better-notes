@@ -46,6 +46,10 @@ And the linked sub-notes will also be updated automatically!
    <img src="./image/README/latex.gif" width="400px"></img>  
   For multiline math, please use `shift+enter` to change line.
 
+- Annotation2Note  
+   <img src="./image/README/markdowncomment.png" width="400px"></img>  
+  Create a note from annotation by just on click. `markdown` is supported!
+
 - Heading mark  
   <img src="./image/README/headingmark.png" width="400px"></img>
 
