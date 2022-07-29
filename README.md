@@ -28,17 +28,30 @@ Use customized templates to import data from items/notes!
 
 [Template Usage](./TemplateUsage.md)
 
-Discuss & contribute your templates [here](https://github.com/windingwind/zotero-better-notes/issues/23)
+Find templates contributed by the community here: [Template Market](https://github.com/windingwind/zotero-better-notes/issues/85)
+
+## Auto-Sync to Files
+
+Keep the MarkDown version of your notes in sync with the latest changes inside Zotero is extremely easy now!
+
+Just click 'Auto Sync to Export Path' the first time you export your note. Do not require any third-party tools!
+
+And the linked sub-notes will also be updated automatically!
+
+![template](./image/README/sync.png)
 
 ## Note Enhancements
 
 - `LaTex` view  
-  <img src="./image/README/latex.gif" width="400px"></img>
+   <img src="./image/README/latex.gif" width="400px"></img>  
+  For multiline math, please use `shift+enter` to change line.
 
-- Copy annotation image to clipboard  
+- Heading mark  
+  <img src="./image/README/headingmark.png" width="400px"></img>
+
+- Copy annotation image to clipboard(Windows only)  
   <img src="./image/README/copyimage.png" width="400px"></img>
 
-- Heading indent
 - Cite Items
 - Image resizing(comming soon)
 
@@ -128,5 +141,6 @@ Part of the code of this repo refers to other open-source projects within the al
 
 ## My Other Zotero Addons
 
+- [zotero-pdf-preview](https://github.com/windingwind/zotero-pdf-preview) PDF preview for Zotero
 - [zotero-pdf-translate](https://github.com/windingwind/zotero-pdf-translate) PDF translation for Zotero 6
 - [zotero-tag](https://github.com/windingwind/zotero-tag) Automatically tag items/Batch tagging
