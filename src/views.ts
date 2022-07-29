@@ -671,7 +671,7 @@ class AddonViews extends AddonBase {
         addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
       });
       moreButton.before(addAnnotationNoteButton);
-      if (annotationItem.annotationType === "image") {
+      if (annotationItem.annotationType === "image" && Zotero.isWin) {
         // Customize image copy
         const copyImageButton = _document.createElement("div");
         copyImageButton.setAttribute("style", "margin: 5px;");
