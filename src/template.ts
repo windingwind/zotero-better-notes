@@ -31,7 +31,7 @@ class AddonTemplate extends AddonBase {
       },
       {
         name: "[QuickNote]",
-        text: '<p>${annotationItem.annotationComment ? annotationItem.annotationComment : `<span style="background-color: ${annotationItem.annotationColor ? annotationItem.annotationColor : "#ffd400"}">Annotation</span>`}</p>',
+        text: '<p>${annotationItem.annotationComment ? Zotero.Knowledge4Zotero.parse.parseMDToHTML(annotationItem.annotationComment) : `<span style="background-color: ${annotationItem.annotationColor ? annotationItem.annotationColor : "#ffd400"}">Annotation</span>`}</p>',
         disabled: false,
       },
       {
