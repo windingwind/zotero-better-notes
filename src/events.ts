@@ -613,7 +613,7 @@ class AddonEvents extends AddonBase {
 
               const fullPageStyle = document.createElement("style");
               fullPageStyle.innerHTML =
-                "@page { margin: 0; } @media print{ body { height : auto}}";
+                "@page { margin: 0; } @media print{ body { height : auto; -webkit-print-color-adjust: exact; color-adjust: exact; }}";
               document.body.append(fullPageStyle);
 
               let t = 0;
