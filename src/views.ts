@@ -827,7 +827,10 @@ class AddonViews extends AddonBase {
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()
-      .filter((e) => e.name.indexOf(type) !== -1);
+      .filter((e) => e.name.indexOf(type) !== -1)
+      .filter(
+        (e) => !this._Addon.template._systemTemplateNames.includes(e.name)
+      );
     const popup = _window.document.getElementById(
       `menu_insert${type}TemplatePopup`
     );
