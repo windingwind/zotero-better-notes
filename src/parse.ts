@@ -1,4 +1,5 @@
 import { AddonBase } from "./base";
+import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 const TreeModel = require("./treemodel");
 
 class AddonParse extends AddonBase {
@@ -339,6 +340,14 @@ class AddonParse extends AddonBase {
     } catch (e) {
       return "";
     }
+  }
+
+  parseMDToHTML(str: string): string {
+    return Markdown2HTML(str);
+  }
+
+  parseHTMLToMD(str: string): string {
+    return HTML2Markdown(str);
   }
 }
 

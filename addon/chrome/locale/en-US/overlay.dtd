@@ -18,6 +18,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.importLink "Import Selected Note Link Content">
 <!ENTITY zotero.__addonRef__.workspace.menu.updateLink "Update Selected Note Link Text">
 <!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "Auto Insert New Annotations to Note">
+<!ENTITY zotero.__addonRef__.workspace.menu.convertmd "Convert MarkDown In Clipboard">
 <!ENTITY zotero.__addonRef__.workspace.menu.treeview "Outline: Tree View">
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">

@@ -40,6 +40,7 @@
         <!-- <command id="cmd_importlink_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'importLink'});" />
         <command id="cmd_updatelink_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateLink'});" /> -->
         <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateAutoAnnotation'});" />
+        <command id="cmd_convertmd_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'convertMD'});" />
         <command id="cmd_treeview_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(1);" />
         <command id="cmd_mindmap_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
         <command id="cmd_bubblemap_betternotes" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
@@ -86,6 +87,8 @@
         <menuitem id="menu_updatelink_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.updateLink;" command="cmd_updatelink_betternotes" /> -->
         <menuseparator />
         <menuitem id="menu_autoannotation_betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.autoannotation;" command="cmd_autoannotation_betternotes" />
+        <menuseparator />
+        <menuitem id="menu_convertmd_betternotes" label="&zotero.__addonRef__.workspace.menu.convertmd;" command="cmd_convertmd_betternotes" />
     </menupopup>
 
     <menupopup id="menu_viewPopup">

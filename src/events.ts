@@ -1684,6 +1684,42 @@ class AddonEvents extends AddonBase {
         "Better Notes",
         "Image copied to clipboard."
       );
+    } else if (message.type == "convertMD") {
+      /*
+        message.content = {}
+      */
+      const source = Zotero.Utilities.Internal.getClipboard("text/unicode");
+      if (!source) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "No MarkDown found."
+        );
+        return;
+      }
+      const html = this._Addon.parse.parseMDToHTML(source);
+      console.log(source, html);
+      let transferable = Components.classes[
+        "@mozilla.org/widget/transferable;1"
+      ].createInstance(Components.interfaces.nsITransferable);
+      let clipboardService = Components.classes[
+        "@mozilla.org/widget/clipboard;1"
+      ].getService(Components.interfaces.nsIClipboard);
+      const str = Components.classes[
+        "@mozilla.org/supports-string;1"
+      ].createInstance(Components.interfaces.nsISupportsString);
+      str.data = html;
+      transferable.addDataFlavor("text/html");
+      transferable.setTransferData("text/html", str, html.length * 2);
+
+      clipboardService.setData(
+        transferable,
+        null,
+        Components.interfaces.nsIClipboard.kGlobalClipboard
+      );
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        "Converted MarkDown is updated to the clipboard. You can paste them in the note."
+      );
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }
