@@ -8,6 +8,7 @@ class Knowledge extends AddonBase {
   workspaceWindow: Window;
   workspaceTabId: string;
   workspaceNoteEditor: EditorInstance;
+  _firstInit: boolean;
   _exportPath: string;
   _exportFileDict: object;
   _exportPromise: any;
@@ -15,6 +16,7 @@ class Knowledge extends AddonBase {
   _pdfPrintPromise: any;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
+    this._firstInit = true;
     this.currentLine = -1;
     this.currentNodeID = -1;
     this._pdfNoteId = -1;
@@ -53,6 +55,7 @@ class Knowledge extends AddonBase {
         this.closeWorkspaceWindow();
       }
     }
+    this._firstInit = true;
     if (type === "window") {
       Zotero.debug("openWorkspaceWindow: as window");
       this._Addon.views._initIframe = Zotero.Promise.defer();
@@ -189,14 +192,15 @@ class Knowledge extends AddonBase {
     noteEditor.parent = null;
     noteEditor.item = note;
     if (!noteEditor || !noteEditor.getCurrentInstance()) {
-      noteEditor.initEditor();
+      await noteEditor.initEditor();
     }
 
-    await noteEditor._initPromise;
-    let t = 0;
-    while (!noteEditor.getCurrentInstance() && t < 500) {
-      t += 1;
-      await Zotero.Promise.delay(10);
+    await noteEditor._editorInstance._initPromise;
+    // Due to unknown reasons, only after the second init the editor will be correctly loaded.
+    // Thus we must init it twice
+    if (this._firstInit) {
+      this._firstInit = false;
+      await noteEditor.initEditor();
     }
     await this._Addon.events.onEditorEvent(
       new EditorMessage("enterWorkspace", {
