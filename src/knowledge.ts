@@ -365,16 +365,7 @@ class Knowledge extends AddonBase {
     if (!note) {
       return;
     }
-    let annotationJSONList = [];
-    for (const annot of annotations) {
-      const annotJson = await this._Addon.parse.parseAnnotation(annot);
-      annotationJSONList.push(annotJson);
-    }
-    await this.importImagesToNote(note, annotationJSONList);
-    const html =
-      Zotero.EditorInstanceUtilities.serializeAnnotations(
-        annotationJSONList
-      ).html;
+    const html = await this._Addon.parse.parseAnnotationHTML(note, annotations);
     this.addLineToNote(note, html, lineIndex);
   }
 

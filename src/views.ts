@@ -608,53 +608,10 @@ class AddonViews extends AddonBase {
         itemKey
       );
 
-      const annotations = [await reader._getAnnotation(annotationItem)].map(
-        ({
-          id,
-          type,
-          text,
-          color,
-          comment,
-          image,
-          position,
-          pageLabel,
-          tags,
-        }) => {
-          if (image) {
-            let img = _document.querySelector(
-              `[data-sidebar-annotation-id="${id}"] img`
-            );
-            if (img) {
-              function getImageDataURL(img) {
-                var canvas = _document.createElement("canvas");
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-                return canvas.toDataURL("image/png");
-              }
-              image = getImageDataURL(img);
-            }
-          }
-          return {
-            id,
-            type,
-            attachmentItemID: reader.itemID,
-            text: text ? text.trim() : text,
-            color,
-            comment: comment ? comment.trim() : comment,
-            image,
-            position,
-            pageLabel,
-            tags,
-          };
-        }
-      );
       addAnnotationNoteButton.addEventListener("click", (e) => {
         this._Addon.events.onEditorEvent(
           new EditorMessage("addAnnotationNote", {
             params: {
-              annotations: annotations,
               annotationItem: annotationItem,
             },
           })

@@ -218,6 +218,23 @@ class AddonParse extends AddonBase {
     }
   }
 
+  async parseAnnotationHTML(note: ZoteroItem, annotations: ZoteroItem[]) {
+    if (!note) {
+      return;
+    }
+    let annotationJSONList = [];
+    for (const annot of annotations) {
+      const annotJson = await this._Addon.parse.parseAnnotation(annot);
+      annotationJSONList.push(annotJson);
+    }
+    await this._Addon.knowledge.importImagesToNote(note, annotationJSONList);
+    const html =
+      Zotero.EditorInstanceUtilities.serializeAnnotations(
+        annotationJSONList
+      ).html;
+    return html;
+  }
+
   parseLinkInText(text: string): string {
     // Must end with "
     const linkIndex = text.search(/zotero:\/\/note\//g);
