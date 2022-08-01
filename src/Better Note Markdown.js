@@ -1800,7 +1800,8 @@ let bundle;
                   if (typeof uri === "string") {
                     let uriParts = uri.split("/");
                     let libraryType = uriParts[3];
-                    let key = uriParts[6];
+                    let key = uriParts[uriParts.length - 1];
+                    Zotero.debug(key);
                     if (libraryType === "users") {
                       uris.push("zotero://select/library/items/" + key);
                     }
