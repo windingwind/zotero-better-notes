@@ -741,8 +741,10 @@ class Knowledge extends AddonBase {
         const translator = new Zotero.Translate.Export();
         translator.setItems([newNote]);
         translator.setLocation(Zotero.File.pathToFile(filename));
+        this._exportPromise = Zotero.Promise.defer();
         translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
         translator.translate();
+        await this._exportPromise.promise;
         this._Addon.views.showProgressWindow(
           "Better Notes",
           `Note Saved to ${filename}`

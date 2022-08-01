@@ -103,10 +103,6 @@ class AddonSync extends AddonBase {
 
   getSyncNoteIds(): Number[] {
     const ids = Zotero.Prefs.get("Knowledge4Zotero.syncNoteIds");
-    if (typeof ids === "undefined") {
-      Zotero.Prefs.set("Knowledge4Zotero.syncNoteIds", "");
-      return [];
-    }
     return ids.split(",").map((id: string) => Number(id));
   }
 

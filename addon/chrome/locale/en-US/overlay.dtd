@@ -39,6 +39,8 @@
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to MarkDown File">
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "Export Linked Notes to MarkDown File">
 <!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "Auto Sync to Export Path">
+<!ENTITY zotero.__addonRef__.export.highlight.enable.label "Show Highlight">
+<!ENTITY zotero.__addonRef__.export.convertsquare.enable.label "Convert Square Brackets[]">
 <!ENTITY zotero.__addonRef__.export.richtext.label "RichText(MS Word) Settings">
 <!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
 <!ENTITY zotero.__addonRef__.export.pdf.label "PDF Settings">

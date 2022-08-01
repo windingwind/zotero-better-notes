@@ -41,6 +41,22 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportAutoSync;
     }
+    let exportHighlight = Zotero.Prefs.get("Knowledge4Zotero.exportHighlight");
+    if (typeof exportHighlight !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-enablehighlight"
+        ) as XUL.Checkbox
+      ).checked = exportHighlight;
+    }
+    let convertSquare = Zotero.Prefs.get("Knowledge4Zotero.convertSquare");
+    if (typeof convertSquare !== "undefined") {
+      (
+        this._window.document.getElementById(
+          "Knowledge4Zotero-export-convertsquare"
+        ) as XUL.Checkbox
+      ).checked = exportHighlight;
+    }
     let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink");
     if (typeof embedLink !== "undefined") {
       (
@@ -89,6 +105,13 @@ class AddonExport extends AddonBase {
     let exportAutoSync = this._window.document.getElementById(
       "Knowledge4Zotero-export-enableautosync"
     ) as XUL.Checkbox;
+    let exportHighlight = this._window.document.getElementById(
+      "Knowledge4Zotero-export-enablehighlight"
+    ) as XUL.Checkbox;
+    let convertSquare = this._window.document.getElementById(
+      "Knowledge4Zotero-export-convertsquare"
+    ) as XUL.Checkbox;
+
 
     if (event) {
       if (
@@ -118,6 +141,9 @@ class AddonExport extends AddonBase {
     } else {
       exportAutoSync.disabled = true;
     }
+
+    exportHighlight.disabled = !exportFile.checked;
+    convertSquare.disabled = !exportFile.checked;
   }
   doUnload() {
     this.io.deferred && this.io.deferred.resolve();
@@ -137,6 +163,16 @@ class AddonExport extends AddonBase {
     let exportAutoSync = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enableautosync"
+      ) as XUL.Checkbox
+    ).checked;
+    let exportHighlight = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-enablehighlight"
+      ) as XUL.Checkbox
+    ).checked;
+    let convertSquare = (
+      this._window.document.getElementById(
+        "Knowledge4Zotero-export-convertsquare"
       ) as XUL.Checkbox
     ).checked;
     let embedLink = (
@@ -162,6 +198,8 @@ class AddonExport extends AddonBase {
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportSingleFile", exportSingleFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportAutoSync", exportAutoSync);
+    Zotero.Prefs.set("Knowledge4Zotero.exportHighlight", exportHighlight);
+    Zotero.Prefs.set("Knowledge4Zotero.convertSquare", convertSquare);
     Zotero.Prefs.set("Knowledge4Zotero.embedLink", embedLink);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
     Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);

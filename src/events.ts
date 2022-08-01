@@ -1731,13 +1731,6 @@ class AddonEvents extends AddonBase {
     this._Addon.template.getCitationStyle();
     // Initialize sync notes
     this._Addon.sync.getSyncNoteIds();
-    // Initialize sync period
-    // Default sync period is 10s
-    if (
-      typeof Zotero.Prefs.get("Knowledge4Zotero.syncPeriod") === "undefined"
-    ) {
-      this._Addon.syncList.changeSyncPeriod(10);
-    }
     this._Addon.views.updateAutoInsertAnnotationsMenu();
   }
 }

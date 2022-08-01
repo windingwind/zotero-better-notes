@@ -450,6 +450,9 @@ let bundle;
                   (global.TurndownService = factory()));
             })(this, function () {
               "use strict";
+              var _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
+                Components.interfaces.nsISupports
+              ).wrappedJSObject;
 
               function extend(destination) {
                 for (var i = 1; i < arguments.length; i++) {
@@ -902,6 +905,20 @@ let bundle;
                 },
               };
 
+              rules.backgroundColor = {
+                filter: function (node) {
+                  return (
+                    node.nodeName === "SPAN" &&
+                    node.style["background-color"] &&
+                    _Zotero.Prefs.get("Knowledge4Zotero.exportHighlight")
+                  );
+                },
+
+                replacement: function (content, node) {
+                  return `<span style="background-color: ${node.style["background-color"]}">${content}</span>`;
+                },
+              };
+
               function cleanAttribute(attribute) {
                 return attribute ? attribute.replace(/(\n+\s*)+/g, "\n") : "";
               }
@@ -1331,12 +1348,15 @@ let bundle;
                 [/^(#{1,6}) /g, "\\$1 "],
                 [/`/g, "\\`"],
                 [/^~~~/g, "\\~~~"],
-                [/\[/g, "\\["],
-                [/\]/g, "\\]"],
                 [/^>/g, "\\>"],
                 // [/_/g, "\\_"],
                 [/^(\d+)\. /g, "$1\\. "],
               ];
+
+              if (_Zotero.Prefs.get("Knowledge4Zotero.convertSquare")) {
+                escapes.push([/\[/g, "\\["]);
+                escapes.push([/\]/g, "\\]"]);
+              }
 
               function TurndownService(options) {
                 if (!(this instanceof TurndownService))

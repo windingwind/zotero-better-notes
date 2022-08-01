@@ -42,6 +42,14 @@
                     <checkbox id="__addonRef__-export-enableautosync" tooltiptext="&zotero.__addonRef__.export.workwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" checked="false" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.enableautosync.enable.label;" tooltiptext="Only work with &zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>
+                <row>
+                    <checkbox id="__addonRef__-export-enablehighlight" />
+                    <label value="&zotero.__addonRef__.export.highlight.enable.label;" />
+                </row>
+                <row>
+                    <checkbox id="__addonRef__-export-convertsquare" />
+                    <label value="&zotero.__addonRef__.export.convertsquare.enable.label;" />
+                </row>
             </rows>
         </groupbox>
         <groupbox flex="1">

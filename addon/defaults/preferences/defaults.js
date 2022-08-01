@@ -1,0 +1,12 @@
+pref("extensions.zotero.Knowledge4Zotero.syncNoteIds", "");
+pref("extensions.zotero.Knowledge4Zotero.syncPeriod", 10000);
+pref("extensions.zotero.Knowledge4Zotero.autoAnnotation", false);
+pref("extensions.zotero.Knowledge4Zotero.exportFile", true);
+pref("extensions.zotero.Knowledge4Zotero.exportSingleFile", false);
+pref("extensions.zotero.Knowledge4Zotero.exportAutoSync", false);
+pref("extensions.zotero.Knowledge4Zotero.exportHighlight", true);
+pref("extensions.zotero.Knowledge4Zotero.convertSquare", true);
+pref("extensions.zotero.Knowledge4Zotero.embedLink", true);
+pref("extensions.zotero.Knowledge4Zotero.exportNote", false);
+pref("extensions.zotero.Knowledge4Zotero.exportCopy", false);
+pref("extensions.zotero.Knowledge4Zotero.exportPDF", false);
