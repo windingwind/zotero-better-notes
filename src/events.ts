@@ -560,18 +560,17 @@ class AddonEvents extends AddonBase {
         "builtin"
       );
 
-      message.content.editorInstance._iframeWindow.document.addEventListener(
-        "keyup",
-        (e) => {
-          if (e.ctrlKey && e.key === "/") {
-            this.onEditorEvent(
-              new EditorMessage("switchEditorTex", {
-                editorInstance: message.content.editorInstance,
-              })
-            );
-          }
+      message.content.editorInstance._iframeWindow.document.onkeyup = (e) => {
+        if (e.ctrlKey && e.key === "/") {
+          console.log(e);
+          this.onEditorEvent(
+            new EditorMessage("switchEditorTex", {
+              editorInstance: message.content.editorInstance,
+            })
+          );
+          e.stopPropagation();
         }
-      );
+      };
 
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
