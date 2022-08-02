@@ -104,7 +104,7 @@ class AddonParse extends AddonBase {
 
       // For self inline tags, cache start as previous line and end as next line
       for (const tag of forceInline) {
-        const startReg = `<${tag}>`;
+        const startReg = `<${tag}`;
         const isStart = line.includes(startReg);
         const endReg = `</${tag}>`;
         const isEnd = line.includes(endReg);
@@ -125,14 +125,14 @@ class AddonParse extends AddonBase {
 
       // For self inline tags, cache start as previous line and end as next line
       for (const tag of selfInline) {
-        const isStart = line.includes(`<${tag}>`);
-        if (isStart) {
+        const isStart = line.includes(`<${tag}`);
+        const isEnd = line.includes(`</${tag}>`);
+        if (isStart && !isEnd) {
           selfInlineFlag = true;
           nextLineCache.push(line);
           break;
         }
-        const isEnd = line.includes(`</${tag}>`);
-        if (isEnd) {
+        if (!isStart && isEnd) {
           selfInlineFlag = true;
           previousLineCache.push(line);
           break;
