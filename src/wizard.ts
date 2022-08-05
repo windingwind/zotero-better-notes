@@ -255,9 +255,14 @@ class AddonWizard extends AddonBase {
   async setup() {
     if (this.enableSetup) {
       if (this.enableCollection && this.collectionName.trim().length > 0) {
-        const collection = new Zotero.Collection();
-        collection.name = this.collectionName;
-        await collection.saveTx();
+        let collection = Zotero.Collections.getLoaded()
+          .filter((c) => !c.parentID)
+          .find((c) => c.name === this.collectionName);
+        if (!collection) {
+          collection = new Zotero.Collection();
+          collection.name = this.collectionName;
+          await collection.saveTx();
+        }
       }
       if (this.enableNote) {
         const noteID = await ZoteroPane_Local.newNote();

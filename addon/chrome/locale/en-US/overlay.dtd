@@ -22,7 +22,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.treeview "Outline: Tree View">
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">
-<!ENTITY zotero.__addonRef__.workspace.menu.guide "Open User Guide">
+<!ENTITY zotero.__addonRef__.workspace.menu.guide "Better Notes User Guide">
 <!ENTITY zotero.__addonRef__.workspace.menu.about "About Better Notes">
 
 <!ENTITY zotero.__addonRef__.itemmenu.setMainKnowledge.label "Set Main Note">

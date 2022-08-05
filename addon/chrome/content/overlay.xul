@@ -102,8 +102,8 @@
     </menupopup>
 
     <menupopup id="menu_HelpPopup">
-        <menuseparator class="menu-type-betternotes" />
-        <menuitem id="menu_guide_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide_betternotes" />
-        <menuitem id="menu_about_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about_betternotes" />
+        <menuseparator />
+        <menuitem id="menu_guide_betternotes" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide_betternotes" />
+        <menuitem id="menu_about_betternotes" label="&zotero.__addonRef__.workspace.menu.about;" command="cmd_about_betternotes" />
     </menupopup>
 </overlay>
