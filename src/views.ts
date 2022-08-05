@@ -556,7 +556,7 @@ class AddonViews extends AddonBase {
         Zotero.debug(newLine);
         noteLines[this._Addon.knowledge.currentLine] = newLine;
 
-        this._Addon.knowledge.setLinesToNote(undefined, noteLines);
+        await this._Addon.knowledge.setLinesToNote(undefined, noteLines);
         this._Addon.knowledge.scrollWithRefresh(
           this._Addon.knowledge.currentLine
         );

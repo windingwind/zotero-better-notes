@@ -223,7 +223,7 @@ class Knowledge extends AddonBase {
     return this._Addon.parse.parseHTMLLines(noteText);
   }
 
-  setLinesToNote(note: ZoteroItem, noteLines: string[]) {
+  async setLinesToNote(note: ZoteroItem, noteLines: string[]) {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return [];
@@ -241,7 +241,7 @@ class Knowledge extends AddonBase {
       );
     }
 
-    note.saveTx();
+    await note.saveTx();
   }
 
   private async addLineToNote(
@@ -295,7 +295,7 @@ class Knowledge extends AddonBase {
       // insert after current line
       lineIndex += 1;
       noteLines.splice(lineIndex, 0, text);
-      this.setLinesToNote(note, noteLines);
+      await this.setLinesToNote(note, noteLines);
       if (this.getWorkspaceNote().id === note.id) {
         await this.scrollWithRefresh(lineIndex);
       }
@@ -366,7 +366,8 @@ class Knowledge extends AddonBase {
       return;
     }
     const html = await this._Addon.parse.parseAnnotationHTML(note, annotations);
-    this.addLineToNote(note, html, lineIndex);
+    await this.addLineToNote(note, html, lineIndex);
+    return html;
   }
 
   addLinkToNote(
@@ -486,7 +487,7 @@ class Knowledge extends AddonBase {
         currentElement.offsetTop
       );
     } else {
-      this.setLinesToNote(note, noteLines);
+      await this.setLinesToNote(note, noteLines);
       await this.scrollWithRefresh(lineIndex);
     }
   }
@@ -701,7 +702,7 @@ class Knowledge extends AddonBase {
         convertNoteLinks
       );
 
-      this.setLinesToNote(newNote, convertResult.lines);
+      await this.setLinesToNote(newNote, convertResult.lines);
       Zotero.debug(convertResult.subNotes);
 
       await Zotero.DB.executeTransaction(async () => {
@@ -858,7 +859,7 @@ class Knowledge extends AddonBase {
             true
           );
 
-          this.setLinesToNote(newNote, convertResult.lines);
+          await this.setLinesToNote(newNote, convertResult.lines);
           Zotero.debug(convertResult.subNotes);
 
           await Zotero.DB.executeTransaction(async () => {

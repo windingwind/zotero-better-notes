@@ -102,7 +102,7 @@ class AddonParse extends AddonBase {
       // restore self inline flag
       selfInlineFlag = false;
 
-      // For self inline tags, cache start as previous line and end as next line
+      // For force inline tags, set flag to append lines to current line
       for (const tag of forceInline) {
         const startReg = `<${tag}`;
         const isStart = line.includes(startReg);
@@ -163,6 +163,27 @@ class AddonParse extends AddonBase {
       }
     }
     return parsedLines;
+  }
+
+  parseHTMLElements(doc: HTMLElement): Element[] {
+    let currentLineIndex = 0;
+    let currentElement: Element;
+    let elements: Element[] = [];
+
+    const diveTagNames = ["OL", "UL", "LI"];
+    for (const e of doc.children) {
+      if (diveTagNames.includes(e.tagName)) {
+        const innerLines = this.parseListElements(e);
+        currentLineIndex += innerLines.length;
+        currentElement = innerLines[innerLines.length - 1];
+        elements = elements.concat(innerLines);
+      } else {
+        currentLineIndex += 1;
+        currentElement = e;
+        elements.push(e);
+      }
+    }
+    return elements;
   }
 
   parseHTMLLineElement(doc: HTMLElement, lineIndex: number): Element {

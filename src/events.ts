@@ -907,7 +907,7 @@ class AddonEvents extends AddonBase {
         }
       */
       const annotations = message.content.params.annotations;
-      await this._Addon.knowledge.addAnnotationsToNote(
+      const html = await this._Addon.knowledge.addAnnotationsToNote(
         undefined,
         annotations,
         -1
@@ -920,9 +920,16 @@ class AddonEvents extends AddonBase {
             : "end of"
         } main note`
       );
-      // Move cursor foward
       if (this._Addon.knowledge.currentLine >= 0) {
-        this._Addon.knowledge.currentLine += annotations.length;
+        // Compute annotation lines length
+        const temp = document.createElementNS(
+          "http://www.w3.org/1999/xhtml",
+          "div"
+        );
+        temp.innerHTML = html;
+        const elementList = this._Addon.parse.parseHTMLElements(temp);
+        // Move cursor foward
+        this._Addon.knowledge.currentLine += elementList.length;
       }
     } else if (message.type === "jumpNode") {
       /*
