@@ -745,6 +745,9 @@ class AddonViews extends AddonBase {
     Zotero.debug("Knowledge4Zotero: updateMindMap");
     // await this._initIframe.promise;
     const _window = this._Addon.knowledge.getWorkspaceWindow();
+    if (!_window) {
+      return;
+    }
     const iframe = _window.document.getElementById(
       "mindmapIframe"
     ) as HTMLIFrameElement;
