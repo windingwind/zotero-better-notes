@@ -906,6 +906,9 @@ class AddonViews extends AddonBase {
     const _window = this._Addon.knowledge.workspaceTabId
       ? window
       : this._Addon.knowledge.getWorkspaceWindow();
+    if (!_window) {
+      return;
+    }
     Zotero.debug("updateWordCount");
 
     const menuitem = _window.document.getElementById(
