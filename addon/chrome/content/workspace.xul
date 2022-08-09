@@ -20,7 +20,7 @@
     %knowledgeDTD;
 ]>
 
-<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height sizemode" windowtype="zotero:knowledgeWorkspace" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+<window id="zotero-knowledge-workspace" orient="vertical" width="1000" height="350" title="&zotero.__addonRef__.workspace.title;" persist="screenX screenY width height sizemode" windowtype="zotero:knowledgeWorkspace" onload="Zotero.Knowledge4Zotero.knowledge._workspacePromise.resolve()" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
 
     <script src="chrome://zotero/content/include.js" />
 

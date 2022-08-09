@@ -9,6 +9,7 @@ class Knowledge extends AddonBase {
   workspaceTabId: string;
   workspaceNoteEditor: EditorInstance;
   _firstInit: boolean;
+  _workspacePromise: any;
   _exportPath: string;
   _exportFileDict: object;
   _exportPromise: any;
@@ -55,6 +56,7 @@ class Knowledge extends AddonBase {
         this.closeWorkspaceWindow();
       }
     }
+    this._workspacePromise = Zotero.Promise.defer();
     this._firstInit = true;
     if (type === "window") {
       Zotero.debug("openWorkspaceWindow: as window");
@@ -131,11 +133,8 @@ class Knowledge extends AddonBase {
       return false;
     }
     let t = 0;
-    while (_window.document.readyState !== "complete" && t < 500) {
-      t += 1;
-      await Zotero.Promise.delay(10);
-    }
-    return t < 500;
+    await this._workspacePromise.promise;
+    return true;
   }
 
   async getWorkspaceEditor(type: "main" | "preview" = "main") {
@@ -187,6 +186,26 @@ class Knowledge extends AddonBase {
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
+    if (!noteEditor._initialized) {
+      noteEditor._iframe.contentWindow.addEventListener(
+        "drop",
+        (event) => {
+          noteEditor._iframe.contentWindow.wrappedJSObject.droppedData =
+            Components.utils.cloneInto(
+              {
+                "text/plain": event.dataTransfer.getData("text/plain"),
+                "text/html": event.dataTransfer.getData("text/html"),
+                "zotero/annotation":
+                  event.dataTransfer.getData("zotero/annotation"),
+                "zotero/item": event.dataTransfer.getData("zotero/item"),
+              },
+              noteEditor._iframe.contentWindow
+            );
+        },
+        true
+      );
+      noteEditor._initialized = true;
+    }
     noteEditor.mode = "edit";
     noteEditor.viewMode = "library";
     noteEditor.parent = null;
