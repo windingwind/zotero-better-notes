@@ -55,7 +55,7 @@ class AddonExport extends AddonBase {
         this._window.document.getElementById(
           "Knowledge4Zotero-export-convertsquare"
         ) as XUL.Checkbox
-      ).checked = exportHighlight;
+      ).checked = convertSquare;
     }
     let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink");
     if (typeof embedLink !== "undefined") {
