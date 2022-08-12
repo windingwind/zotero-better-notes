@@ -450,9 +450,9 @@ let bundle;
                   (global.TurndownService = factory()));
             })(this, function () {
               "use strict";
-              var _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
-                Components.interfaces.nsISupports
-              ).wrappedJSObject;
+              var _Zotero = Components.classes[
+                "@zotero.org/Zotero;1"
+              ].getService(Components.interfaces.nsISupports).wrappedJSObject;
 
               function extend(destination) {
                 for (var i = 1; i < arguments.length; i++) {
@@ -1743,6 +1743,10 @@ let bundle;
               );
             } catch (e) {
               Zotero.debug(e);
+            }
+
+            if (!annotation) {
+              continue;
             }
 
             const params = {};
