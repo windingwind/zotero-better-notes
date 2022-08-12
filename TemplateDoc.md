@@ -4,6 +4,28 @@ This documentation is like a dictionary. For beginners, see [template usage](./T
 
 Use `Ctrl+F` to look up what you need and make your own template!
 
+## Stages
+
+Some type of templates(Item, Note) support stages.
+
+Code wrapped inside the stage will be called at a specific time.
+
+For example, the `beforeloop` stage code:
+
+```js
+// @beforeloop-begin
+code;
+// @beforeloop-end
+```
+
+| stage      | calling time                      |
+| ---------- | --------------------------------- |
+| beforeloop | before entering the loop of items |
+| default    | loop of items                     |
+| beforeloop | after leaving the loop of items   |
+
+In other type of templates, the default stage is called.
+
 ## Variables
 
 ### QuickInsert
@@ -32,11 +54,15 @@ Use `Ctrl+F` to look up what you need and make your own template!
 
 ### Item
 
-> variables: topItem
+> beforeloop stage: items, copyNoteImage, editor, sharedObj
+> default stage: topItem, itemNotes, copyNoteImage, editor, sharedObj
+> afterloop stage: items, copyNoteImage, editor, sharedObj
 
 ### Note
 
-> variables: topItem, noteItem, link
+> beforeloop stage: notes, copyNoteImage, editor, sharedObj
+> default stage: noteItem, topItem, link, copyNoteImage, editor, sharedObj
+> afterloop stage: notes, copyNoteImage, editor, sharedObj
 
 ## Formats
 
@@ -176,7 +202,7 @@ Required Variable: None.
 
 ### Table
 
-Description: 
+Description:
 | Table | Column1 | Column2 |
 | ---- | ---- | ---- |
 | 00 | 01 | 02 |
@@ -188,37 +214,21 @@ Required Variable: None.
 ```html
 <table>
   <tr>
-      <th style="background-color:#dbeedd;">
-          <p style="text-align: right">Table</p>
-      </th>
-      <th style="background-color:#dbeedd;">
-          Column1
-      </th>
-      <th style="background-color:#dbeedd;">
-          Column2
-      </th>
+    <th style="background-color:#dbeedd;">
+      <p style="text-align: right">Table</p>
+    </th>
+    <th style="background-color:#dbeedd;">Column1</th>
+    <th style="background-color:#dbeedd;">Column2</th>
   </tr>
   <tr>
-      <td>
-          00
-      </td>
-      <td>
-          01
-      </td>
-      <td>
-          02
-      </td>
+    <td>00</td>
+    <td>01</td>
+    <td>02</td>
   </tr>
-   <tr>
-      <td>
-          10
-      </td>
-      <td>
-          11
-      </td>
-      <td>
-          12
-      </td>
+  <tr>
+    <td>10</td>
+    <td>11</td>
+    <td>12</td>
   </tr>
 </table>
 ```
@@ -299,7 +309,8 @@ Required Variable: topItem.
 
 ```js
 <p>
-  ${(() => {
+  $
+  {(() => {
     if (topItem.itemType === "conferencePaper") {
       return;
       topItem.getField("conferenceName") ||
@@ -321,7 +332,8 @@ Required Variable: topItem.
 
 ```js
 <p>
-  ${topItem
+  $
+  {topItem
     .getCreators()
     .map((v) => v.firstName + " " + v.lastName)
     .join("; ")}
@@ -392,7 +404,8 @@ Required Variable: topItem.
 
 ```js
 <p>
-  ${((topItem) => {
+  $
+  {((topItem) => {
     const getPDFLink = (_item) => {
       let libraryID = _item.libraryID;
       let library = Zotero.Libraries.get(libraryID);

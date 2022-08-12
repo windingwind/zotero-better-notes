@@ -1419,7 +1419,7 @@ class AddonEvents extends AddonBase {
 
       let renderredTemplate = await this._Addon.template.renderTemplateAsync(
         message.content.params.templateName,
-        "items, copyNoteImage, editor, sharedObj",
+        "notes, copyNoteImage, editor, sharedObj",
         [notes, copyNoteImage, editor, sharedObj],
         true,
         "beforeloop"
