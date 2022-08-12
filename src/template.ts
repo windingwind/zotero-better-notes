@@ -313,7 +313,8 @@ class AddonTemplate extends AddonBase {
     key: string,
     argString: string = "",
     argList: any[] = [],
-    useDefault: boolean = true
+    useDefault: boolean = true,
+    stage: string = "default"
   ) {
     Zotero.debug(`renderTemplate: ${key}`);
     let templateText = this.getTemplateText(key);
@@ -323,6 +324,23 @@ class AddonTemplate extends AddonBase {
         return "";
       }
     }
+
+    const templateLines = templateText.split("\n");
+    let startIndex = templateLines.indexOf(`// @${stage}-begin`),
+      endIndex = templateLines.indexOf(`// @${stage}-end`);
+    if (startIndex < 0 && endIndex < 0 && stage !== "default") {
+      // Skip this stage
+      return "";
+    }
+    if (startIndex < 0) {
+      // We skip the flag line later
+      startIndex = -1;
+    }
+    if (endIndex < 0) {
+      endIndex = templateLines.length;
+    }
+    // Skip the flag lines
+    templateText = templateLines.slice(startIndex + 1, endIndex).join("\n");
 
     let _newLine: string = "";
     try {
@@ -340,7 +358,8 @@ class AddonTemplate extends AddonBase {
     key: string,
     argString: string = "",
     argList: any[] = [],
-    useDefault: boolean = true
+    useDefault: boolean = true,
+    stage: string = "default"
   ) {
     Zotero.debug(`renderTemplateAsync: ${key}`);
     let templateText = this.getTemplateText(key);
@@ -350,6 +369,23 @@ class AddonTemplate extends AddonBase {
         return "";
       }
     }
+
+    const templateLines = templateText.split("\n");
+    let startIndex = templateLines.indexOf(`// @${stage}-begin`),
+      endIndex = templateLines.indexOf(`// @${stage}-end`);
+    if (startIndex < 0 && endIndex < 0 && stage !== "default") {
+      // Skip this stage
+      return "";
+    }
+    if (startIndex < 0) {
+      // We skip the flag line later
+      startIndex = -1;
+    }
+    if (endIndex < 0) {
+      endIndex = templateLines.length;
+    }
+    // Skip the flag lines
+    templateText = templateLines.slice(startIndex + 1, endIndex).join("\n");
 
     let _newLine: string = "";
     try {

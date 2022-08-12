@@ -1311,28 +1311,58 @@ class AddonEvents extends AddonBase {
 
       const editor = await this._Addon.knowledge.getWorkspaceEditorInstance();
 
+      const sharedObj = {};
+
+      let renderredTemplate = await this._Addon.template.renderTemplateAsync(
+        message.content.params.templateName,
+        "items, copyNoteImage, editor, sharedObj",
+        [items, copyNoteImage, editor, sharedObj],
+        true,
+        "beforeloop"
+      );
+
+      if (renderredTemplate) {
+        newLines.push(renderredTemplate);
+        newLines.push("<p> </p>");
+      }
+
       for (const topItem of items) {
         /*
             Available variables:
-            topItem, itemNotes, copyNoteImage
+            topItem, itemNotes, copyNoteImage, editor
           */
 
         const itemNotes: ZoteroItem[] = topItem
           .getNotes()
           .map((e) => Zotero.Items.get(e));
 
-        const renderredTemplate =
-          await this._Addon.template.renderTemplateAsync(
-            message.content.params.templateName,
-            "topItem, itemNotes, copyNoteImage, editor",
-            [topItem, itemNotes, copyNoteImage, editor]
-          );
+        renderredTemplate = await this._Addon.template.renderTemplateAsync(
+          message.content.params.templateName,
+          "topItem, itemNotes, copyNoteImage, editor, sharedObj",
+          [topItem, itemNotes, copyNoteImage, editor, sharedObj],
+          true,
+          "default"
+        );
 
         if (renderredTemplate) {
           newLines.push(renderredTemplate);
           newLines.push("<p> </p>");
         }
       }
+
+      renderredTemplate = await this._Addon.template.renderTemplateAsync(
+        message.content.params.templateName,
+        "items, copyNoteImage, editor, sharedObj",
+        [items, copyNoteImage, editor, sharedObj],
+        true,
+        "afterloop"
+      );
+
+      if (renderredTemplate) {
+        newLines.push(renderredTemplate);
+        newLines.push("<p> </p>");
+      }
+
       await this._Addon.knowledge.addLineToNote(
         undefined,
         newLines.join("\n"),
@@ -1378,10 +1408,32 @@ class AddonEvents extends AddonBase {
       const newLines = [];
       newLines.push("<p> </p>");
 
+      const toCopyImage = [];
+
+      const copyNoteImage = (noteItem: ZoteroItem) => {
+        toCopyImage.push(noteItem);
+      };
+
+      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance();
+      const sharedObj = {};
+
+      let renderredTemplate = await this._Addon.template.renderTemplateAsync(
+        message.content.params.templateName,
+        "items, copyNoteImage, editor, sharedObj",
+        [notes, copyNoteImage, editor, sharedObj],
+        true,
+        "beforeloop"
+      );
+
+      if (renderredTemplate) {
+        newLines.push(renderredTemplate);
+        newLines.push("<p> </p>");
+      }
+
       for (const noteItem of notes) {
         /*
           Available variables:
-          noteItem, topItem, link
+          noteItem, topItem, link, copyNoteImage, editor
         */
         let topItem = noteItem.parentItem;
         while (topItem && !topItem.isRegularItem()) {
@@ -1393,18 +1445,33 @@ class AddonEvents extends AddonBase {
           linkText ? linkText : linkURL
         }</a></p>`;
 
-        const renderredTemplate =
-          await this._Addon.template.renderTemplateAsync(
-            message.content.params.templateName,
-            "noteItem, topItem, link",
-            [noteItem, topItem, link]
-          );
+        renderredTemplate = await this._Addon.template.renderTemplateAsync(
+          message.content.params.templateName,
+          "noteItem, topItem, link, copyNoteImage, editor, sharedObj",
+          [noteItem, topItem, link, copyNoteImage, editor, sharedObj],
+          true,
+          "default"
+        );
 
         if (renderredTemplate) {
           newLines.push(renderredTemplate);
           newLines.push("<p> </p>");
         }
       }
+
+      renderredTemplate = await this._Addon.template.renderTemplateAsync(
+        message.content.params.templateName,
+        "notes, copyNoteImage, editor, sharedObj",
+        [notes, copyNoteImage, editor, sharedObj],
+        true,
+        "afterloop"
+      );
+
+      if (renderredTemplate) {
+        newLines.push(renderredTemplate);
+        newLines.push("<p> </p>");
+      }
+
       await this._Addon.knowledge.addLineToNote(
         undefined,
         newLines.join("\n"),
