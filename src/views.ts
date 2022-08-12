@@ -43,6 +43,21 @@ class AddonViews extends AddonBase {
     _document.getElementById("better-notes-menu").hidden = true;
   }
 
+  keppDefaultMenuOrder() {
+    const fileMenu = document.querySelector("#menu_FilePopup");
+    const editMenu = document.querySelector("#menu_EditPopup");
+    const exit = fileMenu.querySelector("#menu_FileQuitItem");
+    // exit.remove();
+    const prefs = editMenu.querySelector("#menu_preferences");
+    // prefs.remove();
+    for (const ele of fileMenu.querySelectorAll(".menu-betternotes")) {
+      exit.before(ele);
+    }
+    for (const ele of editMenu.querySelectorAll(".menu-betternotes")) {
+      prefs.before(ele);
+    }
+  }
+
   switchRealMenuBar(hidden: boolean) {
     // We only handle hide. The show will be handled by the ZoteroStandalone.switchMenuType
     document

@@ -152,6 +152,7 @@ class AddonEvents extends AddonBase {
     this.resetState();
 
     this.initWorkspaceTab();
+    this._Addon.views.keppDefaultMenuOrder();
     this._Addon.views.switchRealMenuBar(true);
     this._Addon.views.switchKey(true);
 
