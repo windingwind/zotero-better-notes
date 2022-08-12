@@ -50,11 +50,15 @@ class AddonViews extends AddonBase {
     // exit.remove();
     const prefs = editMenu.querySelector("#menu_preferences");
     // prefs.remove();
-    for (const ele of fileMenu.querySelectorAll(".menu-betternotes")) {
-      exit.before(ele);
+    if (exit) {
+      for (const ele of fileMenu.querySelectorAll(".menu-betternotes")) {
+        exit.before(ele);
+      }
     }
-    for (const ele of editMenu.querySelectorAll(".menu-betternotes")) {
-      prefs.before(ele);
+    if (prefs) {
+      for (const ele of editMenu.querySelectorAll(".menu-betternotes")) {
+        prefs.before(ele);
+      }
     }
   }
 
