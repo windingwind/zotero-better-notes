@@ -516,25 +516,6 @@ class AddonViews extends AddonBase {
         let line = noteLines[this._Addon.knowledge.currentLine];
         Zotero.debug(line);
 
-        // // #text
-        // const focusNode = _window.document.getSelection().focusNode;
-        // const linkElement = focusNode.parentElement as HTMLLinkElement;
-
-        // const currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
-        //   .item;
-
-        // if (!currentNote) {
-        //   return;
-        // }
-        // const newNode = _window.document.createElement("p");
-        // const newLink = _window.document.createElement("a");
-        // newLink.href = linkElement.href;
-        // newLink.innerHTML = currentNote.getNoteTitle();
-        // newNode.appendChild(newLink);
-        // console.log(linkElement, newLink);
-
-        // linkElement.parentElement.replaceChild(newNode, linkElement);
-
         let linkStart = line.search(/<a /g);
         let linkEnd = line.search(/<\/a>/g) + 4;
         let beforeLink = line.slice(0, linkStart);
@@ -580,9 +561,40 @@ class AddonViews extends AddonBase {
           this._Addon.knowledge.currentLine
         );
       });
+
+      let previewContainer =
+        _window.document.getElementById("note-link-preview");
+      if (previewContainer) {
+        previewContainer.remove();
+      }
+      previewContainer = _window.document.createElementNS(
+        "http://www.w3.org/1999/xhtml",
+        "div"
+      );
+      previewContainer.id = "note-link-preview";
+      previewContainer.setAttribute(
+        "style",
+        "width: 98%;height: 300px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;"
+      );
+      previewContainer.className = "ProseMirror primary-editor";
+      previewContainer.innerHTML = await this._Addon.parse.parseNoteStyleHTML(
+        note
+      );
+      previewContainer.addEventListener("click", (e) => {
+        this._Addon.knowledge.setWorkspaceNote("preview", note);
+      });
       const linkPopup = _window.document.querySelector(".link-popup");
       if (linkPopup) {
-        linkPopup.append(insertButton, updateButton);
+        linkPopup.append(insertButton, updateButton, previewContainer);
+        previewContainer
+          .querySelector("div[data-schema-version]")
+          .childNodes.forEach((node) => {
+            if ((node as Element).setAttribute) {
+              (node as Element).setAttribute("style", "margin: 0");
+            } else {
+              node.remove();
+            }
+          });
       }
     } else {
       const insertLink = _window.document.querySelector("#insert-note-link");
@@ -593,6 +605,12 @@ class AddonViews extends AddonBase {
       const updateLink = _window.document.querySelector("#update-note-link");
       if (updateLink) {
         updateLink.remove();
+      }
+
+      const previewContainer =
+        _window.document.querySelector("#note-link-preview");
+      if (previewContainer) {
+        previewContainer.remove();
       }
     }
   }

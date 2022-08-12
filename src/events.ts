@@ -1097,12 +1097,12 @@ class AddonEvents extends AddonBase {
               linkPopup = _window.document.querySelector(".link-popup");
               await Zotero.Promise.delay(30);
             }
-            this._Addon.views.updateEditorPopupButtons(
+            await this._Addon.views.updateEditorPopupButtons(
               message.content.editorInstance._iframeWindow,
               link
             );
           } else {
-            this._Addon.views.updateEditorPopupButtons(
+            await this._Addon.views.updateEditorPopupButtons(
               message.content.editorInstance._iframeWindow,
               undefined
             );

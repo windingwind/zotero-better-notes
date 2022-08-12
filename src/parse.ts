@@ -257,6 +257,53 @@ class AddonParse extends AddonBase {
     return html;
   }
 
+  async parseNoteStyleHTML(item: ZoteroItem, lineCount: 5) {
+    if (!item.isNote()) {
+      throw new Error("Item is not a note");
+    }
+    let note = `<div data-schema-version="8">${this.parseHTMLLines(
+      item.getNote()
+    )
+      .slice(0, lineCount)
+      .join("\n")}</div>`;
+    console.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
+
+    let parser = Components.classes[
+      "@mozilla.org/xmlextras/domparser;1"
+    ].createInstance(Components.interfaces.nsIDOMParser);
+    let doc = parser.parseFromString(note, "text/html");
+
+    // Make sure this is the new note
+    let metadataContainer = doc.querySelector(
+      "body > div[data-schema-version]"
+    );
+    if (metadataContainer) {
+      // Load base64 image data into src
+      let nodes = doc.querySelectorAll("img[data-attachment-key]");
+      for (let node of nodes) {
+        node.remove();
+      }
+
+      nodes = doc.querySelectorAll("span[style]");
+      for (let node of nodes) {
+        // Browser converts #RRGGBBAA hex color to rgba function, and we convert it to rgb function,
+        // because word processors don't understand colors with alpha channel
+        if (
+          node.style.backgroundColor &&
+          node.style.backgroundColor.startsWith("rgba")
+        ) {
+          node.style.backgroundColor =
+            node.style.backgroundColor
+              .replace("rgba", "rgb")
+              .split(",")
+              .slice(0, 3)
+              .join(",") + ")";
+        }
+      }
+    }
+    return doc.body.innerHTML;
+  }
+
   parseLinkInText(text: string): string {
     // Must end with "
     const linkIndex = text.search(/zotero:\/\/note\//g);
