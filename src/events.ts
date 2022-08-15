@@ -432,35 +432,41 @@ class AddonEvents extends AddonBase {
           editorInstance, params: {noStyle: boolean}
         }
       */
-      let mainKnowledgeID = parseInt(
-        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
-      );
       await message.content.editorInstance._initPromise;
 
       message.content.editorInstance._knowledgeUIInitialized = false;
 
-      // Check if this is a window for print
-      const isPrint =
-        this._Addon.knowledge._pdfNoteId ===
-        message.content.editorInstance._item.id;
+      const currentID = message.content.editorInstance._item.id;
 
-      const noteItem: ZoteroItem = Zotero.Items.get(
-        message.content.editorInstance._item.id
-      );
+      // Check if this is a window for print
+      const isPrint = this._Addon.knowledge._pdfNoteId === currentID;
+
+      const noteItem: ZoteroItem = Zotero.Items.get(currentID);
       if (!noteItem.isNote()) {
         return;
       }
 
-      let isMainKnowledge =
-        message.content.editorInstance._item.id === mainKnowledgeID;
+      const mainNoteID = parseInt(
+        Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+      );
+      const isMainNote = currentID === mainNoteID;
+      const isPreviewNote = currentID === this._Addon.knowledge.previewItemID;
 
       Zotero.debug(`Knowledge4Zotero: main Knowledge`);
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-start",
-        isMainKnowledge ? "isMainKnowledge" : "notMainKnowledge",
-        isMainKnowledge ? "Edit the Main Note in Workspace" : "Open Workspace",
-        "openWorkspace",
+        isMainNote
+          ? "isMainKnowledge"
+          : isPreviewNote
+          ? "openAttachment"
+          : "notMainKnowledge",
+        isMainNote
+          ? "Edit the Main Note in Workspace"
+          : isPreviewNote
+          ? "Open Note Attachments"
+          : "Open Workspace",
+        isPreviewNote ? "openAttachment" : "openWorkspace",
         "start"
       );
       const addLinkDropDown: Element = await this._Addon.views.addEditorButton(
@@ -471,34 +477,47 @@ class AddonEvents extends AddonBase {
         "addToKnowledge",
         "middle"
       );
-      addLinkDropDown.addEventListener("mouseover", async (e) => {
-        if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
-          return;
-        }
-        const buttonParam = [];
-        const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
-        for (let node of nodes) {
-          buttonParam.push({
-            id: `knowledge-addlink-popup-${node.model.endIndex}`,
-            text: node.model.name,
-            rank: node.model.rank,
-            eventType: "addToKnowledgeLine",
+      if (isMainNote) {
+        // This is a main knowledge, hide all buttons except the export button and add title
+        addLinkDropDown.innerHTML = "";
+        const header =
+          message.content.editorInstance._iframeWindow.document.createElement(
+            "div"
+          );
+        header.setAttribute("title", "This is a Main Note");
+        header.innerHTML = "Main Note";
+        header.setAttribute("style", "font-size: medium");
+        addLinkDropDown.append(header);
+      } else {
+        addLinkDropDown.addEventListener("mouseover", async (e) => {
+          if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
+            return;
+          }
+          const buttonParam = [];
+          const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
+          for (let node of nodes) {
+            buttonParam.push({
+              id: `knowledge-addlink-popup-${node.model.endIndex}`,
+              text: node.model.name,
+              rank: node.model.rank,
+              eventType: "addToKnowledgeLine",
+            });
+          }
+          const popup: Element = await this._Addon.views.addEditorPopup(
+            message.content.editorInstance,
+            "knowledge-addlink-popup",
+            // [{ id: ''; icon: string; eventType: string }],
+            buttonParam,
+            addLinkDropDown
+          );
+          addLinkDropDown.addEventListener("mouseleave", (e) => {
+            popup.remove();
           });
-        }
-        const popup: Element = await this._Addon.views.addEditorPopup(
-          message.content.editorInstance,
-          "knowledge-addlink-popup",
-          // [{ id: ''; icon: string; eventType: string }],
-          buttonParam,
-          addLinkDropDown
-        );
-        addLinkDropDown.addEventListener("mouseleave", (e) => {
-          popup.remove();
+          addLinkDropDown.addEventListener("click", (e) => {
+            popup.remove();
+          });
         });
-        addLinkDropDown.addEventListener("click", (e) => {
-          popup.remove();
-        });
-      });
+      }
 
       const addCitationButton = await this._Addon.views.addEditorButton(
         message.content.editorInstance,
@@ -576,9 +595,9 @@ class AddonEvents extends AddonBase {
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
         "knowledge-end",
-        "export",
-        "Export with linked notes",
-        "export",
+        isPreviewNote ? "close" : "export",
+        isPreviewNote ? "Close Preview" : "Export with linked notes",
+        isPreviewNote ? "closePreview" : "export",
         "end"
       );
       if (!message.content.editorInstance._knowledgeSelectionInitialized) {
@@ -729,48 +748,6 @@ class AddonEvents extends AddonBase {
             editorInstance: message.content.editorInstance,
             params: { viewTex: true },
           })
-        );
-      }
-    } else if (message.type === "enterWorkspace") {
-      /*
-        message.content = {
-          editorInstance,
-          params: "main" | "preview"
-        }
-      */
-      const _window = message.content.editorInstance._iframeWindow;
-      let t = 0;
-      while (
-        !message.content.editorInstance._knowledgeUIInitialized &&
-        t < 500
-      ) {
-        t += 1;
-        await Zotero.Promise.delay(10);
-      }
-      if (message.content.params === "main") {
-        // This is a main knowledge, hide all buttons except the export button and add title
-        const middle = _window.document.getElementById(
-          "knowledge-tools-middle"
-        );
-        middle.innerHTML = "";
-        const header = _window.document.createElement("div");
-        header.setAttribute("title", "This is a Main Note");
-        header.innerHTML = "Main Note";
-        header.setAttribute("style", "font-size: medium");
-        middle.append(header);
-      } else {
-        // This is a preview knowledge, hide openWorkspace button add show close botton
-        this._Addon.views.changeEditorButtonView(
-          _window.document.getElementById("knowledge-start"),
-          "openAttachment",
-          "Open Note Attachments",
-          "openAttachment"
-        );
-        this._Addon.views.changeEditorButtonView(
-          _window.document.getElementById("knowledge-end"),
-          "close",
-          "Close Preview",
-          "closePreview"
         );
       }
     } else if (message.type === "switchEditorTex") {

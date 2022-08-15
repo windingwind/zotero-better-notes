@@ -8,6 +8,7 @@ class Knowledge extends AddonBase {
   workspaceWindow: Window;
   workspaceTabId: string;
   workspaceNoteEditor: EditorInstance;
+  previewItemID: number;
   _firstInit: boolean;
   _workspacePromise: any;
   _exportPath: string;
@@ -180,6 +181,7 @@ class Knowledge extends AddonBase {
       _window.document
         .getElementById("preview-splitter")
         .setAttribute("state", "open");
+      this.previewItemID = note.id;
     } else {
       // Set line to default
       this.currentLine = -1;
@@ -221,12 +223,6 @@ class Knowledge extends AddonBase {
       this._firstInit = false;
       await noteEditor.initEditor();
     }
-    await this._Addon.events.onEditorEvent(
-      new EditorMessage("enterWorkspace", {
-        editorInstance: noteEditor.getCurrentInstance(),
-        params: type,
-      })
-    );
     if (type === "main") {
       this._Addon.views.updateOutline();
       this._Addon.views.updateWordCount();
@@ -687,12 +683,6 @@ class Knowledge extends AddonBase {
     await Zotero.Promise.delay(500);
     let editorInstance = await this.getWorkspaceEditorInstance();
     this._Addon.views.scrollToLine(editorInstance, lineIndex);
-    this._Addon.events.onEditorEvent(
-      new EditorMessage("enterWorkspace", {
-        editorInstance: editorInstance,
-        params: "main",
-      })
-    );
   }
 
   async exportNoteToFile(
