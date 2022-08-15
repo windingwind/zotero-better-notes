@@ -417,6 +417,10 @@ class AddonParse extends AddonBase {
   parseHTMLToMD(str: string): string {
     return HTML2Markdown(str);
   }
+
+  copyText(str: string, type: "text/unicode" | "text/html"){
+    
+  };
 }
 
 export default AddonParse;

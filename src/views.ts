@@ -864,6 +864,10 @@ class AddonViews extends AddonBase {
     const _window = this._Addon.knowledge.workspaceTabId
       ? window
       : this._Addon.knowledge.getWorkspaceWindow();
+    // If tab is open but not selected, we use copy mode
+    const copyMode =
+      this._Addon.knowledge.workspaceTabId &&
+      Zotero_Tabs.selectedID !== this._Addon.knowledge.workspaceTabId;
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()
@@ -894,7 +898,7 @@ class AddonViews extends AddonBase {
         Zotero.Knowledge4Zotero.events.onEditorEvent({
           type: "insert${type}UsingTemplate",
           content: {
-            params: { templateName: "${template.name}" },
+            params: { templateName: "${template.name}", copy: ${copyMode} },
           },
         });`
       );
@@ -1023,6 +1027,18 @@ class AddonViews extends AddonBase {
     if (t > 0) {
       progressWindow.startCloseTimer(t);
     }
+    return progressWindow;
+  }
+
+  changeProgressWindowDescription(
+    progressWindow: Window,
+    context: string,
+    index: number = 0
+  ) {
+    const desc = progressWindow.document.getElementsByClassName(
+      "zotero-progress-item-label"
+    )[index];
+    desc.innerHTML = context;
   }
 }
 

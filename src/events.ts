@@ -1,4 +1,4 @@
-import { AddonBase, EditorMessage } from "./base";
+import { AddonBase, CopyHelper, EditorMessage } from "./base";
 
 class AddonEvents extends AddonBase {
   notifierCallback: object;
@@ -1228,11 +1228,17 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "insertTextUsingTemplate") {
       /*
         message.content = {
-          params: {templateName}
+          params: {templateName, copy}
         }
       */
       const newLines = [];
 
+      const progressWindow = this._Addon.views.showProgressWindow(
+        "Running Template",
+        message.content.params.templateName,
+        "default",
+        -1
+      );
       const renderredTemplate = await this._Addon.template.renderTemplateAsync(
         message.content.params.templateName
       );
@@ -1240,14 +1246,23 @@ class AddonEvents extends AddonBase {
       if (renderredTemplate) {
         newLines.push(renderredTemplate);
         newLines.push("<p> </p>");
-        // End of line
-        await this._Addon.knowledge.addLineToNote(
-          undefined,
-          newLines.join("\n"),
-          -1,
-          true
-        );
+        const html = newLines.join("\n");
+        if (message.content.params.copy) {
+          console.log(html);
+          new CopyHelper()
+            .addText(html, "text/html")
+            .addText(this._Addon.parse.parseHTMLToMD(html), "text/unicode")
+            .copy();
+          progressWindow.changeHeadline("Template Copied");
+        } else {
+          // End of line
+          await this._Addon.knowledge.addLineToNote(undefined, html, -1, false);
+          progressWindow.changeHeadline("Running Template Finished");
+        }
+      } else {
+        progressWindow.changeHeadline("Running Template Failed");
       }
+      progressWindow.startCloseTimer(5000);
     } else if (message.type === "insertItemUsingTemplate") {
       /*
         message.content = {
@@ -1277,7 +1292,12 @@ class AddonEvents extends AddonBase {
       if (items.length === 0) {
         return;
       }
-
+      const progressWindow = this._Addon.views.showProgressWindow(
+        "Running Template",
+        message.content.params.templateName,
+        "default",
+        -1
+      );
       const newLines = [];
       newLines.push("<p> </p>");
 
@@ -1287,7 +1307,10 @@ class AddonEvents extends AddonBase {
         toCopyImage.push(noteItem);
       };
 
-      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance();
+      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance(
+        "main",
+        false
+      );
 
       const sharedObj = {};
 
@@ -1341,18 +1364,37 @@ class AddonEvents extends AddonBase {
         newLines.push("<p> </p>");
       }
 
-      await this._Addon.knowledge.addLineToNote(
-        undefined,
-        newLines.join("\n"),
-        -1,
-        true
-      );
-      const mainNote = this._Addon.knowledge.getWorkspaceNote();
-      await Zotero.DB.executeTransaction(async () => {
-        for (const subNote of toCopyImage) {
-          await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+      if (newLines) {
+        const html = newLines.join("\n");
+        if (message.content.params.copy) {
+          console.log(html);
+
+          new CopyHelper()
+            .addText(html, "text/html")
+            .addText(this._Addon.parse.parseHTMLToMD(html), "text/unicode")
+            .copy();
+          progressWindow.changeHeadline("Template Copied");
+        } else {
+          const forceMetadata = toCopyImage.length > 0;
+          console.log(toCopyImage);
+          await this._Addon.knowledge.addLineToNote(
+            undefined,
+            html,
+            -1,
+            forceMetadata
+          );
+          const mainNote = this._Addon.knowledge.getWorkspaceNote();
+          await Zotero.DB.executeTransaction(async () => {
+            for (const subNote of toCopyImage) {
+              await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+            }
+          });
+          progressWindow.changeHeadline("Running Template Finished");
         }
-      });
+      } else {
+        progressWindow.changeHeadline("Running Template Failed");
+      }
+      progressWindow.startCloseTimer(5000);
     } else if (message.type === "insertNoteUsingTemplate") {
       /*
         message.content = {
@@ -1382,7 +1424,12 @@ class AddonEvents extends AddonBase {
       if (notes.length === 0) {
         return;
       }
-
+      const progressWindow = this._Addon.views.showProgressWindow(
+        "Running Template",
+        message.content.params.templateName,
+        "default",
+        -1
+      );
       const newLines = [];
       newLines.push("<p> </p>");
 
@@ -1392,7 +1439,10 @@ class AddonEvents extends AddonBase {
         toCopyImage.push(noteItem);
       };
 
-      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance();
+      const editor = await this._Addon.knowledge.getWorkspaceEditorInstance(
+        "main",
+        false
+      );
       const sharedObj = {};
 
       let renderredTemplate = await this._Addon.template.renderTemplateAsync(
@@ -1450,12 +1500,37 @@ class AddonEvents extends AddonBase {
         newLines.push("<p> </p>");
       }
 
-      await this._Addon.knowledge.addLineToNote(
-        undefined,
-        newLines.join("\n"),
-        -1,
-        true
-      );
+      if (newLines) {
+        const html = newLines.join("\n");
+        if (message.content.params.copy) {
+          console.log(html);
+
+          new CopyHelper()
+            .addText(html, "text/html")
+            .addText(this._Addon.parse.parseHTMLToMD(html), "text/unicode")
+            .copy();
+          progressWindow.changeHeadline("Template Copied");
+        } else {
+          const forceMetadata = toCopyImage.length > 0;
+          console.log(toCopyImage);
+          await this._Addon.knowledge.addLineToNote(
+            undefined,
+            html,
+            -1,
+            forceMetadata
+          );
+          const mainNote = this._Addon.knowledge.getWorkspaceNote();
+          await Zotero.DB.executeTransaction(async () => {
+            for (const subNote of toCopyImage) {
+              await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+            }
+          });
+          progressWindow.changeHeadline("Running Template Finished");
+        }
+      } else {
+        progressWindow.changeHeadline("Running Template Failed");
+      }
+      progressWindow.startCloseTimer(5000);
     } else if (message.type === "editTemplate") {
       /*
         message.content = {}
@@ -1690,53 +1765,7 @@ class AddonEvents extends AddonBase {
           params: { src: string }
         }
       */
-      var image = message.content.params.src;
-
-      var io = Components.classes[
-        "@mozilla.org/network/io-service;1"
-      ].getService(Components.interfaces.nsIIOService);
-      var channel = io.newChannel(image, null, null);
-      var input = channel.open();
-      var imgTools = Components.classes[
-        "@mozilla.org/image/tools;1"
-      ].getService(Components.interfaces.imgITools);
-
-      var buffer = NetUtil.readInputStreamToString(input, input.available());
-      var container = imgTools.decodeImageFromBuffer(
-        buffer,
-        buffer.length,
-        channel.contentType
-      );
-
-      var trans = Components.classes[
-        "@mozilla.org/widget/transferable;1"
-      ].createInstance(Components.interfaces.nsITransferable);
-      // Add Blob
-      trans.addDataFlavor(channel.contentType);
-      trans.setTransferData(channel.contentType, container, -1);
-
-      // // Add Text
-      // let str = Components.classes[
-      //   "@mozilla.org/supports-string;1"
-      // ].createInstance(Components.interfaces.nsISupportsString);
-      // str.data = text;
-      // trans.addDataFlavor("text/unicode");
-      // trans.setTransferData("text/unicode", str, text.length * 2);
-
-      // // Add HTML
-      // str = Components.classes["@mozilla.org/supports-string;1"].createInstance(
-      //   Components.interfaces.nsISupportsString
-      // );
-      // str.data = html;
-      // trans.addDataFlavor("text/html");
-      // trans.setTransferData("text/html", str, html.length * 2);
-
-      var clipid = Components.interfaces.nsIClipboard;
-      var clip =
-        Components.classes["@mozilla.org/widget/clipboard;1"].getService(
-          clipid
-        );
-      clip.setData(trans, null, clipid.kGlobalClipboard);
+      new CopyHelper().addImage(message.content.params.src).copy();
       this._Addon.views.showProgressWindow(
         "Better Notes",
         "Image copied to clipboard."
@@ -1755,24 +1784,8 @@ class AddonEvents extends AddonBase {
       }
       const html = this._Addon.parse.parseMDToHTML(source);
       console.log(source, html);
-      let transferable = Components.classes[
-        "@mozilla.org/widget/transferable;1"
-      ].createInstance(Components.interfaces.nsITransferable);
-      let clipboardService = Components.classes[
-        "@mozilla.org/widget/clipboard;1"
-      ].getService(Components.interfaces.nsIClipboard);
-      const str = Components.classes[
-        "@mozilla.org/supports-string;1"
-      ].createInstance(Components.interfaces.nsISupportsString);
-      str.data = html;
-      transferable.addDataFlavor("text/html");
-      transferable.setTransferData("text/html", str, html.length * 2);
+      new CopyHelper().addText(html, "text/html").copy();
 
-      clipboardService.setData(
-        transferable,
-        null,
-        Components.interfaces.nsIClipboard.kGlobalClipboard
-      );
       this._Addon.views.showProgressWindow(
         "Better Notes",
         "Converted MarkDown is updated to the clipboard. You can paste them in the note."
