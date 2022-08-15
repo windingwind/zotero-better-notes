@@ -61,7 +61,7 @@ class AddonTemplate extends AddonBase {
       },
       {
         name: "[Text] table",
-        text: '${(()=>{\nconst size = prompt("Table Size(row*column):", "4*3");\nconst row = Number(size.split("*")[0]);\nconst col = Number(size.split("*")[1]);\nif(!row || !col){\nreturn "";\n}\nconst makeCell = ()=>"<td>\n</td>";\nconst makeRow = ()=>`<tr>${[...Array(col).keys()].map(makeCell).join("\n")}</tr>`;\nreturn `<table>\n${[...Array(row).keys()].map(makeRow).join("\n")}\n</table>`;\n})()}',
+        text: '${(()=>{\nconst size = prompt("Table Size(row*column):", "4*3");\nif(!size){\nreturn "";\n}\nconst row = Number(size.split("*")[0]);\nconst col = Number(size.split("*")[1]);\nif(!row || !col){\nreturn "";\n}\nconst makeCell = ()=>"<td>\\n</td>";\nconst makeRow = ()=>`<tr>${[...Array(col).keys()].map(makeCell).join("\\n")}</tr>`;\nreturn `<table>\n${[...Array(row).keys()].map(makeRow).join("\\n")}\n</table>`;\n})()}',
         disabled: false,
       },
     ];
