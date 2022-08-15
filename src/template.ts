@@ -60,6 +60,11 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
       {
+        name: "[Text] table",
+        text: '${(()=>{\nconst size = prompt("Table Size(row*column):", "4*3");\nconst row = Number(size.split("*")[0]);\nconst col = Number(size.split("*")[1]);\nif(!row || !col){\nreturn "";\n}\nconst makeCell = ()=>"<td>\n</td>";\nconst makeRow = ()=>`<tr>${[...Array(col).keys()].map(makeCell).join("\n")}</tr>`;\nreturn `<table>\n${[...Array(row).keys()].map(makeRow).join("\n")}\n</table>`;\n})()}',
+        disabled: false,
+      },
+      {
         name: "[Text] today",
         text: "<h1>TODO: ${new Date().toLocaleDateString()}</h1>\n<h2>Tasks</h2>\n<ul>\n<li>\nRead Paper 1\n</li>\n<li>\nDo some experiments\n</li>\n</ul>\n<blockquote>\n<p>Insert more items with meta-data in workspace window-&gt;Edit</p>\n</blockquote>\n<p></p>\n<h2>Done Tasks</h2>\n<p></p>\n<h2>Todo Tomorrow</h2>\n<p></p>\n</div>",
         disabled: false,
