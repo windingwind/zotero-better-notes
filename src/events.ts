@@ -722,7 +722,7 @@ class AddonEvents extends AddonBase {
         mathScript.setAttribute("id", "MathJax-script");
         mathScript.setAttribute(
           "src",
-          "chrome://Knowledge4Zotero/content/lib/js/tex-svg.js"
+          "chrome://Knowledge4Zotero/content/lib/js/tex-svg-full.js"
         );
         _window.document.head.append(mathScript);
       }
