@@ -1729,17 +1729,27 @@ class AddonEvents extends AddonBase {
       note.parentID = annotationItem.parentItem.parentID;
       await note.saveTx();
 
-      const renderredTemplate = await this._Addon.template.renderTemplateAsync(
-        "[QuickNote]",
-        "annotationItem, topItem",
-        [annotationItem, annotationItem.parentItem.parentItem]
-      );
-      const html = await this._Addon.parse.parseAnnotationHTML(note, [
-        annotationItem,
-      ]);
+      ZoteroPane.openNoteWindow(note.id);
+      let editorInstance: EditorInstance =
+        this._Addon.knowledge.getEditorInstance(note);
+      let t = 0;
+      // Wait for editor instance
+      while (t < 10 && !editorInstance) {
+        await Zotero.Promise.delay(500);
+        t += 1;
+        editorInstance = this._Addon.knowledge.getEditorInstance(note);
+      }
 
-      note.setNote(
-        `<div data-schema-version="8">${renderredTemplate}\n${html}</div>`
+      const renderredTemplate = await this._Addon.template.renderTemplateAsync(
+        "[QuickNoteV2]",
+        "annotationItem, topItem, noteItem",
+        [annotationItem, annotationItem.parentItem.parentItem, note]
+      );
+      await this._Addon.knowledge.addLineToNote(
+        note,
+        renderredTemplate,
+        0,
+        "before"
       );
 
       const tags = annotationItem.getTags();
@@ -1747,13 +1757,6 @@ class AddonEvents extends AddonBase {
         note.addTag(tag.tag, tag.type);
       }
       await note.saveTx();
-
-      ZoteroPane.openNoteWindow(note.id);
-      let t = 0;
-      while (t < 100 && !ZoteroPane.findNoteWindow(note.id)) {
-        await Zotero.Promise.delay(50);
-        t += 1;
-      }
 
       annotationItem.annotationComment = `${
         annotationItem.annotationComment ? annotationItem.annotationComment : ""

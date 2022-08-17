@@ -10,7 +10,7 @@ class AddonTemplate extends AddonBase {
       "[QuickInsert]",
       "[QuickBackLink]",
       "[QuickImport]",
-      "[QuickNote]",
+      "[QuickNoteV2]",
       "[ExportMDFileName]",
     ];
     this._defaultTemplates = [
@@ -30,8 +30,8 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
       {
-        name: "[QuickNote]",
-        text: '<p>${annotationItem.annotationComment ? Zotero.Knowledge4Zotero.parse.parseMDToHTML(annotationItem.annotationComment) : `<span style="background-color: ${annotationItem.annotationColor ? annotationItem.annotationColor : "#ffd400"}">Annotation</span>`}</p>',
+        name: "[QuickNoteV2]",
+        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += Zotero.Knowledge4Zotero.parse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.parse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
         disabled: false,
       },
       {

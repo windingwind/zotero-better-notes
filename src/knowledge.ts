@@ -263,7 +263,8 @@ class Knowledge extends AddonBase {
     note: ZoteroItem,
     text: string,
     lineIndex: number,
-    forceMetadata: boolean = false
+    forceMetadata: boolean = false,
+    position: "before" | "after" = "after"
   ) {
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -298,7 +299,9 @@ class Knowledge extends AddonBase {
       while (temp.firstChild) {
         frag.appendChild(temp.firstChild);
       }
-      currentElement.after(frag);
+      position === "after"
+        ? currentElement.after(frag)
+        : currentElement.before(frag);
       this._Addon.views.scrollToPosition(
         editorInstance,
         currentElement.offsetTop
@@ -307,8 +310,10 @@ class Knowledge extends AddonBase {
       // The note editor does not exits yet. Fall back to modify the metadata
       console.log("Add note line via note metadata");
 
-      // insert after current line
-      lineIndex += 1;
+      // insert after/before current line
+      if (position === "after") {
+        lineIndex += 1;
+      }
       noteLines.splice(lineIndex, 0, text);
       await this.setLinesToNote(note, noteLines);
       if (this.getWorkspaceNote().id === note.id) {

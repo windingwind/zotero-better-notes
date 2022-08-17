@@ -240,13 +240,20 @@ class AddonParse extends AddonBase {
     }
   }
 
-  async parseAnnotationHTML(note: ZoteroItem, annotations: ZoteroItem[]) {
+  async parseAnnotationHTML(
+    note: ZoteroItem,
+    annotations: ZoteroItem[],
+    ignoreComment: boolean = false
+  ) {
     if (!note) {
       return;
     }
     let annotationJSONList = [];
     for (const annot of annotations) {
       const annotJson = await this._Addon.parse.parseAnnotation(annot);
+      if (ignoreComment && annotJson.comment) {
+        annotJson.comment = "";
+      }
       annotationJSONList.push(annotJson);
     }
     await this._Addon.knowledge.importImagesToNote(note, annotationJSONList);
@@ -417,10 +424,6 @@ class AddonParse extends AddonBase {
   parseHTMLToMD(str: string): string {
     return HTML2Markdown(str);
   }
-
-  copyText(str: string, type: "text/unicode" | "text/html"){
-    
-  };
 }
 
 export default AddonParse;
