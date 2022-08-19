@@ -152,6 +152,9 @@ class Knowledge extends AddonBase {
     wait: boolean = true
   ): Promise<EditorInstance> {
     let noteEditor = (await this.getWorkspaceEditor(type)) as any;
+    if (!noteEditor) {
+      return;
+    }
     let t = 0;
     while (wait && !noteEditor.getCurrentInstance() && t < 500) {
       t += 1;
@@ -163,9 +166,24 @@ class Knowledge extends AddonBase {
   }
 
   getEditorInstance(note: ZoteroItem) {
-    return (Zotero.Notes._editorInstances as EditorInstance[]).find(
-      (e) => e._item.id === note.id
+    // If there are multiple editors of main note available, we use the workspace editor.
+    if (
+      note.id === this.getWorkspaceNote().id &&
+      this.getWorkspaceWindow() &&
+      this.workspaceNoteEditor &&
+      !Components.utils.isDeadWrapper(this.workspaceNoteEditor._iframeWindow)
+    ) {
+      return this.workspaceNoteEditor;
+    }
+    const editor = (Zotero.Notes._editorInstances as EditorInstance[]).find(
+      (e) =>
+        e._item.id === note.id &&
+        !Components.utils.isDeadWrapper(e._iframeWindow)
     );
+    if (note.id === this.getWorkspaceNote().id) {
+      this.workspaceNoteEditor = editor;
+    }
+    return editor;
   }
 
   async setWorkspaceNote(
@@ -687,6 +705,9 @@ class Knowledge extends AddonBase {
   async scrollWithRefresh(lineIndex: number) {
     await Zotero.Promise.delay(500);
     let editorInstance = await this.getWorkspaceEditorInstance();
+    if (!editorInstance) {
+      return;
+    }
     this._Addon.views.scrollToLine(editorInstance, lineIndex);
   }
 

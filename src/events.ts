@@ -477,46 +477,49 @@ class AddonEvents extends AddonBase {
         "addToKnowledge",
         "middle"
       );
-      if (isMainNote) {
-        // This is a main knowledge, hide all buttons except the export button and add title
-        addLinkDropDown.innerHTML = "";
-        const header =
-          message.content.editorInstance._iframeWindow.document.createElement(
-            "div"
-          );
-        header.setAttribute("title", "This is a Main Note");
-        header.innerHTML = "Main Note";
-        header.setAttribute("style", "font-size: medium");
-        addLinkDropDown.append(header);
-      } else {
-        addLinkDropDown.addEventListener("mouseover", async (e) => {
-          if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
-            return;
-          }
-          const buttonParam = [];
-          const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
-          for (let node of nodes) {
-            buttonParam.push({
-              id: `knowledge-addlink-popup-${node.model.endIndex}`,
-              text: node.model.name,
-              rank: node.model.rank,
-              eventType: "addToKnowledgeLine",
+      if (addLinkDropDown) {
+        // If the editor initialization fails, the addLinkDropDown does not exist
+        if (isMainNote) {
+          // This is a main knowledge, hide all buttons except the export button and add title
+          addLinkDropDown.innerHTML = "";
+          const header =
+            message.content.editorInstance._iframeWindow.document.createElement(
+              "div"
+            );
+          header.setAttribute("title", "This is a Main Note");
+          header.innerHTML = "Main Note";
+          header.setAttribute("style", "font-size: medium");
+          addLinkDropDown.append(header);
+        } else {
+          addLinkDropDown.addEventListener("mouseover", async (e) => {
+            if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
+              return;
+            }
+            const buttonParam = [];
+            const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
+            for (let node of nodes) {
+              buttonParam.push({
+                id: `knowledge-addlink-popup-${node.model.endIndex}`,
+                text: node.model.name,
+                rank: node.model.rank,
+                eventType: "addToKnowledgeLine",
+              });
+            }
+            const popup: Element = await this._Addon.views.addEditorPopup(
+              message.content.editorInstance,
+              "knowledge-addlink-popup",
+              // [{ id: ''; icon: string; eventType: string }],
+              buttonParam,
+              addLinkDropDown
+            );
+            addLinkDropDown.addEventListener("mouseleave", (e) => {
+              popup.remove();
             });
-          }
-          const popup: Element = await this._Addon.views.addEditorPopup(
-            message.content.editorInstance,
-            "knowledge-addlink-popup",
-            // [{ id: ''; icon: string; eventType: string }],
-            buttonParam,
-            addLinkDropDown
-          );
-          addLinkDropDown.addEventListener("mouseleave", (e) => {
-            popup.remove();
+            addLinkDropDown.addEventListener("click", (e) => {
+              popup.remove();
+            });
           });
-          addLinkDropDown.addEventListener("click", (e) => {
-            popup.remove();
-          });
-        });
+        }
       }
 
       const addCitationButton = await this._Addon.views.addEditorButton(
@@ -533,42 +536,44 @@ class AddonEvents extends AddonBase {
       while (topItem && !topItem.isRegularItem()) {
         topItem = topItem.parentItem;
       }
-      if (topItem) {
-        addCitationButton.addEventListener("mouseover", async (e) => {
-          if (addCitationButton.getElementsByClassName("popup").length > 0) {
-            return;
-          }
-          const popup: Element = await this._Addon.views.addEditorPopup(
-            message.content.editorInstance,
-            "knowledge-addcitation-popup",
-            [
-              {
-                id: `knowledge-addcitation-popup-${topItem.id}`,
-                rank: 0,
-                text: topItem.getField("title"),
-                eventType: "insertCitation",
+      if (addCitationButton) {
+        if (topItem) {
+          addCitationButton.addEventListener("mouseover", async (e) => {
+            if (addCitationButton.getElementsByClassName("popup").length > 0) {
+              return;
+            }
+            const popup: Element = await this._Addon.views.addEditorPopup(
+              message.content.editorInstance,
+              "knowledge-addcitation-popup",
+              [
+                {
+                  id: `knowledge-addcitation-popup-${topItem.id}`,
+                  rank: 0,
+                  text: topItem.getField("title"),
+                  eventType: "insertCitation",
+                },
+              ],
+              addCitationButton
+            );
+            addCitationButton.addEventListener("mouseleave", (e) => {
+              popup.remove();
+            });
+            addCitationButton.addEventListener("click", (e) => {
+              popup.remove();
+            });
+          });
+        }
+
+        addCitationButton.addEventListener("click", async (e) => {
+          this.onEditorEvent(
+            new EditorMessage("insertCitation", {
+              params: {
+                noteItem: noteItem,
               },
-            ],
-            addCitationButton
+            })
           );
-          addCitationButton.addEventListener("mouseleave", (e) => {
-            popup.remove();
-          });
-          addCitationButton.addEventListener("click", (e) => {
-            popup.remove();
-          });
         });
       }
-
-      addCitationButton.addEventListener("click", async (e) => {
-        this.onEditorEvent(
-          new EditorMessage("insertCitation", {
-            params: {
-              noteItem: noteItem,
-            },
-          })
-        );
-      });
 
       await this._Addon.views.addEditorButton(
         message.content.editorInstance,
