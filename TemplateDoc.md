@@ -40,7 +40,7 @@ In other type of templates, the default stage is called.
 
 > variables: subNoteLines: string[], subNoteItem, noteItem
 
-### QuickNote
+### QuickNoteV2
 
 > variables: annotationItem, topItem
 
@@ -54,15 +54,15 @@ In other type of templates, the default stage is called.
 
 ### Item
 
-> beforeloop stage: items, copyNoteImage, editor, sharedObj
-> default stage: topItem, itemNotes, copyNoteImage, editor, sharedObj
-> afterloop stage: items, copyNoteImage, editor, sharedObj
+> beforeloop stage: items, copyNoteImage, editor, sharedObj(for temporary variables, shared by all stages)  
+> default stage: topItem, itemNotes, copyNoteImage, editor, sharedObj  
+> afterloop stage: items, copyNoteImage, editor, sharedObj  
 
 ### Note
 
-> beforeloop stage: notes, copyNoteImage, editor, sharedObj
-> default stage: noteItem, topItem, link, copyNoteImage, editor, sharedObj
-> afterloop stage: notes, copyNoteImage, editor, sharedObj
+> beforeloop stage: notes, copyNoteImage, editor, sharedObj(for temporary variables, shared by all stages)  
+> default stage: noteItem, topItem, link, copyNoteImage, editor, sharedObj  
+> afterloop stage: notes, copyNoteImage, editor, sharedObj  
 
 ## Formats
 
