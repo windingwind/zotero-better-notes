@@ -14,7 +14,6 @@ const {
   addonRef,
   version,
 } = require("./package.json");
-const { join } = require("path");
 
 function copyFileSync(source, target) {
   var targetFile = target;
@@ -82,96 +81,108 @@ function dateFormat(fmt, date) {
   return fmt;
 }
 
-const t = new Date();
-const buildTime = dateFormat("YYYY-mm-dd HH:MM:SS", t);
-const buildDir = "builds";
+async function main() {
+  const t = new Date();
+  const buildTime = dateFormat("YYYY-mm-dd HH:MM:SS", t);
+  const buildDir = "builds";
 
-console.log(
-  `[Build] BUILD_DIR=${buildDir}, VERSION=${version}, BUILD_TIME=${buildTime}`
-);
+  console.log(
+    `[Build] BUILD_DIR=${buildDir}, VERSION=${version}, BUILD_TIME=${buildTime}`
+  );
 
-clearFolder(buildDir);
+  clearFolder(buildDir);
 
-copyFolderRecursiveSync("addon", buildDir);
+  copyFolderRecursiveSync("addon", buildDir);
 
-esbuild
-  .build({
-    entryPoints: ["src/index.ts"],
-    bundle: true,
-    // Entry should be the same as addon/chrome/content/overlay.xul
-    outfile: path.join(buildDir, "addon/chrome/content/scripts/index.js"),
-    // minify: true,
-    target: ['firefox60']
-  })
-  .catch(() => process.exit(1));
+  const buildStartTime = new Date().getTime();
+  await esbuild
+    .build({
+      entryPoints: ["src/index.ts"],
+      bundle: true,
+      // Entry should be the same as addon/chrome/content/overlay.xul
+      outfile: path.join(buildDir, "addon/chrome/content/scripts/index.js"),
+      // minify: true,
+      target: ["firefox60"],
+    })
+    .catch(() => process.exit(1));
 
-console.log("[Build] Run esbuild OK");
+  console.log(
+    `[Build] Run esbuild OK in ${
+      (new Date().getTime() - buildStartTime) / 1000
+    } s.`
+  );
 
-const optionsAddon = {
-  files: [
-    path.join(buildDir, "**/*.rdf"),
-    path.join(buildDir, "**/*.dtd"),
-    path.join(buildDir, "**/*.xul"),
-    path.join(buildDir, "**/*.html"),
-    path.join(buildDir, "**/*.manifest"),
-    "update.rdf",
-  ],
-  from: [
-    /__author__/g,
-    /__description__/g,
-    /__homepage__/g,
-    /__addonName__/g,
-    /__addonID__/g,
-    /__addonRef__/g,
-    /__buildVersion__/g,
-    /__buildTime__/g,
-    /<em:version>\S*<\/em:version>/g,
-  ],
-  to: [
-    author,
-    description,
-    homepage,
-    addonName,
-    addonID,
-    addonRef,
-    version,
-    buildTime,
-    `<em:version>${version}</em:version>`,
-  ],
-  countMatches: true,
-};
+  const optionsAddon = {
+    files: [
+      path.join(buildDir, "**/*.rdf"),
+      path.join(buildDir, "**/*.dtd"),
+      path.join(buildDir, "**/*.xul"),
+      path.join(buildDir, "**/*.html"),
+      path.join(buildDir, "**/*.manifest"),
+      "update.rdf",
+    ],
+    from: [
+      /__author__/g,
+      /__description__/g,
+      /__homepage__/g,
+      /__addonName__/g,
+      /__addonID__/g,
+      /__addonRef__/g,
+      /__buildVersion__/g,
+      /__buildTime__/g,
+      /<em:version>\S*<\/em:version>/g,
+    ],
+    to: [
+      author,
+      description,
+      homepage,
+      addonName,
+      addonID,
+      addonRef,
+      version,
+      buildTime,
+      `<em:version>${version}</em:version>`,
+    ],
+    countMatches: true,
+  };
 
-_ = replace.sync(optionsAddon);
-console.log(
-  "[Build] Run replace in ",
-  _.filter((f) => f.hasChanged).map(
-    (f) => `${f.file} : ${f.numReplacements} / ${f.numMatches}`
-  )
-);
+  _ = replace.sync(optionsAddon);
+  console.log(
+    "[Build] Run replace in ",
+    _.filter((f) => f.hasChanged).map(
+      (f) => `${f.file} : ${f.numReplacements} / ${f.numMatches}`
+    )
+  );
 
-console.log("[Build] Replace OK");
+  console.log("[Build] Replace OK");
 
-console.log("[Build] Addon prepare OK");
+  console.log("[Build] Addon prepare OK");
 
-copyFileSync(
-  "src/zotero-protocol-handler.js",
-  path.join(buildDir, "addon/components/zotero-protocol-handler.js")
-);
+  copyFileSync(
+    "src/zotero-protocol-handler.js",
+    path.join(buildDir, "addon/components/zotero-protocol-handler.js")
+  );
 
-copyFileSync(
-  "src/Better Note Markdown.js",
-  path.join(buildDir, "addon/chrome/content/translators/Better Note Markdown.js")
-);
+  copyFileSync(
+    "src/Better Note Markdown.js",
+    path.join(
+      buildDir,
+      "addon/chrome/content/translators/Better Note Markdown.js"
+    )
+  );
 
-compressing.zip.compressDir(
-  path.join(buildDir, "addon"),
-  path.join(buildDir, `${name}.xpi`),
-  {
-    ignoreBase: true,
-  }
-);
+  compressing.zip.compressDir(
+    path.join(buildDir, "addon"),
+    path.join(buildDir, `${name}.xpi`),
+    {
+      ignoreBase: true,
+    }
+  );
 
-console.log("[Build] Addon pack OK");
-console.log(
-  `[Build] Finished in ${(new Date().getTime() - t.getTime()) / 1000} s.`
-);
+  console.log("[Build] Addon pack OK");
+  console.log(
+    `[Build] Finished in ${(new Date().getTime() - t.getTime()) / 1000} s.`
+  );
+}
+
+main();
