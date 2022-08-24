@@ -1798,6 +1798,26 @@ class AddonEvents extends AddonBase {
         "Better Notes",
         "Converted MarkDown is updated to the clipboard. You can paste them in the note."
       );
+    } else if (message.type == "convertAsciiDoc") {
+      /*
+        message.content = {}
+      */
+      const source = Zotero.Utilities.Internal.getClipboard("text/unicode");
+      if (!source) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          "No AsciiDoc found."
+        );
+        return;
+      }
+      const html = this._Addon.parse.parseAsciiDocToHTML(source);
+      console.log(source, html);
+      new CopyHelper().addText(html, "text/html").copy();
+
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        "Converted AsciiDoc is updated to the clipboard. You can paste them in the note."
+      );
     } else {
       Zotero.debug(`Knowledge4Zotero: message not handled.`);
     }

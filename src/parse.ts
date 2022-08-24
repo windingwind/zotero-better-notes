@@ -1,6 +1,7 @@
 import { AddonBase } from "./base";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 const TreeModel = require("./treemodel");
+const asciidoctor = require("asciidoctor")();
 
 class AddonParse extends AddonBase {
   public parseNoteTree(note: ZoteroItem): TreeModel.Node<object> {
@@ -423,6 +424,10 @@ class AddonParse extends AddonBase {
 
   parseHTMLToMD(str: string): string {
     return HTML2Markdown(str);
+  }
+
+  parseAsciiDocToHTML(str: string): string {
+    return asciidoctor.convert(str);
   }
 }
 

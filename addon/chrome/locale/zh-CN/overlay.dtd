@@ -19,6 +19,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.updateLink "更新选中的笔记链接文本">
 <!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "自动插入新注释到笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.convertmd "转换剪贴板中的MarkDown内容">
+<!ENTITY zotero.__addonRef__.workspace.menu.convertasciidoc "转换剪贴板中的AsciiDoc内容">
 <!ENTITY zotero.__addonRef__.workspace.menu.treeview "大纲: 树视图">
 <!ENTITY zotero.__addonRef__.workspace.menu.mindmap "大纲: 思维导图">
 <!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "大纲: 气泡导图">

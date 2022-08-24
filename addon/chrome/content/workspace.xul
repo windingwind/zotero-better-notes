@@ -50,6 +50,7 @@
     <command id="cmd_updatelink_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateLink'});" /> -->
     <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateAutoAnnotation', content: {event: event}});" />
     <command id="cmd_convertmd_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'convertMD'});" />
+    <command id="cmd_convertasciidoc_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'convertAsciiDoc'});" />
     <command id="cmd_treeview" oncommand="Zotero.Knowledge4Zotero.views.switchView(1);" />
     <command id="cmd_mindmap" oncommand="Zotero.Knowledge4Zotero.views.switchView(2);" />
     <command id="cmd_bubblemap" oncommand="Zotero.Knowledge4Zotero.views.switchView(3);" />
@@ -95,6 +96,7 @@
                 <menuitem id="menu_autoannotation_betternotes" type="checkbox" label="&zotero.__addonRef__.workspace.menu.autoannotation;" command="cmd_autoannotation_betternotes" />
                 <menuseparator />
                 <menuitem id="menu_convertmd_betternotes" label="&zotero.__addonRef__.workspace.menu.convertmd;" command="cmd_convertmd_betternotes" />
+                <menuitem id="menu_convertasciidoc_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.convertasciidoc;" command="cmd_convertasciidoc_betternotes" />
             </menupopup>
         </menu>
 
