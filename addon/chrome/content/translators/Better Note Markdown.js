@@ -690,6 +690,20 @@ let bundle;
                 },
               };
 
+              rules.mathBlock = {
+                filter: function (node) {
+                  return node.nodeName === "PRE" && node.className === "math";
+                },
+
+                replacement: function (content, node, options) {
+                  return (
+                    "\n\n$$\n" +
+                    node.firstChild.textContent.slice(2, -2) +
+                    "\n$$\n\n"
+                  );
+                },
+              };
+
               rules.indentedCodeBlock = {
                 filter: function (node, options) {
                   return (
