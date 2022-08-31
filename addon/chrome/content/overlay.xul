@@ -21,7 +21,7 @@
         <key id="key_new_betternotes" class="key-type-betternotes" key="N" modifiers="accel" command="cmd_new_betternotes" />
         <key id="key_open_betternotes" class="key-type-betternotes" key="O" modifiers="accel" command="cmd_open_betternotes" />
         <key id="key_export_betternotes" class="key-type-betternotes" key="E" modifiers="accel" command="cmd_export_betternotes" />
-        <key id="key_sync_betternotes" class="key-type-betternotes" key="S" modifiers="accel" command="cmd_sync_betternotes" />
+        <key id="key_sync_betternotes" class="key-type-betternotes" key="S" modifiers="accel,shift" command="cmd_sync_betternotes" />
         <key id="key_indent_betternotes" class="key-type-betternotes" keycode="VK_TAB" command="cmd_indent_betternotes" />
         <key id="key_unindent_betternotes" class="key-type-betternotes" keycode="VK_TAB" modifiers="shift" command="cmd_unindent_betternotes" />
     </keyset>

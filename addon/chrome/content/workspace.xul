@@ -28,7 +28,7 @@
         <key id="key_new" key="N" modifiers="accel" command="cmd_new" />
         <key id="key_open" key="O" modifiers="accel" command="cmd_open" />
         <key id="key_export" key="E" modifiers="accel" command="cmd_export" />
-        <key id="key_sync_betternotes" key="S" modifiers="accel" command="cmd_sync_betternotes" />
+        <key id="key_sync_betternotes" key="S" modifiers="accel,shift" command="cmd_sync_betternotes" />
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
         <!-- <key id="key_insertNotes" key="I" modifiers="accel" command="cmd_insertNotes" /> -->
         <key id="key_indent" keycode="VK_TAB" command="cmd_indent_betternotes" />
