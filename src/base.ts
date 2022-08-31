@@ -1,15 +1,8 @@
-class AddonBase {
-  protected _Addon: Knowledge4Zotero;
-  constructor(parent: Knowledge4Zotero) {
-    this._Addon = parent;
-  }
-}
-
 class EditorMessage {
   public type: string;
   public content: {
-    event?: XULEvent;
-    editorInstance?: EditorInstance;
+    event?: XUL.XULEvent;
+    editorInstance?: Zotero.EditorInstance;
     params?: any;
   };
   constructor(type: string, content: object) {
@@ -83,5 +76,4 @@ class CopyHelper {
     );
   }
 }
-
-export { AddonBase, EditorMessage, OutlineType, NoteTemplate, CopyHelper };
+export { EditorMessage, OutlineType, NoteTemplate, CopyHelper };

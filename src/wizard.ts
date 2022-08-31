@@ -1,4 +1,6 @@
-import { AddonBase, EditorMessage } from "./base";
+import Knowledge4Zotero from "./addon";
+import { EditorMessage } from "./base";
+import AddonBase from "./module";
 
 class AddonWizard extends AddonBase {
   enableSetup: boolean;
@@ -266,7 +268,7 @@ class AddonWizard extends AddonBase {
       }
       if (this.enableNote) {
         const noteID = await ZoteroPane_Local.newNote();
-        Zotero.Items.get(noteID).setNote(
+        (Zotero.Items.get(noteID) as Zotero.Item).setNote(
           Zotero.locale === "zh-CN" ? this.templateCN : this.template
         );
         await this._Addon.events.onEditorEvent(

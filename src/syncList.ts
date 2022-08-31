@@ -1,4 +1,5 @@
-import { AddonBase } from "./base";
+import Knowledge4Zotero from "./addon";
+import AddonBase from "./module";
 
 class AddonSyncList extends AddonBase {
   private _window: Window;
@@ -28,7 +29,9 @@ class AddonSyncList extends AddonBase {
     if (!this._window || this._window.closed) {
       return;
     }
-    const notes = Zotero.Items.get(this._Addon.sync.getSyncNoteIds());
+    const notes = Zotero.Items.get(
+      this._Addon.sync.getSyncNoteIds()
+    ) as Zotero.Item[];
     const listbox = this._window.document.getElementById("sync-list");
     let e,
       es = this._window.document.getElementsByTagName("listitem");
@@ -38,7 +41,8 @@ class AddonSyncList extends AddonBase {
     }
     for (const note of notes) {
       const syncInfo = this._Addon.sync.getNoteSyncStatus(note);
-      const listitem = this._window.document.createElement("listitem");
+      const listitem: XUL.ListItem =
+        this._window.document.createElement("listitem");
       listitem.setAttribute("id", note.id);
 
       const icon = this._window.document.createElement("listcell");
@@ -95,14 +99,14 @@ class AddonSyncList extends AddonBase {
     this._window.focus();
   }
 
-  getSelectedItems(): ZoteroItem[] {
+  getSelectedItems(): Zotero.Item[] {
     return Zotero.Items.get(
       Array.prototype.map.call(
         (this._window.document.getElementById("sync-list") as any)
           .selectedItems,
         (node) => node.id
       )
-    );
+    ) as Zotero.Item[];
   }
 
   useRelated(): Boolean {
@@ -150,10 +154,10 @@ class AddonSyncList extends AddonBase {
       return;
     }
     if (this.useRelated()) {
-      let noteIds: Number[] = await this._Addon.sync.getRelatedNoteIdsFromNotes(
+      let noteIds: number[] = await this._Addon.sync.getRelatedNoteIdsFromNotes(
         selectedItems
       );
-      selectedItems = Zotero.Items.get(noteIds);
+      selectedItems = Zotero.Items.get(noteIds) as Zotero.Item[];
     }
     for (const note of selectedItems) {
       await this._Addon.sync.removeSyncNote(note);

@@ -1,4 +1,6 @@
-import { AddonBase, EditorMessage, OutlineType } from "./base";
+import Knowledge4Zotero from "./addon";
+import { EditorMessage, OutlineType } from "./base";
+import AddonBase from "./module";
 
 class AddonViews extends AddonBase {
   progressWindowIcon: object;
@@ -79,7 +81,7 @@ class AddonViews extends AddonBase {
       .forEach((el) => (el as XUL.Element).setAttribute("disabled", disabled));
   }
 
-  async addEditorKnowledgeToolBar(editorInstances: EditorInstance) {
+  async addEditorKnowledgeToolBar(editorInstances: Zotero.EditorInstance) {
     await editorInstances._initPromise;
 
     await new Promise<void>((resolve, reject) => {
@@ -105,7 +107,7 @@ class AddonViews extends AddonBase {
   }
 
   async addEditorButton(
-    editorInstances: EditorInstance,
+    editorInstances: Zotero.EditorInstance,
     id: string,
     icon: string,
     title: string,
@@ -147,9 +149,9 @@ class AddonViews extends AddonBase {
       itemID: editorInstances._item.id,
       editorInstances: editorInstances,
     });
-    dropdown.addEventListener("click", (e: XULEvent) => {
+    dropdown.addEventListener("click", (e: XUL.XULEvent) => {
       message.type = e.target.getAttribute("eventType");
-      message.content.event = e as XULEvent;
+      message.content.event = e as XUL.XULEvent;
       message.content.editorInstance = editorInstances;
       this._Addon.events.onEditorEvent(message);
     });
@@ -157,7 +159,7 @@ class AddonViews extends AddonBase {
   }
 
   async addEditorPopup(
-    editorInstances: EditorInstance,
+    editorInstances: Zotero.EditorInstance,
     id: string,
     buttons: { id: string; text: string; rank: number; eventType: string }[],
     parentDropDown: Element
@@ -191,9 +193,9 @@ class AddonViews extends AddonBase {
         itemID: editorInstances._item.id,
         editorInstances: editorInstances,
       });
-      button.addEventListener("click", (e: XULEvent) => {
+      button.addEventListener("click", (e: XUL.XULEvent) => {
         message.type = e.target.getAttribute("eventType");
-        message.content.event = e as XULEvent;
+        message.content.event = e as XUL.XULEvent;
         message.content.editorInstance = editorInstances;
         this._Addon.events.onEditorEvent(message);
         e.stopPropagation();
@@ -227,7 +229,7 @@ class AddonViews extends AddonBase {
   }
 
   switchEditorTexView(
-    instance: EditorInstance,
+    instance: Zotero.EditorInstance,
     showView: boolean,
     viewNode: HTMLElement = undefined
   ) {
@@ -274,7 +276,7 @@ class AddonViews extends AddonBase {
     }
   }
 
-  async scrollToLine(instance: EditorInstance, lineIndex: number) {
+  async scrollToLine(instance: Zotero.EditorInstance, lineIndex: number) {
     await instance._initPromise;
     let editorElement = this.getEditorElement(instance._iframeWindow.document);
     const eleList = [];
@@ -306,7 +308,7 @@ class AddonViews extends AddonBase {
     }
   }
 
-  scrollToPosition(instance: EditorInstance, offset: number) {
+  scrollToPosition(instance: Zotero.EditorInstance, offset: number) {
     let editorElement = this.getEditorElement(instance._iframeWindow.document);
     // @ts-ignore
     (editorElement.parentNode as HTMLElement).scrollTo(0, offset);
@@ -370,25 +372,25 @@ class AddonViews extends AddonBase {
         new EditorMessage("openWorkspace", { event: e })
       );
     });
-    treeRow.addEventListener("mouseover", (e: XULEvent) => {
+    treeRow.addEventListener("mouseover", (e: XUL.XULEvent) => {
       treeRow.setAttribute(
         "style",
         "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; background-color: grey;"
       );
     });
-    treeRow.addEventListener("mouseleave", (e: XULEvent) => {
+    treeRow.addEventListener("mouseleave", (e: XUL.XULEvent) => {
       treeRow.setAttribute(
         "style",
         "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
       );
     });
-    treeRow.addEventListener("mousedown", (e: XULEvent) => {
+    treeRow.addEventListener("mousedown", (e: XUL.XULEvent) => {
       treeRow.setAttribute(
         "style",
         "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; color: #FFFFFF;"
       );
     });
-    treeRow.addEventListener("mouseup", (e: XULEvent) => {
+    treeRow.addEventListener("mouseup", (e: XUL.XULEvent) => {
       treeRow.setAttribute(
         "style",
         "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
@@ -400,7 +402,7 @@ class AddonViews extends AddonBase {
   }
 
   async updateEditorPopupButtons(_window: Window, link: string) {
-    const note: ZoteroItem = link
+    const note: Zotero.Item = link
       ? (await this._Addon.knowledge.getNoteFromLink(link)).item
       : undefined;
     // If the note is invalid, we remove the buttons
@@ -481,7 +483,7 @@ class AddonViews extends AddonBase {
         await notifyFlag.promise;
         let hasAttachemnts = false;
         for (const _n of [note, ...convertResult.subNotes]) {
-          if (Zotero.Items.get(_n.getAttachments()).length) {
+          if ((Zotero.Items.get(_n.getAttachments()) as Zotero.Item[]).length) {
             hasAttachemnts = true;
             break;
           }
@@ -522,7 +524,7 @@ class AddonViews extends AddonBase {
         let afterLink = line.slice(linkEnd);
         let linkPart = line.slice(linkStart, linkEnd);
         let link = this._Addon.parse.parseLinkInText(linkPart);
-        let currentNote: ZoteroItem;
+        let currentNote: Zotero.Item;
         if (link) {
           currentNote = (await this._Addon.knowledge.getNoteFromLink(link))
             .item;
@@ -615,7 +617,7 @@ class AddonViews extends AddonBase {
     }
   }
 
-  async addReaderAnnotationButton(reader: ReaderObj) {
+  async addReaderAnnotationButton(reader: _ZoteroReaderInstance) {
     if (!reader) {
       return false;
     }
@@ -639,7 +641,8 @@ class AddonViews extends AddonBase {
       const itemKey = annotationWrapper.getAttribute(
         "data-sidebar-annotation-id"
       );
-      const libraryID = Zotero.Items.get(reader.itemID).libraryID;
+      const libraryID = (Zotero.Items.get(reader.itemID) as Zotero.Item)
+        .libraryID;
       const annotationItem = await Zotero.Items.getByLibraryAndKeyAsync(
         libraryID,
         itemKey
@@ -655,15 +658,21 @@ class AddonViews extends AddonBase {
         );
         e.preventDefault();
       });
-      addAnnotationNoteButton.addEventListener("mouseover", (e: XULEvent) => {
-        addAnnotationNoteButton.setAttribute(
-          "style",
-          "background: #F0F0F0; margin: 5px;"
-        );
-      });
-      addAnnotationNoteButton.addEventListener("mouseout", (e: XULEvent) => {
-        addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
-      });
+      addAnnotationNoteButton.addEventListener(
+        "mouseover",
+        (e: XUL.XULEvent) => {
+          addAnnotationNoteButton.setAttribute(
+            "style",
+            "background: #F0F0F0; margin: 5px;"
+          );
+        }
+      );
+      addAnnotationNoteButton.addEventListener(
+        "mouseout",
+        (e: XUL.XULEvent) => {
+          addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
+        }
+      );
       moreButton.before(addAnnotationNoteButton);
       if (annotationItem.annotationType === "image" && Zotero.isWin) {
         // Customize image copy
@@ -683,13 +692,13 @@ class AddonViews extends AddonBase {
           );
           e.preventDefault();
         });
-        copyImageButton.addEventListener("mouseover", (e: XULEvent) => {
+        copyImageButton.addEventListener("mouseover", (e: XUL.XULEvent) => {
           copyImageButton.setAttribute(
             "style",
             "background: #F0F0F0; margin: 5px;"
           );
         });
-        copyImageButton.addEventListener("mouseout", (e: XULEvent) => {
+        copyImageButton.addEventListener("mouseout", (e: XUL.XULEvent) => {
           copyImageButton.setAttribute("style", "margin: 5px;");
         });
         moreButton.before(copyImageButton);

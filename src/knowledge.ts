@@ -1,13 +1,15 @@
-import { AddonBase, EditorMessage, OutlineType } from "./base";
+import Knowledge4Zotero from "./addon";
+import { OutlineType } from "./base";
 import { loadTranslator, TRANSLATOR_ID_BETTER_MARKDOWN } from "./exportMD";
 import { pick } from "./file_picker";
+import AddonBase from "./module";
 
 class Knowledge extends AddonBase {
   currentLine: number;
   currentNodeID: number;
   workspaceWindow: Window;
   workspaceTabId: string;
-  workspaceNoteEditor: EditorInstance;
+  workspaceNoteEditor: Zotero.EditorInstance | undefined;
   previewItemID: number;
   _firstInit: boolean;
   _workspacePromise: any;
@@ -22,13 +24,12 @@ class Knowledge extends AddonBase {
     this.currentLine = -1;
     this.currentNodeID = -1;
     this._pdfNoteId = -1;
-    this.workspaceNoteEditor = undefined;
   }
 
-  getWorkspaceNote(): ZoteroItem {
+  getWorkspaceNote(): Zotero.Item {
     return Zotero.Items.get(
-      Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
-    );
+      Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") as number
+    ) as Zotero.Item;
   }
 
   getWorkspaceWindow(): Window | boolean {
@@ -67,7 +68,7 @@ class Knowledge extends AddonBase {
         "_blank",
         "chrome,extrachrome,menubar,resizable,scrollbars,status,width=1000,height=600"
       );
-      this.workspaceWindow = win;
+      this.workspaceWindow = win as Window;
       this.workspaceTabId = "";
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
@@ -87,7 +88,7 @@ class Knowledge extends AddonBase {
         index: 1,
         data: {},
         select: select,
-        onClose: undefined,
+        onClose: undefined
       });
       this.workspaceTabId = id;
       const _iframe = window.document.createElement("browser");
@@ -150,7 +151,7 @@ class Knowledge extends AddonBase {
   async getWorkspaceEditorInstance(
     type: "main" | "preview" = "main",
     wait: boolean = true
-  ): Promise<EditorInstance> {
+  ): Promise<Zotero.EditorInstance | undefined> {
     let noteEditor = (await this.getWorkspaceEditor(type)) as any;
     if (!noteEditor) {
       return;
@@ -161,11 +162,11 @@ class Knowledge extends AddonBase {
       await Zotero.Promise.delay(10);
     }
     this.workspaceNoteEditor =
-      noteEditor.getCurrentInstance() as EditorInstance;
+      noteEditor.getCurrentInstance() as Zotero.EditorInstance;
     return this.workspaceNoteEditor;
   }
 
-  getEditorInstance(note: ZoteroItem) {
+  getEditorInstance(note: Zotero.Item) {
     // If there are multiple editors of main note available, we use the workspace editor.
     if (
       note.id === this.getWorkspaceNote().id &&
@@ -175,7 +176,9 @@ class Knowledge extends AddonBase {
     ) {
       return this.workspaceNoteEditor;
     }
-    const editor = (Zotero.Notes._editorInstances as EditorInstance[]).find(
+    const editor = (
+      Zotero.Notes._editorInstances as Zotero.EditorInstance[]
+    ).find(
       (e) =>
         e._item.id === note.id &&
         !Components.utils.isDeadWrapper(e._iframeWindow)
@@ -188,7 +191,7 @@ class Knowledge extends AddonBase {
 
   async setWorkspaceNote(
     type: "main" | "preview" = "main",
-    note: ZoteroItem = undefined
+    note: Zotero.Item | undefined = undefined
   ) {
     let _window = this.getWorkspaceWindow() as Window;
     note = note || this.getWorkspaceNote();
@@ -196,9 +199,8 @@ class Knowledge extends AddonBase {
       return;
     }
     if (type === "preview") {
-      _window.document
-        .getElementById("preview-splitter")
-        .setAttribute("state", "open");
+      const splitter = _window.document.getElementById("preview-splitter");
+      splitter && splitter.setAttribute("state", "open");
       this.previewItemID = note.id;
     } else {
       // Set line to default
@@ -247,7 +249,7 @@ class Knowledge extends AddonBase {
     }
   }
 
-  getLinesInNote(note: ZoteroItem): string[] {
+  getLinesInNote(note: Zotero.Item): string[] {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return [];
@@ -256,7 +258,7 @@ class Knowledge extends AddonBase {
     return this._Addon.parse.parseHTMLLines(noteText);
   }
 
-  async setLinesToNote(note: ZoteroItem, noteLines: string[]) {
+  async setLinesToNote(note: Zotero.Item, noteLines: string[]) {
     note = note || this.getWorkspaceNote();
     if (!note) {
       return [];
@@ -278,7 +280,7 @@ class Knowledge extends AddonBase {
   }
 
   private async addLineToNote(
-    note: ZoteroItem,
+    note: Zotero.Item,
     text: string,
     lineIndex: number,
     forceMetadata: boolean = false,
@@ -342,7 +344,11 @@ class Knowledge extends AddonBase {
 
   _dataURLtoBlob(dataurl: string) {
     let parts = dataurl.split(",");
-    let mime = parts[0].match(/:(.*?);/)[1];
+    let matches = parts[0]?.match(/:(.*?);/);
+    if (!matches || !matches[1]) {
+      return;
+    }
+    let mime = matches[1];
     if (parts[0].indexOf("base64") !== -1) {
       let bstr = atob(parts[1]);
       let n = bstr.length;
@@ -356,7 +362,7 @@ class Knowledge extends AddonBase {
     return null;
   }
 
-  async _importImage(note: ZoteroItem, src, download = false) {
+  async _importImage(note: Zotero.Item, src, download = false) {
     let blob;
     if (src.startsWith("data:")) {
       blob = this._dataURLtoBlob(src);
@@ -382,7 +388,7 @@ class Knowledge extends AddonBase {
     return attachment.key;
   }
 
-  async importImagesToNote(note: ZoteroItem, annotations: any) {
+  async importImagesToNote(note: Zotero.Item, annotations: any) {
     for (let annotation of annotations) {
       if (annotation.image) {
         annotation.imageAttachmentKey = await this._importImage(
@@ -395,8 +401,8 @@ class Knowledge extends AddonBase {
   }
 
   async addAnnotationsToNote(
-    note: ZoteroItem,
-    annotations: ZoteroItem[],
+    note: Zotero.Item,
+    annotations: Zotero.Item[],
     lineIndex: number
   ) {
     note = note || this.getWorkspaceNote();
@@ -409,7 +415,7 @@ class Knowledge extends AddonBase {
   }
 
   addLinkToNote(
-    targetNote: ZoteroItem,
+    targetNote: Zotero.Item,
     lineIndex: number,
     linkedNoteID: number
   ) {
@@ -417,7 +423,7 @@ class Knowledge extends AddonBase {
     if (!targetNote) {
       return;
     }
-    let linkedNote = Zotero.Items.get(linkedNoteID);
+    let linkedNote = Zotero.Items.get(linkedNoteID) as Zotero.Item;
     if (!linkedNote.isNote()) {
       this._Addon.views.showProgressWindow("Better Notes", "Not a note item");
       return;
@@ -450,7 +456,7 @@ class Knowledge extends AddonBase {
     );
   }
 
-  getNoteLink(note: ZoteroItem) {
+  getNoteLink(note: Zotero.Item) {
     let libraryID = note.libraryID;
     let library = Zotero.Libraries.get(libraryID);
     let groupID: string;
@@ -458,12 +464,14 @@ class Knowledge extends AddonBase {
       groupID = "u";
     } else if (library.libraryType === "group") {
       groupID = `${library.id}`;
+    } else {
+      return "";
     }
     let noteKey = note.key;
     return `zotero://note/${groupID}/${noteKey}/`;
   }
 
-  getAnnotationLink(annotation: ZoteroItem) {
+  getAnnotationLink(annotation: Zotero.Item) {
     let position = JSON.parse(annotation.annotationPosition);
     let openURI: string;
 
@@ -474,6 +482,8 @@ class Knowledge extends AddonBase {
       openURI = `zotero://open-pdf/library/items/${attachment.key}`;
     } else if (library.libraryType === "group") {
       openURI = `zotero://open-pdf/groups/${library.id}/items/${attachment.key}`;
+    } else {
+      openURI = "";
     }
 
     openURI +=
@@ -485,7 +495,7 @@ class Knowledge extends AddonBase {
   }
 
   async modifyLineInNote(
-    note: ZoteroItem,
+    note: Zotero.Item,
     text: string | Function,
     lineIndex: number,
     forceMetadata: boolean = false
@@ -531,7 +541,7 @@ class Knowledge extends AddonBase {
   }
 
   async changeHeadingLineInNote(
-    note: ZoteroItem,
+    note: Zotero.Item,
     rankChange: number,
     lineIndex: number
   ) {
@@ -565,7 +575,7 @@ class Knowledge extends AddonBase {
   }
 
   moveHeaderLineInNote(
-    note: ZoteroItem,
+    note: Zotero.Item,
     currentNode: TreeModel.Node<object>,
     targetNode: TreeModel.Node<object>,
     as: "child" | "before" | "after"
@@ -630,7 +640,9 @@ class Knowledge extends AddonBase {
     this.setLinesToNote(note, newLines);
   }
 
-  getNoteTree(note: ZoteroItem = undefined): TreeModel.Node<object> {
+  getNoteTree(
+    note: Zotero.Item | undefined = undefined
+  ): TreeModel.Node<object> {
     // See http://jnuno.com/tree-model-js
     note = note || this.getWorkspaceNote();
     if (!note) {
@@ -640,7 +652,7 @@ class Knowledge extends AddonBase {
   }
 
   getNoteTreeAsList(
-    note: ZoteroItem,
+    note: Zotero.Item,
     filterRoot: boolean = true,
     filterLink: boolean = true
   ): TreeModel.Node<object>[] {
@@ -656,7 +668,7 @@ class Knowledge extends AddonBase {
   }
 
   getNoteTreeNodeById(
-    note: ZoteroItem,
+    note: Zotero.Item,
     id: number,
     root: TreeModel.Node<object> = undefined
   ) {
@@ -667,7 +679,7 @@ class Knowledge extends AddonBase {
   }
 
   getNoteTreeNodesByRank(
-    note: ZoteroItem,
+    note: Zotero.Item,
     rank: number,
     root: TreeModel.Node<object> = undefined
   ) {
@@ -678,7 +690,7 @@ class Knowledge extends AddonBase {
   }
 
   getLineParentNode(
-    note: ZoteroItem,
+    note: Zotero.Item,
     lineIndex: number = -1
   ): TreeModel.Node<object> {
     if (lineIndex < 0) {
@@ -712,7 +724,7 @@ class Knowledge extends AddonBase {
   }
 
   async exportNoteToFile(
-    note: ZoteroItem,
+    note: Zotero.Item,
     convertNoteLinks: boolean = true,
     saveFile: boolean = true,
     saveNote: boolean = false,
@@ -725,10 +737,10 @@ class Knowledge extends AddonBase {
     this._exportFileDict = [];
 
     note = note || this.getWorkspaceNote();
-    let newNote: ZoteroItem;
+    let newNote: Zotero.Item;
     if (convertNoteLinks || saveNote) {
       const noteID = await ZoteroPane_Local.newNote();
-      newNote = Zotero.Items.get(noteID);
+      newNote = Zotero.Items.get(noteID) as Zotero.Item;
       const rootNoteIds = [note.id];
 
       const convertResult = await this.convertNoteLines(
@@ -823,7 +835,7 @@ class Knowledge extends AddonBase {
       const checkPrint = () => {
         try {
           const editor: any = _w.document.querySelector("#zotero-note-editor");
-          const instance: EditorInstance = editor.getCurrentInstance();
+          const instance: Zotero.EditorInstance = editor.getCurrentInstance();
           console.log(instance._iframeWindow.document.title);
           if (instance._iframeWindow.document.title === "Printed") {
             this._pdfPrintPromise.resolve();
@@ -856,7 +868,7 @@ class Knowledge extends AddonBase {
   }
 
   async exportNotesToFile(
-    notes: ZoteroItem[],
+    notes: Zotero.Item[],
     useEmbed: boolean,
     useSync: boolean = false
   ) {
@@ -882,10 +894,10 @@ class Knowledge extends AddonBase {
 
     if (useEmbed) {
       for (const note of notes) {
-        let newNote: ZoteroItem;
+        let newNote: Zotero.Item;
         if (this._Addon.parse.parseLinkInText(note.getNote())) {
           const noteID = await ZoteroPane_Local.newNote();
-          newNote = Zotero.Items.get(noteID);
+          newNote = Zotero.Items.get(noteID) as Zotero.Item;
           const rootNoteIds = [note.id];
 
           const convertResult = await this.convertNoteLines(
@@ -917,7 +929,7 @@ class Knowledge extends AddonBase {
     } else {
       // Export every linked note as a markdown file
       // Find all linked notes that need to be exported
-      let allNoteIds: number[] = [].concat(notes.map((n) => n.id));
+      let allNoteIds: number[] = notes.map((n) => n.id);
       for (const note of notes) {
         const linkMatches = note
           .getNote()
@@ -936,7 +948,9 @@ class Knowledge extends AddonBase {
       }
       allNoteIds = Array.from(new Set(allNoteIds));
       console.log(allNoteIds);
-      const allNoteItems: ZoteroItem[] = Zotero.Items.get(allNoteIds);
+      const allNoteItems: Zotero.Item[] = Zotero.Items.get(
+        allNoteIds
+      ) as Zotero.Item[];
       const noteLinkDict = allNoteItems.map((_note) => {
         return {
           link: this.getNoteLink(_note),
@@ -963,14 +977,14 @@ class Knowledge extends AddonBase {
     }
   }
 
-  async syncNotesToFile(notes: ZoteroItem[], filepath: string) {
+  async syncNotesToFile(notes: Zotero.Item[], filepath: string) {
     this._exportPath = Zotero.File.pathToFile(filepath).path + "/attachments";
     // Convert to unix format
     this._exportPath = this._exportPath.replace(/\\/g, "/");
 
     // Export every linked note as a markdown file
     // Find all linked notes that need to be exported
-    let allNoteIds: number[] = [].concat(notes.map((n) => n.id));
+    let allNoteIds: number[] = notes.map((n) => n.id);
     for (const note of notes) {
       const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
       if (!linkMatches) {
@@ -987,7 +1001,9 @@ class Knowledge extends AddonBase {
     }
     allNoteIds = new Array(...new Set(allNoteIds));
     // console.log(allNoteIds);
-    const allNoteItems: ZoteroItem[] = Zotero.Items.get(allNoteIds);
+    const allNoteItems: Zotero.Item[] = Zotero.Items.get(
+      allNoteIds
+    ) as Zotero.Item[];
     const noteLinkDict = allNoteItems.map((_note) => {
       return {
         link: this.getNoteLink(_note),
@@ -1009,7 +1025,7 @@ class Knowledge extends AddonBase {
   }
 
   private async _export(
-    note: ZoteroItem,
+    note: Zotero.Item,
     filename: string,
     deleteAfterExport: boolean
   ) {
@@ -1045,7 +1061,7 @@ class Knowledge extends AddonBase {
     }
   }
 
-  private _getFileName(noteItem: ZoteroItem) {
+  private _getFileName(noteItem: Zotero.Item) {
     return this._Addon.template.renderTemplate(
       "[ExportMDFileName]",
       "noteItem",
@@ -1054,17 +1070,17 @@ class Knowledge extends AddonBase {
   }
 
   async convertNoteLines(
-    currentNote: ZoteroItem,
+    currentNote: Zotero.Item,
     rootNoteIds: number[],
     convertNoteLinks: boolean = true
-  ): Promise<{ lines: string[]; subNotes: ZoteroItem[] }> {
+  ): Promise<{ lines: string[]; subNotes: Zotero.Item[] }> {
     Zotero.debug(`convert note ${currentNote.id}`);
 
-    let subNotes = [];
+    let subNotes: Zotero.Item[] = [];
     const [..._rootNoteIds] = rootNoteIds;
     _rootNoteIds.push(currentNote.id);
 
-    let newLines = [];
+    let newLines: string[] = [];
     const noteLines = this.getLinesInNote(currentNote);
     for (let i in noteLines) {
       newLines.push(noteLines[i]);

@@ -1,4 +1,6 @@
-import { AddonBase, NoteTemplate } from "./base";
+import Knowledge4Zotero from "./addon";
+import { NoteTemplate } from "./base";
+import AddonBase from "./module";
 
 class AddonTemplate extends AddonBase {
   private _window: Window;
@@ -87,7 +89,7 @@ class AddonTemplate extends AddonBase {
   resetTemplates() {
     let oldTemplatesRaw: string = Zotero.Prefs.get(
       "Knowledge4Zotero.noteTemplate"
-    );
+    ) as string;
     // Convert old version
     if (oldTemplatesRaw) {
       const templates: NoteTemplate[] = JSON.parse(oldTemplatesRaw);
@@ -116,7 +118,7 @@ class AddonTemplate extends AddonBase {
   }
 
   getCitationStyle(): Object {
-    let format = Zotero.Prefs.get("Knowledge4Zotero.citeFormat");
+    let format = Zotero.Prefs.get("Knowledge4Zotero.citeFormat") as string;
     try {
       if (format) {
         format = JSON.parse(format);
@@ -229,7 +231,7 @@ class AddonTemplate extends AddonBase {
       deferred: Zotero.Promise.defer(),
     };
 
-    (window as unknown as XULWindow).openDialog(
+    (window as unknown as XUL.XULWindow).openDialog(
       "chrome://zotero/content/selectItemsDialog.xul",
       "",
       "chrome,dialog=no,centerscreen,resizable=yes",
@@ -238,8 +240,8 @@ class AddonTemplate extends AddonBase {
     await io.deferred.promise;
 
     const ids = io.dataOut;
-    const note: ZoteroItem = Zotero.Items.get(ids).filter((item: ZoteroItem) =>
-      item.isNote()
+    const note: Zotero.Item = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
+      (item: Zotero.Item) => item.isNote()
     )[0];
     if (!note) {
       return;
@@ -404,9 +406,9 @@ class AddonTemplate extends AddonBase {
   }
 
   getTemplateKeys(): NoteTemplate[] {
-    let templateKeys: string = Zotero.Prefs.get(
+    let templateKeys = Zotero.Prefs.get(
       "Knowledge4Zotero.templateKeys"
-    );
+    ) as string;
     return templateKeys ? JSON.parse(templateKeys) : [];
   }
 
@@ -442,9 +444,9 @@ class AddonTemplate extends AddonBase {
   }
 
   getTemplateText(keyName: string): string {
-    let template: string = Zotero.Prefs.get(
+    let template = Zotero.Prefs.get(
       `Knowledge4Zotero.template.${keyName}`
-    );
+    ) as string;
     if (!template) {
       template = "";
       Zotero.Prefs.set(`Knowledge4Zotero.template.${keyName}`, template);

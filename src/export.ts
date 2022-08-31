@@ -1,4 +1,5 @@
-import { AddonBase } from "./base";
+import Knowledge4Zotero from "./addon";
+import AddonBase from "./module";
 
 class AddonExport extends AddonBase {
   private io: {
@@ -13,9 +14,9 @@ class AddonExport extends AddonBase {
   doLoad(_window: Window) {
     this._window = _window;
 
-    this.io = (this._window as unknown as XULWindow).arguments[0];
+    this.io = (this._window as unknown as XUL.XULWindow).arguments[0];
 
-    let exportFile = Zotero.Prefs.get("Knowledge4Zotero.exportFile");
+    let exportFile = Zotero.Prefs.get("Knowledge4Zotero.exportFile") as boolean;
     if (typeof exportFile !== "undefined") {
       (
         this._window.document.getElementById(
@@ -25,7 +26,7 @@ class AddonExport extends AddonBase {
     }
     let exportSingleFile = Zotero.Prefs.get(
       "Knowledge4Zotero.exportSingleFile"
-    );
+    ) as boolean;
     if (typeof exportSingleFile !== "undefined") {
       (
         this._window.document.getElementById(
@@ -33,7 +34,9 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportSingleFile;
     }
-    let exportAutoSync = Zotero.Prefs.get("Knowledge4Zotero.exportAutoSync");
+    let exportAutoSync = Zotero.Prefs.get(
+      "Knowledge4Zotero.exportAutoSync"
+    ) as boolean;
     if (typeof exportAutoSync !== "undefined") {
       (
         this._window.document.getElementById(
@@ -41,7 +44,9 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportAutoSync;
     }
-    let exportHighlight = Zotero.Prefs.get("Knowledge4Zotero.exportHighlight");
+    let exportHighlight = Zotero.Prefs.get(
+      "Knowledge4Zotero.exportHighlight"
+    ) as boolean;
     if (typeof exportHighlight !== "undefined") {
       (
         this._window.document.getElementById(
@@ -49,7 +54,9 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportHighlight;
     }
-    let convertSquare = Zotero.Prefs.get("Knowledge4Zotero.convertSquare");
+    let convertSquare = Zotero.Prefs.get(
+      "Knowledge4Zotero.convertSquare"
+    ) as boolean;
     if (typeof convertSquare !== "undefined") {
       (
         this._window.document.getElementById(
@@ -57,7 +64,7 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = convertSquare;
     }
-    let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink");
+    let embedLink = Zotero.Prefs.get("Knowledge4Zotero.embedLink") as boolean;
     if (typeof embedLink !== "undefined") {
       (
         this._window.document.getElementById(
@@ -65,7 +72,7 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = embedLink;
     }
-    let exportNote = Zotero.Prefs.get("Knowledge4Zotero.exportNote");
+    let exportNote = Zotero.Prefs.get("Knowledge4Zotero.exportNote") as boolean;
     if (typeof exportNote !== "undefined") {
       (
         this._window.document.getElementById(
@@ -73,7 +80,7 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportNote;
     }
-    let exportCopy = Zotero.Prefs.get("Knowledge4Zotero.exportCopy");
+    let exportCopy = Zotero.Prefs.get("Knowledge4Zotero.exportCopy") as boolean;
     if (typeof exportCopy !== "undefined") {
       (
         this._window.document.getElementById(
@@ -81,7 +88,7 @@ class AddonExport extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportCopy;
     }
-    let exportPDF = Zotero.Prefs.get("Knowledge4Zotero.exportPDF");
+    let exportPDF = Zotero.Prefs.get("Knowledge4Zotero.exportPDF") as boolean;
     if (typeof exportPDF !== "undefined") {
       (
         this._window.document.getElementById(
@@ -91,7 +98,7 @@ class AddonExport extends AddonBase {
     }
     this.doUpdate();
   }
-  doUpdate(event: XULEvent = undefined) {
+  doUpdate(event?: XUL.XULEvent) {
     let embedLink = this._window.document.getElementById(
       "Knowledge4Zotero-export-embedLink"
     ) as XUL.Checkbox;
@@ -111,7 +118,6 @@ class AddonExport extends AddonBase {
     let convertSquare = this._window.document.getElementById(
       "Knowledge4Zotero-export-convertsquare"
     ) as XUL.Checkbox;
-
 
     if (event) {
       if (
@@ -154,47 +160,47 @@ class AddonExport extends AddonBase {
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablefile"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportSingleFile = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablesingle"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportAutoSync = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enableautosync"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportHighlight = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablehighlight"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let convertSquare = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-convertsquare"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let embedLink = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-embedLink"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportNote = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablenote"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportCopy = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablecopy"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     let exportPDF = (
       this._window.document.getElementById(
         "Knowledge4Zotero-export-enablepdf"
       ) as XUL.Checkbox
-    ).checked;
+    ).checked as boolean;
     Zotero.Prefs.set("Knowledge4Zotero.exportFile", exportFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportSingleFile", exportSingleFile);
     Zotero.Prefs.set("Knowledge4Zotero.exportAutoSync", exportAutoSync);

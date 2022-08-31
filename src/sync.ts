@@ -1,4 +1,5 @@
-import { AddonBase } from "./base";
+import Knowledge4Zotero from "./addon";
+import AddonBase from "./module";
 
 class AddonSync extends AddonBase {
   triggerTime: number;
@@ -17,7 +18,7 @@ class AddonSync extends AddonBase {
       this._window.close();
     }
     this._window = _window;
-    this.io = (this._window as unknown as XULWindow).arguments[0];
+    this.io = (this._window as unknown as XUL.XULWindow).arguments[0];
     this.doUpdate();
   }
 
@@ -86,7 +87,7 @@ class AddonSync extends AddonBase {
     if (!enable) {
       const note = this.io.dataIn;
       const allNoteIds = await this.getRelatedNoteIds(note);
-      const notes = Zotero.Items.get(allNoteIds);
+      const notes = Zotero.Items.get(allNoteIds) as Zotero.Item[];
       for (const item of notes) {
         await this.removeSyncNote(item);
       }
@@ -101,18 +102,18 @@ class AddonSync extends AddonBase {
     (this._window.document.querySelector("dialog") as any).acceptDialog();
   }
 
-  getSyncNoteIds(): Number[] {
-    const ids = Zotero.Prefs.get("Knowledge4Zotero.syncNoteIds");
+  getSyncNoteIds(): number[] {
+    const ids = Zotero.Prefs.get("Knowledge4Zotero.syncNoteIds") as string;
     return ids.split(",").map((id: string) => Number(id));
   }
 
-  isSyncNote(note: ZoteroItem): boolean {
+  isSyncNote(note: Zotero.Item): boolean {
     const syncNoteIds = this._Addon.sync.getSyncNoteIds();
     return syncNoteIds.includes(note.id);
   }
 
-  async getRelatedNoteIds(note: ZoteroItem): Promise<Number[]> {
-    let allNoteIds: Number[] = [note.id];
+  async getRelatedNoteIds(note: Zotero.Item): Promise<number[]> {
+    let allNoteIds: number[] = [note.id];
     const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
     if (!linkMatches) {
       return allNoteIds;
@@ -131,7 +132,7 @@ class AddonSync extends AddonBase {
     return allNoteIds;
   }
 
-  async getRelatedNoteIdsFromNotes(notes: ZoteroItem[]): Promise<Number[]> {
+  async getRelatedNoteIdsFromNotes(notes: Zotero.Item[]): Promise<Number[]> {
     let allNoteIds: Number[] = [];
     for (const note of notes) {
       allNoteIds = allNoteIds.concat(await this.getRelatedNoteIds(note));
@@ -139,7 +140,7 @@ class AddonSync extends AddonBase {
     return allNoteIds;
   }
 
-  addSyncNote(noteItem: ZoteroItem) {
+  addSyncNote(noteItem: Zotero.Item) {
     const ids = this.getSyncNoteIds();
     if (ids.includes(noteItem.id)) {
       return;
@@ -148,7 +149,7 @@ class AddonSync extends AddonBase {
     Zotero.Prefs.set("Knowledge4Zotero.syncNoteIds", ids.join(","));
   }
 
-  async removeSyncNote(noteItem: ZoteroItem) {
+  async removeSyncNote(noteItem: Zotero.Item) {
     const ids = this.getSyncNoteIds();
     Zotero.Prefs.set(
       "Knowledge4Zotero.syncNoteIds",
@@ -161,7 +162,7 @@ class AddonSync extends AddonBase {
     await noteItem.saveTx();
   }
 
-  getNoteSyncStatus(noteItem: ZoteroItem): any {
+  getNoteSyncStatus(noteItem: Zotero.Item): any {
     const sycnInfo = noteItem.getTags().find((t) => t.tag.includes("sync://"));
     if (!sycnInfo) {
       return false;
@@ -178,7 +179,7 @@ class AddonSync extends AddonBase {
   }
 
   async updateNoteSyncStatus(
-    noteItem: ZoteroItem,
+    noteItem: Zotero.Item,
     path: string = "",
     filename: string = ""
   ) {
@@ -213,12 +214,12 @@ class AddonSync extends AddonBase {
   }
 
   async doSync(
-    items: ZoteroItem[] = null,
+    items: Zotero.Item[] = null,
     force: boolean = false,
     useIO: boolean = true
   ) {
     Zotero.debug("Better Notes: sync start");
-    items = items || Zotero.Items.get(this.getSyncNoteIds());
+    items = items || (Zotero.Items.get(this.getSyncNoteIds()) as Zotero.Item[]);
     const toExport = {};
     const forceNoteIds = force
       ? await this.getRelatedNoteIdsFromNotes(useIO ? [this.io.dataIn] : items)

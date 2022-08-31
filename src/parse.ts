@@ -1,10 +1,10 @@
-import { AddonBase } from "./base";
+import AddonBase from "./module";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 const TreeModel = require("./treemodel");
 const asciidoctor = require("asciidoctor")();
 
 class AddonParse extends AddonBase {
-  public parseNoteTree(note: ZoteroItem): TreeModel.Node<object> {
+  public parseNoteTree(note: Zotero.Item): TreeModel.Node<object> {
     const noteLines = this._Addon.knowledge.getLinesInNote(note);
     let tree = new TreeModel();
     /*
@@ -221,7 +221,7 @@ class AddonParse extends AddonBase {
     return currentElement;
   }
 
-  async parseAnnotation(annotationItem: ZoteroItem) {
+  async parseAnnotation(annotationItem: Zotero.Item) {
     try {
       if (!annotationItem || !annotationItem.isAnnotation()) {
         return null;
@@ -242,8 +242,8 @@ class AddonParse extends AddonBase {
   }
 
   async parseAnnotationHTML(
-    note: ZoteroItem,
-    annotations: ZoteroItem[],
+    note: Zotero.Item,
+    annotations: Zotero.Item[],
     ignoreComment: boolean = false
   ) {
     if (!note) {
@@ -265,7 +265,7 @@ class AddonParse extends AddonBase {
     return html;
   }
 
-  async parseNoteStyleHTML(item: ZoteroItem, lineCount: 5) {
+  async parseNoteStyleHTML(item: Zotero.Item, lineCount: 5) {
     if (!item.isNote()) {
       throw new Error("Item is not a note");
     }
@@ -381,7 +381,7 @@ class AddonParse extends AddonBase {
     return eleList;
   }
 
-  parseNoteHTML(note: ZoteroItem): Element {
+  parseNoteHTML(note: Zotero.Item): Element {
     note = note || this._Addon.knowledge.getWorkspaceNote();
     if (!note) {
       return undefined;
