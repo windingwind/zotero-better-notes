@@ -649,28 +649,6 @@ class AddonEvents extends AddonBase {
 
       await this._Addon.views.addEditorButton(
         editor,
-        "knowledge-switchTex",
-        "switchTex",
-        `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`,
-        "switchEditorTex",
-        "middle",
-        "builtin"
-      );
-
-      editor._iframeWindow.document.onkeyup = (e) => {
-        if (e.ctrlKey && e.key === "/") {
-          console.log(e);
-          this.onEditorEvent(
-            new EditorMessage("switchEditorTex", {
-              editorInstance: editor,
-            })
-          );
-          e.stopPropagation();
-        }
-      };
-
-      await this._Addon.views.addEditorButton(
-        editor,
         "knowledge-end",
         isPreviewNote ? "close" : "export",
         isPreviewNote ? "Close Preview" : "Export with linked notes",
@@ -728,14 +706,12 @@ class AddonEvents extends AddonBase {
         _window.document.body.append(style);
       }
 
-      if (!_window.document.getElementById("MathJax-script")) {
+      if (!_window.document.getElementById("betternotes-script")) {
         const messageScript = _window.document.createElement("script");
+        messageScript.id = "betternotes-script";
         messageScript.innerHTML = `
           window.addEventListener('message', async (e)=>{
-            if(e.data.type === "renderLaTex"){
-              console.log("renderLaTex");
-              await MathJax.typesetPromise([document.getElementById("texView")])
-            } else if(e.data.type === "exportPDF"){
+            if(e.data.type === "exportPDF"){
               console.log("exportPDF");
               const container = document.getElementById("editor-container");
               container.style.display = "none";
@@ -747,7 +723,7 @@ class AddonEvents extends AddonBase {
 
               let t = 0;
               let imageFlag = false;
-              while(!(imageFlag && MathJax.typesetPromise) && t < 500){
+              while(!imageFlag && t < 500){
                 await new Promise(function (resolve) {
                   setTimeout(resolve, 10);
                 });
@@ -760,7 +736,6 @@ class AddonEvents extends AddonBase {
               printNode.style.padding = "20px";
               document.body.append(printNode);
 
-              await MathJax.typesetPromise([printNode]);
               let printFlag = false;
               window.onafterprint = (e) => {
                 console.log('Print Dialog Closed..');
@@ -779,29 +754,8 @@ class AddonEvents extends AddonBase {
               window.print();
             }
           }, false)
-          MathJax = {
-            tex: {
-              inlineMath: [              // start/end delimiter pairs for in-line math
-                ['$', '$']
-              ],
-              displayMath: [             // start/end delimiter pairs for display math
-                ['$$', '$$']
-              ],
-            },
-            startup: {
-              typeset: false,           // Perform initial typeset?
-            }
-          };
         `;
         _window.document.head.append(messageScript);
-
-        const mathScript = _window.document.createElement("script");
-        mathScript.setAttribute("id", "MathJax-script");
-        mathScript.setAttribute(
-          "src",
-          "chrome://Knowledge4Zotero/content/lib/js/tex-svg-full.js"
-        );
-        _window.document.head.append(mathScript);
       }
 
       editor._knowledgeUIInitialized = true;
@@ -810,52 +764,6 @@ class AddonEvents extends AddonBase {
         editor._iframeWindow.postMessage({ type: "exportPDF" }, "*");
         this._Addon.knowledge._pdfNoteId = -1;
         return;
-      }
-
-      if (this._Addon.views._texNotes.includes(editor._item.id)) {
-        this.onEditorEvent(
-          new EditorMessage("switchEditorTex", {
-            editorInstance: editor,
-            params: { viewTex: true },
-          })
-        );
-      }
-    } else if (message.type === "switchEditorTex") {
-      /*
-        message.content = {
-          editorInstance, params: {viewTex: boolean}
-        }
-      */
-      const editor = message.content.editorInstance as Zotero.EditorInstance;
-      let viewTex = false;
-      if (message.content.params && message.content.params.viewTex) {
-        viewTex = true;
-      }
-      if (!this._Addon.views._texNotes.includes(editor._item.id) || viewTex) {
-        const editorElement =
-          editor._iframeWindow.document.getElementsByClassName(
-            "primary-editor"
-          )[0];
-        if (!editorElement) {
-          return;
-        }
-        Zotero.debug("Knowledge4Zotero: latex view on.");
-        const viewNode = editorElement.cloneNode(true) as HTMLElement;
-
-        this._Addon.views.switchEditorTexView(editor, true, viewNode);
-        this._Addon.views.changeEditorButtonView(
-          editor._iframeWindow.document.getElementById("knowledge-switchTex"),
-          "switchEditor",
-          `Editor View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
-        );
-      } else {
-        Zotero.debug("Knowledge4Zotero: latex view off.");
-        this._Addon.views.switchEditorTexView(editor, false);
-        this._Addon.views.changeEditorButtonView(
-          editor._iframeWindow.document.getElementById("knowledge-switchTex"),
-          "switchTex",
-          `LaTex View    ${Zotero.isWin ? "Ctrl" : "⌘"}+/`
-        );
       }
     } else if (message.type === "insertCitation") {
       /*

@@ -85,7 +85,7 @@ class AddonWizard extends AddonBase {
     </blockquote>
     <p></p>
     <h2>5 LaTex Support</h2>
-    <p>Click the 'TEX' button on the tool bar of note editor to switch between LaTex view and editor view.</p>
+    <p>Removed since v0.7.0. Click the 'TEX' button on the tool bar of note editor to switch between LaTex view and editor view.</p>
     <p></p>
     <h2>6 Export</h2>
     <p>Click the<span style="background-color: #ffd40080"> '⬆️export' button</span> on the top-right of the main note area. Choose a format to export, e.g. MarkDown.</p>
@@ -178,7 +178,7 @@ class AddonWizard extends AddonBase {
     </blockquote>
     <p></p>
     <h2>5 LaTex支持</h2>
-    <p>点击笔记编辑器工具栏中'TEX'按钮来切换预览和编辑模式。</p>
+    <p>Removed since v0.7.0. 点击笔记编辑器工具栏中'TEX'按钮来切换预览和编辑模式。</p>
     <p></p>
     <h2>6 导出</h2>
     <p>点击主笔记区域右上角的<span style=\"background-color: #ffd40080\">“⬆️导出”按钮</span>。选择要导出的格式，比如MarkDown。</p>
