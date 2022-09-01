@@ -496,34 +496,101 @@ class AddonEvents extends AddonBase {
           header.setAttribute("style", "font-size: medium");
           addLinkDropDown.append(header);
         } else {
-          addLinkDropDown.addEventListener("mouseover", async (e) => {
-            if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
-              return;
-            }
-            const buttonParam: any[] = [];
-            const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
-            for (let node of nodes) {
-              buttonParam.push({
-                id: `knowledge-addlink-popup-${node.model.endIndex}`,
-                text: node.model.name,
-                rank: node.model.rank,
-                eventType: "addToKnowledgeLine",
+          const normalHintText =
+            "Insert at the end of section.\nHold shift to insert before section.";
+          const shiftHintText =
+            "Insert before section.\nRelease shift to insert at the end of section.";
+          addLinkDropDown.addEventListener(
+            "mouseover",
+            async (e: KeyboardEvent) => {
+              if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
+                return;
+              }
+              let isShift = e.shiftKey;
+              const hintWindow = this._Addon.views.showProgressWindow(
+                "Bi-directional Link",
+                isShift ? shiftHintText : normalHintText,
+                "default",
+                // Disable auto close
+                -1
+              );
+
+              const getButtonParams = () => {
+                const buttonParam: any[] = [];
+                for (let node of nodes) {
+                  buttonParam.push({
+                    id: `knowledge-addlink-popup-${
+                      isShift ? node.model.lineIndex - 1 : node.model.endIndex
+                    }`,
+                    text: node.model.name,
+                    rank: node.model.rank,
+                    eventType: "addToKnowledgeLine",
+                  });
+                }
+                return buttonParam;
+              };
+
+              const nodes = this._Addon.knowledge.getNoteTreeAsList(undefined);
+              const buttonParam = getButtonParams();
+              const popup: HTMLElement = await this._Addon.views.addEditorPopup(
+                editor,
+                "knowledge-addlink-popup",
+                // [{ id: ''; icon: string; eventType: string }],
+                buttonParam,
+                addLinkDropDown
+              );
+              popup.style.backgroundColor = isShift ? "#f0f9fe" : "";
+              const leaveAction = (e?) => {
+                ob?.disconnect();
+                popup?.remove();
+                hintWindow?.close();
+                addLinkDropDown?.removeEventListener("mouseleave", leaveAction);
+                addLinkDropDown?.removeEventListener("click", leaveAction);
+                editor._iframeWindow.document?.removeEventListener(
+                  "keydown",
+                  keyAction
+                );
+                editor._iframeWindow.document?.removeEventListener(
+                  "keyup",
+                  keyAction
+                );
+              };
+              addLinkDropDown.addEventListener("mouseleave", leaveAction);
+              addLinkDropDown.addEventListener("click", leaveAction);
+              // Observe the popup remove triggered by button click
+              const ob = new MutationObserver((e) => {
+                console.log(e);
+                if (e[0].removedNodes) {
+                  leaveAction();
+                }
               });
+              ob.observe(addLinkDropDown, { childList: true });
+              const keyAction = (e: KeyboardEvent) => {
+                if (isShift === e.shiftKey) {
+                  return;
+                }
+                isShift = e.shiftKey;
+                console.log(hintWindow);
+                popup.style.backgroundColor = isShift ? "#f0f9fe" : "";
+                this._Addon.views.changeProgressWindowDescription(
+                  hintWindow,
+                  isShift ? shiftHintText : normalHintText
+                );
+                const buttonParam = getButtonParams();
+                for (const i in popup.children) {
+                  popup.children[i].id = buttonParam[i].id;
+                }
+              };
+              editor._iframeWindow.document.addEventListener(
+                "keydown",
+                keyAction
+              );
+              editor._iframeWindow.document.addEventListener(
+                "keyup",
+                keyAction
+              );
             }
-            const popup: Element = await this._Addon.views.addEditorPopup(
-              editor,
-              "knowledge-addlink-popup",
-              // [{ id: ''; icon: string; eventType: string }],
-              buttonParam,
-              addLinkDropDown
-            );
-            addLinkDropDown.addEventListener("mouseleave", (e) => {
-              popup.remove();
-            });
-            addLinkDropDown.addEventListener("click", (e) => {
-              popup.remove();
-            });
-          });
+          );
         }
       }
 

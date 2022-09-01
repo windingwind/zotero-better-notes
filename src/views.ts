@@ -1039,15 +1039,11 @@ class AddonViews extends AddonBase {
     return progressWindow;
   }
 
-  changeProgressWindowDescription(
-    progressWindow: Window,
-    context: string,
-    index: number = 0
-  ) {
-    const desc = progressWindow.document.getElementsByClassName(
-      "zotero-progress-item-label"
-    )[index];
-    desc.innerHTML = context;
+  changeProgressWindowDescription(progressWindow: any, context: string) {
+    if (!progressWindow || progressWindow.closed) {
+      return;
+    }
+    progressWindow.progress._itemText.innerHTML = context;
   }
 }
 
