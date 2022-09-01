@@ -124,43 +124,45 @@ class AddonParse extends AddonBase {
         }
       }
 
-      // For self inline tags, cache start as previous line and end as next line
-      for (const tag of selfInline) {
-        const isStart = line.includes(`<${tag}`);
-        const isEnd = line.includes(`</${tag}>`);
-        if (isStart && !isEnd) {
-          selfInlineFlag = true;
-          nextLineCache.push(line);
-          break;
-        }
-        if (!isStart && isEnd) {
-          selfInlineFlag = true;
-          previousLineCache.push(line);
-          break;
-        }
-      }
-
-      if (!selfInlineFlag && !forceInlineFlag) {
-        // Append cache to previous line
-        if (previousLineCache.length) {
-          parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
-            "\n"
-          )}`;
-          previousLineCache = [];
-        }
-        let nextLine = "";
-        // Append cache to next line
-        if (nextLineCache.length) {
-          nextLine = nextLineCache.join("\n");
-          nextLineCache = [];
-        }
-        if (nextLine) {
-          nextLine += "\n";
-        }
-        nextLine += `${line}`;
-        parsedLines.push(nextLine);
-      } else if (forceInlineFlag) {
+      if (forceInlineFlag) {
         nextLineCache.push(line);
+      } else {
+        // For self inline tags, cache start as previous line and end as next line
+        for (const tag of selfInline) {
+          const isStart = line.includes(`<${tag}`);
+          const isEnd = line.includes(`</${tag}>`);
+          if (isStart && !isEnd) {
+            selfInlineFlag = true;
+            nextLineCache.push(line);
+            break;
+          }
+          if (!isStart && isEnd) {
+            selfInlineFlag = true;
+            previousLineCache.push(line);
+            break;
+          }
+        }
+
+        if (!selfInlineFlag) {
+          // Append cache to previous line
+          if (previousLineCache.length) {
+            parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
+              "\n"
+            )}`;
+            previousLineCache = [];
+          }
+          let nextLine = "";
+          // Append cache to next line
+          if (nextLineCache.length) {
+            nextLine = nextLineCache.join("\n");
+            nextLineCache = [];
+          }
+          if (nextLine) {
+            nextLine += "\n";
+          }
+          nextLine += `${line}`;
+          parsedLines.push(nextLine);
+        }
       }
     }
     return parsedLines;
