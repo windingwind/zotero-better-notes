@@ -4,7 +4,7 @@
 
 Everything about note management. All in Zotero.
 
-[Better Notes Handbook(Chinese, provide translation)](https://zotero.yuque.com/staff-gkhviy/hblz4m/biigg4) | [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+[Better Notes Handbook(Chinese, provide translation)](https://zotero.yuque.com/books/share/f3fe159f-956c-4f10-ade3-c87559cacb60/biigg4) | [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
 ## Easy to Use
 
