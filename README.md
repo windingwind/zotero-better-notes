@@ -148,3 +148,11 @@ Part of the code of this repo refers to other open-source projects within the al
 - [zotero-pdf-preview](https://github.com/windingwind/zotero-pdf-preview) PDF preview for Zotero
 - [zotero-pdf-translate](https://github.com/windingwind/zotero-pdf-translate) PDF translation for Zotero 6
 - [zotero-tag](https://github.com/windingwind/zotero-tag) Automatically tag items/Batch tagging
+
+## Sponsor Me
+
+I'm windingwind, an active Zotero(https://www.zotero.org) plugin developer. Devoting to making reading papers easier.
+
+Sponsor me to buy a cup of coffee. I spend more than 24 hours every week coding, debugging, and replying to issues in my plugin repositories. The plugins are open-source and totally free.
+
+If you sponsor more than $10 a month, you can list your name/logo here and have priority for feature requests/bug fixes!
