@@ -457,7 +457,7 @@ class Knowledge extends AddonBase {
 
     this._Addon.views.showProgressWindow(
       "Better Notes",
-      "Link is added to workspace"
+      `Link is added to workspace${lineIndex >= 0 ? ` line ${lineIndex}` : ""}`
     );
   }
 

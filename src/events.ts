@@ -17,7 +17,7 @@ class AddonEvents extends AddonBase {
       notify: async (
         event: string,
         type: string,
-        ids: Array<number>,
+        ids: Array<number | string>,
         extraData: object
       ) => {
         if (event === "modify" && type === "item") {
@@ -43,9 +43,11 @@ class AddonEvents extends AddonBase {
             extraData[ids[0]].type == "reader") ||
           (event === "add" &&
             type === "item" &&
-            (Zotero.Items.get(ids) as Zotero.Item[]).filter((item) => {
-              return item.isAnnotation();
-            }).length > 0) ||
+            (Zotero.Items.get(ids as number[]) as Zotero.Item[]).filter(
+              (item) => {
+                return item.isAnnotation();
+              }
+            ).length > 0) ||
           (event === "close" && type === "tab") ||
           (event === "open" && type === "file")
         ) {
@@ -102,21 +104,62 @@ class AddonEvents extends AddonBase {
           Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation") &&
           event === "add" &&
           type === "item" &&
-          (Zotero.Items.get(ids) as Zotero.Item[]).filter((item) => {
-            return item.isAnnotation();
-          }).length > 0
-        ) {
-          Zotero.debug("Knowledge4Zotero: autoAnnotation");
-          const annotations = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
+          (Zotero.Items.get(ids as number[]) as Zotero.Item[]).filter(
             (item) => {
               return item.isAnnotation();
             }
-          );
+          ).length > 0
+        ) {
+          Zotero.debug("Knowledge4Zotero: autoAnnotation");
+          const annotations = (
+            Zotero.Items.get(ids as number[]) as Zotero.Item[]
+          ).filter((item) => {
+            return item.isAnnotation();
+          });
           this.onEditorEvent(
             new EditorMessage("addAnnotationToNote", {
               params: { annotations: annotations },
             })
           );
+        }
+        if (event === "add" && type === "item-tag") {
+          const nodes: TreeModel.Node<object>[] =
+            this._Addon.knowledge.getNoteTreeAsList();
+          const headings: string[] = nodes.map((node) => node.model.name);
+          console.log(ids, extraData, headings);
+
+          for (const tagId of ids.filter((t) => extraData[t].tag[0] === "#")) {
+            const tagName = (extraData[tagId].tag as string).slice(1).trim();
+            if (headings.includes(tagName) || tagName === "#") {
+              const lineIndex =
+                tagName === "#"
+                  ? -1
+                  : nodes.find((node) => node.model.name === tagName).model
+                      .endIndex;
+              const item = Zotero.Items.get(
+                (tagId as string).split("-")[0]
+              ) as Zotero.Item;
+              if (item.isAnnotation()) {
+                this.onEditorEvent(
+                  new EditorMessage("addAnnotationToNote", {
+                    params: {
+                      annotations: [item],
+                      lineIndex: lineIndex,
+                    },
+                  })
+                );
+              } else if (item.isNote()) {
+                this.onEditorEvent(
+                  new EditorMessage("addToKnowledgeLine", {
+                    params: {
+                      itemID: item.id,
+                      lineIndex: lineIndex,
+                    },
+                  })
+                );
+              }
+            }
+          }
         }
         for (const cbk of Object.values(this.notifierCbkDict)) {
           (cbk as Function)(event, type, ids, extraData);
@@ -136,6 +179,7 @@ class AddonEvents extends AddonBase {
       "item",
       "tab",
       "file",
+      "item-tag",
     ]);
 
     // Unregister callback when the window closes (important to avoid a memory leak)
@@ -926,58 +970,75 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "addToKnowledgeLine") {
       /*
         message.content = {
-          editorInstance,
-          event,
-          type
+          editorInstance?,
+          event?,
+          params: {
+            itemID: number,
+            lineIndex: number
+          }
         }
       */
       Zotero.debug("Knowledge4Zotero: addToKnowledgeLine");
-      Zotero.debug((message.content.event as XUL.XULEvent).target.id);
-      const idSplit = (message.content.event as XUL.XULEvent).target.id.split(
-        "-"
-      );
-      const lineIndex = parseInt(idSplit[idSplit.length - 1]);
+      let lineIndex = message.content.params?.lineIndex;
+      if (typeof lineIndex === "undefined") {
+        const eventInfo = (message.content.event as XUL.XULEvent).target.id;
+        Zotero.debug(eventInfo);
+        const idSplit = eventInfo.split("-");
+        lineIndex = parseInt(idSplit.pop());
+      }
+
       this._Addon.knowledge.addLinkToNote(
         undefined,
         lineIndex,
-        (message.content.editorInstance as Zotero.EditorInstance)._item.id
+        message.content.params?.itemID
+          ? message.content.params.itemID
+          : (message.content.editorInstance as Zotero.EditorInstance)._item.id
       );
     } else if (message.type === "addAnnotationToNote") {
       /*
         message.content = {
-          params: {annotations}
+          params: {
+            annotations: Zotero.Item[],
+            lineIndex?: number
+          }
         }
       */
+      const useLineIndex = message.content.params?.lineIndex >= 0;
+      let currentLine = useLineIndex ? message.content.params?.lineIndex : -1;
       const annotations = message.content.params.annotations;
+
       const html = await this._Addon.knowledge.addAnnotationsToNote(
         undefined,
         annotations,
-        -1
+        currentLine
       );
-      let currentLine =
-        this._Addon.knowledge.currentLine[
-          this._Addon.knowledge.getWorkspaceNote().id
-        ];
-      currentLine = currentLine ? currentLine : -1;
+      if (!useLineIndex) {
+        currentLine =
+          this._Addon.knowledge.currentLine[
+            this._Addon.knowledge.getWorkspaceNote().id
+          ];
+        currentLine = currentLine >= 0 ? currentLine : -1;
+
+        if (currentLine >= 0) {
+          // Compute annotation lines length
+          const temp = document.createElementNS(
+            "http://www.w3.org/1999/xhtml",
+            "div"
+          );
+          temp.innerHTML = html;
+          const elementList = this._Addon.parse.parseHTMLElements(temp);
+          // Move cursor foward
+          this._Addon.knowledge.currentLine[
+            this._Addon.knowledge.getWorkspaceNote().id
+          ] += elementList.length;
+        }
+      }
       this._Addon.views.showProgressWindow(
         "Better Notes",
-        `[Auto] Insert Annotation to ${
+        `Insert Annotation to ${
           currentLine >= 0 ? `line ${currentLine} in` : "end of"
         } main note`
       );
-      if (currentLine >= 0) {
-        // Compute annotation lines length
-        const temp = document.createElementNS(
-          "http://www.w3.org/1999/xhtml",
-          "div"
-        );
-        temp.innerHTML = html;
-        const elementList = this._Addon.parse.parseHTMLElements(temp);
-        // Move cursor foward
-        this._Addon.knowledge.currentLine[
-          this._Addon.knowledge.getWorkspaceNote().id
-        ] += elementList.length;
-      }
     } else if (message.type === "jumpNode") {
       /*
         message.content = {

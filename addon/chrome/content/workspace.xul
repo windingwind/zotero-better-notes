@@ -5,7 +5,6 @@
 <?xml-stylesheet href="chrome://zotero/skin/standalone.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/overlay.css"?>
 <?xml-stylesheet href="chrome://__addonRef__/skin/workspace.css" type="text/css"?>
-<?xul-overlay href="chrome://zotero/content/standalone/editMenuOverlay.xul"?>
 
 <!DOCTYPE window [
     <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">

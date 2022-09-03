@@ -826,9 +826,10 @@ class AddonViews extends AddonBase {
       ? window
       : this._Addon.knowledge.getWorkspaceWindow();
     // If tab is open but not selected, we use copy mode
-    const copyMode =
+    const copyMode = Boolean(
       this._Addon.knowledge.workspaceTabId &&
-      Zotero_Tabs.selectedID !== this._Addon.knowledge.workspaceTabId;
+        Zotero_Tabs.selectedID !== this._Addon.knowledge.workspaceTabId
+    );
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()
