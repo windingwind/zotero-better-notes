@@ -486,6 +486,7 @@ class AddonEvents extends AddonBase {
         "middle"
       );
       if (addLinkDropDown) {
+        addLinkDropDown.classList.add("more-dropdown");
         // If the editor initialization fails, the addLinkDropDown does not exist
         if (isMainNote) {
           // This is a main knowledge, hide all buttons except the export button and add title
@@ -758,13 +759,96 @@ class AddonEvents extends AddonBase {
         _window.document.head.append(messageScript);
       }
 
-      editor._knowledgeUIInitialized = true;
-
       if (isPrint) {
         editor._iframeWindow.postMessage({ type: "exportPDF" }, "*");
         this._Addon.knowledge._pdfNoteId = -1;
         return;
       }
+
+      const moreDropdown: HTMLElement = Array.prototype.filter.call(
+        _window.document.querySelectorAll(".more-dropdown"),
+        (e) => e.id !== "knowledge-addlink"
+      )[0];
+      if (!moreDropdown.getAttribute("ob")) {
+        moreDropdown.setAttribute("ob", "true");
+        const dropdownOb = new MutationObserver((e) => {
+          if (
+            e[0].addedNodes.length &&
+            (e[0].addedNodes[0] as HTMLElement).classList.contains("popup")
+          ) {
+            const dropdownPopup = moreDropdown.querySelector(".popup");
+            if (dropdownPopup) {
+              const refreshButton = _window.document.createElement("button");
+              refreshButton.classList.add("option");
+              refreshButton.innerText = "Refresh Editor";
+              refreshButton.addEventListener("click", (e) => {
+                editor.init({
+                  item: editor._item,
+                  viewMode: editor._viewMode,
+                  readOnly: editor._readOnly,
+                  disableUI: editor._disableUI,
+                  onReturn: editor._onReturn,
+                  iframeWindow: editor._iframeWindow,
+                  popup: editor._popup,
+                  state: editor._state,
+                });
+              });
+              const copyLinkButton = _window.document.createElement("button");
+              copyLinkButton.classList.add("option");
+              copyLinkButton.innerText = "Copy Note Link";
+              copyLinkButton.addEventListener("click", (e) => {
+                const link = this._Addon.knowledge.getNoteLink(noteItem);
+                const linkTemplate = this._Addon.template.renderTemplate(
+                  "[QuickInsert]",
+                  "link, subNoteItem, noteItem",
+                  [link, noteItem, noteItem]
+                );
+                new CopyHelper()
+                  .addText(link, "text/unicode")
+                  .addText(linkTemplate, "text/html")
+                  .copy();
+                this._Addon.views.showProgressWindow(
+                  "Better Notes",
+                  "Note Link Copied"
+                );
+              });
+
+              const copyLinkAtLineButton =
+                _window.document.createElement("button");
+              copyLinkAtLineButton.classList.add("option");
+              copyLinkAtLineButton.innerText = "Copy Note Link of Current Line";
+              copyLinkAtLineButton.addEventListener("click", (e) => {
+                const link = this._Addon.knowledge.getNoteLink(noteItem, {
+                  withLine: true,
+                });
+                const linkTemplate = this._Addon.template.renderTemplate(
+                  "[QuickInsert]",
+                  "link, subNoteItem, noteItem",
+                  [link, noteItem, noteItem]
+                );
+                new CopyHelper()
+                  .addText(link, "text/unicode")
+                  .addText(linkTemplate, "text/html")
+                  .copy();
+                this._Addon.views.showProgressWindow(
+                  "Better Notes",
+                  `Note Link of Line ${
+                    this._Addon.knowledge.currentLine[noteItem.id] + 1
+                  } Copied`
+                );
+              });
+              dropdownPopup.append(
+                refreshButton,
+                copyLinkButton,
+                copyLinkAtLineButton
+              );
+            }
+          }
+        });
+        dropdownOb.observe(moreDropdown, { childList: true });
+      }
+
+      editor._knowledgeUIInitialized = true;
     } else if (message.type === "insertCitation") {
       /*
         message.content = {
@@ -870,15 +954,18 @@ class AddonEvents extends AddonBase {
         annotations,
         -1
       );
+      let currentLine =
+        this._Addon.knowledge.currentLine[
+          this._Addon.knowledge.getWorkspaceNote().id
+        ];
+      currentLine = currentLine ? currentLine : -1;
       this._Addon.views.showProgressWindow(
         "Better Notes",
         `[Auto] Insert Annotation to ${
-          this._Addon.knowledge.currentLine >= 0
-            ? `line ${this._Addon.knowledge.currentLine} in`
-            : "end of"
+          currentLine >= 0 ? `line ${currentLine} in` : "end of"
         } main note`
       );
-      if (this._Addon.knowledge.currentLine >= 0) {
+      if (currentLine >= 0) {
         // Compute annotation lines length
         const temp = document.createElementNS(
           "http://www.w3.org/1999/xhtml",
@@ -887,7 +974,9 @@ class AddonEvents extends AddonBase {
         temp.innerHTML = html;
         const elementList = this._Addon.parse.parseHTMLElements(temp);
         // Move cursor foward
-        this._Addon.knowledge.currentLine += elementList.length;
+        this._Addon.knowledge.currentLine[
+          this._Addon.knowledge.getWorkspaceNote().id
+        ] += elementList.length;
       }
     } else if (message.type === "jumpNode") {
       /*
@@ -949,6 +1038,7 @@ class AddonEvents extends AddonBase {
           params: {
             item: Zotero.Item | boolean,
             infoText: string
+            args: {}
           }
         }
       */
@@ -957,6 +1047,10 @@ class AddonEvents extends AddonBase {
       }
       Zotero.debug(
         `Knowledge4Zotero: onNoteLink ${message.content.params.item.id}`
+      );
+      // Copy and save
+      const oldEditors = Zotero.Notes._editorInstances.map(
+        (e): string => e.instanceID
       );
       let _window = this._Addon.knowledge.getWorkspaceWindow();
       if (_window) {
@@ -973,109 +1067,125 @@ class AddonEvents extends AddonBase {
       } else {
         ZoteroPane.openNoteWindow(message.content.params.item.id);
       }
+      if (message.content.params.args.line) {
+        let t = 0;
+        let newEditors = Zotero.Notes._editorInstances.filter(
+          (e) => !oldEditors.includes(e.instanceID) && e._knowledgeUIInitialized
+        );
+        while (newEditors.length === 0 && t < 500) {
+          t += 1;
+          await Zotero.Promise.delay(10);
+          newEditors = Zotero.Notes._editorInstances.filter(
+            (e) => !oldEditors.includes(e.instanceID)
+          );
+        }
+        newEditors.forEach((e) => {
+          this._Addon.views.scrollToLine(
+            e,
+            // Scroll to line
+            message.content.params.args.line
+          );
+        });
+      }
     } else if (message.type === "noteEditorSelectionChange") {
       const editor = message.content.editorInstance as Zotero.EditorInstance;
-      if (
-        editor._item.id === Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
-      ) {
-        // Update current line index
-        const _window = editor._iframeWindow;
-        const selection = _window.document.getSelection();
-        if (!selection || !selection.focusNode) {
-          return;
-        }
-        const realElement = selection.focusNode.parentElement;
-        let focusNode = selection.focusNode as XUL.Element;
-        if (!focusNode || !realElement) {
-          return;
-        }
 
-        function getChildIndex(node) {
-          return Array.prototype.indexOf.call(node.parentNode.childNodes, node);
-        }
+      // Update current line index
+      const _window = editor._iframeWindow;
+      const selection = _window.document.getSelection();
+      if (!selection || !selection.focusNode) {
+        return;
+      }
+      const realElement = selection.focusNode.parentElement;
+      let focusNode = selection.focusNode as XUL.Element;
+      if (!focusNode || !realElement) {
+        return;
+      }
 
-        // Make sure this is a direct child node of editor
-        try {
+      function getChildIndex(node) {
+        return Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+      }
+
+      // Make sure this is a direct child node of editor
+      try {
+        while (
+          focusNode.parentElement &&
+          (!focusNode.parentElement.className ||
+            focusNode.parentElement.className.indexOf("primary-editor") === -1)
+        ) {
+          focusNode = focusNode.parentNode as XUL.Element;
+        }
+      } catch (e) {
+        return;
+      }
+
+      if (!focusNode.parentElement) {
+        return;
+      }
+
+      let currentLineIndex = getChildIndex(focusNode);
+
+      // Parse list
+      const diveTagNames = ["OL", "UL", "LI"];
+
+      // Find list elements before current line
+      const listElements = Array.prototype.filter.call(
+        Array.prototype.slice.call(
+          focusNode.parentElement.childNodes,
+          0,
+          currentLineIndex
+        ),
+        (e) => diveTagNames.includes(e.tagName)
+      );
+
+      for (const e of listElements) {
+        currentLineIndex += this._Addon.parse.parseListElements(e).length - 1;
+      }
+
+      // Find list index if current line is inside a list
+      if (diveTagNames.includes(focusNode.tagName)) {
+        const eleList = this._Addon.parse.parseListElements(focusNode);
+        for (const i in eleList) {
+          if (realElement.parentElement === eleList[i]) {
+            currentLineIndex += Number(i);
+            break;
+          }
+        }
+      }
+      Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
+      console.log(currentLineIndex);
+      Zotero.debug(
+        `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
+      );
+      this._Addon.knowledge.currentLine[editor._item.id] = currentLineIndex;
+      if (realElement.tagName === "A") {
+        let link = (realElement as HTMLLinkElement).href;
+        let linkedNote = (await this._Addon.knowledge.getNoteFromLink(link))
+          .item;
+        if (linkedNote) {
+          let t = 0;
+          let linkPopup = _window.document.querySelector(".link-popup");
           while (
-            focusNode.parentElement &&
-            (!focusNode.parentElement.className ||
-              focusNode.parentElement.className.indexOf("primary-editor") ===
-                -1)
+            !(
+              linkPopup &&
+              (linkPopup.querySelector("a") as unknown as HTMLLinkElement)
+                .href === link
+            ) &&
+            t < 100
           ) {
-            focusNode = focusNode.parentNode as XUL.Element;
+            t += 1;
+            linkPopup = _window.document.querySelector(".link-popup");
+            await Zotero.Promise.delay(30);
           }
-        } catch (e) {
-          return;
-        }
-
-        if (!focusNode.parentElement) {
-          return;
-        }
-
-        let currentLineIndex = getChildIndex(focusNode);
-
-        // Parse list
-        const diveTagNames = ["OL", "UL", "LI"];
-
-        // Find list elements before current line
-        const listElements = Array.prototype.filter.call(
-          Array.prototype.slice.call(
-            focusNode.parentElement.childNodes,
-            0,
-            currentLineIndex
-          ),
-          (e) => diveTagNames.includes(e.tagName)
-        );
-
-        for (const e of listElements) {
-          currentLineIndex += this._Addon.parse.parseListElements(e).length - 1;
-        }
-
-        // Find list index if current line is inside a list
-        if (diveTagNames.includes(focusNode.tagName)) {
-          const eleList = this._Addon.parse.parseListElements(focusNode);
-          for (const i in eleList) {
-            if (realElement.parentElement === eleList[i]) {
-              currentLineIndex += Number(i);
-              break;
-            }
-          }
-        }
-        Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
-        console.log(currentLineIndex);
-        Zotero.debug(
-          `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
-        );
-        this._Addon.knowledge.currentLine = currentLineIndex;
-        if (realElement.tagName === "A") {
-          let link = (realElement as HTMLLinkElement).href;
-          let linkedNote = (await this._Addon.knowledge.getNoteFromLink(link))
-            .item;
-          if (linkedNote) {
-            let t = 0;
-            let linkPopup = _window.document.querySelector(".link-popup");
-            while (
-              !(
-                linkPopup &&
-                (linkPopup.querySelector("a") as unknown as HTMLLinkElement)
-                  .href === link
-              ) &&
-              t < 100
-            ) {
-              t += 1;
-              linkPopup = _window.document.querySelector(".link-popup");
-              await Zotero.Promise.delay(30);
-            }
-            await this._Addon.views.updateEditorPopupButtons(
-              editor._iframeWindow,
-              link
-            );
-          } else {
-            await this._Addon.views.updateEditorPopupButtons(
-              editor._iframeWindow,
-              undefined
-            );
-          }
+          await this._Addon.views.updateEditorPopupButtons(
+            editor._iframeWindow,
+            link
+          );
+        } else {
+          await this._Addon.views.updateEditorPopupButtons(
+            editor._iframeWindow,
+            undefined
+          );
         }
       }
     } else if (message.type === "addHeading") {

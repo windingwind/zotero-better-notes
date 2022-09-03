@@ -5,7 +5,7 @@ import { pick } from "./file_picker";
 import AddonBase from "./module";
 
 class Knowledge extends AddonBase {
-  currentLine: number;
+  currentLine: object;
   currentNodeID: number;
   workspaceWindow: Window;
   workspaceTabId: string;
@@ -21,7 +21,7 @@ class Knowledge extends AddonBase {
   constructor(parent: Knowledge4Zotero) {
     super(parent);
     this._firstInit = true;
-    this.currentLine = -1;
+    this.currentLine = {};
     this.currentNodeID = -1;
     this._pdfNoteId = -1;
   }
@@ -72,7 +72,7 @@ class Knowledge extends AddonBase {
       this.workspaceTabId = "";
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
-      this.currentLine = -1;
+      this.currentLine[this.getWorkspaceNote().id] = -1;
       this._Addon.views.initKnowledgeWindow(win);
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
@@ -88,7 +88,7 @@ class Knowledge extends AddonBase {
         index: 1,
         data: {},
         select: select,
-        onClose: undefined
+        onClose: undefined,
       });
       this.workspaceTabId = id;
       const _iframe = window.document.createElement("browser");
@@ -107,7 +107,7 @@ class Knowledge extends AddonBase {
 
       this._Addon.views.hideMenuBar(this.workspaceWindow.document);
 
-      this.currentLine = -1;
+      this.currentLine[this.getWorkspaceNote().id] = -1;
       this._Addon.views.initKnowledgeWindow(this.workspaceWindow);
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
@@ -204,7 +204,7 @@ class Knowledge extends AddonBase {
       this.previewItemID = note.id;
     } else {
       // Set line to default
-      this.currentLine = -1;
+      this.currentLine[note.id] = -1;
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
@@ -237,12 +237,19 @@ class Knowledge extends AddonBase {
     }
 
     await noteEditor._editorInstance._initPromise;
+    const position = this._Addon.views.getEditorElement(
+      noteEditor._editorInstance._iframeWindow.document
+    ).parentNode.scrollTop;
     // Due to unknown reasons, only after the second init the editor will be correctly loaded.
     // Thus we must init it twice
     if (this._firstInit) {
       this._firstInit = false;
       await noteEditor.initEditor();
     }
+    await this._Addon.views.scrollToPosition(
+      noteEditor._editorInstance,
+      position
+    );
     if (type === "main") {
       this._Addon.views.updateOutline();
       this._Addon.views.updateWordCount();
@@ -292,10 +299,8 @@ class Knowledge extends AddonBase {
     }
     let noteLines = this.getLinesInNote(note);
     if (lineIndex < 0) {
-      lineIndex =
-        this.getWorkspaceNote().id === note.id && this.currentLine >= 0
-          ? this.currentLine
-          : noteLines.length;
+      lineIndex = this.currentLine[note.id];
+      lineIndex = lineIndex && lineIndex >= 0 ? lineIndex : noteLines.length;
     } else if (lineIndex >= noteLines.length) {
       lineIndex = noteLines.length;
     }
@@ -456,7 +461,13 @@ class Knowledge extends AddonBase {
     );
   }
 
-  getNoteLink(note: Zotero.Item) {
+  getNoteLink(
+    note: Zotero.Item,
+    options: {
+      ignore?: boolean;
+      withLine?: boolean;
+    } = { ignore: false, withLine: false }
+  ) {
     let libraryID = note.libraryID;
     let library = Zotero.Libraries.get(libraryID);
     let groupID: string;
@@ -468,7 +479,28 @@ class Knowledge extends AddonBase {
       return "";
     }
     let noteKey = note.key;
-    return `zotero://note/${groupID}/${noteKey}/`;
+    let link = `zotero://note/${groupID}/${noteKey}/`;
+    const addParam = (link: string, param: string): string => {
+      const lastChar = link[link.length - 1];
+      if (lastChar === "/") {
+        link += "?";
+      } else if (lastChar !== "?" && lastChar !== "&") {
+        link += "&";
+      }
+      return `${link}${param}`;
+    };
+    if (options.ignore || options.withLine) {
+      if (options.ignore) {
+        link = addParam(link, "ignore=1");
+      }
+      if (options.withLine) {
+        if (!this.currentLine[note.id]) {
+          this.currentLine[note.id] = 0;
+        }
+        link = addParam(link, `line=${this.currentLine[note.id]}`);
+      }
+    }
+    return link;
   }
 
   getAnnotationLink(annotation: Zotero.Item) {
@@ -694,7 +726,11 @@ class Knowledge extends AddonBase {
     lineIndex: number = -1
   ): TreeModel.Node<object> {
     if (lineIndex < 0) {
-      lineIndex = this.currentLine;
+      lineIndex = this.currentLine[note.id];
+      lineIndex =
+        lineIndex && lineIndex >= 0
+          ? lineIndex
+          : this.getLinesInNote(note).length;
     }
     let nodes = this.getNoteTreeAsList(note);
     if (!nodes.length || nodes[0].model.lineIndex > lineIndex) {
@@ -1156,11 +1192,13 @@ class Knowledge extends AddonBase {
     if (!item || !item.isNote()) {
       return {
         item: false,
+        args: params,
         infoText: "Note does not exist or is not a note.",
       };
     }
     return {
       item: item,
+      args: params,
       infoText: "OK",
     };
   }

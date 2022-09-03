@@ -135,7 +135,7 @@ class AddonViews extends AddonBase {
       );
     }
     const dropdown = _document.createElement("div");
-    dropdown.setAttribute("class", "dropdown more-dropdown");
+    dropdown.setAttribute("class", "dropdown");
     dropdown.setAttribute("id", id);
     const button = _document.createElement("button");
     button.setAttribute("class", "toolbar-button");
@@ -252,22 +252,12 @@ class AddonViews extends AddonBase {
     // @ts-ignore
     const scrollNum = eleList[lineIndex].offsetTop;
     (editorElement.parentNode as HTMLElement).scrollTo(0, scrollNum);
-
-    const texView = instance._iframeWindow.document.getElementById("texView");
-    if (texView) {
-      texView.scrollTo(0, scrollNum);
-    }
   }
 
   scrollToPosition(instance: Zotero.EditorInstance, offset: number) {
     let editorElement = this.getEditorElement(instance._iframeWindow.document);
     // @ts-ignore
     (editorElement.parentNode as HTMLElement).scrollTo(0, offset);
-
-    const texView = instance._iframeWindow.document.getElementById("texView");
-    if (texView) {
-      texView.scrollTo(0, offset);
-    }
   }
 
   addNewKnowledgeButton() {
@@ -427,7 +417,9 @@ class AddonViews extends AddonBase {
               linkIndex[1]
             )}\n${newLineString}`;
           },
-          this._Addon.knowledge.currentLine,
+          this._Addon.knowledge.currentLine[
+            this._Addon.knowledge.getWorkspaceNote().id
+          ],
           true
         );
         // wait the first modify finish
@@ -447,7 +439,9 @@ class AddonViews extends AddonBase {
             }
           });
           await this._Addon.knowledge.scrollWithRefresh(
-            this._Addon.knowledge.currentLine
+            this._Addon.knowledge.currentLine[
+              this._Addon.knowledge.getWorkspaceNote().id
+            ]
           );
         }
       });
@@ -466,7 +460,12 @@ class AddonViews extends AddonBase {
       updateButton.addEventListener("click", async (e) => {
         Zotero.debug("ZBN: Update Link Text");
         const noteLines = this._Addon.knowledge.getLinesInNote();
-        let line = noteLines[this._Addon.knowledge.currentLine];
+        let line =
+          noteLines[
+            this._Addon.knowledge.currentLine[
+              this._Addon.knowledge.getWorkspaceNote().id
+            ]
+          ];
         Zotero.debug(line);
 
         let linkStart = line.search(/<a /g);
@@ -511,7 +510,9 @@ class AddonViews extends AddonBase {
 
         await this._Addon.knowledge.setLinesToNote(undefined, noteLines);
         this._Addon.knowledge.scrollWithRefresh(
-          this._Addon.knowledge.currentLine
+          this._Addon.knowledge.currentLine[
+            this._Addon.knowledge.getWorkspaceNote().id
+          ]
         );
       });
 
