@@ -25,7 +25,7 @@ class AddonParse extends AddonBase {
     });
     let id = 0;
     let lastNode = root;
-    let headerStartReg = new RegExp("<h[1-6]>");
+    let headerStartReg = new RegExp("<h[1-6]");
     let headerStopReg = new RegExp("</h[1-6]>");
     for (let i in noteLines) {
       let currentRank = 7;
