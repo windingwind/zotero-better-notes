@@ -1941,6 +1941,57 @@ class AddonEvents extends AddonBase {
         "Better Notes",
         "Image copied to clipboard."
       );
+    } else if (message.type === "ocrImageAnnotation") {
+      /*
+        message.content = {
+          params: { src: string, annotationItem: Zotero.Item }
+        }
+      */
+      const annotationItem: Zotero.Item = message.content.params.annotationItem;
+      const xhr = await Zotero.HTTP.request(
+        "POST",
+        "https://www.bing.com/cameraexp/api/v1/getlatex",
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: message.content.params.src.split(",").pop(),
+            inputForm: "Image",
+            clientInfo: { platform: "edge" },
+          }),
+          responseType: "json",
+        }
+      );
+      if (xhr && xhr.status && xhr.status === 200) {
+        if (xhr.response.isError) {
+          this._Addon.views.showProgressWindow(
+            "Better Notes OCR",
+            xhr.response.errorMessage,
+            "fail"
+          );
+        } else {
+          let ocrResult = xhr.response.latex
+            ? `$${xhr.response.latex.replace(/ /g, "")}$`
+            : xhr.response.ocrText;
+          annotationItem.annotationComment = `${
+            annotationItem.annotationComment
+              ? `${annotationItem.annotationComment}\n`
+              : ""
+          }${ocrResult}`;
+          await annotationItem.saveTx();
+          this._Addon.views.showProgressWindow(
+            "Better Notes OCR",
+            `OCR Result: ${ocrResult}`
+          );
+        }
+      } else {
+        this._Addon.views.showProgressWindow(
+          "Better Notes OCR",
+          `${xhr.status} Error`,
+          "fail"
+        );
+      }
     } else if (message.type == "convertMD") {
       /*
         message.content = {}

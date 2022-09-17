@@ -38,6 +38,6 @@
     "@types/jquery": "^3.5.14",
     "@types/node": "^17.0.31",
     "release-it": "^14.14.0",
-    "zotero-types": "^0.0.3"
+    "zotero-types": "^0.0.4"
   }
 }

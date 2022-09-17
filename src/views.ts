@@ -29,6 +29,7 @@ class AddonViews extends AddonBase {
       close: `<svg t="1651331457107" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12754" width="24" height="24"><path d="M557.311759 513.248864l265.280473-263.904314c12.54369-12.480043 12.607338-32.704421 0.127295-45.248112-12.512727-12.576374-32.704421-12.607338-45.248112-0.127295L512.127295 467.904421 249.088241 204.063755c-12.447359-12.480043-32.704421-12.54369-45.248112-0.063647-12.512727 12.480043-12.54369 32.735385-0.063647 45.280796l262.975407 263.775299-265.151458 263.744335c-12.54369 12.480043-12.607338 32.704421-0.127295 45.248112 6.239161 6.271845 14.463432 9.440452 22.687703 9.440452 8.160624 0 16.319527-3.103239 22.560409-9.311437l265.216826-263.807983 265.440452 266.240344c6.239161 6.271845 14.432469 9.407768 22.65674 9.407768 8.191587 0 16.352211-3.135923 22.591372-9.34412 12.512727-12.480043 12.54369-32.704421 0.063647-45.248112L557.311759 513.248864z" fill="currentColor" p-id="12755"></path></svg>`,
       openWorkspaceCollectionView: `<svg t="1651317033804" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2432" width="100%" height="100%"><path d="M874.9 459.4c-18.8 0-34 15.2-34 34v355.7c0 18.6-15.5 33.7-34.5 33.7H181.5c-19 0-34.5-15.1-34.5-33.7V232.3c0-18.6 15.5-33.7 34.5-33.7H541c18.8 0 34-15.2 34-34s-15.2-34-34-34H181.5C125 130.6 79 176.2 79 232.3v616.8c0 56 46 101.7 102.5 101.7h624.9c56.5 0 102.5-45.6 102.5-101.7V493.4c0-18.8-15.2-34-34-34z" fill="currentColor" p-id="2433"></path><path d="M885.5 82.7H657.1c-18.8 0-34 15.2-34 34s15.2 34 34 34h169.7L358.5 619.1c-13.3 13.3-13.3 34.8 0 48.1 6.6 6.6 15.3 10 24 10s17.4-3.3 24-10l470-470v169.7c0 18.8 15.2 34 34 34s34-15.2 34-34V141.5c0.1-32.4-26.4-58.8-59-58.8z" fill="currentColor" p-id="2434"></path></svg>`,
       tabIcon: `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon icon-bg"><path d="M791.30324 369.7c-5 5-6.2 12.7-2.8 18.9 17.5 31.9 27.4 68.5 27.4 107.4 0 56.2-20.7 107.6-54.9 147-4.5 5.1-5.1 12.6-1.8 18.4l39.2 67.9c3.3 5.7 9.6 8.7 16.1 7.8 6-0.8 12.1-1.2 18.3-1.2 70.1 0.5 128 59.7 127.1 129.7-0.9 69.7-57.4 125.9-127.1 126.4-70.9 0.5-128.9-57.1-128.9-128 0-38.1 16.7-72.3 43.1-95.8l-37-64c-4.2-7.3-13.3-10-20.9-6.4-29.3 14.2-62.3 22.2-97.2 22.2-26.7 0-52.3-4.7-76-13.2-7.3-2.6-15.4 0.3-19.3 7l-24.9 43.1c-3.1 5.4-2.8 12.1 0.8 17.2 15 21.2 23.7 47.1 23.5 75.1-0.7 69.5-57.5 126.2-127 126.8-71.6 0.6-129.8-57.7-129.1-129.4 0.8-69.7 58-126.5 127.8-126.6 12 0 23.7 1.6 34.8 4.7 7 2 14.5-1.1 18.2-7.4l21.7-37.6c3.7-6.4 2.5-14.6-2.9-19.6-33.6-31.2-57.5-72.6-67-119.2-1.5-7.5-8-12.9-15.7-12.9h-92c-6.9 0-13.1 4.5-15.2 11.1C232.80324 590.2 184.70324 627 128.00324 627 57.00324 627-0.49676 569.2 0.00324 498.1 0.40324 427.5 58.60324 370.3 129.20324 371c54.2 0.5 100.4 34.8 118.5 82.8C250.00324 460 256.00324 464 262.60324 464h94.1c7.6 0 14.2-5.3 15.7-12.7 11-54.2 41.5-101.3 84-133.6 6.4-4.9 8.2-13.8 4.2-20.8l-2.2-3.8c-3.5-6-10.3-9-17.1-7.7-8.8 1.8-18 2.7-27.4 2.5-69.5-1-126.9-60.1-126-129.6 0.9-70.3 58.4-126.9 129-126.3 69.3 0.6 126 57 127 126.2 0.4 31.6-10.6 60.7-29.3 83.2-4.3 5.2-5 12.5-1.6 18.3l6.6 11.4c3.6 6.2 10.8 9.3 17.7 7.5 17.5-4.4 35.8-6.7 54.6-6.7 52.3 0 100.4 17.9 138.6 48 6.4 5 15.5 4.5 21.2-1.2l24.2-24.2c4.7-4.7 6-11.8 3.3-17.8-7.3-16.1-11.3-34-11.3-52.8 0-70.7 57.3-128 128-128 70.6 0 128 57.4 128 128 0 70.7-57.3 128-128 128-20.7 0-40.2-4.9-57.5-13.6-6.2-3.1-13.7-2-18.7 2.9l-28.4 28.5z" fill="#f2ac46"/></svg>`,
+      ocrTex: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><defs><style>.cls-1{fill-opacity: 0;}.cls-2{fill:#ffd400;}</style></defs><rect class="cls-1" width="24" height="24"/><path class="cls-2" d="M9,7.1H2.33L2.14,9.56H2.4c.15-1.77.32-2.14,2-2.14a3.39,3.39,0,0,1,.59,0c.23,0,.23.16.23.41v5.77c0,.37,0,.53-1.15.53H3.61v.34c.45,0,1.56,0,2.06,0s1.64,0,2.09,0v-.34H7.32c-1.15,0-1.15-.16-1.15-.53V7.86c0-.22,0-.37.19-.41a3.9,3.9,0,0,1,.63,0c1.65,0,1.81.37,2,2.14h.27L9,7.1Z"/><path class="cls-2" d="M14.91,14.15h-.27c-.28,1.68-.53,2.48-2.41,2.48H10.78c-.52,0-.54-.08-.54-.44V13.27h1c1.06,0,1.19.35,1.19,1.28h.27v-2.9h-.27c0,.94-.13,1.28-1.19,1.28h-1V10.3c0-.36,0-.44.54-.44h1.41c1.68,0,2,.61,2.14,2.13h.27l-.3-2.46H8.14v.33H8.4c.84,0,.86.12.86.52v5.73c0,.4,0,.52-.86.52H8.14V17h6.31Z"/><path class="cls-2" d="M18.22,10.27l1.5-2.2a1.67,1.67,0,0,1,1.58-.71V7H18.69v.33c.44,0,.68.25.68.5a.37.37,0,0,1-.1.26L18,10,16.61,7.85a.46.46,0,0,1-.07-.16c0-.13.24-.32.7-.33V7c-.37,0-1.18,0-1.59,0s-1,0-1.43,0v.33h.21c.6,0,.81.08,1,.38l2,3-1.79,2.64a1.67,1.67,0,0,1-1.58.73v.34H16.7v-.34c-.5,0-.69-.31-.69-.51s0-.14.11-.26l1.55-2.3,1.73,2.62s.06.09.06.12-.24.32-.72.33v.34c.39,0,1.19,0,1.6,0s1,0,1.42,0v-.34h-.2c-.58,0-.81-.06-1-.4l-2.3-3.49Z"/></svg>`,
     };
     this.currentOutline = OutlineType.treeView;
     this._initIframe = Zotero.Promise.defer();
@@ -584,6 +585,7 @@ class AddonViews extends AddonBase {
       moreButton.setAttribute("knowledgeinit", "true");
       const addAnnotationNoteButton = _document.createElement("div");
       addAnnotationNoteButton.setAttribute("style", "margin: 5px;");
+      addAnnotationNoteButton.title = "Quick Note";
       addAnnotationNoteButton.innerHTML = this.editorIcon["addAnnotationNote"];
 
       let annotationWrapper = moreButton;
@@ -630,6 +632,7 @@ class AddonViews extends AddonBase {
         // Customize image copy
         const copyImageButton = _document.createElement("div");
         copyImageButton.setAttribute("style", "margin: 5px;");
+        copyImageButton.title = "Copy Image";
         copyImageButton.innerHTML = this.editorIcon["copyImageAnnotation"];
         copyImageButton.addEventListener("click", (e) => {
           this._Addon.events.onEditorEvent(
@@ -654,6 +657,34 @@ class AddonViews extends AddonBase {
           copyImageButton.setAttribute("style", "margin: 5px;");
         });
         moreButton.before(copyImageButton);
+      }
+      if (annotationItem.annotationType === "image") {
+        // Image OCR
+        const ocrButton = _document.createElement("div");
+        ocrButton.setAttribute("style", "margin: 5px;");
+        ocrButton.innerHTML = this.editorIcon["ocrTex"];
+        ocrButton.title = "OCR LaTex";
+        ocrButton.addEventListener("click", (e) => {
+          this._Addon.events.onEditorEvent(
+            new EditorMessage("ocrImageAnnotation", {
+              params: {
+                src: (
+                  ocrButton.parentElement.parentElement
+                    .nextSibling as HTMLImageElement
+                ).src,
+                annotationItem: annotationItem,
+              },
+            })
+          );
+          e.preventDefault();
+        });
+        ocrButton.addEventListener("mouseover", (e: XUL.XULEvent) => {
+          ocrButton.setAttribute("style", "background: #F0F0F0; margin: 5px;");
+        });
+        ocrButton.addEventListener("mouseout", (e: XUL.XULEvent) => {
+          ocrButton.setAttribute("style", "margin: 5px;");
+        });
+        moreButton.before(ocrButton);
       }
       updateCount += 1;
     }
