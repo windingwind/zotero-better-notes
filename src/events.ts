@@ -482,10 +482,6 @@ class AddonEvents extends AddonBase {
         Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
         await this._Addon.knowledge.openWorkspaceWindow();
         await this._Addon.knowledge.setWorkspaceNote("main");
-        this._Addon.views.showProgressWindow(
-          "Better Notes",
-          `Set main Note to: ${item.getNoteTitle()}`
-        );
       }
     } else if (message.type === "addNoteInstance") {
       /*
@@ -515,22 +511,81 @@ class AddonEvents extends AddonBase {
       const isPreviewNote = currentID === this._Addon.knowledge.previewItemID;
 
       Zotero.debug(`Knowledge4Zotero: main Knowledge`);
-      await this._Addon.views.addEditorButton(
-        editor,
-        "knowledge-start",
-        isMainNote
-          ? "isMainKnowledge"
-          : isPreviewNote
-          ? "openAttachment"
-          : "notMainKnowledge",
-        isMainNote
-          ? "Edit the Main Note in Workspace"
-          : isPreviewNote
-          ? "Open Note Attachments"
-          : "Open Workspace",
-        isPreviewNote ? "openAttachment" : "openWorkspace",
-        "start"
-      );
+      const setMainNoteDropDown: Element =
+        await this._Addon.views.addEditorButton(
+          editor,
+          "knowledge-start",
+          isMainNote
+            ? "isMainKnowledge"
+            : isPreviewNote
+            ? "openAttachment"
+            : "notMainKnowledge",
+          isMainNote
+            ? "Edit the Main Note in Workspace"
+            : isPreviewNote
+            ? "Open Note Attachments"
+            : "Open Workspace",
+          isPreviewNote ? "openAttachment" : "openWorkspace",
+          "start"
+        );
+
+      if (setMainNoteDropDown) {
+        setMainNoteDropDown.classList.add("more-dropdown");
+        setMainNoteDropDown.addEventListener("mouseover", async (e) => {
+          if (setMainNoteDropDown.getElementsByClassName("popup").length > 0) {
+            return;
+          }
+          const recentIds = (
+            Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") as string
+          ).split(",");
+          // Add current note
+          recentIds.splice(0, 0, String(currentID));
+          // Remove main note and duplicate notes
+          const recentMainNotes = Zotero.Items.get(
+            new Array(
+              ...new Set(
+                recentIds.filter(
+                  (id) =>
+                    Number(id) !==
+                    parseInt(
+                      Zotero.Prefs.get(
+                        "Knowledge4Zotero.mainKnowledgeID"
+                      ) as string
+                    )
+                )
+              )
+            )
+          ) as Zotero.Item[];
+          const buttons = recentMainNotes.map((item) => {
+            return {
+              id: `knowledge-setmainnote-popup-${item.id}`,
+              rank: 0,
+              text: item.getNoteTitle(),
+              eventType: "setRecentMainNote",
+            };
+          });
+          const popup: Element = await this._Addon.views.addEditorPopup(
+            editor,
+            "knowledge-setmainnote-popup",
+            buttons,
+            setMainNoteDropDown,
+            "left"
+          );
+          const titleNode = _window.document.createElement("div");
+          titleNode.innerHTML = "Recent Main Notes";
+          titleNode.style.textAlign = "center";
+          popup.childNodes[0].before(
+            titleNode,
+            _window.document.createElement("hr")
+          );
+          setMainNoteDropDown.addEventListener("mouseleave", (e) => {
+            popup.remove();
+          });
+          setMainNoteDropDown.addEventListener("click", (e) => {
+            popup.remove();
+          });
+        });
+      }
       const addLinkDropDown: Element = await this._Addon.views.addEditorButton(
         editor,
         "knowledge-addlink",
@@ -664,6 +719,7 @@ class AddonEvents extends AddonBase {
         topItem = topItem.parentItem;
       }
       if (addCitationButton) {
+        addCitationButton.classList.add("more-dropdown");
         if (topItem) {
           addCitationButton.addEventListener("mouseover", async (e) => {
             if (addCitationButton.getElementsByClassName("popup").length > 0) {
@@ -821,7 +877,7 @@ class AddonEvents extends AddonBase {
 
       const moreDropdown: HTMLElement = Array.prototype.filter.call(
         _window.document.querySelectorAll(".more-dropdown"),
-        (e) => e.id !== "knowledge-addlink"
+        (e) => !e.id.includes("knowledge")
       )[0];
       if (!moreDropdown.getAttribute("ob")) {
         moreDropdown.setAttribute("ob", "true");
@@ -846,6 +902,12 @@ class AddonEvents extends AddonBase {
                   popup: editor._popup,
                   state: editor._state,
                 });
+              });
+              const previewButton = _window.document.createElement("button");
+              previewButton.classList.add("option");
+              previewButton.innerText = "Preview in Workspace";
+              previewButton.addEventListener("click", (e) => {
+                this._Addon.knowledge.setWorkspaceNote("preview", editor._item);
               });
               const copyLinkButton = _window.document.createElement("button");
               copyLinkButton.classList.add("option");
@@ -892,6 +954,7 @@ class AddonEvents extends AddonBase {
                 );
               });
               dropdownPopup.append(
+                previewButton,
                 refreshButton,
                 copyLinkButton,
                 copyLinkAtLineButton
@@ -963,6 +1026,18 @@ class AddonEvents extends AddonBase {
             ? topItems.length + "items"
             : topItems.map((i) => i.getField("title")).join("\n")
         } cited.`
+      );
+    } else if (message.type === "setRecentMainNote") {
+      /*
+        message.content = {
+          editorInstance?, event?
+        }
+      */
+      await this._Addon.knowledge.setWorkspaceNote(
+        "main",
+        Zotero.Items.get(
+          message.content.event.target.id.split("-").pop()
+        ) as Zotero.Item
       );
     } else if (message.type === "addToKnowledge") {
       /*

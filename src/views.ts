@@ -162,7 +162,8 @@ class AddonViews extends AddonBase {
     editorInstances: Zotero.EditorInstance,
     id: string,
     buttons: { id: string; text: string; rank: number; eventType: string }[],
-    parentDropDown: Element
+    parentDropDown: Element,
+    align: "center" | "left" | "right" = "center"
   ) {
     // Use Zotero.Notes._editorInstances to find current opened note editor
     await editorInstances._initPromise;
@@ -204,7 +205,15 @@ class AddonViews extends AddonBase {
     }
     parentDropDown.append(popup);
     Zotero.debug(popup.offsetWidth);
-    popup.setAttribute("style", `right: -${popup.offsetWidth / 2 - 15}px;`);
+    let style: string = "";
+    if (align === "center") {
+      style = `right: -${popup.offsetWidth / 2 - 15}px;`;
+    } else if (align === "left") {
+      style = "left: 0; right: auto;";
+    } else if (align === "right") {
+      style = "right: 0;";
+    }
+    popup.setAttribute("style", style);
     return popup;
   }
 

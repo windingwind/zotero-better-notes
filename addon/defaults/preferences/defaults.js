@@ -1,3 +1,4 @@
+pref("extensions.zotero.Knowledge4Zotero.recentMainNoteIds", "");
 pref("extensions.zotero.Knowledge4Zotero.syncNoteIds", "");
 pref("extensions.zotero.Knowledge4Zotero.syncPeriod", 10000);
 pref("extensions.zotero.Knowledge4Zotero.autoAnnotation", false);

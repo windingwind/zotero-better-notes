@@ -205,6 +205,9 @@ class Knowledge extends AddonBase {
     } else {
       // Set line to default
       this.currentLine[note.id] = -1;
+      if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") !== note.id) {
+        Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", note.id);
+      }
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
@@ -253,6 +256,27 @@ class Knowledge extends AddonBase {
     if (type === "main") {
       this._Addon.views.updateOutline();
       this._Addon.views.updateWordCount();
+      const recentMainNotes = Zotero.Items.get(
+        new Array(
+          ...new Set(
+            (
+              Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") as string
+            ).split(",")
+          )
+        )
+      ) as Zotero.Item[];
+      recentMainNotes.splice(0, 0, note);
+      Zotero.Prefs.set(
+        "Knowledge4Zotero.recentMainNoteIds",
+        new Array(...new Set(recentMainNotes.map((item) => String(item.id))))
+          .slice(0, 10)
+          .filter((id) => id)
+          .join(",")
+      );
+      this._Addon.views.showProgressWindow(
+        "Better Notes",
+        `Set main Note to: ${note.getNoteTitle()}`
+      );
     }
   }
 
