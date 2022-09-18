@@ -421,14 +421,14 @@ class Knowledge extends AddonBase {
 
   addLinkToNote(
     targetNote: Zotero.Item,
+    linkedNote: Zotero.Item,
     lineIndex: number,
-    linkedNoteID: number
+    sectionName: string
   ) {
     targetNote = targetNote || this.getWorkspaceNote();
     if (!targetNote) {
       return;
     }
-    let linkedNote = Zotero.Items.get(linkedNoteID) as Zotero.Item;
     if (!linkedNote.isNote()) {
       this._Addon.views.showProgressWindow("Better Notes", "Not a note item");
       return;
@@ -438,16 +438,16 @@ class Knowledge extends AddonBase {
 
     const linkTemplate = this._Addon.template.renderTemplate(
       "[QuickInsert]",
-      "link, subNoteItem, noteItem",
-      [link, linkedNote, targetNote]
+      "link, subNoteItem, noteItem, sectionName, lineIndex",
+      [link, linkedNote, targetNote, sectionName, lineIndex]
     );
 
     this.addLineToNote(targetNote, linkTemplate, lineIndex);
 
     const backLinkTemplate = this._Addon.template.renderTemplate(
       "[QuickBackLink]",
-      "subNoteItem, noteItem",
-      [linkedNote, targetNote],
+      "subNoteItem, noteItem, sectionName, lineIndex",
+      [linkedNote, targetNote, sectionName, lineIndex],
       false
     );
 

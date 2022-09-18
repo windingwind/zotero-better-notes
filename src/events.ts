@@ -131,11 +131,19 @@ class AddonEvents extends AddonBase {
           for (const tagId of ids.filter((t) => extraData[t].tag[0] === "#")) {
             const tagName = (extraData[tagId].tag as string).slice(1).trim();
             if (headings.includes(tagName) || tagName === "#") {
-              const lineIndex =
-                tagName === "#"
-                  ? -1
-                  : nodes.find((node) => node.model.name === tagName).model
-                      .endIndex;
+              let lineIndex: number;
+              let sectionName: string;
+              if (tagName === "#") {
+                lineIndex = -1;
+                sectionName = "";
+              } else {
+                const targetNode = nodes.find(
+                  (node) => node.model.name === tagName
+                );
+                lineIndex = targetNode.model.endIndex;
+                sectionName = targetNode.model.name;
+              }
+
               const item = Zotero.Items.get(
                 (tagId as string).split("-")[0]
               ) as Zotero.Item;
@@ -145,6 +153,7 @@ class AddonEvents extends AddonBase {
                     params: {
                       annotations: [item],
                       lineIndex: lineIndex,
+                      sectionName: sectionName,
                     },
                   })
                 );
@@ -154,6 +163,7 @@ class AddonEvents extends AddonBase {
                     params: {
                       itemID: item.id,
                       lineIndex: lineIndex,
+                      sectionName: sectionName,
                     },
                   })
                 );
@@ -963,9 +973,10 @@ class AddonEvents extends AddonBase {
       Zotero.debug("Knowledge4Zotero: addToKnowledge");
       this._Addon.knowledge.addLinkToNote(
         undefined,
+        (message.content.editorInstance as Zotero.EditorInstance)._item,
         // -1 for automatically insert to current selected line or end of note
         -1,
-        (message.content.editorInstance as Zotero.EditorInstance)._item.id
+        ""
       );
     } else if (message.type === "addToKnowledgeLine") {
       /*
@@ -974,7 +985,8 @@ class AddonEvents extends AddonBase {
           event?,
           params: {
             itemID: number,
-            lineIndex: number
+            lineIndex: number,
+            sectionName: string
           }
         }
       */
@@ -986,13 +998,18 @@ class AddonEvents extends AddonBase {
         const idSplit = eventInfo.split("-");
         lineIndex = parseInt(idSplit.pop());
       }
+      let sectionName = message.content.params?.sectionName;
+      if (typeof sectionName === "undefined") {
+        sectionName = (message.content.event as XUL.XULEvent).target.innerText;
+      }
 
       this._Addon.knowledge.addLinkToNote(
         undefined,
-        lineIndex,
         message.content.params?.itemID
-          ? message.content.params.itemID
-          : (message.content.editorInstance as Zotero.EditorInstance)._item.id
+          ? Zotero.Items.get(message.content.params.itemID)
+          : (message.content.editorInstance as Zotero.EditorInstance)._item,
+        lineIndex,
+        sectionName
       );
     } else if (message.type === "addAnnotationToNote") {
       /*

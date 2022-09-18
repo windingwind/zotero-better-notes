@@ -23,7 +23,7 @@ class AddonTemplate extends AddonBase {
       },
       {
         name: "[QuickBackLink]",
-        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}?ignore=1" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}</a></p>',
+        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}?ignore=1&line=${lineIndex}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}${sectionName?`/${sectionName}`:""}</a></p>',
         disabled: false,
       },
       {
