@@ -939,6 +939,22 @@ class AddonViews extends AddonBase {
     });
   }
 
+  updateOCRStyleMenu() {
+    Zotero.debug(`updateOCRStyleMenu`);
+    const popup = document.getElementById("menu_ocrsettingpopup");
+    Array.prototype.forEach.call(popup.children, (e) =>
+      e.setAttribute("checked", false)
+    );
+    let engine = Zotero.Prefs.get("Knowledge4Zotero.OCREngine");
+    if (!engine) {
+      engine = "bing";
+      Zotero.Prefs.set("Knowledge4Zotero.OCREngine", engine);
+    }
+    (
+      document.getElementById(`menu_ocr_${engine}_betternotes`) as XUL.Menuitem
+    ).setAttribute("checked", true);
+  }
+
   updateWordCount() {
     const _window = this._Addon.knowledge.workspaceTabId
       ? window

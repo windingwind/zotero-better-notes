@@ -1941,6 +1941,30 @@ class AddonEvents extends AddonBase {
         "Better Notes",
         "Image copied to clipboard."
       );
+    } else if (message.type === "setOCREngine") {
+      /*
+        message.content = {
+          params: { engine: string }
+        }
+      */
+      const engine = message.content.params.engine;
+      if (engine === "mathpix") {
+        Zotero.Prefs.set(
+          "Knowledge4Zotero.OCRMathpix.Appid",
+          prompt(
+            "Please input app_id",
+            Zotero.Prefs.get("Knowledge4Zotero.OCRMathpix.Appid") as string
+          )
+        );
+        Zotero.Prefs.set(
+          "Knowledge4Zotero.OCRMathpix.Appkey",
+          prompt(
+            "Please input app_key",
+            Zotero.Prefs.get("Knowledge4Zotero.OCRMathpix.Appkey") as string
+          )
+        );
+      }
+      Zotero.Prefs.set("Knowledge4Zotero.OCREngine", engine);
     } else if (message.type === "ocrImageAnnotation") {
       /*
         message.content = {
@@ -1948,47 +1972,84 @@ class AddonEvents extends AddonBase {
         }
       */
       const annotationItem: Zotero.Item = message.content.params.annotationItem;
-      const xhr = await Zotero.HTTP.request(
-        "POST",
-        "https://www.bing.com/cameraexp/api/v1/getlatex",
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            data: message.content.params.src.split(",").pop(),
-            inputForm: "Image",
-            clientInfo: { platform: "edge" },
-          }),
-          responseType: "json",
-        }
-      );
-      if (xhr && xhr.status && xhr.status === 200) {
-        if (xhr.response.isError) {
-          this._Addon.views.showProgressWindow(
-            "Better Notes OCR",
-            xhr.response.errorMessage,
-            "fail"
-          );
+      let result: string;
+      let success: boolean;
+      const engine = Zotero.Prefs.get("Knowledge4Zotero.OCREngine");
+      if (engine === "mathpix") {
+        const xhr = await Zotero.HTTP.request(
+          "POST",
+          "https://api.mathpix.com/v3/text",
+          {
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              app_id: Zotero.Prefs.get("Knowledge4Zotero.OCRMathpix.Appid"),
+              app_key: Zotero.Prefs.get("Knowledge4Zotero.OCRMathpix.Appkey"),
+            },
+            body: JSON.stringify({
+              src: message.content.params.src,
+              math_inline_delimiters: ["$", "$"],
+              math_display_delimiters: ["$$", "$$"],
+              rm_spaces: true,
+            }),
+            responseType: "json",
+          }
+        );
+        console.log(xhr);
+        if (xhr && xhr.status && xhr.status === 200 && xhr.response.text) {
+          result = xhr.response.text;
+          success = true;
         } else {
-          let ocrResult = xhr.response.latex
-            ? `$${xhr.response.latex.replace(/ /g, "")}$`
-            : xhr.response.ocrText;
-          annotationItem.annotationComment = `${
-            annotationItem.annotationComment
-              ? `${annotationItem.annotationComment}\n`
-              : ""
-          }${ocrResult}`;
-          await annotationItem.saveTx();
-          this._Addon.views.showProgressWindow(
-            "Better Notes OCR",
-            `OCR Result: ${ocrResult}`
-          );
+          result =
+            xhr.status === 200 ? xhr.response.error : `${xhr.status} Error`;
+          success = false;
         }
+      } else if (engine === "bing") {
+        const xhr = await Zotero.HTTP.request(
+          "POST",
+          "https://www.bing.com/cameraexp/api/v1/getlatex",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              data: message.content.params.src.split(",").pop(),
+              inputForm: "Image",
+              clientInfo: { platform: "edge" },
+            }),
+            responseType: "json",
+          }
+        );
+        if (xhr && xhr.status && xhr.status === 200 && !xhr.response.isError) {
+          result = xhr.response.latex
+            ? `$${xhr.response.latex}$`
+            : xhr.response.ocrText;
+          success = true;
+        } else {
+          result =
+            xhr.status === 200
+              ? xhr.response.errorMessage
+              : `${xhr.status} Error`;
+          success = false;
+        }
+      } else {
+        result = "OCR Engine Not Found";
+        success = false;
+      }
+      if (success) {
+        annotationItem.annotationComment = `${
+          annotationItem.annotationComment
+            ? `${annotationItem.annotationComment}\n`
+            : ""
+        }${result}`;
+        await annotationItem.saveTx();
+        this._Addon.views.showProgressWindow(
+          "Better Notes OCR",
+          `OCR Result: ${result}`
+        );
       } else {
         this._Addon.views.showProgressWindow(
           "Better Notes OCR",
-          `${xhr.status} Error`,
+          result,
           "fail"
         );
       }

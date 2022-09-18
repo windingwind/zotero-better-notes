@@ -10,3 +10,6 @@ pref("extensions.zotero.Knowledge4Zotero.embedLink", true);
 pref("extensions.zotero.Knowledge4Zotero.exportNote", false);
 pref("extensions.zotero.Knowledge4Zotero.exportCopy", false);
 pref("extensions.zotero.Knowledge4Zotero.exportPDF", false);
+pref("extensions.zotero.Knowledge4Zotero.OCREngine", "bing");
+pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.Appid", "");
+pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.Appkey", "");
