@@ -102,6 +102,7 @@
 <!ENTITY zotero.__addonRef__.template.save.label "保存">
 <!ENTITY zotero.__addonRef__.template.delete.label "删除">
 <!ENTITY zotero.__addonRef__.template.reset.label "重置">
+<!ENTITY zotero.__addonRef__.template.more.label "获取更多模板">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

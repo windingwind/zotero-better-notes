@@ -102,6 +102,7 @@
 <!ENTITY zotero.__addonRef__.template.save.label "Save">
 <!ENTITY zotero.__addonRef__.template.delete.label "Delete">
 <!ENTITY zotero.__addonRef__.template.reset.label "Reset">
+<!ENTITY zotero.__addonRef__.template.more.label "Get More Templates">
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">

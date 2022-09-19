@@ -26,10 +26,11 @@
     </keyset>
     <command id="cmd_save" oncommand="Zotero.Knowledge4Zotero.template.saveSelectedTemplate();" />
     <command id="cmd_help" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/blob/master/Template.md');" />
+    <command id="cmd_more" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/issues/85');" />
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
-        <vbox id="template-container" flex="1" minwidth="200px">
+        <vbox id="template-container" flex="1" minwidth="400px">
             <listbox id="template-list" flex="1" seltype="single" onselect="Zotero.Knowledge4Zotero.template.updateEditorView();">
                 <listhead>
                     <listheader id="name" label="&zotero.__addonRef__.template.list.label;" flex="1" />
@@ -38,9 +39,15 @@
                     <listcol flex="1" />
                 </listcols>
             </listbox>
+            <row style="margin: 10px 0 10px 0;">
+                <button id="create-template" label="&zotero.__addonRef__.template.create.label;" oncommand="Zotero.Knowledge4Zotero.template.createTemplate();"></button>
+                <button id="import-template" label="&zotero.__addonRef__.template.import.label;" oncommand="Zotero.Knowledge4Zotero.template.importNoteTemplate();"></button>
+                <button id="help" label="&helpMenu.label;" command="cmd_help" key="key_help" accesskey="H"></button>
+                <button id="more" label="&zotero.__addonRef__.template.more.label;" command="cmd_more"></button>
+            </row>
         </vbox>
         <splitter></splitter>
-        <rows>
+        <rows minwidth="400px">
             <row style="margin: 10px 0 10px 0;">
                 <label value="&zotero.__addonRef__.template.header.label;"></label>
                 <textbox id="editor-name" disabled="true"></textbox>
@@ -49,12 +56,9 @@
                 <textbox id="editor-textbox" flex="1" multiline="true" disabled="true"></textbox>
             </row>
             <row style="margin: 10px 0 10px 0;">
-                <button id="create-template" label="&zotero.__addonRef__.template.create.label;" oncommand="Zotero.Knowledge4Zotero.template.createTemplate();"></button>
-                <button id="import-template" label="&zotero.__addonRef__.template.import.label;" oncommand="Zotero.Knowledge4Zotero.template.importNoteTemplate();"></button>
                 <button id="save-template" label="&zotero.__addonRef__.template.save.label;" command="cmd_save" key="key_save" accesskey="S"></button>
                 <button id="delete-template" label="&zotero.__addonRef__.template.delete.label;" oncommand="Zotero.Knowledge4Zotero.template.deleteSelectedTemplate();"></button>
                 <button id="reset-template" label="&zotero.__addonRef__.template.reset.label;" oncommand="Zotero.Knowledge4Zotero.template.resetSelectedTemplate();" hidden="hidden"></button>
-                <button id="help" label="&helpMenu.label;" command="cmd_help" key="key_help" accesskey="H"></button>
             </row>
         </rows>
     </hbox>
