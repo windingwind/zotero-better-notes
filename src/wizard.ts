@@ -273,7 +273,7 @@ class AddonWizard extends AddonBase {
         );
         await this._Addon.events.onEditorEvent(
           new EditorMessage("setMainKnowledge", {
-            params: { itemID: noteID, enableConfirm: false },
+            params: { itemID: noteID, enableConfirm: false, enableOpen: true },
           })
         );
       }

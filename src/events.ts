@@ -389,14 +389,17 @@ class AddonEvents extends AddonBase {
       if (!res) {
         return;
       }
-      const header = prompt("Enter new note header:");
+      const header = prompt(
+        "Enter new note header:",
+        `New Note ${new Date().toLocaleString()}`
+      );
       const noteID = await ZoteroPane_Local.newNote();
       (Zotero.Items.get(noteID) as Zotero.Item).setNote(
         `<div data-schema-version="8"><h1>${header}</h1>\n</div>`
       );
       await this.onEditorEvent(
         new EditorMessage("setMainKnowledge", {
-          params: { itemID: noteID },
+          params: { itemID: noteID, enableConfirm: false, enableOpen: true },
         })
       );
       await this._Addon.knowledge.openWorkspaceWindow();
@@ -436,7 +439,7 @@ class AddonEvents extends AddonBase {
       if (note && note.isNote()) {
         this.onEditorEvent(
           new EditorMessage("setMainKnowledge", {
-            params: { itemID: note.id, enableConfirm: false },
+            params: { itemID: note.id, enableConfirm: false, enableOpen: true },
           })
         );
       } else {
@@ -448,7 +451,7 @@ class AddonEvents extends AddonBase {
     } else if (message.type === "setMainKnowledge") {
       /*
         message.content = {
-          params: {itemID, enableConfirm}
+          params: {itemID, enableConfirm, enableOpen}
         }
       */
       Zotero.debug("Knowledge4Zotero: setMainKnowledge");
@@ -469,19 +472,21 @@ class AddonEvents extends AddonBase {
           "Not a valid note item."
         );
       } else {
-        if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")) {
-          if (message.content.params.enableConfirm) {
-            let confirmChange = confirm(
-              "Will change current Knowledge Workspace. Confirm?"
-            );
-            if (!confirmChange) {
-              return;
-            }
+        if (
+          message.content.params.enableConfirm &&
+          Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
+        ) {
+          let confirmChange = confirm(
+            "Will change current Knowledge Workspace. Confirm?"
+          );
+          if (!confirmChange) {
+            return;
           }
         }
-        Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", itemID);
-        await this._Addon.knowledge.openWorkspaceWindow();
-        await this._Addon.knowledge.setWorkspaceNote("main");
+        if (message.content.params.enableOpen) {
+          await this._Addon.knowledge.openWorkspaceWindow();
+        }
+        await this._Addon.knowledge.setWorkspaceNote("main", item);
       }
     } else if (message.type === "addNoteInstance") {
       /*
