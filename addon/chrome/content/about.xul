@@ -30,5 +30,11 @@
                 <label value="&zotero.__addonRef__.help.feedback.label;" class="zotero-text-link" onclick="Zotero.launchURL('__homepage__');" />
             </hbox>
         </hbox>
+        <hbox>
+            <label id="doc" value="&zotero.__addonRef__.help.doc.caption.label;" />
+            <hbox style="display: block">
+                <label value="&zotero.__addonRef__.help.doc.label;" class="zotero-text-link" onclick="Zotero.launchURL('https://zotero.yuque.com/books/share/f3fe159f-956c-4f10-ade3-c87559cacb60/biigg4');" />
+            </hbox>
+        </hbox>
     </vbox>
 </dialog>

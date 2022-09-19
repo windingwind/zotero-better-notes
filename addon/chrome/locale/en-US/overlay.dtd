@@ -106,5 +106,7 @@
 
 <!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
+<!ENTITY zotero.__addonRef__.help.doc.caption.label "Documentations">
+<!ENTITY zotero.__addonRef__.help.doc.label "Better Notes Handbook(Chinese, provide translation)">
 <!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">

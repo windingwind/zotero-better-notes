@@ -104,7 +104,9 @@
 <!ENTITY zotero.__addonRef__.template.reset.label "重置">
 <!ENTITY zotero.__addonRef__.template.more.label "获取更多模板">
 
-<!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
+<!ENTITY zotero.__addonRef__.help.feedback.caption.label "用户指引和反馈">
 <!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
+<!ENTITY zotero.__addonRef__.help.doc.caption.label "使用文档">
+<!ENTITY zotero.__addonRef__.help.doc.label "Better Notes手册(中文)">
 <!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">
