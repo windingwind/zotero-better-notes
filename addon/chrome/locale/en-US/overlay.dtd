@@ -1,4 +1,4 @@
-<!ENTITY zotero.__addonRef__.workspace.title "Knowledge Workspace">
+<!ENTITY zotero.__addonRef__.workspace.title "Workspace">
 
 <!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
