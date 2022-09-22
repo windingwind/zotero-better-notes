@@ -38,7 +38,7 @@ class AddonTemplate extends AddonBase {
       },
       {
         name: "[ExportMDFileName]",
-        text: '${(noteItem.getNoteTitle ? noteItem.getNoteTitle().replace(/[/\\?%*:|"<> ]/g, "-") + "-" : "")}${noteItem.key}.md',
+        text: '${(noteItem.getNoteTitle ? noteItem.getNoteTitle().replace(/[/\\\\?%*:|"<> ]/g, "-") + "-" : "")}${noteItem.key}.md',
         disabled: false,
       },
       {

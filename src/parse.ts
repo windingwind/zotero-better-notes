@@ -1,9 +1,28 @@
 import AddonBase from "./module";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
+import TurndownService = require("turndown");
+const turndownPluginGfm = require("turndown-plugin-gfm");
 const TreeModel = require("./treemodel");
 const asciidoctor = require("asciidoctor")();
+const seedrandom = require("seedrandom");
 
 class AddonParse extends AddonBase {
+  // A seedable version of Zotero.Utilities.randomString
+  private randomString(len: number, chars: string, seed: string) {
+    if (!chars) {
+      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    }
+    if (!len) {
+      len = 8;
+    }
+    let randomstring = "";
+    const random: Function = seedrandom(seed);
+    for (let i = 0; i < len; i++) {
+      const rnum = Math.floor(random() * chars.length);
+      randomstring += chars.substring(rnum, rnum + 1);
+    }
+    return randomstring;
+  }
   public parseNoteTree(note: Zotero.Item): TreeModel.Node<object> {
     const noteLines = this._Addon.knowledge.getLinesInNote(note);
     let tree = new TreeModel();
@@ -430,6 +449,272 @@ class AddonParse extends AddonBase {
 
   parseAsciiDocToHTML(str: string): string {
     return asciidoctor.convert(str);
+  }
+
+  // A realization of Markdown Note.js translator
+  async parseNoteToMD(noteItem: Zotero.Item, options: any = {}) {
+    const doc = new DOMParser().parseFromString(
+      noteItem.getNote() || "",
+      "text/html"
+    );
+    Components.utils.import("resource://gre/modules/osfile.jsm");
+    doc.querySelectorAll("span").forEach(function (span) {
+      if (span.style.textDecoration === "line-through") {
+        let s = doc.createElement("s");
+        s.append(...span.childNodes);
+        span.replaceWith(s);
+      }
+    });
+
+    // Turndown wants pre content inside additional code block
+    doc.querySelectorAll("pre").forEach(function (pre) {
+      let code = doc.createElement("code");
+      code.append(...pre.childNodes);
+      pre.append(code);
+    });
+
+    // Insert a PDF link for highlight and image annotation nodes
+    doc
+      .querySelectorAll('span[class="highlight"], img[data-annotation]')
+      .forEach((node) => {
+        Zotero.debug(node.outerHTML);
+        try {
+          var annotation = JSON.parse(
+            decodeURIComponent(node.getAttribute("data-annotation"))
+          );
+        } catch (e) {
+          Zotero.debug(e);
+        }
+
+        if (annotation) {
+          // annotation.uri was used before note-editor v4
+          let uri = annotation.attachmentURI || annotation.uri;
+          let position = annotation.position;
+          Zotero.debug("----Debug Link----");
+          Zotero.debug(annotation);
+          if (typeof uri === "string" && typeof position === "object") {
+            Zotero.debug(uri);
+            let openURI;
+            let uriParts = uri.split("/");
+            let libraryType = uriParts[3];
+            let key = uriParts[uriParts.length - 1];
+            Zotero.debug(key);
+            if (libraryType === "users") {
+              openURI = "zotero://open-pdf/library/items/" + key;
+            }
+            // groups
+            else {
+              let groupID = uriParts[4];
+              openURI = "zotero://open-pdf/groups/" + groupID + "/items/" + key;
+            }
+
+            openURI +=
+              "?page=" +
+              (position.pageIndex + 1) +
+              (annotation.annotationKey
+                ? "&annotation=" + annotation.annotationKey
+                : "");
+
+            let a = doc.createElement("a");
+            a.href = openURI;
+            a.append("pdf");
+            let fragment = doc.createDocumentFragment();
+            fragment.append(" (", a, ") ");
+
+            if (options.wrapCitation) {
+              const citationKey = annotation.annotationKey
+                ? annotation.annotationKey
+                : this.randomString(
+                    8,
+                    Zotero.Utilities.allowedKeyChars,
+                    Zotero.Utilities.Internal.md5(
+                      node.getAttribute("data-annotation")
+                    )
+                  );
+              Zotero.Utilities.Internal.md5(
+                node.getAttribute("data-annotation")
+              );
+              const beforeCitationDecorator = doc.createElement("span");
+              beforeCitationDecorator.innerHTML = `&lt;!-- bn::${citationKey} --&gt;`;
+              const afterCitationDecorator = doc.createElement("span");
+              afterCitationDecorator.innerHTML = `&lt;!-- bn::${citationKey} --&gt;`;
+              node.before(beforeCitationDecorator);
+              fragment.append(afterCitationDecorator);
+            }
+
+            let nextNode = node.nextElementSibling;
+            if (nextNode && nextNode.classList.contains("citation")) {
+              nextNode.parentNode.insertBefore(fragment, nextNode.nextSibling);
+            } else {
+              node.parentNode.insertBefore(fragment, node.nextSibling);
+            }
+          }
+        }
+      });
+
+    console.log(doc);
+
+    for (const img of doc.querySelectorAll("img[data-attachment-key]")) {
+      let imgKey = img.getAttribute("data-attachment-key");
+
+      const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
+        noteItem.libraryID,
+        imgKey
+      );
+      Zotero.debug(attachmentItem);
+
+      let oldFile = String(await attachmentItem.getFilePathAsync());
+      Zotero.debug(oldFile);
+      let ext = oldFile.split(".").pop();
+      let newAbsPath = OS.Path.join(
+        ...`${this._Addon.knowledge._exportPath}/${imgKey}.${ext}`.split(/\//)
+      );
+      if (!Zotero.isWin && newAbsPath.charAt(0) !== "/") {
+        newAbsPath = "/" + newAbsPath;
+      }
+      Zotero.debug(newAbsPath);
+      let newFile = oldFile;
+      try {
+        // Don't overwrite
+        if (await OS.File.exists(newAbsPath)) {
+          newFile = newAbsPath.replace(/\\/g, "/");
+        } else {
+          newFile = Zotero.File.copyToUnique(oldFile, newAbsPath).path;
+          newFile = newFile.replace(/\\/g, "/");
+        }
+        newFile = `attachments/${newFile.split(/\//).pop()}`;
+      } catch (e) {
+        Zotero.debug(e);
+      }
+      Zotero.debug(newFile);
+
+      img.setAttribute("src", newFile ? newFile : oldFile);
+      img.setAttribute("alt", "image");
+    }
+
+    // Transform citations to links
+    doc.querySelectorAll('span[class="citation"]').forEach(function (span) {
+      try {
+        var citation = JSON.parse(
+          decodeURIComponent(span.getAttribute("data-citation"))
+        );
+      } catch (e) {}
+
+      if (citation && citation.citationItems && citation.citationItems.length) {
+        let uris = [];
+        for (let citationItem of citation.citationItems) {
+          let uri = citationItem.uris[0];
+          if (typeof uri === "string") {
+            let uriParts = uri.split("/");
+            let libraryType = uriParts[3];
+            let key = uriParts[uriParts.length - 1];
+            Zotero.debug(key);
+            if (libraryType === "users") {
+              uris.push("zotero://select/library/items/" + key);
+            }
+            // groups
+            else {
+              let groupID = uriParts[4];
+              uris.push("zotero://select/groups/" + groupID + "/items/" + key);
+            }
+          }
+        }
+
+        let items = Array.from(span.querySelectorAll(".citation-item")).map(
+          (x) => x.textContent
+        );
+        // Fallback to pre v5 note-editor schema that was serializing citations as plain text i.e.:
+        // <span class="citation" data-citation="...">(Jang et al., 2005, p. 14; Kongsgaard et al., 2009, p. 790)</span>
+        if (!items.length) {
+          items = span.textContent.slice(1, -1).split("; ");
+        }
+
+        span.innerHTML =
+          "(" +
+          items
+            .map((item, i) => {
+              return `<a href="${uris[i]}">${item}</a>`;
+            })
+            .join("; ") +
+          ")";
+      }
+    });
+    // Overwrite escapes
+    const escapes: [RegExp, string][] = [
+      // [/\\/g, '\\\\'],
+      // [/\*/g, '\\*'],
+      [/^-/g, "\\-"],
+      [/^\+ /g, "\\+ "],
+      [/^(=+)/g, "\\$1"],
+      [/^(#{1,6}) /g, "\\$1 "],
+      [/`/g, "\\`"],
+      [/^~~~/g, "\\~~~"],
+      // [/^>/g, "\\>"],
+      // [/_/g, "\\_"],
+      [/^(\d+)\. /g, "$1\\. "],
+    ];
+    if (Zotero.Prefs.get("Knowledge4Zotero.convertSquare")) {
+      escapes.push([/\[/g, "\\["]);
+      escapes.push([/\]/g, "\\]"]);
+    }
+    TurndownService.prototype.escape = function (string) {
+      return escapes.reduce(function (accumulator, escape) {
+        return accumulator.replace(escape[0], escape[1]);
+      }, string);
+    };
+    // Initialize Turndown Service
+    let turndownService = new TurndownService({
+      headingStyle: "atx",
+      bulletListMarker: "-",
+      emDelimiter: "*",
+      codeBlockStyle: "fenced",
+    });
+    turndownService.use(turndownPluginGfm.gfm);
+    // Add math block rule
+    turndownService.addRule("mathBlock", {
+      filter: function (node) {
+        return node.nodeName === "PRE" && node.className === "math";
+      },
+
+      replacement: function (content, node, options) {
+        return (
+          "\n\n$$\n" + node.firstChild.textContent.slice(2, -2) + "\n$$\n\n"
+        );
+      },
+    });
+    turndownService.addRule("inlineLinkCustom", {
+      filter: function (node, options) {
+        return (
+          options.linkStyle === "inlined" &&
+          node.nodeName === "A" &&
+          node.getAttribute("href").length > 0
+        );
+      },
+
+      replacement: function (content, node: HTMLElement, options) {
+        var href = node.getAttribute("href");
+        const cleanAttribute = (attribute) =>
+          attribute ? attribute.replace(/(\n+\s*)+/g, "\n") : "";
+        var title = cleanAttribute(node.getAttribute("title"));
+        if (title) title = ' "' + title + '"';
+        if (href.search(/zotero:\/\/note\/\w+\/\w+\//g) !== -1) {
+          // A note link should be converted if it is in the _exportFileDict
+          var _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
+            Components.interfaces.nsISupports
+          ).wrappedJSObject;
+          const noteInfo =
+            _Zotero.Knowledge4Zotero.knowledge._exportFileDict &&
+            _Zotero.Knowledge4Zotero.knowledge._exportFileDict.find((i) =>
+              href.includes(i.link)
+            );
+          if (noteInfo) {
+            href = `./${noteInfo.filename}`;
+          }
+        }
+        return "[" + content + "](" + href + title + ")";
+      },
+    });
+    return turndownService.turndown(doc.body);
   }
 }
 

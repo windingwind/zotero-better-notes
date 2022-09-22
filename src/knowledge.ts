@@ -1,6 +1,5 @@
 import Knowledge4Zotero from "./addon";
 import { OutlineType } from "./base";
-import { loadTranslator, TRANSLATOR_ID_BETTER_MARKDOWN } from "./exportMD";
 import { pick } from "./file_picker";
 import AddonBase from "./module";
 
@@ -15,7 +14,6 @@ class Knowledge extends AddonBase {
   _workspacePromise: any;
   _exportPath: string;
   _exportFileDict: object;
-  _exportPromise: any;
   _pdfNoteId: number;
   _pdfPrintPromise: any;
   constructor(parent: Knowledge4Zotero) {
@@ -191,7 +189,8 @@ class Knowledge extends AddonBase {
 
   async setWorkspaceNote(
     type: "main" | "preview" = "main",
-    note: Zotero.Item | undefined = undefined
+    note: Zotero.Item | undefined = undefined,
+    showPopup: boolean = true
   ) {
     let _window = this.getWorkspaceWindow() as Window;
     note = note || this.getWorkspaceNote();
@@ -273,10 +272,12 @@ class Knowledge extends AddonBase {
           .filter((id) => id)
           .join(",")
       );
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Set main Note to: ${note.getNoteTitle()}`
-      );
+      if (showPopup) {
+        this._Addon.views.showProgressWindow(
+          "Better Notes",
+          `Set main Note to: ${note.getNoteTitle()}`
+        );
+      }
     }
   }
 
@@ -786,12 +787,12 @@ class Knowledge extends AddonBase {
   async exportNoteToFile(
     note: Zotero.Item,
     convertNoteLinks: boolean = true,
-    saveFile: boolean = true,
+    saveMD: boolean = true,
     saveNote: boolean = false,
-    saveCopy: boolean = false,
+    doCopy: boolean = false,
     savePDF: boolean = false
   ) {
-    if (!saveFile && !saveNote && !saveCopy && !savePDF) {
+    if (!saveMD && !saveNote && !doCopy && !savePDF) {
       return;
     }
     this._exportFileDict = [];
@@ -822,9 +823,7 @@ class Knowledge extends AddonBase {
       newNote = note;
     }
 
-    if (saveFile) {
-      await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-
+    if (saveMD) {
       const filename = await pick(
         Zotero.getString("fileInterface.export"),
         "save",
@@ -836,30 +835,10 @@ class Knowledge extends AddonBase {
           Zotero.File.pathToFile(filename).parent.path + "/attachments";
         // Convert to unix format
         this._exportPath = this._exportPath.replace(/\\/g, "/");
-
-        Components.utils.import("resource://gre/modules/osfile.jsm");
-
-        const hasImage = newNote.getNote().includes("<img");
-        if (hasImage) {
-          await Zotero.File.createDirectoryIfMissingAsync(
-            OS.Path.join(...this._exportPath.split(/\//))
-          );
-        }
-
-        const translator = new Zotero.Translate.Export();
-        translator.setItems([newNote]);
-        translator.setLocation(Zotero.File.pathToFile(filename));
-        this._exportPromise = Zotero.Promise.defer();
-        translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-        translator.translate();
-        await this._exportPromise.promise;
-        this._Addon.views.showProgressWindow(
-          "Better Notes",
-          `Note Saved to ${filename}`
-        );
+        await this._export(newNote, filename, false);
       }
     }
-    if (saveCopy) {
+    if (doCopy) {
       if (!convertNoteLinks) {
         Zotero_File_Interface.exportItemsToClipboard(
           [newNote],
@@ -944,8 +923,6 @@ class Knowledge extends AddonBase {
       return;
     }
 
-    await loadTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-
     this._exportPath = Zotero.File.pathToFile(filepath).path + "/attachments";
     // Convert to unix format
     this._exportPath = this._exportPath.replace(/\\/g, "/");
@@ -1007,7 +984,6 @@ class Knowledge extends AddonBase {
         allNoteIds = allNoteIds.concat(subNoteIds);
       }
       allNoteIds = Array.from(new Set(allNoteIds));
-      console.log(allNoteIds);
       const allNoteItems: Zotero.Item[] = Zotero.Items.get(
         allNoteIds
       ) as Zotero.Item[];
@@ -1101,13 +1077,11 @@ class Knowledge extends AddonBase {
     if (!Zotero.isWin && filename.charAt(0) !== "/") {
       filename = "/" + filename;
     }
-    const translator = new Zotero.Translate.Export();
-    translator.setItems([note]);
-    translator.setLocation(Zotero.File.pathToFile(filename));
-    translator.setTranslator(TRANSLATOR_ID_BETTER_MARKDOWN);
-    this._exportPromise = Zotero.Promise.defer();
-    translator.translate();
-    await this._exportPromise.promise;
+    const content: string = await this._Addon.parse.parseNoteToMD(note);
+    console.log(
+      `Exporting MD file: ${filename}, content length: ${content.length}`
+    );
+    await Zotero.File.putContentsAsync(filename, content);
     this._Addon.views.showProgressWindow(
       "Better Notes",
       `Note Saved to ${filename}`
@@ -1122,11 +1096,11 @@ class Knowledge extends AddonBase {
   }
 
   private _getFileName(noteItem: Zotero.Item) {
-    return this._Addon.template.renderTemplate(
-      "[ExportMDFileName]",
-      "noteItem",
-      [noteItem]
-    );
+    return (
+      this._Addon.template.renderTemplate("[ExportMDFileName]", "noteItem", [
+        noteItem,
+      ]) as string
+    ).replace(/\\/g, "-");
   }
 
   async convertNoteLines(

@@ -76,7 +76,7 @@ class AddonEvents extends AddonBase {
               t < 100
             ) {
               t += 1;
-              this._Addon.knowledge.setWorkspaceNote();
+              this._Addon.knowledge.setWorkspaceNote("main", undefined, false);
               await Zotero.Promise.delay(100);
             }
 
@@ -500,14 +500,14 @@ class AddonEvents extends AddonBase {
       editor._knowledgeUIInitialized = false;
 
       const currentID = editor._item.id;
+      const noteItem = editor._item;
+      // item.getNote may not be initialized yet
+      if (Zotero.ItemTypes.getID("note") !== noteItem.itemTypeID) {
+        return;
+      }
 
       // Check if this is a window for print
       const isPrint = this._Addon.knowledge._pdfNoteId === currentID;
-
-      const noteItem = Zotero.Items.get(currentID) as Zotero.Item;
-      if (!noteItem.isNote()) {
-        return;
-      }
 
       const mainNoteID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") as string
@@ -1843,6 +1843,9 @@ class AddonEvents extends AddonBase {
       await io.deferred.promise;
 
       const options = io.dataOut as any;
+      if (!options) {
+        return;
+      }
       if (options.exportFile && options.exportSingleFile) {
         await this._Addon.knowledge.exportNotesToFile(
           [item],

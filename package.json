@@ -32,11 +32,15 @@
     "compressing": "^1.5.1",
     "esbuild": "^0.14.34",
     "replace-in-file": "^6.3.2",
-    "tree-model": "^1.0.7"
+    "seedrandom": "^3.0.5",
+    "tree-model": "^1.0.7",
+    "turndown": "^7.1.1",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
     "@types/node": "^17.0.31",
+    "@types/turndown": "^5.0.1",
     "release-it": "^14.14.0",
     "zotero-types": "^0.0.4"
   }
