@@ -18,6 +18,7 @@ class Knowledge extends AddonBase {
   _pdfPrintPromise: any;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
+    this.workspaceTabId = "";
     this._firstInit = true;
     this.currentLine = {};
     this.currentNodeID = -1;
@@ -45,7 +46,7 @@ class Knowledge extends AddonBase {
     if (this.getWorkspaceWindow()) {
       if (!reopen) {
         Zotero.debug("openWorkspaceWindow: focus");
-        if (this.workspaceTabId) {
+        if (this.workspaceTabId !== "WINDOW") {
           Zotero_Tabs.select(this.workspaceTabId);
         } else {
           (this.getWorkspaceWindow() as Window).focus();
@@ -67,7 +68,7 @@ class Knowledge extends AddonBase {
         "chrome,extrachrome,menubar,resizable,scrollbars,status,width=1000,height=600"
       );
       this.workspaceWindow = win as Window;
-      this.workspaceTabId = "";
+      this.workspaceTabId = "WINDOW";
       await this.waitWorkspaceReady();
       this.setWorkspaceNote("main");
       this.currentLine[this.getWorkspaceNote().id] = -1;
@@ -86,7 +87,7 @@ class Knowledge extends AddonBase {
         index: 1,
         data: {},
         select: select,
-        onClose: undefined,
+        onClose: () => (this.workspaceTabId = ""),
       });
       this.workspaceTabId = id;
       const _iframe = window.document.createElement("browser");
@@ -118,7 +119,7 @@ class Knowledge extends AddonBase {
 
   closeWorkspaceWindow() {
     if (this.getWorkspaceWindow()) {
-      if (this.workspaceTabId) {
+      if (this.workspaceTabId !== "WINDOW") {
         Zotero_Tabs.close(this.workspaceTabId);
       } else {
         (this.getWorkspaceWindow() as Window).close();

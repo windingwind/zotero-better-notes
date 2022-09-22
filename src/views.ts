@@ -809,18 +809,24 @@ class AddonViews extends AddonBase {
     }
   }
 
+  private getMenuWindow(): XUL.XULWindow {
+    return this._Addon.knowledge.workspaceTabId
+      ? this._Addon.knowledge.workspaceTabId !== "WINDOW"
+        ? window
+        : this._Addon.knowledge.getWorkspaceWindow()
+      : window;
+  }
+
   updateEditCommand() {
-    const _window = this._Addon.knowledge.workspaceTabId
-      ? window
-      : this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this.getMenuWindow();
     Zotero.debug(`updateEditMenu, ${this._Addon.knowledge.currentNodeID}`);
     if (this._Addon.knowledge.currentNodeID < 0) {
       _window.document
         .getElementById("cmd_indent_betternotes")
-        .setAttribute("disabled", true);
+        .setAttribute("disabled", true as any);
       _window.document
         .getElementById("cmd_unindent_betternotes")
-        .setAttribute("disabled", true);
+        .setAttribute("disabled", true as any);
     } else {
       _window.document
         .getElementById("cmd_indent_betternotes")
@@ -832,21 +838,19 @@ class AddonViews extends AddonBase {
   }
 
   updateViewMenu() {
-    const _window = this._Addon.knowledge.workspaceTabId
-      ? window
-      : this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this.getMenuWindow();
     Zotero.debug(`updateViewMenu, ${this.currentOutline}`);
     const treeview = _window.document.getElementById("menu_treeview");
     this.currentOutline === OutlineType.treeView
-      ? treeview.setAttribute("checked", true)
+      ? treeview.setAttribute("checked", true as any)
       : treeview.removeAttribute("checked");
     const mindmap = _window.document.getElementById("menu_mindmap");
     this.currentOutline === OutlineType.mindMap
-      ? mindmap.setAttribute("checked", true)
+      ? mindmap.setAttribute("checked", true as any)
       : mindmap.removeAttribute("checked");
     const bubblemap = _window.document.getElementById("menu_bubblemap");
     this.currentOutline === OutlineType.bubbleMap
-      ? bubblemap.setAttribute("checked", true)
+      ? bubblemap.setAttribute("checked", true as any)
       : bubblemap.removeAttribute("checked");
 
     const noteFontSize = Zotero.Prefs.get("note.fontSize");
@@ -854,7 +858,7 @@ class AddonViews extends AddonBase {
       `#note-font-size-menu menuitem`
     )) {
       if (parseInt(menuitem.getAttribute("label")) == noteFontSize) {
-        menuitem.setAttribute("checked", true);
+        menuitem.setAttribute("checked", true as any);
       } else {
         menuitem.removeAttribute("checked");
       }
@@ -862,14 +866,14 @@ class AddonViews extends AddonBase {
   }
 
   updateTemplateMenu(type: "Note" | "Item" | "Text") {
-    const _window = this._Addon.knowledge.workspaceTabId
-      ? window
-      : this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this.getMenuWindow();
     // If tab is open but not selected, we use copy mode
-    const copyMode = Boolean(
-      this._Addon.knowledge.workspaceTabId &&
-        Zotero_Tabs.selectedID !== this._Addon.knowledge.workspaceTabId
-    );
+    const copyMode =
+      Boolean(
+        this._Addon.knowledge.workspaceTabId &&
+          this._Addon.knowledge.workspaceTabId !== "WINDOW" &&
+          Zotero_Tabs.selectedID !== this._Addon.knowledge.workspaceTabId
+      ) || !this._Addon.knowledge.workspaceTabId;
     Zotero.debug(`updateTemplateMenu, ${this.currentOutline}`);
     let templates = this._Addon.template
       .getTemplateKeys()
@@ -906,16 +910,14 @@ class AddonViews extends AddonBase {
       );
 
       if (template.disabled) {
-        menuitem.setAttribute("disabled", true);
+        menuitem.setAttribute("disabled", true as any);
       }
       popup.append(menuitem);
     }
   }
 
   updateCitationStyleMenu() {
-    const _window = this._Addon.knowledge.workspaceTabId
-      ? window
-      : this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this.getMenuWindow();
     Zotero.debug(`updateCitationStyleMenu, ${this.currentOutline}`);
 
     const popup = _window.document.getElementById("menu_citeSettingPopup");
@@ -965,9 +967,7 @@ class AddonViews extends AddonBase {
   }
 
   updateWordCount() {
-    const _window = this._Addon.knowledge.workspaceTabId
-      ? window
-      : this._Addon.knowledge.getWorkspaceWindow();
+    const _window = this.getMenuWindow();
     if (!_window) {
       return;
     }
