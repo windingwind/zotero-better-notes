@@ -182,6 +182,7 @@ class AddonEvents extends AddonBase {
 
   public async onInit() {
     Zotero.debug("Knowledge4Zotero: init called");
+    this.initProxyHandler();
 
     this.addEditorInstanceListener();
     // Register the callback in Zotero as an item observer
@@ -219,6 +220,27 @@ class AddonEvents extends AddonBase {
 
     // Set a init sync
     this._Addon.sync.setSync();
+  }
+
+  private initProxyHandler() {
+    const openNoteExtension = {
+      noContent: true,
+      doAction: async (uri: any) => {
+        let message = {
+          type: "onNoteLink",
+          content: {
+            params: await this._Addon.knowledge.getNoteFromLink(uri.spec),
+          },
+        };
+        await this._Addon.events.onEditorEvent(message);
+      },
+      newChannel: function (uri: any) {
+        this.doAction(uri);
+      },
+    };
+    Services.io.getProtocolHandler("zotero").wrappedJSObject._extensions[
+      "zotero://note"
+    ] = openNoteExtension;
   }
 
   private async initWorkspaceTab() {
