@@ -53,9 +53,6 @@ And the linked sub-notes will also be updated automatically!
 - Heading mark  
   <img src="./image/README/headingmark.png" width="400px"></img>
 
-- Copy annotation image to clipboard(Windows only)  
-  <img src="./image/README/copyimage.png" width="400px"></img>
-
 - Cite Items
 - Image resizing(comming soon)
 

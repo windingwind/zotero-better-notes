@@ -2052,17 +2052,6 @@ class AddonEvents extends AddonBase {
         annotationItem.annotationComment ? annotationItem.annotationComment : ""
       }\nnote link: "${this._Addon.knowledge.getNoteLink(note)}"`;
       await annotationItem.saveTx();
-    } else if (message.type === "copyImageAnnotation") {
-      /*
-        message.content = {
-          params: { src: string }
-        }
-      */
-      new CopyHelper().addImage(message.content.params.src).copy();
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        "Image copied to clipboard."
-      );
     } else if (message.type === "setOCREngine") {
       /*
         message.content = {
