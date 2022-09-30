@@ -111,10 +111,6 @@ class Knowledge extends AddonBase {
       this._Addon.views.switchView(OutlineType.treeView);
       this._Addon.views.updateOutline();
     }
-    // Important!
-    // Due to unknown reasons, the DOMParser constructor fails after the tab is opened.
-    // We restore it from the preserved object constructor.
-    DOMParser = this._Addon.events._DOMParser.__proto__.constructor;
   }
 
   closeWorkspaceWindow() {

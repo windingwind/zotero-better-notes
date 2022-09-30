@@ -7,6 +7,16 @@ const asciidoctor = require("asciidoctor")();
 const seedrandom = require("seedrandom");
 
 class AddonParse extends AddonBase {
+  private getDOMParser(): DOMParser {
+    if (Zotero.platformMajorVersion > 60) {
+      return new DOMParser();
+    } else {
+      return Components.classes[
+        "@mozilla.org/xmlextras/domparser;1"
+      ].createInstance(Components.interfaces.nsIDOMParser);
+    }
+  }
+
   // A seedable version of Zotero.Utilities.randomString
   private randomString(len: number, chars: string, seed: string) {
     if (!chars) {
@@ -23,6 +33,7 @@ class AddonParse extends AddonBase {
     }
     return randomstring;
   }
+
   public parseNoteTree(note: Zotero.Item): TreeModel.Node<object> {
     const noteLines = this._Addon.knowledge.getLinesInNote(note);
     let tree = new TreeModel();
@@ -297,9 +308,7 @@ class AddonParse extends AddonBase {
       .join("\n")}</div>`;
     console.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
 
-    let parser = Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
+    let parser = this.getDOMParser();
     let doc = parser.parseFromString(note, "text/html");
 
     // Make sure this is the new note
@@ -308,12 +317,14 @@ class AddonParse extends AddonBase {
     );
     if (metadataContainer) {
       // Load base64 image data into src
-      let nodes = doc.querySelectorAll("img[data-attachment-key]");
+      let nodes = doc.querySelectorAll(
+        "img[data-attachment-key]"
+      ) as NodeListOf<HTMLElement>;
       for (let node of nodes) {
         node.remove();
       }
 
-      nodes = doc.querySelectorAll("span[style]");
+      nodes = doc.querySelectorAll("span[style]") as NodeListOf<HTMLElement>;
       for (let node of nodes) {
         // Browser converts #RRGGBBAA hex color to rgba function, and we convert it to rgb function,
         // because word processors don't understand colors with alpha channel
@@ -411,9 +422,7 @@ class AddonParse extends AddonBase {
     if (noteText.search(/data-schema-version/g) === -1) {
       noteText = `<div data-schema-version="8">${noteText}\n</div>`;
     }
-    let parser = Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
+    let parser = this.getDOMParser();
     let doc = parser.parseFromString(noteText, "text/html");
 
     let metadataContainer: Element = doc.querySelector(
@@ -423,17 +432,16 @@ class AddonParse extends AddonBase {
   }
 
   parseLineText(line: string): string {
-    const parser = Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
+    const parser = this.getDOMParser();
     try {
       if (line.search(/data-schema-version/g) === -1) {
         line = `<div data-schema-version="8">${line}</div>`;
       }
-      return parser
-        .parseFromString(line, "text/html")
-        .querySelector("body > div[data-schema-version]")
-        .innerText.trim();
+      return (
+        parser
+          .parseFromString(line, "text/html")
+          .querySelector("body > div[data-schema-version]") as HTMLElement
+      ).innerText.trim();
     } catch (e) {
       return "";
     }
@@ -453,10 +461,8 @@ class AddonParse extends AddonBase {
 
   // A realization of Markdown Note.js translator
   async parseNoteToMD(noteItem: Zotero.Item, options: any = {}) {
-    const doc = new DOMParser().parseFromString(
-      noteItem.getNote() || "",
-      "text/html"
-    );
+    const parser = this.getDOMParser();
+    const doc = parser.parseFromString(noteItem.getNote() || "", "text/html");
     Components.utils.import("resource://gre/modules/osfile.jsm");
     doc.querySelectorAll("span").forEach(function (span) {
       if (span.style.textDecoration === "line-through") {
@@ -714,7 +720,9 @@ class AddonParse extends AddonBase {
         return "[" + content + "](" + href + title + ")";
       },
     });
-    return turndownService.turndown(doc.body);
+    const parsedMD = turndownService.turndown(doc.body);
+    console.log(parsedMD);
+    return parsedMD;
   }
 }
 
