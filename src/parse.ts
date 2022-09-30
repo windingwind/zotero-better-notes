@@ -649,7 +649,7 @@ class AddonParse extends AddonBase {
     const escapes: [RegExp, string][] = [
       // [/\\/g, '\\\\'],
       // [/\*/g, '\\*'],
-      [/^-/g, "\\-"],
+      // [/^-/g, "\\-"],
       [/^\+ /g, "\\+ "],
       [/^(=+)/g, "\\$1"],
       [/^(#{1,6}) /g, "\\$1 "],
