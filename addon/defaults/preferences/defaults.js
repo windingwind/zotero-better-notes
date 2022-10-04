@@ -14,3 +14,6 @@ pref("extensions.zotero.Knowledge4Zotero.exportPDF", false);
 pref("extensions.zotero.Knowledge4Zotero.OCREngine", "bing");
 pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.Appid", "");
 pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.Appkey", "");
+pref("extensions.zotero.Knowledge4Zotero.OCRXunfei.APPID", "");
+pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.APISecret", "");
+pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.APIKey", "");

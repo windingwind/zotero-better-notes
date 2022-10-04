@@ -1,3 +1,4 @@
+const CryptoJS = require("crypto-js");
 import Knowledge4Zotero from "./addon";
 import { CopyHelper, EditorMessage } from "./base";
 import AddonBase from "./module";
@@ -2067,6 +2068,28 @@ class AddonEvents extends AddonBase {
             Zotero.Prefs.get("Knowledge4Zotero.OCRMathpix.Appkey") as string
           )
         );
+      } else if (engine === "xunfei") {
+        Zotero.Prefs.set(
+          "Knowledge4Zotero.OCRXunfei.APPID",
+          prompt(
+            "Please input APPID",
+            Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APPID") as string
+          )
+        );
+        Zotero.Prefs.set(
+          "Knowledge4Zotero.OCRXunfei.APISecret",
+          prompt(
+            "Please input APISecret",
+            Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APISecret") as string
+          )
+        );
+        Zotero.Prefs.set(
+          "Knowledge4Zotero.OCRXunfei.APIKey",
+          prompt(
+            "Please input APIKey",
+            Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APIKey") as string
+          )
+        );
       }
       Zotero.Prefs.set("Knowledge4Zotero.OCREngine", engine);
     } else if (message.type === "ocrImageAnnotation") {
@@ -2106,6 +2129,88 @@ class AddonEvents extends AddonBase {
           result =
             xhr.status === 200 ? xhr.response.error : `${xhr.status} Error`;
           success = false;
+        }
+      } else if (engine === "xunfei") {
+        /**
+         * 1.Doc：https://www.xfyun.cn/doc/words/formula-discern/API.html
+         * 2.Error code：https://www.xfyun.cn/document/error-code
+         * @author iflytek
+         */
+
+        const config = {
+          hostUrl: "https://rest-api.xfyun.cn/v2/itr",
+          host: "rest-api.xfyun.cn",
+          appid: Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APPID"),
+          apiSecret: Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APISecret"),
+          apiKey: Zotero.Prefs.get("Knowledge4Zotero.OCRXunfei.APIKey"),
+          uri: "/v2/itr",
+        };
+
+        let date = new Date().toUTCString();
+        let postBody = getPostBody();
+        let digest = getDigest(postBody);
+
+        const xhr = await Zotero.HTTP.request("POST", config.hostUrl, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json,version=1.0",
+            Host: config.host,
+            Date: date,
+            Digest: digest,
+            Authorization: getAuthStr(date, digest),
+          },
+          body: JSON.stringify(postBody),
+          responseType: "json",
+        });
+
+        if (xhr?.response?.code === 0) {
+          result = xhr.response.data.region
+            .filter((r) => r.type === "text")
+            .map((r) => r.recog.content)
+            .join(" ")
+            .replace(/ifly-latex-(begin)?(end)?/g, "$");
+          console.log(xhr);
+          success = true;
+        } else {
+          result =
+            xhr.status === 200
+              ? `${xhr.response.code} ${xhr.response.message}`
+              : `${xhr.status} Error`;
+          success = false;
+        }
+
+        function getPostBody() {
+          let digestObj = {
+            common: {
+              app_id: config.appid,
+            },
+            business: {
+              ent: "teach-photo-print",
+              aue: "raw",
+            },
+            data: {
+              image: message.content.params.src.split(",").pop(),
+            },
+          };
+          return digestObj;
+        }
+
+        function getDigest(body) {
+          return (
+            "SHA-256=" +
+            CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(JSON.stringify(body)))
+          );
+        }
+
+        function getAuthStr(date, digest) {
+          let signatureOrigin = `host: ${config.host}\ndate: ${date}\nPOST ${config.uri} HTTP/1.1\ndigest: ${digest}`;
+          let signatureSha = CryptoJS.HmacSHA256(
+            signatureOrigin,
+            config.apiSecret
+          );
+          let signature = CryptoJS.enc.Base64.stringify(signatureSha);
+          let authorizationOrigin = `api_key="${config.apiKey}", algorithm="hmac-sha256", headers="host date request-line digest", signature="${signature}"`;
+          return authorizationOrigin;
         }
       } else if (engine === "bing") {
         const xhr = await Zotero.HTTP.request(

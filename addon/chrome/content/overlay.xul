@@ -110,6 +110,7 @@
             <menupopup id="menu_ocrsettingpopup" onpopupshowing="Zotero.Knowledge4Zotero.views.updateOCRStyleMenu();">
                 <menuitem id="menu_ocr_bing_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRBing;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setOCREngine', content: {params: {engine: 'bing'}}})" type="checkbox" />
                 <menuitem id="menu_ocr_mathpix_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRMathpix;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setOCREngine', content: {params: {engine: 'mathpix'}}})" type="checkbox" />
+                <menuitem id="menu_ocr_xunfei_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRXunfei;" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent.bind(Zotero.Knowledge4Zotero.events)({type: 'setOCREngine', content: {params: {engine: 'xunfei'}}})" type="checkbox" />
             </menupopup>
         </menu>
         <menuitem id="menu_guide_betternotes menu-betternotes" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide_betternotes" />

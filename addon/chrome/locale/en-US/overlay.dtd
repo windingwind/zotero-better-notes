@@ -15,6 +15,7 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.OCRSetting "Annotation Math OCR">
 <!ENTITY zotero.__addonRef__.workspace.menu.OCRBing "Bing">
 <!ENTITY zotero.__addonRef__.workspace.menu.OCRMathpix "Mathpix">
+<!ENTITY zotero.__addonRef__.workspace.menu.OCRXunfei "Xunfei">
 <!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
 <!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
 <!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">

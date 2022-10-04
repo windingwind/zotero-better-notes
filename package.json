@@ -30,6 +30,7 @@
     "@syncfusion/ej2-navigations": "^20.1.51",
     "asciidoctor": "^2.2.6",
     "compressing": "^1.5.1",
+    "crypto-js": "^4.1.1",
     "esbuild": "^0.14.34",
     "replace-in-file": "^6.3.2",
     "seedrandom": "^3.0.5",
