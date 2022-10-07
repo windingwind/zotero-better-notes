@@ -355,6 +355,7 @@ class AddonViews extends AddonBase {
     const note: Zotero.Item = link
       ? (await this._Addon.knowledge.getNoteFromLink(link)).item
       : undefined;
+    const workspaceNote = this._Addon.knowledge.getWorkspaceNote();
     // If the note is invalid, we remove the buttons
     if (note) {
       let insertButton = _window.document.getElementById("insert-note-link");
@@ -387,11 +388,10 @@ class AddonViews extends AddonBase {
         const templateText = await this._Addon.template.renderTemplateAsync(
           "[QuickImport]",
           "subNoteLines, subNoteItem, noteItem",
-          [subNoteLines, note, this._Addon.knowledge.getWorkspaceNote()]
+          [subNoteLines, note, workspaceNote]
         );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
-        const workspaceNote = this._Addon.knowledge.getWorkspaceNote();
         const notifyFlag = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
         this._Addon.events.addNotifyListener(
@@ -426,9 +426,7 @@ class AddonViews extends AddonBase {
               linkIndex[1]
             )}\n${newLineString}`;
           },
-          this._Addon.knowledge.currentLine[
-            this._Addon.knowledge.getWorkspaceNote().id
-          ],
+          this._Addon.knowledge.currentLine[workspaceNote.id],
           true
         );
         // wait the first modify finish
@@ -448,9 +446,7 @@ class AddonViews extends AddonBase {
             }
           });
           await this._Addon.knowledge.scrollWithRefresh(
-            this._Addon.knowledge.currentLine[
-              this._Addon.knowledge.getWorkspaceNote().id
-            ]
+            this._Addon.knowledge.currentLine[workspaceNote.id]
           );
         }
       });
@@ -470,11 +466,7 @@ class AddonViews extends AddonBase {
         Zotero.debug("ZBN: Update Link Text");
         const noteLines = this._Addon.knowledge.getLinesInNote();
         let line =
-          noteLines[
-            this._Addon.knowledge.currentLine[
-              this._Addon.knowledge.getWorkspaceNote().id
-            ]
-          ];
+          noteLines[this._Addon.knowledge.currentLine[workspaceNote.id]];
         Zotero.debug(line);
 
         let linkStart = line.search(/<a /g);
@@ -515,13 +507,12 @@ class AddonViews extends AddonBase {
         afterLink = "</a>" + afterLink;
         const newLine = `${beforeLink}${currentNote.getNoteTitle()}${afterLink}`;
         Zotero.debug(newLine);
-        noteLines[this._Addon.knowledge.currentLine] = newLine;
+        noteLines[this._Addon.knowledge.currentLine[workspaceNote.id]] =
+          newLine;
 
         await this._Addon.knowledge.setLinesToNote(undefined, noteLines);
         this._Addon.knowledge.scrollWithRefresh(
-          this._Addon.knowledge.currentLine[
-            this._Addon.knowledge.getWorkspaceNote().id
-          ]
+          this._Addon.knowledge.currentLine[workspaceNote.id]
         );
       });
 
