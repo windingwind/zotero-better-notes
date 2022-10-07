@@ -593,7 +593,8 @@ class AddonEvents extends AddonBase {
             "left"
           );
           const titleNode = _window.document.createElement("div");
-          titleNode.innerHTML = "Recent Main Notes";
+          titleNode.innerHTML = "Set Recent Main Notes";
+          titleNode.title = "Click item to set it main note";
           titleNode.style.textAlign = "center";
           popup.childNodes[0].before(
             titleNode,
