@@ -550,7 +550,7 @@ class AddonEvents extends AddonBase {
           "start"
         );
 
-      if (setMainNoteDropDown) {
+      if (setMainNoteDropDown && !isPreviewNote) {
         setMainNoteDropDown.classList.add("more-dropdown");
         setMainNoteDropDown.addEventListener("mouseover", async (e) => {
           if (setMainNoteDropDown.getElementsByClassName("popup").length > 0) {
