@@ -619,7 +619,7 @@ class EditorViews extends AddonBase {
       : undefined;
     const mainNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
     // If the note is invalid, we remove the buttons
-    if (note) {
+    if (note && note.id === mainNote.id) {
       let insertButton = _window.document.getElementById("insert-note-link");
       if (insertButton) {
         insertButton.remove();
