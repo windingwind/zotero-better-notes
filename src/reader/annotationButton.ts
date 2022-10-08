@@ -51,7 +51,7 @@ class ReaderViews extends AddonBase {
       );
 
       createNoteButton.addEventListener("click", async (e) => {
-        await this.createNoteFromAnnotation(annotationItem);
+        await this.createNoteFromAnnotation(annotationItem, e);
         e.preventDefault();
       });
       createNoteButton.addEventListener("mouseover", (e: XUL.XULEvent) => {
@@ -106,7 +106,10 @@ class ReaderViews extends AddonBase {
     }
   }
 
-  private async createNoteFromAnnotation(annotationItem: Zotero.Item) {
+  private async createNoteFromAnnotation(
+    annotationItem: Zotero.Item,
+    event: MouseEvent
+  ) {
     if (annotationItem.annotationComment) {
       const text = annotationItem.annotationComment;
       let link = this._Addon.NoteParse.parseLinkInText(text);
@@ -119,6 +122,7 @@ class ReaderViews extends AddonBase {
               params: {
                 item: note,
                 infoText: "OK",
+                forceStandalone: event.shiftKey,
               },
             })
           );

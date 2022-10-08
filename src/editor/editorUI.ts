@@ -470,7 +470,10 @@ class EditorViews extends AddonBase {
   }
 
   public getEditorElement(_document: Document): Element {
-    let editor = _document.querySelector(".primary-editor");
+    let editor = Array.prototype.find.call(
+      _document.querySelectorAll(".primary-editor"),
+      (e) => e.id !== "note-link-preview"
+    );
     return editor;
   }
 

@@ -336,6 +336,8 @@ class AddonEvents extends AddonBase {
         }
 
         instance._knowledgeUIInitialized = true;
+
+        this._Addon.EditorController.recordEditor(instance);
       };
     }
   }
@@ -747,55 +749,50 @@ class AddonEvents extends AddonBase {
         message.content = {
           params: {
             item: Zotero.Item | boolean,
+            forceStandalone: boolean,
             infoText: string
             args: {}
           }
         }
       */
-      if (!message.content.params.item) {
+      const noteItem = message.content.params.item;
+      const forceStandalone = message.content.params.forceStandalone;
+      let _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
+      if (!noteItem) {
         Zotero.debug(`Knowledge4Zotero: ${message.content.params.infoText}`);
       }
-      Zotero.debug(
-        `Knowledge4Zotero: onNoteLink ${message.content.params.item.id}`
-      );
-      // Copy and save
-      const oldEditors = Zotero.Notes._editorInstances.map(
-        (e): string => e.instanceID
-      );
-      let _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
-      if (_window) {
-        if (
-          message.content.params.item.id !==
-          Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID")
-        ) {
-          this._Addon.WorkspaceWindow.setWorkspaceNote(
-            "preview",
-            message.content.params.item
-          );
-        }
-        this._Addon.WorkspaceWindow.openWorkspaceWindow();
+      Zotero.debug(`Knowledge4Zotero: onNoteLink ${noteItem.id}`);
+      if (
+        !forceStandalone &&
+        _window &&
+        (noteItem.id === this._Addon.WorkspaceWindow.getWorkspaceNote().id ||
+          noteItem.id === this._Addon.WorkspaceWindow.previewItemID)
+      ) {
+        // Scroll to line directly
       } else {
-        ZoteroPane.openNoteWindow(message.content.params.item.id);
-      }
-      if (message.content.params.args.line) {
-        let t = 0;
-        let newEditors = Zotero.Notes._editorInstances.filter(
-          (e) => !oldEditors.includes(e.instanceID) && e._knowledgeUIInitialized
-        );
-        while (newEditors.length === 0 && t < 500) {
-          t += 1;
-          await Zotero.Promise.delay(10);
-          newEditors = Zotero.Notes._editorInstances.filter(
-            (e) => !oldEditors.includes(e.instanceID)
+        this._Addon.EditorController.startWaiting();
+        if (_window && !forceStandalone) {
+          await this._Addon.WorkspaceWindow.setWorkspaceNote(
+            "preview",
+            noteItem
           );
+          await this._Addon.WorkspaceWindow.openWorkspaceWindow();
+        } else {
+          ZoteroPane.openNoteWindow(noteItem.id);
         }
-        newEditors.forEach((e) => {
-          this._Addon.EditorViews.scrollToLine(
-            e,
-            // Scroll to line
-            message.content.params.args.line
-          );
-        });
+        await this._Addon.EditorController.waitForEditor();
+      }
+
+      if (message.content.params.args.line) {
+        Zotero.Notes._editorInstances
+          .filter((e) => e._item.id === noteItem.id)
+          .forEach((e) => {
+            this._Addon.EditorViews.scrollToLine(
+              e,
+              // Scroll to line
+              message.content.params.args.line
+            );
+          });
       }
     } else if (message.type === "updateAutoAnnotation") {
       /*

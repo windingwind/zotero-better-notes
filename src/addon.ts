@@ -5,19 +5,20 @@
 import AddonEvents from "./zotero/events";
 import ZoteroViews from "./zotero/views";
 import ReaderViews from "./reader/annotationButton";
-import WorkspaceOutline from "./workspace/workspaceOutline";
-import EditorViews from "./editor/editorUI";
 import AddonWizard from "./wizard";
-import NoteExportWindow from "./editor/noteExportWindow";
 import { TemplateController, TemplateAPI } from "./template/templateController";
 import SyncInfoWindow from "./sync/syncInfoWindow";
 import SyncListWindow from "./sync/syncListWindow";
-import NoteParse from "./editor/noteParse";
+import SyncController from "./sync/syncController";
 import WorkspaceWindow from "./workspace/workspaceWindow";
+import WorkspaceOutline from "./workspace/workspaceOutline";
 import WorkspaceMenu from "./workspace/workspaceMenu";
 import NoteUtils from "./editor/noteUtils";
+import NoteParse from "./editor/noteParse";
+import NoteExportWindow from "./editor/noteExportWindow";
 import NoteExport from "./editor/noteExportController";
-import SyncController from "./sync/syncController";
+import EditorViews from "./editor/editorUI";
+import EditorController from "./editor/editorController";
 import TemplateWindow from "./template/templateWindow";
 
 class Knowledge4Zotero {
@@ -47,6 +48,7 @@ class Knowledge4Zotero {
   public NoteExportWindow: NoteExportWindow;
   public NoteParse: NoteParse;
   public EditorViews: EditorViews;
+  public EditorController: EditorController;
 
   constructor() {
     this.events = new AddonEvents(this);
@@ -56,6 +58,7 @@ class Knowledge4Zotero {
     this.WorkspaceWindow = new WorkspaceWindow(this);
     this.WorkspaceMenu = new WorkspaceMenu(this);
     this.EditorViews = new EditorViews(this);
+    this.EditorController = new EditorController(this);
     this.wizard = new AddonWizard(this);
     this.SyncInfoWindow = new SyncInfoWindow(this);
     this.SyncListWindow = new SyncListWindow(this);
