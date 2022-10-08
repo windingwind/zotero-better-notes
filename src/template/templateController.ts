@@ -1,9 +1,8 @@
-import Knowledge4Zotero from "./addon";
-import { NoteTemplate } from "./base";
-import AddonBase from "./module";
+import Knowledge4Zotero from "../addon";
+import { NoteTemplate } from "../utils";
+import AddonBase from "../module";
 
-class AddonTemplate extends AddonBase {
-  private _window: Window;
+class TemplateController extends AddonBase {
   _systemTemplateNames: string[];
   _defaultTemplates: NoteTemplate[];
   constructor(parent: Knowledge4Zotero) {
@@ -12,7 +11,7 @@ class AddonTemplate extends AddonBase {
       "[QuickInsert]",
       "[QuickBackLink]",
       "[QuickImport]",
-      "[QuickNoteV2]",
+      "[QuickNoteV3]",
       "[ExportMDFileName]",
     ];
     this._defaultTemplates = [
@@ -32,8 +31,8 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
       {
-        name: "[QuickNoteV2]",
-        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += Zotero.Knowledge4Zotero.parse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.parse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
+        name: "[QuickNoteV3]",
+        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += Zotero.Knowledge4Zotero.NoteParse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.NoteParse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
         disabled: false,
       },
       {
@@ -67,248 +66,6 @@ class AddonTemplate extends AddonBase {
         disabled: false,
       },
     ];
-  }
-
-  openEditor() {
-    if (this._window && !this._window.closed) {
-      this._window.focus();
-    } else {
-      window.open(
-        "chrome://Knowledge4Zotero/content/template.xul",
-        "_blank",
-        "chrome,extrachrome,centerscreen,width=800,height=400,resizable=yes"
-      );
-    }
-  }
-
-  initTemplates(_window: Window) {
-    this._window = _window;
-    this.updateTemplateView();
-  }
-
-  resetTemplates() {
-    let oldTemplatesRaw: string = Zotero.Prefs.get(
-      "Knowledge4Zotero.noteTemplate"
-    ) as string;
-    // Convert old version
-    if (oldTemplatesRaw) {
-      const templates: NoteTemplate[] = JSON.parse(oldTemplatesRaw);
-      for (const template of templates) {
-        this.setTemplate(template);
-      }
-      Zotero.Prefs.clear("Knowledge4Zotero.noteTemplate");
-    }
-    // Convert buggy template
-    if (!this.getTemplateText("[QuickBackLink]").includes("ignore=1")) {
-      this.setTemplate(
-        this._defaultTemplates.find((t) => t.name === "[QuickBackLink]")
-      );
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        "The [QuickBackLink] is reset because of missing ignore=1 in link."
-      );
-    }
-    let templateKeys = this.getTemplateKeys();
-    const currentNames = templateKeys.map((t) => t.name);
-    for (const defaultTemplate of this._defaultTemplates) {
-      if (!currentNames.includes(defaultTemplate.name)) {
-        this.setTemplate(defaultTemplate);
-      }
-    }
-  }
-
-  getCitationStyle(): Object {
-    let format = Zotero.Prefs.get("Knowledge4Zotero.citeFormat") as string;
-    try {
-      if (format) {
-        format = JSON.parse(format);
-      } else {
-        throw Error("format not initialized");
-      }
-    } catch (e) {
-      format = Zotero.QuickCopy.getFormatFromURL(
-        Zotero.QuickCopy.lastActiveURL
-      );
-      format = Zotero.QuickCopy.unserializeSetting(format);
-      Zotero.Prefs.set("Knowledge4Zotero.citeFormat", JSON.stringify(format));
-    }
-    return format;
-  }
-
-  getSelectedTemplateName(): string {
-    const listbox: XUL.ListItem =
-      this._window.document.getElementById("template-list");
-    const selectedItem = listbox.selectedItem;
-    if (selectedItem) {
-      const name = selectedItem.getAttribute("id");
-      return name;
-    }
-    return "";
-  }
-
-  updateTemplateView() {
-    const templates = this.getTemplateKeys();
-    const listbox = this._window.document.getElementById("template-list");
-    let e,
-      es = this._window.document.getElementsByTagName("listitem");
-    while (es.length > 0) {
-      e = es[0];
-      e.parentElement.removeChild(e);
-    }
-    for (const template of templates) {
-      const listitem = this._window.document.createElement("listitem");
-      listitem.setAttribute("id", template.name);
-      const name = this._window.document.createElement("listcell");
-      name.setAttribute("label", template.name);
-      if (this._systemTemplateNames.includes(template.name)) {
-        listitem.style.color = "#f2ac46";
-      }
-      listitem.append(name);
-      listbox.append(listitem);
-    }
-    this.updateEditorView();
-  }
-
-  updateEditorView() {
-    Zotero.debug("update editor");
-    console.log("update editor");
-    const name = this.getSelectedTemplateName();
-    const templateText = this.getTemplateText(name);
-
-    const header: XUL.Textbox =
-      this._window.document.getElementById("editor-name");
-    const text: XUL.Textbox =
-      this._window.document.getElementById("editor-textbox");
-    const saveTemplate = this._window.document.getElementById("save-template");
-    const deleteTemplate =
-      this._window.document.getElementById("delete-template");
-    const resetTemplate =
-      this._window.document.getElementById("reset-template");
-    if (!name) {
-      header.value = "";
-      header.setAttribute("disabled", "true");
-      text.value = "";
-      text.setAttribute("disabled", "true");
-      saveTemplate.setAttribute("disabled", "true");
-      deleteTemplate.setAttribute("disabled", "true");
-      deleteTemplate.hidden = false;
-      resetTemplate.hidden = true;
-    } else {
-      header.value = name;
-      if (!this._systemTemplateNames.includes(name)) {
-        header.removeAttribute("disabled");
-        deleteTemplate.hidden = false;
-        resetTemplate.hidden = true;
-      } else {
-        header.setAttribute("disabled", "true");
-        deleteTemplate.setAttribute("disabled", "true");
-        deleteTemplate.hidden = true;
-        resetTemplate.hidden = false;
-      }
-      text.value = templateText;
-      text.removeAttribute("disabled");
-      saveTemplate.removeAttribute("disabled");
-      deleteTemplate.removeAttribute("disabled");
-    }
-  }
-
-  createTemplate() {
-    const template: NoteTemplate = {
-      name: `New Template: ${new Date().getTime()}`,
-      text: "",
-      disabled: false,
-    };
-    this.setTemplate(template);
-    this.updateTemplateView();
-  }
-
-  async importNoteTemplate() {
-    const io = {
-      // Not working
-      singleSelection: true,
-      dataIn: null,
-      dataOut: null,
-      deferred: Zotero.Promise.defer(),
-    };
-
-    (window as unknown as XUL.XULWindow).openDialog(
-      "chrome://zotero/content/selectItemsDialog.xul",
-      "",
-      "chrome,dialog=no,centerscreen,resizable=yes",
-      io
-    );
-    await io.deferred.promise;
-
-    const ids = io.dataOut;
-    const note: Zotero.Item = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
-      (item: Zotero.Item) => item.isNote()
-    )[0];
-    if (!note) {
-      return;
-    }
-    const template: NoteTemplate = {
-      name: `Template from ${note.getNoteTitle()}: ${new Date().getTime()}`,
-      text: note.getNote(),
-      disabled: false,
-    };
-    this.setTemplate(template);
-    this.updateTemplateView();
-  }
-
-  saveSelectedTemplate() {
-    const name = this.getSelectedTemplateName();
-    const header: XUL.Textbox =
-      this._window.document.getElementById("editor-name");
-    const text: XUL.Textbox =
-      this._window.document.getElementById("editor-textbox");
-
-    if (this._systemTemplateNames.includes(name) && header.value !== name) {
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Template ${name} is a system template. Modifying template name is not allowed.`
-      );
-      return;
-    }
-
-    const template = this.getTemplateKey(name);
-    template.name = header.value;
-    template.text = text.value;
-    this.setTemplate(template);
-    if (name !== template.name) {
-      this.removeTemplate(name);
-    }
-    this._Addon.views.showProgressWindow(
-      "Better Notes",
-      `Template ${template.name} saved.`
-    );
-
-    this.updateTemplateView();
-  }
-
-  deleteSelectedTemplate() {
-    const name = this.getSelectedTemplateName();
-    if (this._systemTemplateNames.includes(name)) {
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Template ${name} is a system template. Removing system template is note allowed.`
-      );
-      return;
-    }
-    this.removeTemplate(name);
-    this.updateTemplateView();
-  }
-
-  resetSelectedTemplate() {
-    const name = this.getSelectedTemplateName();
-    if (this._systemTemplateNames.includes(name)) {
-      const text: XUL.Textbox =
-        this._window.document.getElementById("editor-textbox");
-      text.value = this._defaultTemplates.find((t) => t.name === name).text;
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Template ${name} is reset. Please save before leaving.`
-      );
-    }
   }
 
   renderTemplate(
@@ -468,6 +225,97 @@ class AddonTemplate extends AddonBase {
     this.removeTemplateKey(keyName);
     Zotero.Prefs.clear(`Knowledge4Zotero.template.${keyName}`);
   }
+
+  resetTemplates() {
+    let oldTemplatesRaw: string = Zotero.Prefs.get(
+      "Knowledge4Zotero.noteTemplate"
+    ) as string;
+    // Convert old version
+    if (oldTemplatesRaw) {
+      const templates: NoteTemplate[] = JSON.parse(oldTemplatesRaw);
+      for (const template of templates) {
+        this._Addon.TemplateController.setTemplate(template);
+      }
+      Zotero.Prefs.clear("Knowledge4Zotero.noteTemplate");
+    }
+    // Convert buggy template
+    if (
+      !this._Addon.TemplateController.getTemplateText(
+        "[QuickBackLink]"
+      ).includes("ignore=1")
+    ) {
+      this._Addon.TemplateController.setTemplate(
+        this._Addon.TemplateController._defaultTemplates.find(
+          (t) => t.name === "[QuickBackLink]"
+        )
+      );
+      this._Addon.ZoteroViews.showProgressWindow(
+        "Better Notes",
+        "The [QuickBackLink] is reset because of missing ignore=1 in link."
+      );
+    }
+    let templateKeys = this._Addon.TemplateController.getTemplateKeys();
+    const currentNames = templateKeys.map((t) => t.name);
+    for (const defaultTemplate of this._Addon.TemplateController
+      ._defaultTemplates) {
+      if (!currentNames.includes(defaultTemplate.name)) {
+        this._Addon.TemplateController.setTemplate(defaultTemplate);
+      }
+    }
+  }
+
+  getCitationStyle(): {
+    mode: string;
+    contentType: string;
+    id: string;
+    locale: string;
+  } {
+    let format = Zotero.Prefs.get("Knowledge4Zotero.citeFormat") as string;
+    try {
+      if (format) {
+        format = JSON.parse(format);
+      } else {
+        throw Error("format not initialized");
+      }
+    } catch (e) {
+      format = Zotero.QuickCopy.getFormatFromURL(
+        Zotero.QuickCopy.lastActiveURL
+      );
+      format = Zotero.QuickCopy.unserializeSetting(format);
+      Zotero.Prefs.set("Knowledge4Zotero.citeFormat", JSON.stringify(format));
+    }
+    return format as any;
+  }
 }
 
-export default AddonTemplate;
+/*
+ * This part is for the template usage only
+ * to keep API consistency
+ */
+class TemplateAPI extends AddonBase {
+  constructor(parent: Knowledge4Zotero) {
+    super(parent);
+  }
+
+  public getNoteLink(
+    note: Zotero.Item,
+    options: {
+      ignore?: boolean;
+      withLine?: boolean;
+    } = { ignore: false, withLine: false }
+  ) {
+    return this._Addon.NoteUtils.getNoteLink(note, options);
+  }
+
+  public async getWorkspaceEditorInstance(
+    type: "main" | "preview" = "main",
+    wait: boolean = true
+  ) {
+    return await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance(
+      type,
+      wait
+    );
+  }
+}
+
+export { TemplateController, TemplateAPI };

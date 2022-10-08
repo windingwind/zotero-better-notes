@@ -11,14 +11,14 @@
     %knowledgeDTD;
 ]>
 
-<dialog id="betternotes-export-dialog" windowtype="betternotes-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.export.doAccept();" onload="Zotero.Knowledge4Zotero.export.doLoad(window);" onunload="Zotero.Knowledge4Zotero.export.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
+<dialog id="betternotes-export-dialog" windowtype="betternotes-export" title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300" buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.NoteExportWindow.doAccept();" onload="Zotero.Knowledge4Zotero.NoteExportWindow.doLoad(window);" onunload="Zotero.Knowledge4Zotero.NoteExportWindow.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height">
     <script src="chrome://zotero/content/include.js" />
     <vbox flex="1">
         <groupbox flex="1">
             <caption label="&zotero.__addonRef__.export.option.label;"></caption>
             <rows flex="1">
                 <row>
-                    <checkbox id="__addonRef__-export-embedLink" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" checked="true" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
+                    <checkbox id="__addonRef__-export-embedLink" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" checked="true" oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.link.enable.label;" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>
                 <row>
@@ -31,15 +31,15 @@
             <caption label="&zotero.__addonRef__.export.markdown.label;"></caption>
             <rows flex="1">
                 <row>
-                    <checkbox id="__addonRef__-export-enablefile" checked="true" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
+                    <checkbox id="__addonRef__-export-enablefile" checked="true" oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.file.enable.label;" />
                 </row>
                 <row>
-                    <checkbox id="__addonRef__-export-enablesingle" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;" checked="false" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
+                    <checkbox id="__addonRef__-export-enablesingle" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;" checked="false" oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.singlefile.enable.label;" tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;" />
                 </row>
                 <row>
-                    <checkbox id="__addonRef__-export-enableautosync" tooltiptext="&zotero.__addonRef__.export.workwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" checked="false" oncommand="Zotero.Knowledge4Zotero.export.doUpdate(event)" />
+                    <checkbox id="__addonRef__-export-enableautosync" tooltiptext="&zotero.__addonRef__.export.workwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" checked="false" oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.enableautosync.enable.label;" tooltiptext="Only work with &zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>
                 <row>

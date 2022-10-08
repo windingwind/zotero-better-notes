@@ -1,7 +1,7 @@
-import Knowledge4Zotero from "./addon";
-import AddonBase from "./module";
+import Knowledge4Zotero from "../addon";
+import AddonBase from "../module";
 
-class AddonExport extends AddonBase {
+class NoteExportWindow extends AddonBase {
   private io: {
     dataIn: any;
     dataOut: any;
@@ -224,4 +224,4 @@ class AddonExport extends AddonBase {
   }
 }
 
-export default AddonExport;
+export default NoteExportWindow;

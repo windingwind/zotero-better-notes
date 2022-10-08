@@ -1,7 +1,7 @@
-import Knowledge4Zotero from "./addon";
-import AddonBase from "./module";
+import Knowledge4Zotero from "../addon";
+import AddonBase from "../module";
 
-class AddonSyncList extends AddonBase {
+class SyncListWindow extends AddonBase {
   private _window: Window;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -30,7 +30,7 @@ class AddonSyncList extends AddonBase {
       return;
     }
     const notes = Zotero.Items.get(
-      this._Addon.sync.getSyncNoteIds()
+      this._Addon.SyncController.getSyncNoteIds()
     ) as Zotero.Item[];
     const listbox = this._window.document.getElementById("sync-list");
     let e,
@@ -40,7 +40,7 @@ class AddonSyncList extends AddonBase {
       e.parentElement.removeChild(e);
     }
     for (const note of notes) {
-      const syncInfo = this._Addon.sync.getNoteSyncStatus(note);
+      const syncInfo = this._Addon.SyncController.getNoteSyncStatus(note);
       const listitem: XUL.ListItem =
         this._window.document.createElement("listitem");
       listitem.setAttribute("id", note.id);
@@ -119,7 +119,7 @@ class AddonSyncList extends AddonBase {
     if (selectedItems.length === 0) {
       return;
     }
-    await this._Addon.sync.doSync(selectedItems, true, false);
+    await this._Addon.SyncController.doSync(selectedItems, true, false);
     this.doUpdate();
   }
 
@@ -128,7 +128,7 @@ class AddonSyncList extends AddonBase {
     if (selectedItems.length === 0) {
       return;
     }
-    await this._Addon.knowledge.exportNotesToFile(selectedItems, false, true);
+    await this._Addon.NoteExport.exportNotesToFile(selectedItems, false, true);
     this.doUpdate();
   }
 
@@ -154,16 +154,16 @@ class AddonSyncList extends AddonBase {
       return;
     }
     if (this.useRelated()) {
-      let noteIds: number[] = await this._Addon.sync.getRelatedNoteIdsFromNotes(
+      let noteIds: number[] = await this._Addon.SyncController.getRelatedNoteIdsFromNotes(
         selectedItems
       );
       selectedItems = Zotero.Items.get(noteIds) as Zotero.Item[];
     }
     for (const note of selectedItems) {
-      await this._Addon.sync.removeSyncNote(note);
+      await this._Addon.SyncController.removeSyncNote(note);
     }
     this.doUpdate();
   }
 }
 
-export default AddonSyncList;
+export default SyncListWindow;

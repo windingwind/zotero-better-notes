@@ -33,7 +33,7 @@ Only the template with specific name will be called.
 - QuickInsert: Called when inserting a note link to main note.
 - QuickBackLink: Called when inserting a note link to main note. The template will be inserted to the end of the sub-note and point to the main note by default.
 - QuickImport: Called when importing a sub-note to main note.
-- QuickNoteV2: Called when creating a note from an annotation.
+- QuickNoteV3: Called when creating a note from an annotation.
   > QuickNote is deprecated since v0.6.25
 - ExportMDFileName: Called when exporting notes to markdown in batch/linked notes to markdown mode. The rendered template will be file name.
 

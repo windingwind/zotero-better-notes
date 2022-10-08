@@ -1,5 +1,9 @@
+/*
+ * This file contains the first-run wizard window code
+ */
+
 import Knowledge4Zotero from "./addon";
-import { EditorMessage } from "./base";
+import { EditorMessage } from "./utils";
 import AddonBase from "./module";
 
 class AddonWizard extends AddonBase {
@@ -272,7 +276,7 @@ class AddonWizard extends AddonBase {
           Zotero.locale === "zh-CN" ? this.templateCN : this.template
         );
         await this._Addon.events.onEditorEvent(
-          new EditorMessage("setMainKnowledge", {
+          new EditorMessage("setMainNote", {
             params: { itemID: noteID, enableConfirm: false, enableOpen: true },
           })
         );

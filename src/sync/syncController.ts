@@ -1,105 +1,11 @@
-import Knowledge4Zotero from "./addon";
-import AddonBase from "./module";
+import Knowledge4Zotero from "../addon";
+import AddonBase from "../module";
 
-class AddonSync extends AddonBase {
+class SyncController extends AddonBase {
   triggerTime: number;
-  private io: {
-    dataIn: any;
-    dataOut: any;
-    deferred?: typeof Promise;
-  };
-  private _window: Window;
+
   constructor(parent: Knowledge4Zotero) {
     super(parent);
-  }
-
-  doLoad(_window: Window) {
-    if (this._window && !this._window.closed) {
-      this._window.close();
-    }
-    this._window = _window;
-    this.io = (this._window as unknown as XUL.XULWindow).arguments[0];
-    this.doUpdate();
-  }
-
-  doUpdate() {
-    const syncInfo = this.getNoteSyncStatus(this.io.dataIn);
-    const syncPathLable = this._window.document.getElementById(
-      "Knowledge4Zotero-sync-path"
-    );
-    const path = `${decodeURIComponent(syncInfo.path)}/${decodeURIComponent(
-      syncInfo.filename
-    )}`;
-
-    syncPathLable.setAttribute(
-      "value",
-      path.length > 50
-        ? `${path.slice(0, 25)}...${path.slice(path.length - 25)}`
-        : path
-    );
-    syncPathLable.setAttribute("tooltiptext", path);
-
-    const copyCbk = (event) => {
-      Zotero.Utilities.Internal.copyTextToClipboard(event.target.tooltipText);
-      this._Addon.views.showProgressWindow(
-        "Path Copied",
-        event.target.tooltipText
-      );
-    };
-    syncPathLable.removeEventListener("click", copyCbk);
-    syncPathLable.addEventListener("click", copyCbk);
-
-    let lastSync: string;
-    const lastSyncTime = Number(syncInfo.lastsync);
-    const currentTime = new Date().getTime();
-    if (currentTime - lastSyncTime <= 60000) {
-      lastSync = `${Math.round(
-        (currentTime - lastSyncTime) / 1000
-      )} seconds ago.`;
-    } else if (currentTime - lastSyncTime <= 3600000) {
-      lastSync = `${Math.round(
-        (currentTime - lastSyncTime) / 60000
-      )} minutes ago.`;
-    } else {
-      lastSync = new Date(lastSyncTime).toLocaleString();
-    }
-    this._window.document
-      .getElementById("Knowledge4Zotero-sync-lastsync")
-      .setAttribute("value", lastSync);
-    setTimeout(() => {
-      if (!this._window.closed) {
-        this.doUpdate();
-      }
-    }, 3000);
-  }
-
-  doUnload() {
-    this.io.deferred && this.io.deferred.resolve();
-  }
-
-  async doAccept() {
-    // Update Settings
-    let enable = (
-      this._window.document.getElementById(
-        "Knowledge4Zotero-sync-enable"
-      ) as XUL.Checkbox
-    ).checked;
-    if (!enable) {
-      const note = this.io.dataIn;
-      const allNoteIds = await this.getRelatedNoteIds(note);
-      const notes = Zotero.Items.get(allNoteIds) as Zotero.Item[];
-      for (const item of notes) {
-        await this.removeSyncNote(item);
-      }
-      this._Addon.views.showProgressWindow(
-        "Better Notes",
-        `Cancel sync of ${notes.length} notes.`
-      );
-    }
-  }
-  doExport() {
-    this.io.dataOut.export = true;
-    (this._window.document.querySelector("dialog") as any).acceptDialog();
   }
 
   getSyncNoteIds(): number[] {
@@ -108,7 +14,7 @@ class AddonSync extends AddonBase {
   }
 
   isSyncNote(note: Zotero.Item): boolean {
-    const syncNoteIds = this._Addon.sync.getSyncNoteIds();
+    const syncNoteIds = this.getSyncNoteIds();
     return syncNoteIds.includes(note.id);
   }
 
@@ -121,7 +27,7 @@ class AddonSync extends AddonBase {
     const subNoteIds = (
       await Promise.all(
         linkMatches.map(async (link) =>
-          this._Addon.knowledge.getNoteFromLink(link)
+          this._Addon.NoteUtils.getNoteFromLink(link)
         )
       )
     )
@@ -132,8 +38,8 @@ class AddonSync extends AddonBase {
     return allNoteIds;
   }
 
-  async getRelatedNoteIdsFromNotes(notes: Zotero.Item[]): Promise<Number[]> {
-    let allNoteIds: Number[] = [];
+  async getRelatedNoteIdsFromNotes(notes: Zotero.Item[]): Promise<number[]> {
+    let allNoteIds: number[] = [];
     for (const note of notes) {
       allNoteIds = allNoteIds.concat(await this.getRelatedNoteIds(note));
     }
@@ -222,7 +128,9 @@ class AddonSync extends AddonBase {
     items = items || (Zotero.Items.get(this.getSyncNoteIds()) as Zotero.Item[]);
     const toExport = {};
     const forceNoteIds = force
-      ? await this.getRelatedNoteIdsFromNotes(useIO ? [this.io.dataIn] : items)
+      ? await this.getRelatedNoteIdsFromNotes(
+          useIO ? [this._Addon.SyncInfoWindow.io.dataIn] : items
+        )
       : [];
     for (const item of items) {
       const syncInfo = this.getNoteSyncStatus(item);
@@ -242,12 +150,15 @@ class AddonSync extends AddonBase {
     }
     console.log(toExport);
     for (const filepath of Object.keys(toExport)) {
-      await this._Addon.knowledge.syncNotesToFile(toExport[filepath], filepath);
+      await this._Addon.NoteExport.syncNotesToFile(
+        toExport[filepath],
+        filepath
+      );
     }
-    if (this._window && !this._window.closed) {
-      this.doUpdate();
+    if (this._Addon.SyncInfoWindow._window && !this._Addon.SyncInfoWindow._window.closed) {
+      this._Addon.SyncInfoWindow.doUpdate();
     }
   }
 }
 
-export default AddonSync;
+export default SyncController;

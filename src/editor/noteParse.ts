@@ -1,12 +1,12 @@
-import AddonBase from "./module";
+import AddonBase from "../module";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 import TurndownService = require("turndown");
 const turndownPluginGfm = require("turndown-plugin-gfm");
-const TreeModel = require("./treemodel");
+const TreeModel = require("tree-model");
 const asciidoctor = require("asciidoctor")();
 const seedrandom = require("seedrandom");
 
-class AddonParse extends AddonBase {
+class NoteParse extends AddonBase {
   private getDOMParser(): DOMParser {
     if (Zotero.platformMajorVersion > 60) {
       return new DOMParser();
@@ -35,18 +35,8 @@ class AddonParse extends AddonBase {
   }
 
   public parseNoteTree(note: Zotero.Item): TreeModel.Node<object> {
-    const noteLines = this._Addon.knowledge.getLinesInNote(note);
+    const noteLines = this._Addon.NoteUtils.getLinesInNote(note);
     let tree = new TreeModel();
-    /*
-    tree-model/index.js: line 40
-    TreeModel.prototype.parse = function (model) {
-    var i, childCount, node;
-    Annotate the line 40 of:
-
-    // if (!(model instanceof Object)) {
-    //   throw new TypeError('Model must be of type object.');
-    // }
-    */
     let root = tree.parse({
       id: -1,
       rank: 0,
@@ -74,7 +64,7 @@ class AddonParse extends AddonBase {
           link = lineElement.slice(lineElement.search(/href="/g) + 6);
           link = link.slice(0, link.search(/"/g));
         }
-        name = this._Addon.parse.parseLineText(lineElement);
+        name = this._Addon.NoteParse.parseLineText(lineElement);
 
         // Find parent node
         let parentNode = lastNode;
@@ -206,7 +196,7 @@ class AddonParse extends AddonBase {
     const diveTagNames = ["OL", "UL", "LI"];
     for (const e of doc.children) {
       if (diveTagNames.includes(e.tagName)) {
-        const innerLines = this.parseListElements(e);
+        const innerLines = this.parseListElements(e as HTMLElement);
         currentLineIndex += innerLines.length;
         currentElement = innerLines[innerLines.length - 1];
         elements = elements.concat(innerLines);
@@ -219,9 +209,9 @@ class AddonParse extends AddonBase {
     return elements;
   }
 
-  parseHTMLLineElement(doc: HTMLElement, lineIndex: number): Element {
+  parseHTMLLineElement(doc: HTMLElement, lineIndex: number): HTMLElement {
     let currentLineIndex = 0;
-    let currentElement: Element;
+    let currentElement: HTMLElement;
 
     const diveTagNames = ["OL", "UL", "LI"];
     for (const e of doc.children) {
@@ -229,7 +219,7 @@ class AddonParse extends AddonBase {
         break;
       }
       if (diveTagNames.includes(e.tagName)) {
-        const innerLines = this.parseListElements(e);
+        const innerLines = this.parseListElements(e as HTMLElement);
         if (currentLineIndex + innerLines.length > lineIndex) {
           // The target line is inside the line list
           for (const _e of innerLines) {
@@ -245,7 +235,7 @@ class AddonParse extends AddonBase {
         }
       } else {
         currentLineIndex += 1;
-        currentElement = e;
+        currentElement = e as HTMLElement;
         // console.log(currentLineIndex, e);
       }
     }
@@ -283,13 +273,13 @@ class AddonParse extends AddonBase {
     }
     let annotationJSONList = [];
     for (const annot of annotations) {
-      const annotJson = await this._Addon.parse.parseAnnotation(annot);
+      const annotJson = await this._Addon.NoteParse.parseAnnotation(annot);
       if (ignoreComment && annotJson.comment) {
         annotJson.comment = "";
       }
       annotationJSONList.push(annotJson);
     }
-    await this._Addon.knowledge.importImagesToNote(note, annotationJSONList);
+    await this._Addon.NoteUtils.importImagesToNote(note, annotationJSONList);
     const html =
       Zotero.EditorInstanceUtilities.serializeAnnotations(
         annotationJSONList
@@ -297,7 +287,7 @@ class AddonParse extends AddonBase {
     return html;
   }
 
-  async parseNoteStyleHTML(item: Zotero.Item, lineCount: 5) {
+  async parseNoteStyleHTML(item: Zotero.Item, lineCount: number = 5) {
     if (!item.isNote()) {
       throw new Error("Item is not a note");
     }
@@ -396,8 +386,8 @@ class AddonParse extends AddonBase {
   }
 
   parseListElements(
-    e: Element,
-    eleList: Element[] = undefined,
+    e: HTMLElement,
+    eleList: HTMLElement[] = undefined,
     tags: string[] = ["OL", "UL", "LI"]
   ) {
     if (!eleList) {
@@ -405,7 +395,7 @@ class AddonParse extends AddonBase {
     }
     for (let _e of e.children) {
       if (tags.includes(_e.tagName)) {
-        this.parseListElements(_e, eleList);
+        this.parseListElements(_e as HTMLElement, eleList);
       } else {
         eleList.push(e);
       }
@@ -413,8 +403,7 @@ class AddonParse extends AddonBase {
     return eleList;
   }
 
-  parseNoteHTML(note: Zotero.Item): Element {
-    note = note || this._Addon.knowledge.getWorkspaceNote();
+  parseNoteHTML(note: Zotero.Item): HTMLElement {
     if (!note) {
       return undefined;
     }
@@ -425,7 +414,7 @@ class AddonParse extends AddonBase {
     let parser = this.getDOMParser();
     let doc = parser.parseFromString(noteText, "text/html");
 
-    let metadataContainer: Element = doc.querySelector(
+    let metadataContainer: HTMLElement = doc.querySelector(
       "body > div[data-schema-version]"
     );
     return metadataContainer;
@@ -573,7 +562,7 @@ class AddonParse extends AddonBase {
       Zotero.debug(oldFile);
       let ext = oldFile.split(".").pop();
       let newAbsPath = OS.Path.join(
-        ...`${this._Addon.knowledge._exportPath}/${imgKey}.${ext}`.split(/\//)
+        ...`${this._Addon.NoteExport._exportPath}/${imgKey}.${ext}`.split(/\//)
       );
       if (!Zotero.isWin && newAbsPath.charAt(0) !== "/") {
         newAbsPath = "/" + newAbsPath;
@@ -697,7 +686,7 @@ class AddonParse extends AddonBase {
         );
       },
 
-      replacement: function (content, node: HTMLElement, options) {
+      replacement: (content, node: HTMLElement, options) => {
         var href = node.getAttribute("href");
         const cleanAttribute = (attribute) =>
           attribute ? attribute.replace(/(\n+\s*)+/g, "\n") : "";
@@ -705,14 +694,9 @@ class AddonParse extends AddonBase {
         if (title) title = ' "' + title + '"';
         if (href.search(/zotero:\/\/note\/\w+\/\w+\//g) !== -1) {
           // A note link should be converted if it is in the _exportFileDict
-          var _Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
-            Components.interfaces.nsISupports
-          ).wrappedJSObject;
-          const noteInfo =
-            _Zotero.Knowledge4Zotero.knowledge._exportFileDict &&
-            _Zotero.Knowledge4Zotero.knowledge._exportFileDict.find((i) =>
-              href.includes(i.link)
-            );
+          const noteInfo = this._Addon.NoteExport._exportFileInfo.find((i) =>
+            href.includes(i.link)
+          );
           if (noteInfo) {
             href = `./${noteInfo.filename}`;
           }
@@ -726,4 +710,4 @@ class AddonParse extends AddonBase {
   }
 }
 
-export default AddonParse;
+export default NoteParse;

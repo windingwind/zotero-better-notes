@@ -40,7 +40,7 @@ In other type of templates, the default stage is called.
 
 > variables: subNoteLines: string[], subNoteItem, noteItem
 
-### QuickNoteV2
+### QuickNoteV3
 
 > variables: annotationItem, topItem
 

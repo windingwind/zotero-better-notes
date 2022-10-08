@@ -1,6 +1,8 @@
+import Knowledge4Zotero from "./addon";
+
 class AddonBase {
-  protected _Addon: any;
-  constructor(parent: any) {
+  protected _Addon: Knowledge4Zotero;
+  constructor(parent: Knowledge4Zotero) {
     this._Addon = parent;
   }
 }
