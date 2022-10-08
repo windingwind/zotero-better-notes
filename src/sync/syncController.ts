@@ -1,3 +1,7 @@
+/*
+ * This file realizes the sycn feature.
+ */
+
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 

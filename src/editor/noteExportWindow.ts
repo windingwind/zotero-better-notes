@@ -1,3 +1,7 @@
+/*
+ * This file contains note export window code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 

@@ -1,3 +1,7 @@
+/*
+ * This file realizes note parse (md, html, rich-text).
+ */
+
 import AddonBase from "../module";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 import TurndownService = require("turndown");

@@ -1,3 +1,8 @@
+/*
+ * This file defines the modules' base class.
+ */
+
+
 import Knowledge4Zotero from "./addon";
 
 class AddonBase {

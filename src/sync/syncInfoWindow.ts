@@ -1,3 +1,7 @@
+/*
+ * This file contains sync info window related code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 

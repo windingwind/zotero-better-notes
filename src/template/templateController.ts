@@ -1,3 +1,7 @@
+/*
+ * This file realizes the template feature.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { NoteTemplate } from "../utils";
 import AddonBase from "../module";

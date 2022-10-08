@@ -1,3 +1,7 @@
+/*
+ * This file contains definitions of commonly used structures.
+ */
+
 class EditorMessage {
   public type: string;
   public content: {

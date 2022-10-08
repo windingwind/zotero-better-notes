@@ -1,3 +1,7 @@
+/*
+ * This file contains sync list window related code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 
@@ -154,9 +158,10 @@ class SyncListWindow extends AddonBase {
       return;
     }
     if (this.useRelated()) {
-      let noteIds: number[] = await this._Addon.SyncController.getRelatedNoteIdsFromNotes(
-        selectedItems
-      );
+      let noteIds: number[] =
+        await this._Addon.SyncController.getRelatedNoteIdsFromNotes(
+          selectedItems
+        );
       selectedItems = Zotero.Items.get(noteIds) as Zotero.Item[];
     }
     for (const note of selectedItems) {

@@ -1,3 +1,7 @@
+/*
+ * This file contains the life-time and UI events.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { CopyHelper, EditorMessage } from "../utils";
 import AddonBase from "../module";

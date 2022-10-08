@@ -1,3 +1,7 @@
+/*
+ * This file realizes note export.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { pick } from "../utils";
 import AddonBase from "../module";
@@ -341,9 +345,11 @@ class NoteExport extends AddonBase {
 
   private _getFileName(noteItem: Zotero.Item) {
     return (
-      this._Addon.TemplateController.renderTemplate("[ExportMDFileName]", "noteItem", [
-        noteItem,
-      ]) as string
+      this._Addon.TemplateController.renderTemplate(
+        "[ExportMDFileName]",
+        "noteItem",
+        [noteItem]
+      ) as string
     ).replace(/\\/g, "-");
   }
 }

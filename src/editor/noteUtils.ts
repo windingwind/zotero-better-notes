@@ -1,3 +1,7 @@
+/*
+ * This file realizes note tools.
+ */
+
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 

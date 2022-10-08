@@ -1,3 +1,7 @@
+/*
+ * This file contains workspace window related code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { EditorMessage, OutlineType } from "../utils";
 import AddonBase from "../module";

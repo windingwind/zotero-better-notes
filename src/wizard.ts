@@ -1,5 +1,5 @@
 /*
- * This file contains the first-run wizard window code
+ * This file contains the first-run wizard window code.
  */
 
 import Knowledge4Zotero from "./addon";

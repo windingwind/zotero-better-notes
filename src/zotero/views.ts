@@ -1,3 +1,7 @@
+/*
+ * This file contains the Zotero UI code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { EditorMessage } from "../utils";
 import AddonBase from "../module";

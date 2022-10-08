@@ -1,3 +1,7 @@
+/*
+ * This file contains note editor UI code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { CopyHelper, EditorMessage } from "../utils";
 import AddonBase from "../module";

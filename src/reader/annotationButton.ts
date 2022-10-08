@@ -1,3 +1,7 @@
+/*
+ * This file contains reader annotation pane code.
+ */
+
 const CryptoJS = require("crypto-js");
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";

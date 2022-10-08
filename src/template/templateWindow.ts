@@ -1,3 +1,7 @@
+/*
+ * This file contains template window related code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { NoteTemplate } from "../utils";
 import AddonBase from "../module";

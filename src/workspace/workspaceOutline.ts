@@ -1,3 +1,7 @@
+/*
+ * This file contains workspace ontline related code.
+ */
+
 import Knowledge4Zotero from "../addon";
 import { OutlineType } from "../utils";
 import AddonBase from "../module";

@@ -1,3 +1,7 @@
+/*
+ * This file defines the plugin's structure.
+ */
+
 import AddonEvents from "./zotero/events";
 import ZoteroViews from "./zotero/views";
 import ReaderViews from "./reader/annotationButton";
