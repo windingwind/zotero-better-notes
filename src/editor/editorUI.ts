@@ -778,6 +778,10 @@ class EditorViews extends AddonBase {
         );
       });
 
+      const linkPopup = _window.document.querySelector(
+        ".link-popup"
+      ) as HTMLElement;
+
       let previewContainer =
         _window.document.getElementById("note-link-preview");
       if (previewContainer) {
@@ -788,19 +792,20 @@ class EditorViews extends AddonBase {
         "div"
       );
       previewContainer.id = "note-link-preview";
-      previewContainer.setAttribute(
-        "style",
-        "width: 98%;height: 300px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;"
-      );
       previewContainer.className = "ProseMirror primary-editor";
       previewContainer.innerHTML =
         await this._Addon.NoteParse.parseNoteStyleHTML(note);
       previewContainer.addEventListener("click", (e) => {
         this._Addon.WorkspaceWindow.setWorkspaceNote("preview", note);
       });
-      const linkPopup = _window.document.querySelector(".link-popup");
       if (linkPopup) {
         linkPopup.append(insertButton, updateButton, previewContainer);
+        previewContainer.setAttribute(
+          "style",
+          `width: 98%;height: ${
+            linkPopup ? Math.min(linkPopup.offsetTop, 300) : 300
+          }px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;`
+        );
         previewContainer
           .querySelector("div[data-schema-version]")
           .childNodes.forEach((node) => {
