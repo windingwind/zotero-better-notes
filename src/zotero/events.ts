@@ -1290,38 +1290,28 @@ class AddonEvents extends AddonBase {
       */
       const editor = message.content.editorInstance as Zotero.EditorInstance;
       const note = editor._item;
-      let successCount = 0;
-      let failCount = 0;
       if (note.parentItem) {
-        for (const attchment of (
-          Zotero.Items.get(note.parentItem.getAttachments()) as Zotero.Item[]
-        ).filter((item: Zotero.Item) => {
-          return item.isPDFAttachment();
-        })) {
-          Zotero.debug(attchment);
-          try {
-            Zotero.debug("Launching PDF without page number");
-            let zp = Zotero.getActiveZoteroPane();
-            if (zp) {
-              zp.viewAttachment([attchment.id]);
-            }
-            Zotero.Notifier.trigger("open", "file", attchment.id);
-            successCount += 1;
-          } catch (e) {
-            Zotero.debug("Knowledge4Zotero: Open attachment failed:");
-            Zotero.debug(attchment);
-            failCount += 1;
-          }
+        const attachment = await note.parentItem.getBestAttachment();
+        Zotero.debug(attachment);
+        if (!attachment) {
+          return;
         }
-      }
-      if (successCount === 0) {
-        this._Addon.ZoteroViews.showProgressWindow(
-          "Better Notes",
-          failCount
-            ? "Error occurred on opening attachemnts."
-            : "No attachment found.",
-          "fail"
-        );
+        try {
+          Zotero.debug("Launching PDF without page number");
+          let zp = Zotero.getActiveZoteroPane();
+          if (zp) {
+            zp.viewAttachment([attachment.id]);
+          }
+          Zotero.Notifier.trigger("open", "file", attachment.id);
+        } catch (e) {
+          Zotero.debug("Knowledge4Zotero: Open attachment failed:");
+          Zotero.debug(attachment);
+          this._Addon.ZoteroViews.showProgressWindow(
+            "Better Notes",
+            "Error occurred on opening attachemnts.",
+            "fail"
+          );
+        }
       }
     } else if (message.type === "setOCREngine") {
       /*
