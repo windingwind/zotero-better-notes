@@ -769,6 +769,7 @@ class AddonEvents extends AddonBase {
           noteItem.id === this._Addon.WorkspaceWindow.previewItemID)
       ) {
         // Scroll to line directly
+        await this._Addon.WorkspaceWindow.openWorkspaceWindow();
       } else {
         this._Addon.EditorController.startWaiting();
         if (_window && !forceStandalone) {
