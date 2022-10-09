@@ -14,6 +14,7 @@ class WorkspaceWindow extends AddonBase {
   public previewItemID: number;
   private _firstInit: boolean;
   public _workspacePromise: ZoteroPromise;
+  private _DOMParser: any;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
@@ -48,6 +49,7 @@ class WorkspaceWindow extends AddonBase {
         this.closeWorkspaceWindow();
       }
     }
+    this._DOMParser = window.DOMParser;
     this._workspacePromise = Zotero.Promise.defer();
     this._firstInit = true;
     if (type === "window") {
@@ -102,6 +104,10 @@ class WorkspaceWindow extends AddonBase {
       this._Addon.WorkspaceOutline.switchView(OutlineType.treeView);
       this._Addon.WorkspaceOutline.updateOutline();
     }
+    // DONT TOUCH
+    // Avoid DOMParser raises error because of re-loading chrome://zotero/content/include.js
+    // in workspace.xul
+    window.DOMParser = this._DOMParser;
   }
 
   public closeWorkspaceWindow() {
