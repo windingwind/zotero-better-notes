@@ -404,8 +404,9 @@ class EditorViews extends AddonBase {
             const previewButton = _window.document.createElement("button");
             previewButton.classList.add("option");
             previewButton.innerText = "Preview in Workspace";
-            previewButton.addEventListener("click", (e) => {
-              this._Addon.WorkspaceWindow.setWorkspaceNote(
+            previewButton.addEventListener("click", async (e) => {
+              await this._Addon.WorkspaceWindow.openWorkspaceWindow();
+              await this._Addon.WorkspaceWindow.setWorkspaceNote(
                 "preview",
                 instance._item
               );
