@@ -414,16 +414,16 @@ class EditorViews extends AddonBase {
             copyLinkButton.classList.add("option");
             copyLinkButton.innerText = "Copy Note Link";
             copyLinkButton.addEventListener("click", (e) => {
-              const link = this._Addon.NoteUtils.getNoteLink(noteItem);
-              const linkTemplate =
-                this._Addon.TemplateController.renderTemplate(
-                  "[QuickInsert]",
-                  "link, subNoteItem, noteItem",
-                  [link, noteItem, noteItem]
-                );
+              const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
+              const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                noteItem.getNoteTitle().trim()
+                  ? noteItem.getNoteTitle().trim()
+                  : linkText
+              }</a></p>`;
+
               new CopyHelper()
-                .addText(link, "text/unicode")
-                .addText(linkTemplate, "text/html")
+                .addText(linkText, "text/unicode")
+                .addText(linkHTML, "text/html")
                 .copy();
               this._Addon.ZoteroViews.showProgressWindow(
                 "Better Notes",
@@ -436,18 +436,17 @@ class EditorViews extends AddonBase {
             copyLinkAtLineButton.classList.add("option");
             copyLinkAtLineButton.innerText = "Copy Note Link of Current Line";
             copyLinkAtLineButton.addEventListener("click", (e) => {
-              const link = this._Addon.NoteUtils.getNoteLink(noteItem, {
+              const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
                 withLine: true,
               });
-              const linkTemplate =
-                this._Addon.TemplateController.renderTemplate(
-                  "[QuickInsert]",
-                  "link, subNoteItem, noteItem",
-                  [link, noteItem, noteItem]
-                );
+              const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                noteItem.getNoteTitle().trim()
+                  ? noteItem.getNoteTitle().trim()
+                  : linkText
+              }</a></p>`;
               new CopyHelper()
-                .addText(link, "text/unicode")
-                .addText(linkTemplate, "text/html")
+                .addText(linkText, "text/unicode")
+                .addText(linkHTML, "text/html")
                 .copy();
               this._Addon.ZoteroViews.showProgressWindow(
                 "Better Notes",

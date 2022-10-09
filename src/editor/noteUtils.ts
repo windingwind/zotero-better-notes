@@ -174,7 +174,7 @@ class NoteUtils extends AddonBase {
     return html;
   }
 
-  public addLinkToNote(
+  public async addLinkToNote(
     targetNote: Zotero.Item,
     linkedNote: Zotero.Item,
     lineIndex: number,
@@ -193,20 +193,22 @@ class NoteUtils extends AddonBase {
     const link = this.getNoteLink(linkedNote);
     const linkText = linkedNote.getNoteTitle().trim();
 
-    const linkTemplate = this._Addon.TemplateController.renderTemplate(
-      "[QuickInsert]",
-      "link, subNoteItem, noteItem, sectionName, lineIndex",
-      [link, linkedNote, targetNote, sectionName, lineIndex]
-    );
+    const linkTemplate =
+      await this._Addon.TemplateController.renderTemplateAsync(
+        "[QuickInsert]",
+        "link, subNoteItem, noteItem, sectionName, lineIndex",
+        [link, linkedNote, targetNote, sectionName, lineIndex]
+      );
 
     this.addLineToNote(targetNote, linkTemplate, lineIndex);
 
-    const backLinkTemplate = this._Addon.TemplateController.renderTemplate(
-      "[QuickBackLink]",
-      "subNoteItem, noteItem, sectionName, lineIndex",
-      [linkedNote, targetNote, sectionName, lineIndex],
-      false
-    );
+    const backLinkTemplate =
+      await this._Addon.TemplateController.renderTemplateAsync(
+        "[QuickBackLink]",
+        "subNoteItem, noteItem, sectionName, lineIndex",
+        [linkedNote, targetNote, sectionName, lineIndex],
+        false
+      );
 
     if (backLinkTemplate) {
       this.addLineToNote(linkedNote, backLinkTemplate, -1);

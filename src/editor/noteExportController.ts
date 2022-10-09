@@ -202,7 +202,7 @@ class NoteExport extends AddonBase {
 
         let filename = `${
           Zotero.File.pathToFile(filepath).path
-        }/${this._getFileName(note)}`;
+        }/${await this._getFileName(note)}`;
         filename = filename.replace(/\\/g, "/");
 
         await this._export(newNote, filename, newNote.id !== note.id);
@@ -233,14 +233,15 @@ class NoteExport extends AddonBase {
       const allNoteItems: Zotero.Item[] = Zotero.Items.get(
         allNoteIds
       ) as Zotero.Item[];
-      const noteLinkDict = allNoteItems.map((_note) => {
-        return {
+      const noteLinkDict = [];
+      for (const _note of allNoteItems) {
+        noteLinkDict.push({
           link: this._Addon.NoteUtils.getNoteLink(_note),
           id: _note.id,
           note: _note,
-          filename: this._getFileName(_note),
-        };
-      });
+          filename: await this._getFileName(_note),
+        });
+      }
       this._exportFileInfo = noteLinkDict;
 
       for (const noteInfo of noteLinkDict) {
@@ -288,14 +289,15 @@ class NoteExport extends AddonBase {
     const allNoteItems: Zotero.Item[] = Zotero.Items.get(
       allNoteIds
     ) as Zotero.Item[];
-    const noteLinkDict = allNoteItems.map((_note) => {
-      return {
+    const noteLinkDict = [];
+    for (const _note of allNoteItems) {
+      noteLinkDict.push({
         link: this._Addon.NoteUtils.getNoteLink(_note),
         id: _note.id,
         note: _note,
-        filename: this._getFileName(_note),
-      };
-    });
+        filename: await this._getFileName(_note),
+      });
+    }
     this._exportFileInfo = noteLinkDict;
 
     for (const note of notes) {
@@ -343,13 +345,13 @@ class NoteExport extends AddonBase {
     }
   }
 
-  private _getFileName(noteItem: Zotero.Item) {
+  private async _getFileName(noteItem: Zotero.Item) {
     return (
-      this._Addon.TemplateController.renderTemplate(
+      (await this._Addon.TemplateController.renderTemplateAsync(
         "[ExportMDFileName]",
         "noteItem",
         [noteItem]
-      ) as string
+      )) as string
     ).replace(/\\/g, "-");
   }
 }

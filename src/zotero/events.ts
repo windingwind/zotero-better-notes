@@ -605,7 +605,7 @@ class AddonEvents extends AddonBase {
         }
       */
       Zotero.debug("Knowledge4Zotero: addToNoteEnd");
-      this._Addon.NoteUtils.addLinkToNote(
+      await this._Addon.NoteUtils.addLinkToNote(
         mainNote,
         (message.content.editorInstance as Zotero.EditorInstance)._item,
         // -1 for automatically insert to current selected line or end of note
@@ -637,7 +637,7 @@ class AddonEvents extends AddonBase {
         sectionName = (message.content.event as XUL.XULEvent).target.innerText;
       }
 
-      this._Addon.NoteUtils.addLinkToNote(
+      await this._Addon.NoteUtils.addLinkToNote(
         mainNote,
         message.content.params?.itemID
           ? (Zotero.Items.get(message.content.params.itemID) as Zotero.Item)
