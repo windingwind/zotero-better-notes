@@ -696,13 +696,10 @@ class NoteUtils extends AddonBase {
           linkPopup = _window.document.querySelector(".link-popup");
           await Zotero.Promise.delay(30);
         }
-        await this._Addon.EditorViews.updateEditorPopupButtons(
-          editor._iframeWindow,
-          link
-        );
+        await this._Addon.EditorViews.updateEditorPopupButtons(editor, link);
       } else {
         await this._Addon.EditorViews.updateEditorPopupButtons(
-          editor._iframeWindow,
+          editor,
           undefined
         );
       }

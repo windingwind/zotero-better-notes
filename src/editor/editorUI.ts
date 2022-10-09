@@ -613,13 +613,17 @@ class EditorViews extends AddonBase {
     return popup;
   }
 
-  public async updateEditorPopupButtons(_window: Window, link: string) {
+  public async updateEditorPopupButtons(
+    instance: Zotero.EditorInstance,
+    link: string
+  ) {
+    const _window = instance._iframeWindow;
     const note: Zotero.Item = link
       ? (await this._Addon.NoteUtils.getNoteFromLink(link)).item
       : undefined;
-    const mainNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
+    const targetNote = instance._item;
     // If the note is invalid, we remove the buttons
-    if (note && note.id === mainNote.id) {
+    if (note) {
       let insertButton = _window.document.getElementById("insert-note-link");
       if (insertButton) {
         insertButton.remove();
@@ -651,7 +655,7 @@ class EditorViews extends AddonBase {
           await this._Addon.TemplateController.renderTemplateAsync(
             "[QuickImport]",
             "subNoteLines, subNoteItem, noteItem",
-            [subNoteLines, note, mainNote]
+            [subNoteLines, note, targetNote]
           );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
@@ -668,7 +672,7 @@ class EditorViews extends AddonBase {
             if (
               event === "modify" &&
               type === "item" &&
-              ids.includes(mainNote.id)
+              ids.includes(targetNote.id)
             ) {
               notifyFlag.resolve();
               this._Addon.events.removeNotifyListener(notifierName);
@@ -676,7 +680,7 @@ class EditorViews extends AddonBase {
           }
         );
         await this._Addon.NoteUtils.modifyLineInNote(
-          mainNote,
+          targetNote,
           (oldLine: string) => {
             Zotero.debug(oldLine);
             const params = this._Addon.NoteParse.parseParamsFromLink(link);
@@ -690,7 +694,7 @@ class EditorViews extends AddonBase {
               linkIndex[1]
             )}\n${newLineString}`;
           },
-          this._Addon.NoteUtils.currentLine[mainNote.id],
+          this._Addon.NoteUtils.currentLine[targetNote.id],
           true
         );
         // wait the first modify finish
@@ -704,13 +708,13 @@ class EditorViews extends AddonBase {
         }
         if (hasAttachemnts) {
           await Zotero.DB.executeTransaction(async () => {
-            await Zotero.Notes.copyEmbeddedImages(note, mainNote);
+            await Zotero.Notes.copyEmbeddedImages(note, targetNote);
             for (const subNote of convertResult.subNotes) {
-              await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+              await Zotero.Notes.copyEmbeddedImages(subNote, targetNote);
             }
           });
           await this._Addon.NoteUtils.scrollWithRefresh(
-            this._Addon.NoteUtils.currentLine[mainNote.id]
+            this._Addon.NoteUtils.currentLine[targetNote.id]
           );
         }
       });
@@ -728,8 +732,8 @@ class EditorViews extends AddonBase {
       updateButton.innerHTML = `<svg t="1652685521153" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7063" width="16" height="16"><path d="M271.914667 837.418667C182.314667 756.522667 128 637.653333 128 508.714667 128 304.896 263.338667 129.834667 450.986667 85.333333L469.333333 170.026667c-150.016 35.584-258.304 175.658667-258.304 338.688 0 106.069333 45.866667 203.562667 121.258667 268.373333L426.666667 682.666667v256H170.666667l101.248-101.248zM727.082667 168.917333C831.530667 249.045333 896 377.088 896 517.077333c0 202.922667-135.338667 377.258667-322.986667 421.589334L554.666667 854.357333c150.016-35.456 258.304-174.933333 258.304-337.322666 0-117.12-56.405333-223.786667-146.901334-287.146667L554.666667 341.333333V85.333333h256l-83.584 83.584z" p-id="7064"></path></svg>`;
       updateButton.addEventListener("click", async (e) => {
         Zotero.debug("ZBN: Update Link Text");
-        const noteLines = this._Addon.NoteUtils.getLinesInNote(mainNote);
-        let line = noteLines[this._Addon.NoteUtils.currentLine[mainNote.id]];
+        const noteLines = this._Addon.NoteUtils.getLinesInNote(targetNote);
+        let line = noteLines[this._Addon.NoteUtils.currentLine[targetNote.id]];
         Zotero.debug(line);
 
         let linkStart = line.search(/<a /g);
@@ -770,11 +774,11 @@ class EditorViews extends AddonBase {
         afterLink = "</a>" + afterLink;
         const newLine = `${beforeLink}${currentNote.getNoteTitle()}${afterLink}`;
         Zotero.debug(newLine);
-        noteLines[this._Addon.NoteUtils.currentLine[mainNote.id]] = newLine;
+        noteLines[this._Addon.NoteUtils.currentLine[targetNote.id]] = newLine;
 
-        await this._Addon.NoteUtils.setLinesToNote(mainNote, noteLines);
+        await this._Addon.NoteUtils.setLinesToNote(targetNote, noteLines);
         this._Addon.NoteUtils.scrollWithRefresh(
-          this._Addon.NoteUtils.currentLine[mainNote.id]
+          this._Addon.NoteUtils.currentLine[targetNote.id]
         );
       });
 
