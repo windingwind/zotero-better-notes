@@ -68,7 +68,7 @@ class NoteUtils extends AddonBase {
       console.log("Add note line via note editor");
       const _document = editorInstance._iframeWindow.document;
       const currentElement = this._Addon.NoteParse.parseHTMLLineElement(
-        _document.querySelector(".primary-editor"),
+        this._Addon.EditorViews.getEditorElement(_document) as HTMLElement,
         lineIndex
       );
       const frag = _document.createDocumentFragment();
@@ -310,7 +310,7 @@ class NoteUtils extends AddonBase {
       const _document = editorInstance._iframeWindow.document;
       const currentElement: HTMLElement =
         this._Addon.NoteParse.parseHTMLLineElement(
-          _document.querySelector(".primary-editor"),
+          this._Addon.EditorViews.getEditorElement(_document) as HTMLElement,
           lineIndex
         );
       const frag = _document.createDocumentFragment();
