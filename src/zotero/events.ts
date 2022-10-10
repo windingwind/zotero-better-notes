@@ -6,7 +6,7 @@ import Knowledge4Zotero from "../addon";
 import { CopyHelper, EditorMessage } from "../utils";
 import AddonBase from "../module";
 
-class AddonEvents extends AddonBase {
+class ZoteroEvents extends AddonBase {
   notifierCallback: any;
   notifierCbkDict: any;
   constructor(parent: Knowledge4Zotero) {
@@ -233,7 +233,7 @@ class AddonEvents extends AddonBase {
             params: await this._Addon.NoteUtils.getNoteFromLink(uri.spec),
           },
         };
-        await this._Addon.events.onEditorEvent(message);
+        await this._Addon.ZoteroEvents.onEditorEvent(message);
       },
       newChannel: function (uri: any) {
         this.doAction(uri);
@@ -1403,4 +1403,4 @@ class AddonEvents extends AddonBase {
   }
 }
 
-export default AddonEvents;
+export default ZoteroEvents;

@@ -9,7 +9,7 @@ Zotero.Knowledge4Zotero = new Knowledge4Zotero();
 window.addEventListener(
   "load",
   async function (e) {
-    Zotero.Knowledge4Zotero.events.onInit();
+    Zotero.Knowledge4Zotero.ZoteroEvents.onInit();
   },
   false
 );

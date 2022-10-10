@@ -166,20 +166,20 @@ class WorkspaceWindow extends AddonBase {
     } else if (e.data.type === "getMindMapData") {
       this._Addon.WorkspaceOutline.updateOutline();
     } else if (e.data.type === "jumpNode") {
-      this._Addon.events.onEditorEvent(
+      this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("jumpNode", {
           params: e.data,
         })
       );
     } else if (e.data.type === "jumpNote") {
       Zotero.debug(e.data);
-      this._Addon.events.onEditorEvent(
+      this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("onNoteLink", {
           params: await this._Addon.NoteUtils.getNoteFromLink(e.data.link),
         })
       );
     } else if (e.data.type === "moveNode") {
-      this._Addon.events.onEditorEvent(
+      this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("moveNode", {
           params: e.data,
         })

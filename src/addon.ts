@@ -2,10 +2,10 @@
  * This file defines the plugin's structure.
  */
 
-import AddonEvents from "./zotero/events";
+import ZoteroEvents from "./zotero/events";
 import ZoteroViews from "./zotero/views";
-import ReaderViews from "./reader/annotationButton";
-import AddonWizard from "./wizard";
+import ReaderViews from "./reader/readerViews";
+import WizardWindow from "./wizard/wizardWindow";
 import { TemplateController, TemplateAPI } from "./template/templateController";
 import SyncInfoWindow from "./sync/syncInfoWindow";
 import SyncListWindow from "./sync/syncListWindow";
@@ -13,16 +13,16 @@ import SyncController from "./sync/syncController";
 import WorkspaceWindow from "./workspace/workspaceWindow";
 import WorkspaceOutline from "./workspace/workspaceOutline";
 import WorkspaceMenu from "./workspace/workspaceMenu";
-import NoteUtils from "./editor/noteUtils";
-import NoteParse from "./editor/noteParse";
-import NoteExportWindow from "./editor/noteExportWindow";
-import NoteExport from "./editor/noteExportController";
-import EditorViews from "./editor/editorUI";
+import NoteUtils from "./note/noteUtils";
+import NoteParse from "./note/noteParse";
+import NoteExportWindow from "./note/noteExportWindow";
+import NoteExport from "./note/noteExportController";
+import EditorViews from "./editor/editorViews";
 import EditorController from "./editor/editorController";
 import TemplateWindow from "./template/templateWindow";
 
 class Knowledge4Zotero {
-  public events: AddonEvents;
+  public ZoteroEvents: ZoteroEvents;
   // Zotero UI
   public ZoteroViews: ZoteroViews;
   // Reader UI
@@ -32,7 +32,7 @@ class Knowledge4Zotero {
   public WorkspaceWindow: WorkspaceWindow;
   public WorkspaceMenu: WorkspaceMenu;
   // First-run wizard
-  public wizard: AddonWizard;
+  public WizardWindow: WizardWindow;
   // Sync tools
   public SyncInfoWindow: SyncInfoWindow;
   public SyncListWindow: SyncListWindow;
@@ -51,7 +51,7 @@ class Knowledge4Zotero {
   public EditorController: EditorController;
 
   constructor() {
-    this.events = new AddonEvents(this);
+    this.ZoteroEvents = new ZoteroEvents(this);
     this.ZoteroViews = new ZoteroViews(this);
     this.ReaderViews = new ReaderViews(this);
     this.WorkspaceOutline = new WorkspaceOutline(this);
@@ -59,7 +59,7 @@ class Knowledge4Zotero {
     this.WorkspaceMenu = new WorkspaceMenu(this);
     this.EditorViews = new EditorViews(this);
     this.EditorController = new EditorController(this);
-    this.wizard = new AddonWizard(this);
+    this.WizardWindow = new WizardWindow(this);
     this.SyncInfoWindow = new SyncInfoWindow(this);
     this.SyncListWindow = new SyncListWindow(this);
     this.SyncController = new SyncController(this);

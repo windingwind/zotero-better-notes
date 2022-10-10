@@ -261,7 +261,7 @@ class EditorViews extends AddonBase {
       }
 
       addCitationButton.addEventListener("click", async (e) => {
-        this._Addon.events.onEditorEvent(
+        this._Addon.ZoteroEvents.onEditorEvent(
           new EditorMessage("insertCitation", {
             params: {
               noteItem: noteItem,
@@ -549,7 +549,7 @@ class EditorViews extends AddonBase {
       message.type = e.target.getAttribute("eventType");
       message.content.event = e as XUL.XULEvent;
       message.content.editorInstance = editorInstances;
-      this._Addon.events.onEditorEvent(message);
+      this._Addon.ZoteroEvents.onEditorEvent(message);
     });
     return dropdown;
   }
@@ -594,7 +594,7 @@ class EditorViews extends AddonBase {
         message.type = e.target.getAttribute("eventType");
         message.content.event = e as XUL.XULEvent;
         message.content.editorInstance = editorInstances;
-        this._Addon.events.onEditorEvent(message);
+        this._Addon.ZoteroEvents.onEditorEvent(message);
         e.stopPropagation();
         popup.remove();
       });
@@ -661,7 +661,7 @@ class EditorViews extends AddonBase {
         const newLineString = newLines.join("\n");
         const notifyFlag: ZoteroPromise = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
-        this._Addon.events.addNotifyListener(
+        this._Addon.ZoteroEvents.addNotifyListener(
           notifierName,
           (
             event: string,
@@ -675,7 +675,7 @@ class EditorViews extends AddonBase {
               ids.includes(targetNote.id)
             ) {
               notifyFlag.resolve();
-              this._Addon.events.removeNotifyListener(notifierName);
+              this._Addon.ZoteroEvents.removeNotifyListener(notifierName);
             }
           }
         );

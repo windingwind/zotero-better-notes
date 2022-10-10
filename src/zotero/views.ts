@@ -72,7 +72,7 @@ class ZoteroViews extends AddonBase {
     button.setAttribute("id", "zotero-tb-knowledge-openwindow");
     button.setAttribute("label", "New Main Note");
     button.addEventListener("click", (e) => {
-      this._Addon.events.onEditorEvent(
+      this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("createWorkspace", {})
       );
     });
@@ -112,7 +112,7 @@ class ZoteroViews extends AddonBase {
     span1.append(span2, span3, span4);
     treeRow.append(span1);
     treeRow.addEventListener("click", (e) => {
-      this._Addon.events.onEditorEvent(
+      this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("openWorkspace", { event: e })
       );
     });
@@ -182,7 +182,7 @@ class ZoteroViews extends AddonBase {
       menuitem.setAttribute(
         "oncommand",
         `
-        Zotero.Knowledge4Zotero.events.onEditorEvent({
+        Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({
           type: "insert${type}UsingTemplate",
           content: {
             params: { templateName: "${template.name}", copy: ${copyMode} },

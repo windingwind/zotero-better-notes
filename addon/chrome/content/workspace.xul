@@ -33,25 +33,25 @@
         <key id="key_indent" keycode="VK_TAB" command="cmd_indent_betternotes" />
         <key id="key_unindent" keycode="VK_TAB" modifiers="shift" command="cmd_unindent_betternotes" />
     </keyset>
-    <command id="cmd_new" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'createWorkspace'});" />
-    <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'selectMainNote'});" />
-    <command id="cmd_openWindow" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openWorkspaceInWindow'});" />
-    <command id="cmd_export" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
-    <command id="cmd_sync_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'sync'});" />
+    <command id="cmd_new" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'createWorkspace'});" />
+    <command id="cmd_open" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'selectMainNote'});" />
+    <command id="cmd_openWindow" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openWorkspaceInWindow'});" />
+    <command id="cmd_export" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
+    <command id="cmd_sync_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'sync'});" />
     <command id="cmd_sync_manager_betternotes" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.openSyncList();" />
-    <command id="cmd_close" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'closeWorkspace'});" />
-    <!-- <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'insertNotes'});" /> -->
-    <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'editTemplate'});" />
-    <!-- <command id="cmd_importlink_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'importLink'});" />
-    <command id="cmd_updatelink_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateLink'});" /> -->
-    <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'updateAutoAnnotation', content: {event: event}});" />
-    <command id="cmd_convertmd_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'convertMD'});" />
-    <command id="cmd_convertasciidoc_betternotes" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'convertAsciiDoc'});" />
+    <command id="cmd_close" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'closeWorkspace'});" />
+    <!-- <command id="cmd_insertNotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'insertNotes'});" /> -->
+    <command id="cmd_editTemplate" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'editTemplate'});" />
+    <!-- <command id="cmd_importlink_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'importLink'});" />
+    <command id="cmd_updatelink_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'updateLink'});" /> -->
+    <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'updateAutoAnnotation', content: {event: event}});" />
+    <command id="cmd_convertmd_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'convertMD'});" />
+    <command id="cmd_convertasciidoc_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'convertAsciiDoc'});" />
     <command id="cmd_treeview" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(1);" />
     <command id="cmd_mindmap" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(2);" />
     <command id="cmd_bubblemap" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(3);" />
-    <command id="cmd_guide" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openUserGuide'});" />
-    <command id="cmd_about" oncommand="Zotero.Knowledge4Zotero.events.onEditorEvent({type: 'openAbout'});" />
+    <command id="cmd_guide" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openUserGuide'});" />
+    <command id="cmd_about" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openAbout'});" />
 
     <!-- Menu -->
     <menubar id="better-notes-menu">

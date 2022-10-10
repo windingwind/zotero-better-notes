@@ -117,7 +117,7 @@ class ReaderViews extends AddonBase {
       if (link) {
         const note = (await this._Addon.NoteUtils.getNoteFromLink(link)).item;
         if (note && note.id) {
-          await this._Addon.events.onEditorEvent(
+          await this._Addon.ZoteroEvents.onEditorEvent(
             new EditorMessage("onNoteLink", {
               params: {
                 item: note,

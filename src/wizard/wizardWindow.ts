@@ -2,11 +2,11 @@
  * This file contains the first-run wizard window code.
  */
 
-import Knowledge4Zotero from "./addon";
-import { EditorMessage } from "./utils";
-import AddonBase from "./module";
+import Knowledge4Zotero from "../addon";
+import { EditorMessage } from "../utils";
+import AddonBase from "../module";
 
-class AddonWizard extends AddonBase {
+class WizardWindow extends AddonBase {
   enableSetup: boolean;
   enableCollection: boolean;
   collectionName: string;
@@ -275,7 +275,7 @@ class AddonWizard extends AddonBase {
         (Zotero.Items.get(noteID) as Zotero.Item).setNote(
           Zotero.locale === "zh-CN" ? this.templateCN : this.template
         );
-        await this._Addon.events.onEditorEvent(
+        await this._Addon.ZoteroEvents.onEditorEvent(
           new EditorMessage("setMainNote", {
             params: { itemID: noteID, enableConfirm: false, enableOpen: true },
           })
@@ -285,4 +285,4 @@ class AddonWizard extends AddonBase {
   }
 }
 
-export default AddonWizard;
+export default WizardWindow;
