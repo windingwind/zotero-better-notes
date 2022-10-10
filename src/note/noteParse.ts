@@ -708,6 +708,21 @@ class NoteParse extends AddonBase {
         return "[" + content + "](" + href + title + ")";
       },
     });
+
+    if (Zotero.Prefs.get("Knowledge4Zotero.exportHighlight")) {
+      turndownService.addRule("backgroundColor", {
+        filter: function (node, options) {
+          return node.nodeName === "SPAN" && node.style["background-color"];
+        },
+
+        replacement: function (content, node) {
+          return `<span style="background-color: ${
+            (node as HTMLElement).style["background-color"]
+          }">${content}</span>`;
+        },
+      });
+    }
+
     const parsedMD = turndownService.turndown(doc.body);
     console.log(parsedMD);
     return parsedMD;

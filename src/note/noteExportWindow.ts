@@ -220,6 +220,7 @@ class NoteExportWindow extends AddonBase {
       exportFile: exportFile,
       exportSingleFile: exportSingleFile,
       exportAutoSync: exportAutoSync,
+      exportHighlight: exportHighlight,
       embedLink: embedLink,
       exportNote: exportNote,
       exportCopy: exportCopy,
