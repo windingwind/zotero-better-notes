@@ -441,23 +441,7 @@ class ZoteroEvents extends AddonBase {
       /*
         message.content = {}
       */
-      const io = {
-        // Not working
-        singleSelection: true,
-        dataIn: null,
-        dataOut: null,
-        deferred: Zotero.Promise.defer(),
-      };
-
-      (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://zotero/content/selectItemsDialog.xul",
-        "",
-        "chrome,dialog=no,centerscreen,resizable=yes",
-        io
-      );
-      await io.deferred.promise;
-
-      const ids = io.dataOut as unknown as number[];
+      const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       if (ids.length === 0) {
         this._Addon.ZoteroViews.showProgressWindow(
           "Knowledge",
@@ -546,23 +530,8 @@ class ZoteroEvents extends AddonBase {
         topItems = Zotero.Items.get([topItemID]) as Zotero.Item[];
       }
       if (!topItems.length) {
-        const io = {
-          // Not working
-          singleSelection: false,
-          dataIn: null,
-          dataOut: null,
-          deferred: Zotero.Promise.defer(),
-        };
+        const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
 
-        (window as unknown as XUL.XULWindow).openDialog(
-          "chrome://zotero/content/selectItemsDialog.xul",
-          "",
-          "chrome,dialog=no,centerscreen,resizable=yes",
-          io
-        );
-        await io.deferred.promise;
-
-        const ids = io.dataOut as unknown as number[];
         topItems = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
           (item: Zotero.Item) => item.isRegularItem()
         );
@@ -809,23 +778,7 @@ class ZoteroEvents extends AddonBase {
       /*
         message.content = {}
       */
-      const io = {
-        // Not working
-        singleSelection: true,
-        dataIn: null,
-        dataOut: null,
-        deferred: Zotero.Promise.defer(),
-      };
-
-      (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://zotero/content/selectItemsDialog.xul",
-        "",
-        "chrome,dialog=no,centerscreen,resizable=yes",
-        io
-      );
-      await io.deferred.promise;
-
-      const ids = io.dataOut as unknown as number[];
+      const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       const notes = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
         (item: Zotero.Item) => item.isNote()
       );
@@ -895,23 +848,7 @@ class ZoteroEvents extends AddonBase {
           params: {templateName}
         }
       */
-      const io = {
-        // Not working
-        singleSelection: true,
-        dataIn: null,
-        dataOut: null,
-        deferred: Zotero.Promise.defer(),
-      };
-
-      (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://zotero/content/selectItemsDialog.xul",
-        "",
-        "chrome,dialog=no,centerscreen,resizable=yes",
-        io
-      );
-      await io.deferred.promise;
-
-      const ids = io.dataOut as unknown as number[];
+      const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       const items = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
         (item: Zotero.Item) => item.isRegularItem()
       );
@@ -1030,23 +967,7 @@ class ZoteroEvents extends AddonBase {
           params: {templateName}
         }
       */
-      const io = {
-        // Not working
-        singleSelection: true,
-        dataIn: null,
-        dataOut: null,
-        deferred: Zotero.Promise.defer(),
-      };
-
-      (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://zotero/content/selectItemsDialog.xul",
-        "",
-        "chrome,dialog=no,centerscreen,resizable=yes",
-        io
-      );
-      await io.deferred.promise;
-
-      const ids = io.dataOut as unknown as number[];
+      const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       const notes = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
         (item: Zotero.Item) => item.isNote()
       );
@@ -1207,7 +1128,7 @@ class ZoteroEvents extends AddonBase {
       };
 
       (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://Knowledge4Zotero/content/export.xul",
+        "chrome://Knowledge4Zotero/content/export.xhtml",
         "",
         "chrome,centerscreen,width=400,height=400,resizable=yes",
         io

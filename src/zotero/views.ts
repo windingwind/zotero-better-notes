@@ -307,6 +307,25 @@ class ZoteroViews extends AddonBase {
       _window !== window;
   }
 
+  public async openSelectItemsWindow(): Promise<number[]> {
+    const io = {
+      // Not working
+      singleSelection: true,
+      dataIn: null,
+      dataOut: null,
+      deferred: Zotero.Promise.defer(),
+    };
+
+    (window as unknown as XUL.XULWindow).openDialog(
+      "chrome://zotero/content/selectItemsDialog.xul",
+      "",
+      "chrome,dialog=no,centerscreen,resizable=yes",
+      io
+    );
+    await io.deferred.promise;
+    return io.dataOut;
+  }
+
   public showProgressWindow(
     header: string,
     context: string,
