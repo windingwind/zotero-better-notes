@@ -441,7 +441,7 @@ class NoteParse extends AddonBase {
   }
 
   parseMDToHTML(str: string): string {
-    return Markdown2HTML(str);
+    return Markdown2HTML(str.replace(/\u00A0/gu, " "));
   }
 
   parseHTMLToMD(str: string): string {

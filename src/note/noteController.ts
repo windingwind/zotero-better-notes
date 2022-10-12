@@ -12,33 +12,6 @@ class NoteController extends AddonBase {
     this.currentLine = [];
   }
 
-  async getNoteFromLink(uri: string) {
-    const params = this._Addon.NoteParse.parseParamsFromLink(uri);
-    if (!params.libraryID) {
-      return {
-        item: false,
-        infoText: "Library does not exist or access denied.",
-      };
-    }
-    Zotero.debug(params);
-    let item = await Zotero.Items.getByLibraryAndKeyAsync(
-      params.libraryID,
-      params.noteKey
-    );
-    if (!item || !item.isNote()) {
-      return {
-        item: false,
-        args: params,
-        infoText: "Note does not exist or is not a note.",
-      };
-    }
-    return {
-      item: item,
-      args: params,
-      infoText: "OK",
-    };
-  }
-
   public async onSelectionChange(editor: Zotero.EditorInstance) {
     // Update current line index
     const _window = editor._iframeWindow;
@@ -110,7 +83,7 @@ class NoteController extends AddonBase {
     this.currentLine[editor._item.id] = currentLineIndex;
     if (realElement.tagName === "A") {
       let link = (realElement as HTMLLinkElement).href;
-      let linkedNote = (await this.getNoteFromLink(link)).item;
+      let linkedNote = (await this._Addon.NoteUtils.getNoteFromLink(link)).item;
       if (linkedNote) {
         let t = 0;
         let linkPopup = _window.document.querySelector(".link-popup");
