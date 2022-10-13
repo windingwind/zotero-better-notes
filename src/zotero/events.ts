@@ -1128,7 +1128,7 @@ class ZoteroEvents extends AddonBase {
       };
 
       (window as unknown as XUL.XULWindow).openDialog(
-        "chrome://Knowledge4Zotero/content/export.xhtml",
+        "chrome://Knowledge4Zotero/content/export.xul",
         "",
         "chrome,centerscreen,width=400,height=400,resizable=yes",
         io

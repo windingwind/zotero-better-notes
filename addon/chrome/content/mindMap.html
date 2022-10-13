@@ -12,14 +12,15 @@
         margin: 0;
       }
       #canvas {
-        position:absolute;
-        height:100%; width:100%;
+        position: absolute;
+        height: 100%;
+        width: 100%;
       }
     </style>
     <div id="allSampleContent" class="p-4 w-full">
       <script id="code">
         function init() {
-          window.addEventListener('message', handler, false)
+          window.addEventListener("message", handler, false);
 
           // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
@@ -32,8 +33,9 @@
             "draggingTool.dragsTree": true,
             "undoManager.isEnabled": true,
             initialAutoScale: go.Diagram.UniformToFill,
-            layout: $(go.TreeLayout,
-              { comparer: go.LayoutVertex.smartComparer })
+            layout: $(go.TreeLayout, {
+              comparer: go.LayoutVertex.smartComparer,
+            }),
           });
 
           // a node consists of some text with a line shape underneath
@@ -47,6 +49,9 @@
                 name: "TEXT",
                 minSize: new go.Size(30, 15),
                 editable: true,
+                textEdited: function (textBlock, previousText, currentText) {
+                  console.log("editing heading", textBlock, currentText);
+                },
               },
               // remember not only the text string but the scale and the font in the node data
               new go.Binding("text", "text").makeTwoWay(),
@@ -141,8 +146,8 @@
           });
 
           // read in the predefined graph using the JSON format data held in the "mySavedModel" textarea
-          window.parent.postMessage({type: "ready"}, "*");
-          getData()
+          window.parent.postMessage({ type: "ready" }, "*");
+          getData();
         }
 
         function spotConverter(dir, from) {
@@ -234,73 +239,92 @@
           myDiagram.commitTransaction("Layout");
         }
 
-        function getData(){
-          window.parent.postMessage({type: "getMindMapData"}, "*");
+        function getData() {
+          window.parent.postMessage({ type: "getMindMapData" }, "*");
         }
 
-        function setData(nodes){
+        function setData(nodes) {
           const data = {
             class: "go.TreeModel",
             nodeDataArray: [{ key: 999, text: "📄", parent: undefined }],
           };
-          const colors = []
+          const colors = [];
+          const wrapText = (text) => {
+            let wrappedText = "";
+            for (let i = 0; i < text.length / 50; i++) {
+              wrappedText += text.slice(50 * i, 50 * i + 50);
+              wrappedText += "\n";
+            }
+            return wrappedText;
+          };
           for (const node of nodes) {
-            const parent = node.parent.model.id === -1? 999:node.parent.model.id;
-              data.nodeDataArray.push({
+            const parent =
+              node.parent.model.id === -1 ? 999 : node.parent.model.id;
+            data.nodeDataArray.push({
               key: node.model.id,
-              text: `${node.model.rank===7?'🔗':''}${node.model.name.slice(0,50)}${node.model.name.length>=50?'...':''}`,
+              text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
+                node.model.name
+              )}`,
               parent: parent,
               lineIndex: node.model.lineIndex,
-              noteLink: node.model.rank===7?node.model.link:'',
-              brush: go.Brush.randomColor()
+              noteLink: node.model.rank === 7 ? node.model.link : "",
+              brush: go.Brush.randomColor(),
             });
           }
           myDiagram.model = go.Model.fromJson(data);
         }
 
-        
         function jumpNode(e, obj) {
           var adorn = obj.part;
           var oldnode = adorn.adornedPart;
           var olddata = oldnode.data;
-          if(olddata.noteLink){
-            window.parent.postMessage({type: "jumpNote", link: olddata.noteLink, id: olddata.key}, "*");
-          }else{
-            window.parent.postMessage({type: "jumpNode", lineIndex: olddata.lineIndex, id: olddata.key}, "*");
-          }
-        }
-        
-        function handler(e){
-          console.log(e)
-          if(e.data.type === "setMindMapData"){
-            setData(e.data.nodes)
+          if (olddata.noteLink) {
+            window.parent.postMessage(
+              { type: "jumpNote", link: olddata.noteLink, id: olddata.key },
+              "*"
+            );
+          } else {
+            window.parent.postMessage(
+              {
+                type: "jumpNode",
+                lineIndex: olddata.lineIndex,
+                id: olddata.key,
+              },
+              "*"
+            );
           }
         }
 
-        window.addEventListener("DOMContentLoaded",  ()=>{
-          try{
-            init()
-          }catch(e){
-            window.parent.postMessage({type: "error", event: e}, "*");
+        function handler(e) {
+          console.log(e);
+          if (e.data.type === "setMindMapData") {
+            setData(e.data.nodes);
+          }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          try {
+            init();
+          } catch (e) {
+            window.parent.postMessage({ type: "error", event: e }, "*");
           }
         });
 
-        var resizeTime = new Date().getTime()
-        window.addEventListener('resize', (e)=>{
-          const canvas = document.getElementsByTagName("canvas")[0]
-          const div = document.getElementById('myDiagramDiv')
-          canvas.setAttribute('height', div.getAttribute('height'))
-          canvas.setAttribute('width', div.getAttribute('width'))
-          const currentResize = new Date().getTime()
-          resizeTime = currentResize
+        var resizeTime = new Date().getTime();
+        window.addEventListener("resize", (e) => {
+          const canvas = document.getElementsByTagName("canvas")[0];
+          const div = document.getElementById("myDiagramDiv");
+          canvas.setAttribute("height", div.getAttribute("height"));
+          canvas.setAttribute("width", div.getAttribute("width"));
+          const currentResize = new Date().getTime();
+          resizeTime = currentResize;
           // Delay update
-          setTimeout(()=>{
-            if(resizeTime === currentResize){
-              getData()
+          setTimeout(() => {
+            if (resizeTime === currentResize) {
+              getData();
             }
-          }, 500)
-        })
-
+          }, 500);
+        });
       </script>
 
       <div id="sample">
@@ -331,5 +355,6 @@
           >
         </div>
       </div>
+    </div>
   </body>
 </html>

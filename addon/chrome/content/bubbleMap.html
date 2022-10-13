@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
-  <html lang="en">
-    <body>
+<html lang="en">
+  <body>
     <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
     <style>
       html,
@@ -13,96 +12,117 @@
         margin: 0;
       }
       #canvas {
-        position:absolute;
-        height:100%; width:100%;
+        position: absolute;
+        height: 100%;
+        width: 100%;
       }
     </style>
     <div id="allSampleContent" class="p-4 w-full">
-    <script id="code">
-      // This variation on ForceDirectedLayout does not move any selected Nodes
-      // but does move all other nodes (vertexes).
-      class ContinuousForceDirectedLayout extends go.ForceDirectedLayout {
-        isFixed(v) {
-          return v.node.isSelected;
-        }
-
-        // optimization: reuse the ForceDirectedNetwork rather than re-create it each time
-        doLayout(coll) {
-          if (!this._isObserving) {
-            this._isObserving = true;
-            // cacheing the network means we need to recreate it if nodes or links have been added or removed or relinked,
-            // so we need to track structural model changes to discard the saved network.
-            this.diagram.addModelChangedListener(e => {
-              // modelChanges include a few cases that we don't actually care about, such as
-              // "nodeCategory" or "linkToPortId", but we'll go ahead and recreate the network anyway.
-              // Also clear the network when replacing the model.
-              if (e.modelChange !== "" ||
-                (e.change === go.ChangedEvent.Transaction && e.propertyName === "StartingFirstTransaction")) {
-                this.network = null;
-              }
-            });
+      <script id="code">
+        // This variation on ForceDirectedLayout does not move any selected Nodes
+        // but does move all other nodes (vertexes).
+        class ContinuousForceDirectedLayout extends go.ForceDirectedLayout {
+          isFixed(v) {
+            return v.node.isSelected;
           }
-          var net = this.network;
-          if (net === null) {  // the first time, just create the network as normal
-            this.network = net = this.makeNetwork(coll);
-          } else {  // but on reuse we need to update the LayoutVertex.bounds for selected nodes
-            this.diagram.nodes.each(n => {
-              var v = net.findVertex(n);
-              if (v !== null) v.bounds = n.actualBounds;
-            });
-          }
-          // now perform the normal layout
-          super.doLayout(coll);
-          // doLayout normally discards the LayoutNetwork by setting Layout.network to null;
-          // here we remember it for next time
-          this.network = net;
-        }
-      }
-      // end ContinuousForceDirectedLayout
 
+          // optimization: reuse the ForceDirectedNetwork rather than re-create it each time
+          doLayout(coll) {
+            if (!this._isObserving) {
+              this._isObserving = true;
+              // cacheing the network means we need to recreate it if nodes or links have been added or removed or relinked,
+              // so we need to track structural model changes to discard the saved network.
+              this.diagram.addModelChangedListener((e) => {
+                // modelChanges include a few cases that we don't actually care about, such as
+                // "nodeCategory" or "linkToPortId", but we'll go ahead and recreate the network anyway.
+                // Also clear the network when replacing the model.
+                if (
+                  e.modelChange !== "" ||
+                  (e.change === go.ChangedEvent.Transaction &&
+                    e.propertyName === "StartingFirstTransaction")
+                ) {
+                  this.network = null;
+                }
+              });
+            }
+            var net = this.network;
+            if (net === null) {
+              // the first time, just create the network as normal
+              this.network = net = this.makeNetwork(coll);
+            } else {
+              // but on reuse we need to update the LayoutVertex.bounds for selected nodes
+              this.diagram.nodes.each((n) => {
+                var v = net.findVertex(n);
+                if (v !== null) v.bounds = n.actualBounds;
+              });
+            }
+            // now perform the normal layout
+            super.doLayout(coll);
+            // doLayout normally discards the LayoutNetwork by setting Layout.network to null;
+            // here we remember it for next time
+            this.network = net;
+          }
+        }
+        // end ContinuousForceDirectedLayout
 
         function init() {
-          window.addEventListener('message', handler, false)
+          window.addEventListener("message", handler, false);
 
           // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
-          const $ = go.GraphObject.make;  // for conciseness in defining templates
+          const $ = go.GraphObject.make; // for conciseness in defining templates
 
-          myDiagram =
-            $(go.Diagram, "myDiagramDiv",  // must name or refer to the DIV HTML element
-              {
-                initialAutoScale: go.Diagram.UniformToFill ,  // an initial automatic zoom-to-fit
-                contentAlignment: go.Spot.Center,  // align document to the center of the viewport
-                layout:
-                  $(ContinuousForceDirectedLayout,  // automatically spread nodes apart while dragging
-                    { defaultSpringLength: 15, defaultElectricalCharge: 30 }),
-                // do an extra layout at the end of a move
-                "SelectionMoved": e => e.diagram.layout.invalidateLayout()
-              });
+          myDiagram = $(
+            go.Diagram,
+            "myDiagramDiv", // must name or refer to the DIV HTML element
+            {
+              initialAutoScale: go.Diagram.UniformToFill, // an initial automatic zoom-to-fit
+              contentAlignment: go.Spot.Center, // align document to the center of the viewport
+              layout: $(
+                ContinuousForceDirectedLayout, // automatically spread nodes apart while dragging
+                { defaultSpringLength: 15, defaultElectricalCharge: 30 }
+              ),
+              // do an extra layout at the end of a move
+              SelectionMoved: (e) => e.diagram.layout.invalidateLayout(),
+            }
+          );
 
           // dragging a node invalidates the Diagram.layout, causing a layout during the drag
-          myDiagram.toolManager.draggingTool.doMouseMove = function() {
+          myDiagram.toolManager.draggingTool.doMouseMove = function () {
             go.DraggingTool.prototype.doMouseMove.call(this);
-            if (this.isActive) { this.diagram.layout.invalidateLayout(); }
-          }
+            if (this.isActive) {
+              this.diagram.layout.invalidateLayout();
+            }
+          };
 
           // define each Node's appearance
-          myDiagram.nodeTemplate =
-            $(go.Node, "Vertical",  // the whole node panel
-              // define the node's outer shape, which will surround the TextBlock
-            $(go.Panel, "Spot",
-              $(go.Shape, "Circle",
+          myDiagram.nodeTemplate = $(
+            go.Node,
+            "Vertical", // the whole node panel
+            // define the node's outer shape, which will surround the TextBlock
+            $(
+              go.Panel,
+              "Spot",
+              $(
+                go.Shape,
+                "Circle",
                 {
                   name: "SHAPE",
-                  fill: "lightgray",  // default value, but also data-bound
+                  fill: "lightgray", // default value, but also data-bound
                   strokeWidth: 0,
                   desiredSize: new go.Size(10, 10),
                 },
-                new go.Binding("fill", "isSelected", (s, obj) => s ? "#f2ac46" : "lightgray").ofObject())),
-              $(go.TextBlock,
-                { textAlign: "center", maxSize: new go.Size(100, NaN) }, 
-                new go.Binding("text", "text"))
-            );
+                new go.Binding("fill", "isSelected", (s, obj) =>
+                  s ? "#f2ac46" : "lightgray"
+                ).ofObject()
+              )
+            ),
+            $(
+              go.TextBlock,
+              { textAlign: "center", maxSize: new go.Size(100, NaN) },
+              new go.Binding("text", "text")
+            )
+          );
           // the rest of this app is the same as samples/conceptMap.html
 
           // selected nodes show a button for adding children
@@ -133,105 +153,135 @@
           );
 
           // replace the default Link template in the linkTemplateMap
-          myDiagram.linkTemplate =
-            $(go.Link,  // the whole link panel
-              $(go.Shape,  // the link shape
-                { stroke: "grey" }),
-              $(go.Shape,  // the arrowhead
-                { toArrow: "standard", stroke: null }),
-              $(go.Panel, "Auto")
-            );
-          window.parent.postMessage({type: "ready"}, "*");
-          getData()
+          myDiagram.linkTemplate = $(
+            go.Link, // the whole link panel
+            $(
+              go.Shape, // the link shape
+              { stroke: "grey" }
+            ),
+            $(
+              go.Shape, // the arrowhead
+              { toArrow: "standard", stroke: null }
+            ),
+            $(go.Panel, "Auto")
+          );
+          window.parent.postMessage({ type: "ready" }, "*");
+          getData();
         }
 
-        
-        function getData(){
-          window.parent.postMessage({type: "getMindMapData"}, "*");
+        function getData() {
+          window.parent.postMessage({ type: "getMindMapData" }, "*");
         }
 
-        function setData(nodes){
-          const nodeDataArray = [{ key: 999, text: "📄", parent: undefined }]
-          const linkDataArray = []
+        function setData(nodes) {
+          const nodeDataArray = [{ key: 999, text: "📄", parent: undefined }];
+          const linkDataArray = [];
+          const wrapText = (text) => {
+            let wrappedText = "";
+            for (let i = 0; i < text.length / 50; i++) {
+              wrappedText += text.slice(50 * i, 50 * i + 50);
+              wrappedText += "\n";
+            }
+            return wrappedText;
+          };
           for (const node of nodes) {
-            const parent = node.parent.model.id === -1? 999:node.parent.model.id;
+            const parent =
+              node.parent.model.id === -1 ? 999 : node.parent.model.id;
             nodeDataArray.push({
               key: node.model.id,
-              text: `${node.model.rank===7?'🔗':''}${node.model.name.slice(0,50)}${node.model.name.length>=50?'...':''}`,
+              text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
+                node.model.name
+              )}`,
               lineIndex: node.model.lineIndex,
-              noteLink: node.model.rank===7?node.model.link:'',
+              noteLink: node.model.rank === 7 ? node.model.link : "",
             });
             linkDataArray.push({
-              from: parent, to: node.model.id, text: ""
-            })
+              from: parent,
+              to: node.model.id,
+              text: "",
+            });
           }
-          console.log(nodeDataArray, linkDataArray)
-          myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+          console.log(nodeDataArray, linkDataArray);
+          myDiagram.model = new go.GraphLinksModel(
+            nodeDataArray,
+            linkDataArray
+          );
         }
-        
+
         function jumpNode(e, obj) {
           var adorn = obj.part;
           var oldnode = adorn.adornedPart;
           var olddata = oldnode.data;
-          if(olddata.noteLink){
-            window.parent.postMessage({type: "jumpNote", link: olddata.noteLink, id: olddata.key}, "*");
-          }else{
-            window.parent.postMessage({type: "jumpNode", lineIndex: olddata.lineIndex, id: olddata.key}, "*");
-          }
-        }
-        
-        function handler(e){
-          console.log(e)
-          if(e.data.type === "setMindMapData"){
-            setData(e.data.nodes)
+          if (olddata.noteLink) {
+            window.parent.postMessage(
+              { type: "jumpNote", link: olddata.noteLink, id: olddata.key },
+              "*"
+            );
+          } else {
+            window.parent.postMessage(
+              {
+                type: "jumpNode",
+                lineIndex: olddata.lineIndex,
+                id: olddata.key,
+              },
+              "*"
+            );
           }
         }
 
-        window.addEventListener('DOMContentLoaded', init);
+        function handler(e) {
+          console.log(e);
+          if (e.data.type === "setMindMapData") {
+            setData(e.data.nodes);
+          }
+        }
 
-        var resizeTime = new Date().getTime()
-        window.addEventListener('resize', (e)=>{
-          const canvas = document.getElementsByTagName("canvas")[0]
-          const div = document.getElementById('myDiagramDiv')
-          canvas.setAttribute('height', div.getAttribute('height'))
-          canvas.setAttribute('width', div.getAttribute('width'))
-          const currentResize = new Date().getTime()
-          resizeTime = currentResize
+        window.addEventListener("DOMContentLoaded", init);
+
+        var resizeTime = new Date().getTime();
+        window.addEventListener("resize", (e) => {
+          const canvas = document.getElementsByTagName("canvas")[0];
+          const div = document.getElementById("myDiagramDiv");
+          canvas.setAttribute("height", div.getAttribute("height"));
+          canvas.setAttribute("width", div.getAttribute("width"));
+          const currentResize = new Date().getTime();
+          resizeTime = currentResize;
           // Delay update
-          setTimeout(()=>{
-            if(resizeTime === currentResize){
-              getData()
+          setTimeout(() => {
+            if (resizeTime === currentResize) {
+              getData();
             }
-          }, 500)
-        })
+          }, 500);
+        });
       </script>
 
-    <div id="sample">
-      <div
-        id="myDiagramDiv"
-        style="
-          width: 100%;
-          position: relative;
-          -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-          cursor: auto;
-          font: 13px sans-serif;
-          overflow: hidden;
-        "
-      >
-        <canvas
-          tabindex="0"
+      <div id="sample">
+        <div
+          id="myDiagramDiv"
           style="
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 2;
-            user-select: none;
-            touch-action: none;
+            width: 100%;
+            position: relative;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
             cursor: auto;
+            font: 13px sans-serif;
+            overflow: hidden;
           "
-          >This text is displayed if your browser does not support the Canvas
-          HTML element.</canvas
         >
+          <canvas
+            tabindex="0"
+            style="
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              z-index: 2;
+              user-select: none;
+              touch-action: none;
+              cursor: auto;
+            "
+            >This text is displayed if your browser does not support the Canvas
+            HTML element.</canvas
+          >
+        </div>
       </div>
     </div>
   </body>
