@@ -179,10 +179,10 @@ class WorkspaceWindow extends AddonBase {
         })
       );
     } else if (e.data.type === "moveNode") {
-      this._Addon.ZoteroEvents.onEditorEvent(
-        new EditorMessage("moveNode", {
-          params: e.data,
-        })
+      await this._Addon.NoteUtils.moveNode(
+        e.data.fromID,
+        e.data.toID,
+        e.data.moveType
       );
     }
   }

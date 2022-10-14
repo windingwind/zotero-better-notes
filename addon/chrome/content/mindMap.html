@@ -26,7 +26,7 @@
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
           const $ = go.GraphObject.make;
 
-          myDiagram = $(go.Diagram, "myDiagramDiv", {
+          const Diagram = $(go.Diagram, "myDiagramDiv", {
             "commandHandler.copiesTree": true,
             "commandHandler.copiesParentKey": true,
             "commandHandler.deletesTree": true,
@@ -39,7 +39,7 @@
           });
 
           // a node consists of some text with a line shape underneath
-          myDiagram.nodeTemplate = $(
+          Diagram.nodeTemplate = $(
             go.Node,
             "Vertical",
             { selectionObjectName: "TEXT" },
@@ -86,7 +86,7 @@
           );
 
           // selected nodes show a button for adding children
-          myDiagram.nodeTemplate.selectionAdornmentTemplate = $(
+          Diagram.nodeTemplate.selectionAdornmentTemplate = $(
             go.Adornment,
             "Spot",
             $(
@@ -113,7 +113,7 @@
           );
 
           // a link is just a Bezier-curved line of the same color as the node to which it is connected
-          myDiagram.linkTemplate = $(
+          Diagram.linkTemplate = $(
             go.Link,
             {
               curve: go.Link.Bezier,
@@ -131,9 +131,9 @@
             )
           );
 
-          myDiagram.addDiagramListener("SelectionMoved", (e) => {
-            var rootX = myDiagram.findNodeForKey(0).location.x;
-            myDiagram.selection.each((node) => {
+          Diagram.addDiagramListener("SelectionMoved", (e) => {
+            var rootX = Diagram.findNodeForKey(0).location.x;
+            Diagram.selection.each((node) => {
               if (node.data.parent !== 0) return; // Only consider nodes connected to the root
               var nodeX = node.location.x;
               if (rootX < nodeX && node.data.dir !== "right") {

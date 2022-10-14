@@ -674,35 +674,6 @@ class ZoteroEvents extends AddonBase {
         // Scroll to line
         message.content.params.lineIndex
       );
-    } else if (message.type === "moveNode") {
-      /*
-        message.content = {
-          params: {
-            fromID, toID, moveType: "before" | "child"
-          }
-        }
-      */
-      const workspaceNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
-      let tree = this._Addon.NoteUtils.getNoteTree(workspaceNote);
-      let fromNode = this._Addon.NoteUtils.getNoteTreeNodeById(
-        workspaceNote,
-        message.content.params.fromID,
-        tree
-      );
-      let toNode = this._Addon.NoteUtils.getNoteTreeNodeById(
-        workspaceNote,
-        message.content.params.toID,
-        tree
-      );
-      Zotero.debug(fromNode.model);
-      Zotero.debug(toNode.model);
-      Zotero.debug(message.content.params.moveType);
-      this._Addon.NoteUtils.moveHeaderLineInNote(
-        mainNote,
-        fromNode,
-        toNode,
-        message.content.params.moveType
-      );
     } else if (message.type === "closePreview") {
       /*
         message.content = {

@@ -72,7 +72,7 @@
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
           const $ = go.GraphObject.make; // for conciseness in defining templates
 
-          myDiagram = $(
+          const Diagram = $(
             go.Diagram,
             "myDiagramDiv", // must name or refer to the DIV HTML element
             {
@@ -88,7 +88,7 @@
           );
 
           // dragging a node invalidates the Diagram.layout, causing a layout during the drag
-          myDiagram.toolManager.draggingTool.doMouseMove = function () {
+          Diagram.toolManager.draggingTool.doMouseMove = function () {
             go.DraggingTool.prototype.doMouseMove.call(this);
             if (this.isActive) {
               this.diagram.layout.invalidateLayout();
@@ -96,7 +96,7 @@
           };
 
           // define each Node's appearance
-          myDiagram.nodeTemplate = $(
+          Diagram.nodeTemplate = $(
             go.Node,
             "Vertical", // the whole node panel
             // define the node's outer shape, which will surround the TextBlock
@@ -126,7 +126,7 @@
           // the rest of this app is the same as samples/conceptMap.html
 
           // selected nodes show a button for adding children
-          myDiagram.nodeTemplate.selectionAdornmentTemplate = $(
+          Diagram.nodeTemplate.selectionAdornmentTemplate = $(
             go.Adornment,
             "Spot",
             $(
@@ -153,7 +153,7 @@
           );
 
           // replace the default Link template in the linkTemplateMap
-          myDiagram.linkTemplate = $(
+          Diagram.linkTemplate = $(
             go.Link, // the whole link panel
             $(
               go.Shape, // the link shape

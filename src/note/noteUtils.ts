@@ -363,14 +363,14 @@ class NoteUtils extends AddonBase {
     );
   }
 
-  moveHeaderLineInNote(
+  async moveHeaderLineInNote(
     note: Zotero.Item,
     currentNode: TreeModel.Node<object>,
     targetNode: TreeModel.Node<object>,
     as: "child" | "before" | "after"
   ) {
     if (!note || targetNode.getPath().indexOf(currentNode) >= 0) {
-      return undefined;
+      return;
     }
 
     let targetIndex = 0;
@@ -382,7 +382,7 @@ class NoteUtils extends AddonBase {
       targetIndex = targetNode.model.endIndex;
       targetRank = targetNode.model.rank === 6 ? 6 : targetNode.model.rank + 1;
     } else if (as === "before") {
-      targetIndex = targetNode.model.lineIndex;
+      targetIndex = targetNode.model.lineIndex - 1;
       targetRank =
         targetNode.model.rank === 7
           ? targetNode.parent.model.rank === 6
@@ -401,17 +401,15 @@ class NoteUtils extends AddonBase {
 
     let rankChange = targetRank - currentNode.model.rank;
 
-    Zotero.debug(`move to ${targetIndex}`);
-
     let movedLines = lines.splice(
       currentNode.model.lineIndex,
-      currentNode.model.endIndex - currentNode.model.lineIndex
+      currentNode.model.endIndex - currentNode.model.lineIndex + 1
     );
 
-    let headerReg = /<\/?h[1-6]>/g;
+    let headerReg = /<\/?h[1-6]/g;
     for (const i in movedLines) {
       movedLines[i] = movedLines[i].replace(headerReg, (e) => {
-        let rank = parseInt(e.slice(-2, -1));
+        let rank = parseInt(e.slice(-1));
         rank += rankChange;
         if (rank > 6) {
           rank = 6;
@@ -419,13 +417,25 @@ class NoteUtils extends AddonBase {
         if (rank < 1) {
           rank = 1;
         }
-        return `${e.slice(0, -2)}${rank}>`;
+        return `${e.slice(0, -1)}${rank}`;
       });
     }
+
+    // If the moved lines is before the insert index
+    // the slice index -= lines length.
+    if (currentNode.model.endIndex <= targetIndex) {
+      targetIndex -= movedLines.length;
+    }
+    Zotero.debug(`move to ${targetIndex}`);
+
     let newLines = lines
-      .slice(0, targetIndex)
-      .concat(movedLines, lines.slice(targetIndex));
-    this.setLinesToNote(note, newLines);
+      .slice(0, targetIndex + 1)
+      .concat(movedLines, lines.slice(targetIndex + 1));
+    console.log("new lines", newLines);
+    console.log("moved", movedLines);
+    console.log("insert after", lines[targetIndex]);
+    console.log("next line", lines[targetIndex + 1]);
+    await this.setLinesToNote(note, newLines);
   }
 
   getNoteTree(note: Zotero.Item): TreeModel.Node<object> {
@@ -500,6 +510,27 @@ class NoteUtils extends AddonBase {
         }
       }
     }
+  }
+
+  async moveNode(fromID: number, toID: number, moveType: "before" | "child") {
+    const workspaceNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
+    let tree = this.getNoteTree(workspaceNote);
+    let fromNode = this.getNoteTreeNodeById(workspaceNote, fromID, tree);
+    let toNode = this._Addon.NoteUtils.getNoteTreeNodeById(
+      workspaceNote,
+      toID,
+      tree
+    );
+    Zotero.debug(fromNode.model);
+    Zotero.debug(toNode.model);
+    Zotero.debug(moveType);
+    console.log(toNode.model, fromNode.model, moveType);
+    this.moveHeaderLineInNote(
+      this._Addon.WorkspaceWindow.getWorkspaceNote(),
+      fromNode,
+      toNode,
+      moveType
+    );
   }
 
   async scrollWithRefresh(lineIndex: number) {
