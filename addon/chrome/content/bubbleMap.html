@@ -64,6 +64,7 @@
           }
         }
         // end ContinuousForceDirectedLayout
+        var Diagram;
 
         function init() {
           window.addEventListener("message", handler, false);
@@ -72,9 +73,9 @@
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
           const $ = go.GraphObject.make; // for conciseness in defining templates
 
-          const Diagram = $(
+          Diagram = $(
             go.Diagram,
-            "myDiagramDiv", // must name or refer to the DIV HTML element
+            "DiagramDiv", // must name or refer to the DIV HTML element
             {
               initialAutoScale: go.Diagram.UniformToFill, // an initial automatic zoom-to-fit
               contentAlignment: go.Spot.Center, // align document to the center of the viewport
@@ -202,10 +203,7 @@
             });
           }
           console.log(nodeDataArray, linkDataArray);
-          myDiagram.model = new go.GraphLinksModel(
-            nodeDataArray,
-            linkDataArray
-          );
+          Diagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
         }
 
         function jumpNode(e, obj) {
@@ -241,7 +239,7 @@
         var resizeTime = new Date().getTime();
         window.addEventListener("resize", (e) => {
           const canvas = document.getElementsByTagName("canvas")[0];
-          const div = document.getElementById("myDiagramDiv");
+          const div = document.getElementById("DiagramDiv");
           canvas.setAttribute("height", div.getAttribute("height"));
           canvas.setAttribute("width", div.getAttribute("width"));
           const currentResize = new Date().getTime();
@@ -257,7 +255,7 @@
 
       <div id="sample">
         <div
-          id="myDiagramDiv"
+          id="DiagramDiv"
           style="
             width: 100%;
             position: relative;

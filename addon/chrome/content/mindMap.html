@@ -19,6 +19,7 @@
     </style>
     <div id="allSampleContent" class="p-4 w-full">
       <script id="code">
+        var Diagram;
         function init() {
           window.addEventListener("message", handler, false);
 
@@ -26,7 +27,7 @@
           // For details, see https://gojs.net/latest/intro/buildingObjects.html
           const $ = go.GraphObject.make;
 
-          const Diagram = $(go.Diagram, "myDiagramDiv", {
+          Diagram = $(go.Diagram, "DiagramDiv", {
             "commandHandler.copiesTree": true,
             "commandHandler.copiesParentKey": true,
             "commandHandler.deletesTree": true,
@@ -183,7 +184,7 @@
         }
 
         function updateNodeDirection(node, dir) {
-          myDiagram.model.setDataProperty(node.data, "dir", dir);
+          Diagram.model.setDataProperty(node.data, "dir", dir);
           // recursively update the direction of the child nodes
           var chl = node.findTreeChildrenNodes(); // gives us an iterator of the child nodes related to this particular node
           while (chl.next()) {
@@ -215,9 +216,9 @@
         }
 
         function layoutAll() {
-          var root = myDiagram.findNodeForKey(0);
+          var root = Diagram.findNodeForKey(0);
           if (root === null) return;
-          myDiagram.startTransaction("Layout");
+          Diagram.startTransaction("Layout");
           // split the nodes and links into two collections
           var rightward = new go.Set(/*go.Part*/);
           var leftward = new go.Set(/*go.Part*/);
@@ -236,7 +237,7 @@
           // do one layout and then the other without moving the shared root node
           layoutAngle(rightward, 0);
           layoutAngle(leftward, 180);
-          myDiagram.commitTransaction("Layout");
+          Diagram.commitTransaction("Layout");
         }
 
         function getData() {
@@ -271,7 +272,7 @@
               brush: go.Brush.randomColor(),
             });
           }
-          myDiagram.model = go.Model.fromJson(data);
+          Diagram.model = go.Model.fromJson(data);
         }
 
         function jumpNode(e, obj) {
@@ -313,7 +314,7 @@
         var resizeTime = new Date().getTime();
         window.addEventListener("resize", (e) => {
           const canvas = document.getElementsByTagName("canvas")[0];
-          const div = document.getElementById("myDiagramDiv");
+          const div = document.getElementById("DiagramDiv");
           canvas.setAttribute("height", div.getAttribute("height"));
           canvas.setAttribute("width", div.getAttribute("width"));
           const currentResize = new Date().getTime();
@@ -329,7 +330,7 @@
 
       <div id="sample">
         <div
-          id="myDiagramDiv"
+          id="DiagramDiv"
           style="
             width: 100%;
             position: relative;
