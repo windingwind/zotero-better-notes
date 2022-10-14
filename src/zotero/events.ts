@@ -335,6 +335,15 @@ class ZoteroEvents extends AddonBase {
           return;
         }
 
+        instance._popup.setAttribute(
+          "onpopupshowing",
+          "Zotero.Knowledge4Zotero.EditorViews.updatePopupMenu()"
+        );
+
+        instance._iframeWindow.addEventListener("mousedown", (e) => {
+          this._Addon.EditorController.activeEditor = instance;
+        });
+
         instance._knowledgeUIInitialized = true;
 
         this._Addon.EditorController.recordEditor(instance);
@@ -777,10 +786,13 @@ class ZoteroEvents extends AddonBase {
     } else if (message.type === "insertTextUsingTemplate") {
       /*
         message.content = {
-          params: {templateName, copy}
+          params: {templateName, targetItemId}
         }
       */
       const newLines: string[] = [];
+      const targetItem = Zotero.Items.get(
+        message.content.params.targetItemId
+      ) as Zotero.Item;
 
       const progressWindow = this._Addon.ZoteroViews.showProgressWindow(
         "Running Template",
@@ -797,7 +809,7 @@ class ZoteroEvents extends AddonBase {
         newLines.push(renderredTemplate);
         newLines.push("<p> </p>");
         const html = newLines.join("\n");
-        if (message.content.params.copy) {
+        if (!targetItem) {
           console.log(html);
           new CopyHelper()
             .addText(html, "text/html")
@@ -806,7 +818,12 @@ class ZoteroEvents extends AddonBase {
           progressWindow.changeHeadline("Template Copied");
         } else {
           // End of line
-          await this._Addon.NoteUtils.addLineToNote(mainNote, html, -1, false);
+          await this._Addon.NoteUtils.addLineToNote(
+            targetItem,
+            html,
+            -1,
+            false
+          );
           progressWindow.changeHeadline("Running Template Finished");
         }
       } else {
@@ -819,6 +836,10 @@ class ZoteroEvents extends AddonBase {
           params: {templateName}
         }
       */
+      const targetItem = Zotero.Items.get(
+        message.content.params.targetItemId
+      ) as Zotero.Item;
+
       const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       const items = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
         (item: Zotero.Item) => item.isRegularItem()
@@ -904,7 +925,7 @@ class ZoteroEvents extends AddonBase {
 
       if (newLines) {
         const html = newLines.join("\n");
-        if (message.content.params.copy) {
+        if (!targetItem) {
           console.log(html);
 
           new CopyHelper()
@@ -916,14 +937,14 @@ class ZoteroEvents extends AddonBase {
           const forceMetadata = toCopyImage.length > 0;
           console.log(toCopyImage);
           await this._Addon.NoteUtils.addLineToNote(
-            mainNote,
+            targetItem,
             html,
             -1,
             forceMetadata
           );
           await Zotero.DB.executeTransaction(async () => {
             for (const subNote of toCopyImage) {
-              await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+              await Zotero.Notes.copyEmbeddedImages(subNote, targetItem);
             }
           });
           progressWindow.changeHeadline("Running Template Finished");
@@ -938,6 +959,9 @@ class ZoteroEvents extends AddonBase {
           params: {templateName}
         }
       */
+      const targetItem = Zotero.Items.get(
+        message.content.params.targetItemId
+      ) as Zotero.Item;
       const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
       const notes = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
         (item: Zotero.Item) => item.isNote()
@@ -1027,7 +1051,7 @@ class ZoteroEvents extends AddonBase {
 
       if (newLines) {
         const html = newLines.join("\n");
-        if (message.content.params.copy) {
+        if (!targetItem) {
           console.log(html);
 
           new CopyHelper()
@@ -1039,14 +1063,14 @@ class ZoteroEvents extends AddonBase {
           const forceMetadata = toCopyImage.length > 0;
           console.log(toCopyImage);
           await this._Addon.NoteUtils.addLineToNote(
-            mainNote,
+            targetItem,
             html,
             -1,
             forceMetadata
           );
           await Zotero.DB.executeTransaction(async () => {
             for (const subNote of toCopyImage) {
-              await Zotero.Notes.copyEmbeddedImages(subNote, mainNote);
+              await Zotero.Notes.copyEmbeddedImages(subNote, targetItem);
             }
           });
           progressWindow.changeHeadline("Running Template Finished");

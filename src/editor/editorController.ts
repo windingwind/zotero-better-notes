@@ -11,6 +11,7 @@ class EditorController extends AddonBase {
     time: number;
   }>;
   editorPromise: ZoteroPromise;
+  activeEditor: Zotero.EditorInstance;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);

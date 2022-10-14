@@ -864,6 +864,123 @@ class EditorViews extends AddonBase {
     }
   }
 
+  public updatePopupMenu() {
+    console.log("updating editor popup");
+    const instance = this._Addon.EditorController.activeEditor;
+    const noteItem = instance._item;
+
+    const copyLinkId = "menupopup-copylink";
+    if (!instance._popup.querySelector(`#${copyLinkId}`)) {
+      const copyLinkMenu =
+        instance._popup.ownerDocument.createElement("menuitem");
+      copyLinkMenu.id = copyLinkId;
+      copyLinkMenu.setAttribute("label", "Copy Note Link");
+      copyLinkMenu.addEventListener("command", (e) => {
+        const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
+        const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+          noteItem.getNoteTitle().trim()
+            ? noteItem.getNoteTitle().trim()
+            : linkText
+        }</a></p>`;
+
+        new CopyHelper()
+          .addText(linkText, "text/unicode")
+          .addText(linkHTML, "text/html")
+          .copy();
+        this._Addon.ZoteroViews.showProgressWindow(
+          "Better Notes",
+          "Note Link Copied"
+        );
+      });
+      instance._popup.append(copyLinkMenu);
+    }
+
+    const copyLinkAtLineId = "menupopup-copylinkline";
+    if (!instance._popup.querySelector(`#${copyLinkAtLineId}`)) {
+      const copyLinkAtLineMenu =
+        instance._popup.ownerDocument.createElement("menuitem");
+      copyLinkAtLineMenu.id = copyLinkAtLineId;
+      copyLinkAtLineMenu.setAttribute(
+        "label",
+        `Copy Note Link of Line ${
+          this._Addon.NoteUtils.currentLine[noteItem.id] + 1
+        }`
+      );
+      copyLinkAtLineMenu.addEventListener("command", (e) => {
+        const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
+          withLine: true,
+        });
+        const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+          noteItem.getNoteTitle().trim()
+            ? noteItem.getNoteTitle().trim()
+            : linkText
+        }</a></p>`;
+        new CopyHelper()
+          .addText(linkText, "text/unicode")
+          .addText(linkHTML, "text/html")
+          .copy();
+        this._Addon.ZoteroViews.showProgressWindow(
+          "Better Notes",
+          `Note Link of Line ${
+            this._Addon.NoteUtils.currentLine[noteItem.id] + 1
+          } Copied`
+        );
+      });
+      instance._popup.append(copyLinkAtLineMenu);
+    }
+
+    const templateTextId = "menupopup-insertTextTemplate";
+    if (!instance._popup.querySelector(`#${templateTextId}`)) {
+      const templateTextMenu =
+        instance._popup.ownerDocument.createElement("menu");
+      templateTextMenu.id = templateTextId;
+      templateTextMenu.setAttribute("label", "Insert Template (Text)");
+      const templateTextMenuPopup =
+        instance._popup.ownerDocument.createElement("menupopup");
+      templateTextMenuPopup.id = `menu_insert${instance._item.id}TextTemplatePopup`;
+      templateTextMenuPopup.setAttribute(
+        "onpopupshowing",
+        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`
+      );
+      templateTextMenu.append(templateTextMenuPopup);
+      instance._popup.append(templateTextMenu);
+    }
+
+    const templateNoteId = "menupopup-insertNoteTemplate";
+    if (!instance._popup.querySelector(`#${templateNoteId}`)) {
+      const templateNoteMenu =
+        instance._popup.ownerDocument.createElement("menu");
+      templateNoteMenu.id = templateNoteId;
+      templateNoteMenu.setAttribute("label", "Insert Template (Note)");
+      const templateNoteMenuPopup =
+        instance._popup.ownerDocument.createElement("menupopup");
+      templateNoteMenuPopup.id = `menu_insert${instance._item.id}NoteTemplatePopup`;
+      templateNoteMenuPopup.setAttribute(
+        "onpopupshowing",
+        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, ${instance._item.id});`
+      );
+      templateNoteMenu.append(templateNoteMenuPopup);
+      instance._popup.append(templateNoteMenu);
+    }
+
+    const templateItemId = "menupopup-insertItemTemplate";
+    if (!instance._popup.querySelector(`#${templateItemId}`)) {
+      const templateItemMenu =
+        instance._popup.ownerDocument.createElement("menu");
+      templateItemMenu.id = templateItemId;
+      templateItemMenu.setAttribute("label", "Insert Template (Item)");
+      const templateItemMenuPopup =
+        instance._popup.ownerDocument.createElement("menupopup");
+      templateItemMenuPopup.id = `menu_insert${instance._item.id}ItemTemplatePopup`;
+      templateItemMenuPopup.setAttribute(
+        "onpopupshowing",
+        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, ${instance._item.id});`
+      );
+      templateItemMenu.append(templateItemMenuPopup);
+      instance._popup.append(templateItemMenu);
+    }
+  }
+
   public async scrollToLine(
     instance: Zotero.EditorInstance,
     lineIndex: number

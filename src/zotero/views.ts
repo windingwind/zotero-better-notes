@@ -145,16 +145,24 @@ class ZoteroViews extends AddonBase {
       .children[0].before(treeRow);
   }
 
-  public updateTemplateMenu(type: "Note" | "Item" | "Text") {
-    const _window = this._Addon.WorkspaceMenu.getWorkspaceMenuWindow();
+  public updateTemplateMenu(
+    type: "Note" | "Item" | "Text",
+    _document: Document,
+    prefix: string = ""
+  ) {
+    _document =
+      _document || this._Addon.WorkspaceMenu.getWorkspaceMenuWindow().document;
 
-    // If tab is open but not selected, we use copy mode
-    const copyMode =
-      Boolean(
-        this._Addon.WorkspaceWindow.workspaceTabId &&
-          this._Addon.WorkspaceWindow.workspaceTabId !== "WINDOW" &&
-          Zotero_Tabs.selectedID !== this._Addon.WorkspaceWindow.workspaceTabId
-      ) || !this._Addon.WorkspaceWindow.workspaceTabId;
+    // If no note is activated, use copy
+    const targetItemId =
+      this._Addon.EditorController.activeEditor &&
+      Zotero.Notes._editorInstances.includes(
+        this._Addon.EditorController.activeEditor
+      )
+        ? this._Addon.EditorController.activeEditor._item.id
+        : Zotero_Tabs.selectedID === this._Addon.WorkspaceWindow.workspaceTabId
+        ? this._Addon.WorkspaceWindow.getWorkspaceNote().id
+        : -1;
     Zotero.debug(`updateTemplateMenu`);
     let templates = this._Addon.TemplateController.getTemplateKeys()
       .filter((e) => e.name.indexOf(type) !== -1)
@@ -162,8 +170,8 @@ class ZoteroViews extends AddonBase {
         (e) =>
           !this._Addon.TemplateController._systemTemplateNames.includes(e.name)
       );
-    const popup = _window.document.getElementById(
-      `menu_insert${type}TemplatePopup`
+    const popup = _document.getElementById(
+      `menu_insert${prefix}${type}TemplatePopup`
     );
     popup.innerHTML = "";
     if (templates.length === 0) {
@@ -176,8 +184,8 @@ class ZoteroViews extends AddonBase {
       ];
     }
     for (const template of templates) {
-      const menuitem = _window.document.createElement("menuitem");
-      menuitem.setAttribute("id", template.name);
+      const menuitem = _document.createElement("menuitem");
+      // menuitem.setAttribute("id", template.name);
       menuitem.setAttribute("label", template.name);
       menuitem.setAttribute(
         "oncommand",
@@ -185,7 +193,7 @@ class ZoteroViews extends AddonBase {
         Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({
           type: "insert${type}UsingTemplate",
           content: {
-            params: { templateName: "${template.name}", copy: ${copyMode} },
+            params: { templateName: "${template.name}", targetItemId: ${targetItemId} },
           },
         });`
       );

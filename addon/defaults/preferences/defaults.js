@@ -17,3 +17,6 @@ pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.Appkey", "");
 pref("extensions.zotero.Knowledge4Zotero.OCRXunfei.APPID", "");
 pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.APISecret", "");
 pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.APIKey", "");
+pref("extensions.zotero.Knowledge4Zotero.linkAction.click", "");
+pref("extensions.zotero.Knowledge4Zotero.linkAction.shiftclick", "");
+pref("extensions.zotero.Knowledge4Zotero.linkAction.ctrlclick", "");
