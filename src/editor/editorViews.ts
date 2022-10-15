@@ -472,7 +472,7 @@ class EditorViews extends AddonBase {
     }
   }
 
-  public getEditorElement(_document: Document): Element {
+  public getEditorElement(_document: Document): HTMLElement {
     let editor = Array.prototype.find.call(
       _document.querySelectorAll(".primary-editor"),
       (e) => e.id !== "note-link-preview"
@@ -868,116 +868,225 @@ class EditorViews extends AddonBase {
     console.log("updating editor popup");
     const instance = this._Addon.EditorController.activeEditor;
     const noteItem = instance._item;
+    const lineIndex = this._Addon.NoteUtils.currentLine[noteItem.id];
+    const lineElements = this._Addon.NoteParse.parseHTMLElements(
+      this.getEditorElement(
+        this._Addon.EditorController.activeEditor._iframeWindow.document
+      ) as HTMLElement
+    ) as HTMLElement[];
+    const charLength = (c) => {
+      if (/^[\u0000-\u00ffA-Za-z1-9]+$/.test(c.charAt(0))) {
+        return 1;
+      } else {
+        return 2;
+      }
+    };
+    const shorten = (str: string, threshold: number) => {
+      let res = "";
+      let len = 0;
+      for (const c of str) {
+        const clen = charLength(c);
+        if (len + clen > threshold) {
+          break;
+        }
+        res += c;
+        len += clen;
+      }
+      if (str.length > res.length) {
+        res = res.slice(0, res.length - 3) + "...";
+      }
+      return res;
+    };
 
-    const copyLinkId = "menupopup-copylink";
-    if (!instance._popup.querySelector(`#${copyLinkId}`)) {
-      const copyLinkMenu =
-        instance._popup.ownerDocument.createElement("menuitem");
-      copyLinkMenu.id = copyLinkId;
-      copyLinkMenu.setAttribute("label", "Copy Note Link");
-      copyLinkMenu.addEventListener("command", (e) => {
-        const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
-        const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
-          noteItem.getNoteTitle().trim()
-            ? noteItem.getNoteTitle().trim()
-            : linkText
-        }</a></p>`;
+    const elementOptions: XULElementOptions = {
+      tag: "fragment",
+      subElementOptions: [
+        {
+          tag: "menuseparator",
+          id: "menupopup-betternotessplitter",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-copylink",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", "Copy Note Link"]],
+          listeners: [
+            [
+              "command",
+              (e) => {
+                const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
+                const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                  noteItem.getNoteTitle().trim()
+                    ? noteItem.getNoteTitle().trim()
+                    : linkText
+                }</a></p>`;
 
-        new CopyHelper()
-          .addText(linkText, "text/unicode")
-          .addText(linkHTML, "text/html")
-          .copy();
-        this._Addon.ZoteroViews.showProgressWindow(
-          "Better Notes",
-          "Note Link Copied"
-        );
-      });
-      instance._popup.append(copyLinkMenu);
-    }
+                new CopyHelper()
+                  .addText(linkText, "text/unicode")
+                  .addText(linkHTML, "text/html")
+                  .copy();
+                this._Addon.ZoteroViews.showProgressWindow(
+                  "Better Notes",
+                  "Note Link Copied"
+                );
+              },
+              undefined,
+            ],
+          ],
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-copylinkline",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", `Copy Note Link of Line ${lineIndex + 1}`]],
+          listeners: [
+            [
+              "command",
+              (e) => {
+                const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
+                  withLine: true,
+                });
+                const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                  noteItem.getNoteTitle().trim()
+                    ? noteItem.getNoteTitle().trim()
+                    : linkText
+                }</a></p>`;
+                new CopyHelper()
+                  .addText(linkText, "text/unicode")
+                  .addText(linkHTML, "text/html")
+                  .copy();
+                this._Addon.ZoteroViews.showProgressWindow(
+                  "Better Notes",
+                  `Note Link of Line ${lineIndex + 1} Copied`
+                );
+              },
+              undefined,
+            ],
+          ],
+        },
+        {
+          tag: "menu",
+          id: "menupopup-insertTextTemplateMenu",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", "Insert Template (Text)"]],
+          subElementOptions: [
+            {
+              tag: "menupopup",
+              id: `menu_insert${instance._item.id}TextTemplatePopup`,
+              ignoreIfExists: true,
+              attributes: [
+                [
+                  "onpopupshowing",
+                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
+                ],
+              ],
+            },
+          ],
+        },
+        {
+          tag: "menu",
+          id: "menupopup-insertNoteTemplate",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", "Insert Template (Note)"]],
+          subElementOptions: [
+            {
+              tag: "menupopup",
+              id: `menu_insert${instance._item.id}NoteTemplatePopup`,
+              ignoreIfExists: true,
+              attributes: [
+                [
+                  "onpopupshowing",
+                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
+                ],
+              ],
+            },
+          ],
+        },
+        {
+          tag: "menu",
+          id: "menupopup-insertItemTemplate",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", "Insert Template (Item)"]],
+          subElementOptions: [
+            {
+              tag: "menupopup",
+              id: `menu_insert${instance._item.id}ItemTemplatePopup`,
+              ignoreIfExists: true,
+              attributes: [
+                [
+                  "onpopupshowing",
+                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
+                ],
+              ],
+            },
+          ],
+        },
+        {
+          tag: "menuseparator",
+          id: "menupopup-linepreviewsplitter",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-lineprevious",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [
+            [
+              "label",
+              `L${lineIndex + 1}:${shorten(
+                lineElements[lineIndex].innerText,
+                25
+              )}`,
+            ],
+            ["disabled", true],
+          ],
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-insertposition",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [
+            ["label", "<--- Insert Anchor"],
+            ["disabled", true],
+          ],
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-linenext",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [
+            [
+              "label",
+              lineIndex + 1 >= lineElements.length
+                ? "End of Note"
+                : `L${lineIndex + 2}:${shorten(
+                    lineElements[lineIndex + 1].innerText,
+                    25
+                  )}`,
+            ],
+            ["disabled", true],
+          ],
+        },
+      ],
+    };
 
-    const copyLinkAtLineId = "menupopup-copylinkline";
-    if (!instance._popup.querySelector(`#${copyLinkAtLineId}`)) {
-      const copyLinkAtLineMenu =
-        instance._popup.ownerDocument.createElement("menuitem");
-      copyLinkAtLineMenu.id = copyLinkAtLineId;
-      copyLinkAtLineMenu.setAttribute(
-        "label",
-        `Copy Note Link of Line ${
-          this._Addon.NoteUtils.currentLine[noteItem.id] + 1
-        }`
-      );
-      copyLinkAtLineMenu.addEventListener("command", (e) => {
-        const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
-          withLine: true,
-        });
-        const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
-          noteItem.getNoteTitle().trim()
-            ? noteItem.getNoteTitle().trim()
-            : linkText
-        }</a></p>`;
-        new CopyHelper()
-          .addText(linkText, "text/unicode")
-          .addText(linkHTML, "text/html")
-          .copy();
-        this._Addon.ZoteroViews.showProgressWindow(
-          "Better Notes",
-          `Note Link of Line ${
-            this._Addon.NoteUtils.currentLine[noteItem.id] + 1
-          } Copied`
-        );
-      });
-      instance._popup.append(copyLinkAtLineMenu);
-    }
-
-    const templateTextId = "menupopup-insertTextTemplate";
-    if (!instance._popup.querySelector(`#${templateTextId}`)) {
-      const templateTextMenu =
-        instance._popup.ownerDocument.createElement("menu");
-      templateTextMenu.id = templateTextId;
-      templateTextMenu.setAttribute("label", "Insert Template (Text)");
-      const templateTextMenuPopup =
-        instance._popup.ownerDocument.createElement("menupopup");
-      templateTextMenuPopup.id = `menu_insert${instance._item.id}TextTemplatePopup`;
-      templateTextMenuPopup.setAttribute(
-        "onpopupshowing",
-        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`
-      );
-      templateTextMenu.append(templateTextMenuPopup);
-      instance._popup.append(templateTextMenu);
-    }
-
-    const templateNoteId = "menupopup-insertNoteTemplate";
-    if (!instance._popup.querySelector(`#${templateNoteId}`)) {
-      const templateNoteMenu =
-        instance._popup.ownerDocument.createElement("menu");
-      templateNoteMenu.id = templateNoteId;
-      templateNoteMenu.setAttribute("label", "Insert Template (Note)");
-      const templateNoteMenuPopup =
-        instance._popup.ownerDocument.createElement("menupopup");
-      templateNoteMenuPopup.id = `menu_insert${instance._item.id}NoteTemplatePopup`;
-      templateNoteMenuPopup.setAttribute(
-        "onpopupshowing",
-        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, ${instance._item.id});`
-      );
-      templateNoteMenu.append(templateNoteMenuPopup);
-      instance._popup.append(templateNoteMenu);
-    }
-
-    const templateItemId = "menupopup-insertItemTemplate";
-    if (!instance._popup.querySelector(`#${templateItemId}`)) {
-      const templateItemMenu =
-        instance._popup.ownerDocument.createElement("menu");
-      templateItemMenu.id = templateItemId;
-      templateItemMenu.setAttribute("label", "Insert Template (Item)");
-      const templateItemMenuPopup =
-        instance._popup.ownerDocument.createElement("menupopup");
-      templateItemMenuPopup.id = `menu_insert${instance._item.id}ItemTemplatePopup`;
-      templateItemMenuPopup.setAttribute(
-        "onpopupshowing",
-        `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, ${instance._item.id});`
-      );
-      templateItemMenu.append(templateItemMenuPopup);
-      instance._popup.append(templateItemMenu);
+    const fragment = this._Addon.ZoteroViews.createXULElement(
+      instance._popup.ownerDocument,
+      elementOptions
+    );
+    if (fragment) {
+      instance._popup.append(fragment);
     }
   }
 

@@ -359,6 +359,65 @@ class ZoteroViews extends AddonBase {
     }
     progressWindow.progress._itemText.innerHTML = context;
   }
+
+  public createXULElement(doc: Document, options: XULElementOptions) {
+    const createElement: () => XUL.Element =
+      options.tag === "fragment"
+        ? () => doc.createDocumentFragment()
+        : Zotero.platformMajorVersion <= 60
+        ? () =>
+            doc.createElementNS(
+              "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+              options.tag
+            )
+        : // @ts-ignore
+          () => doc.createXULElement(options.tag);
+    if (
+      options.id &&
+      (options.checkExistanceParent
+        ? options.checkExistanceParent
+        : doc
+      ).querySelector(`#${options.id}`)
+    ) {
+      if (options.ignoreIfExists) {
+        return undefined;
+      }
+      if (options.removeIfExists) {
+        doc.querySelector(`#${options.id}`).remove();
+      }
+    }
+    const element = createElement();
+    if (options.id) {
+      element.id = options.id;
+    }
+    if (options.styles?.length) {
+      options.styles.forEach(([k, v]) => {
+        element.style[k] = v;
+      });
+    }
+    if (options.directAttributes?.length) {
+      options.directAttributes.forEach(([k, v]) => {
+        element[k] = v;
+      });
+    }
+    if (options.attributes?.length) {
+      options.attributes.forEach(([k, v]) => {
+        element.setAttribute(k, v);
+      });
+    }
+    if (options.listeners?.length) {
+      options.listeners.forEach(([type, cbk, option]) => {
+        element.addEventListener(type, cbk, option);
+      });
+    }
+    if (options.subElementOptions?.length) {
+      const subElements = options.subElementOptions
+        .map((options) => this.createXULElement(doc, options))
+        .filter((e) => e);
+      element.append(...subElements);
+    }
+    return element;
+  }
 }
 
 export default ZoteroViews;
