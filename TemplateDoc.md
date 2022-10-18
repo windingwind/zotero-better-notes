@@ -22,7 +22,7 @@ code;
 | ---------- | --------------------------------- |
 | beforeloop | before entering the loop of items |
 | default    | loop of items                     |
-| beforeloop | after leaving the loop of items   |
+| afterloop  | after leaving the loop of items   |
 
 In other type of templates, the default stage is called.
 
