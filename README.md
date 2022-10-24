@@ -42,9 +42,7 @@ And the linked sub-notes will also be updated automatically!
 
 ## Note Enhancements
 
-- `LaTex` view  
-   <img src="./image/README/latex.gif" width="400px"></img>  
-  For multiline math, please use `shift+enter` to change line.
+- Outline
 
 - Annotation2Note  
    <img src="./image/README/markdowncomment.png" width="400px"></img>  
@@ -53,8 +51,11 @@ And the linked sub-notes will also be updated automatically!
 - Heading mark  
   <img src="./image/README/headingmark.png" width="400px"></img>
 
-- Cite Items
-- Image resizing(comming soon)
+- Linked Notes Preview
+
+- Cite Items(`"` button)
+
+- Image resizing(right click on images)
 
 # Quick Start Guide
 
