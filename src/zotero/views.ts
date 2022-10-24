@@ -386,6 +386,9 @@ class ZoteroViews extends AddonBase {
         doc.querySelector(`#${options.id}`).remove();
       }
     }
+    if (options.customCheck && !options.customCheck()) {
+      return undefined;
+    }
     const element = createElement();
     if (options.id) {
       element.id = options.id;

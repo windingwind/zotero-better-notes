@@ -19,5 +19,6 @@ declare interface XULElementOptions {
   checkExistanceParent?: HTMLElement;
   ignoreIfExists?: boolean;
   removeIfExists?: boolean;
+  customCheck?: () => boolean;
   subElementOptions?: Array<XULElementOptions>;
 }

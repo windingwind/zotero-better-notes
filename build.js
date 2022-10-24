@@ -112,6 +112,36 @@ async function main() {
     } s.`
   );
 
+  await esbuild
+    .build({
+      entryPoints: ["src/editor/editorScript.ts"],
+      bundle: true,
+      outfile: path.join(buildDir, "temp/editorScript.js"),
+      // minify: true,
+      target: ["firefox60"],
+    })
+    .catch(() => process.exit(1));
+
+  const optionsScript = {
+    files: [path.join(buildDir, "addon/chrome/content/scripts/index.js")],
+    from: [/__placeholder:editorScript.js__/g],
+    to: [
+      fs
+        .readFileSync(path.join(buildDir, "temp/editorScript.js"))
+        .toString()
+        .replace(/\\/g, "\\\\"),
+    ],
+    countMatches: true,
+  };
+
+  _ = replace.sync(optionsScript);
+  console.log(
+    "[Build] Run replace in ",
+    _.filter((f) => f.hasChanged).map(
+      (f) => `${f.file} : ${f.numReplacements} / ${f.numMatches}`
+    )
+  );
+
   const optionsAddon = {
     files: [
       path.join(buildDir, "**/*.rdf"),

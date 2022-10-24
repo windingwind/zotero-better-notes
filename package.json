@@ -32,6 +32,7 @@
     "compressing": "^1.5.1",
     "crypto-js": "^4.1.1",
     "esbuild": "^0.14.34",
+    "prosemirror-transform": "^1.7.0",
     "replace-in-file": "^6.3.2",
     "seedrandom": "^3.0.5",
     "tree-model": "^1.0.7",

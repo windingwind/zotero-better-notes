@@ -324,57 +324,7 @@ class EditorViews extends AddonBase {
       _window.document.body.append(style);
     }
 
-    if (!_window.document.getElementById("betternotes-script")) {
-      const messageScript = _window.document.createElement("script");
-      messageScript.id = "betternotes-script";
-      messageScript.innerHTML = `
-          window.addEventListener('message', async (e)=>{
-            if(e.data.type === "exportPDF"){
-              console.log("exportPDF");
-              const container = document.getElementById("editor-container");
-              container.style.display = "none";
-
-              const fullPageStyle = document.createElement("style");
-              fullPageStyle.innerHTML =
-                "@page { margin: 0; } @media print{ body { height : auto; -webkit-print-color-adjust: exact; color-adjust: exact; }}";
-              document.body.append(fullPageStyle);
-
-              let t = 0;
-              let imageFlag = false;
-              while(!imageFlag && t < 500){
-                await new Promise(function (resolve) {
-                  setTimeout(resolve, 10);
-                });
-                imageFlag = !Array.prototype.find.call(document.querySelectorAll('img'), e=>(!e.getAttribute('src') || e.style.display === 'none'));
-                t += 1;
-              }
-
-              const editNode = document.querySelector(".primary-editor");
-              const printNode = editNode.cloneNode(true);
-              printNode.style.padding = "20px";
-              document.body.append(printNode);
-
-              let printFlag = false;
-              window.onafterprint = (e) => {
-                console.log('Print Dialog Closed..');
-                printFlag = true;
-                document.title = "Printed";
-              };
-              window.onmouseover = (e) => {
-                if (printFlag) {
-                  document.title = "Printed";
-                  printNode.remove();
-                  container.style.removeProperty('display');
-                }
-              };
-              document.title = printNode.firstChild.innerText;
-              console.log(document.title);
-              window.print();
-            }
-          }, false)
-        `;
-      _window.document.head.append(messageScript);
-    }
+    this._Addon.EditorController.injectScripts(_window);
 
     const moreDropdown: HTMLElement = Array.prototype.filter.call(
       _window.document.querySelectorAll(".more-dropdown"),
@@ -898,6 +848,13 @@ class EditorViews extends AddonBase {
       return res;
     };
 
+    const checkImageSelected = () => {
+      return (
+        (instance._iframeWindow as any).wrappedJSObject._currentEditorInstance
+          ._editorCore.view.state.selection.node?.type?.name === "image"
+      );
+    };
+
     const elementOptions: XULElementOptions = {
       tag: "fragment",
       subElementOptions: [
@@ -905,6 +862,43 @@ class EditorViews extends AddonBase {
           tag: "menuseparator",
           id: "menupopup-betternotessplitter",
           checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+        },
+        {
+          tag: "menuitem",
+          id: "menupopup-resizeImage",
+          checkExistanceParent: instance._popup,
+          ignoreIfExists: true,
+          attributes: [["label", "Resize Image"]],
+          customCheck: checkImageSelected,
+          listeners: [
+            [
+              "command",
+              (e) => {
+                const newWidth = parseFloat(
+                  prompt(
+                    "Enter new width (px):",
+                    (instance._iframeWindow as any).wrappedJSObject
+                      ._currentEditorInstance._editorCore.view.state.selection
+                      .node?.attrs?.width
+                  )
+                );
+                if (newWidth && newWidth > 10) {
+                  instance._iframeWindow.postMessage(
+                    { type: "resizeImage", width: newWidth },
+                    "*"
+                  );
+                }
+              },
+              undefined,
+            ],
+          ],
+        },
+        {
+          tag: "menuseparator",
+          id: "menupopup-resizeimagesplitter",
+          checkExistanceParent: instance._popup,
+          customCheck: checkImageSelected,
           ignoreIfExists: true,
         },
         {

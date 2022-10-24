@@ -26,6 +26,15 @@ class EditorController extends AddonBase {
     await this.editorPromise.promise;
   }
 
+  injectScripts(_window: Window) {
+    if (!_window.document.getElementById("betternotes-script")) {
+      const messageScript = _window.document.createElement("script");
+      messageScript.id = "betternotes-script";
+      messageScript.innerHTML = `__placeholder:editorScript.js__`;
+      _window.document.head.append(messageScript);
+    }
+  }
+
   recordEditor(instance: Zotero.EditorInstance) {
     this.editorHistory.push({
       instance: instance,
