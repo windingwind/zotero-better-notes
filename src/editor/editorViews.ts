@@ -749,7 +749,7 @@ class EditorViews extends AddonBase {
       openInWindowButton.innerHTML = this.icons["openInNewWindow"];
       openInWindowButton.addEventListener("click", async (e) => {
         Zotero.debug("ZBN: Open link in new window");
-        ZoteroPane.openNoteWindow(targetNote.id);
+        ZoteroPane.openNoteWindow(note.id);
       });
 
       const linkPopup = _window.document.querySelector(
