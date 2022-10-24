@@ -250,10 +250,10 @@ class WorkspaceWindow extends AddonBase {
   ) {
     let _window = this.getWorkspaceWindow() as Window;
     note = note || this.getWorkspaceNote();
-    if (!_window) {
-      return;
-    }
     if (type === "preview") {
+      if (!_window) {
+        return;
+      }
       const splitter = _window.document.getElementById("preview-splitter");
       splitter && splitter.setAttribute("state", "open");
       this.previewItemID = note.id;
@@ -266,50 +266,53 @@ class WorkspaceWindow extends AddonBase {
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
-    if (!noteEditor._initialized) {
-      noteEditor._iframe.contentWindow.addEventListener(
-        "drop",
-        (event) => {
-          noteEditor._iframe.contentWindow.wrappedJSObject.droppedData =
-            Components.utils.cloneInto(
-              {
-                "text/plain": event.dataTransfer.getData("text/plain"),
-                "text/html": event.dataTransfer.getData("text/html"),
-                "zotero/annotation":
-                  event.dataTransfer.getData("zotero/annotation"),
-                "zotero/item": event.dataTransfer.getData("zotero/item"),
-              },
-              noteEditor._iframe.contentWindow
-            );
-        },
-        true
+    if (noteEditor) {
+      if (!noteEditor._initialized) {
+        noteEditor._iframe.contentWindow.addEventListener(
+          "drop",
+          (event) => {
+            noteEditor._iframe.contentWindow.wrappedJSObject.droppedData =
+              Components.utils.cloneInto(
+                {
+                  "text/plain": event.dataTransfer.getData("text/plain"),
+                  "text/html": event.dataTransfer.getData("text/html"),
+                  "zotero/annotation":
+                    event.dataTransfer.getData("zotero/annotation"),
+                  "zotero/item": event.dataTransfer.getData("zotero/item"),
+                },
+                noteEditor._iframe.contentWindow
+              );
+          },
+          true
+        );
+        noteEditor._initialized = true;
+      }
+      noteEditor.mode = "edit";
+      noteEditor.viewMode = "library";
+      noteEditor.parent = null;
+      noteEditor.item = note;
+      if (!noteEditor || !noteEditor.getCurrentInstance()) {
+        await noteEditor.initEditor();
+      }
+
+      await noteEditor._editorInstance._initPromise;
+      const position = (
+        this._Addon.EditorViews.getEditorElement(
+          noteEditor._editorInstance._iframeWindow.document
+        ).parentNode as HTMLElement
+      ).scrollTop;
+      // Due to unknown reasons, only after the second init the editor will be correctly loaded.
+      // Thus we must init it twice
+      if (this._firstInit) {
+        this._firstInit = false;
+        await noteEditor.initEditor();
+      }
+      this._Addon.EditorViews.scrollToPosition(
+        noteEditor._editorInstance,
+        position
       );
-      noteEditor._initialized = true;
-    }
-    noteEditor.mode = "edit";
-    noteEditor.viewMode = "library";
-    noteEditor.parent = null;
-    noteEditor.item = note;
-    if (!noteEditor || !noteEditor.getCurrentInstance()) {
-      await noteEditor.initEditor();
     }
 
-    await noteEditor._editorInstance._initPromise;
-    const position = (
-      this._Addon.EditorViews.getEditorElement(
-        noteEditor._editorInstance._iframeWindow.document
-      ).parentNode as HTMLElement
-    ).scrollTop;
-    // Due to unknown reasons, only after the second init the editor will be correctly loaded.
-    // Thus we must init it twice
-    if (this._firstInit) {
-      this._firstInit = false;
-      await noteEditor.initEditor();
-    }
-    this._Addon.EditorViews.scrollToPosition(
-      noteEditor._editorInstance,
-      position
-    );
     if (type === "main") {
       this._Addon.WorkspaceOutline.updateOutline();
       this._Addon.ZoteroViews.updateWordCount();
