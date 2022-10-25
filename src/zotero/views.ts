@@ -148,7 +148,8 @@ class ZoteroViews extends AddonBase {
   public updateTemplateMenu(
     type: "Note" | "Item" | "Text",
     _document: Document,
-    prefix: string = ""
+    prefix: string = "",
+    useMainNote: boolean = true
   ) {
     _document =
       _document || this._Addon.WorkspaceMenu.getWorkspaceMenuWindow().document;
@@ -193,7 +194,7 @@ class ZoteroViews extends AddonBase {
         Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({
           type: "insert${type}UsingTemplate",
           content: {
-            params: { templateName: "${template.name}", targetItemId: ${targetItemId} },
+            params: { templateName: "${template.name}", targetItemId: ${targetItemId}, useMainNote: ${useMainNote} },
           },
         });`
       );

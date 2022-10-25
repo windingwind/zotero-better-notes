@@ -976,7 +976,7 @@ class EditorViews extends AddonBase {
               attributes: [
                 [
                   "onpopupshowing",
-                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
+                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
                 ],
               ],
             },
@@ -996,7 +996,7 @@ class EditorViews extends AddonBase {
               attributes: [
                 [
                   "onpopupshowing",
-                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
+                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
                 ],
               ],
             },

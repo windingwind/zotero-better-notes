@@ -786,7 +786,7 @@ class ZoteroEvents extends AddonBase {
     } else if (message.type === "insertTextUsingTemplate") {
       /*
         message.content = {
-          params: {templateName, targetItemId}
+          params: {templateName, targetItemId, useMainNote}
         }
       */
       const newLines: string[] = [];
@@ -833,7 +833,7 @@ class ZoteroEvents extends AddonBase {
     } else if (message.type === "insertItemUsingTemplate") {
       /*
         message.content = {
-          params: {templateName}
+          params: {templateName, targetItemId, useMainNote}
         }
       */
       const targetItem = Zotero.Items.get(
@@ -860,11 +860,12 @@ class ZoteroEvents extends AddonBase {
         toCopyImage.push(noteItem);
       };
 
-      const editor =
-        await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance(
-          "main",
-          false
-        );
+      const editor = message.content.params.useMainNote
+        ? await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance(
+            "main",
+            false
+          )
+        : this._Addon.EditorController.activeEditor;
 
       const sharedObj = {};
 
