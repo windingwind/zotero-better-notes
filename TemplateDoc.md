@@ -6,7 +6,7 @@ Use `Ctrl+F` to look up what you need and make your own template!
 
 ## Stages
 
-Some type of templates(Item, Note) support stages.
+Some type of templates(Item) support stages.
 
 Code wrapped inside the stage will be called at a specific time.
 
@@ -60,9 +60,7 @@ In other type of templates, the default stage is called.
 
 ### Note
 
-> beforeloop stage: notes, copyNoteImage, editor, sharedObj(for temporary variables, shared by all stages)  
-> default stage: noteItem, topItem, link, copyNoteImage, editor, sharedObj  
-> afterloop stage: notes, copyNoteImage, editor, sharedObj  
+> Removed after v0.7.15+
 
 ## Formats
 

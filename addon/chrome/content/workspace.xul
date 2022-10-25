@@ -72,9 +72,6 @@
                 <menu id="menu_insertTextTemplate" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
                     <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text');" />
                 </menu>
-                <menu id="menu_insertNoteTemplate" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
-                    <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note');" />
-                </menu>
                 <menu id="menu_insertItemTemplate" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
                     <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item');" />
                 </menu>

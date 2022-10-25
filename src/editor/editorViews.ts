@@ -984,26 +984,6 @@ class EditorViews extends AddonBase {
         },
         {
           tag: "menu",
-          id: "menupopup-insertNoteTemplate",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: [["label", "Insert Template (Note)"]],
-          subElementOptions: [
-            {
-              tag: "menupopup",
-              id: `menu_insert${instance._item.id}NoteTemplatePopup`,
-              ignoreIfExists: true,
-              attributes: [
-                [
-                  "onpopupshowing",
-                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}');`,
-                ],
-              ],
-            },
-          ],
-        },
-        {
-          tag: "menu",
           id: "menupopup-insertItemTemplate",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,

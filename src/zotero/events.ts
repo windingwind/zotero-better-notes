@@ -841,9 +841,7 @@ class ZoteroEvents extends AddonBase {
       ) as Zotero.Item;
 
       const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
-      const items = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
-        (item: Zotero.Item) => item.isRegularItem()
-      );
+      const items = Zotero.Items.get(ids) as Zotero.Item[];
       if (items.length === 0) {
         return;
       }
@@ -890,9 +888,9 @@ class ZoteroEvents extends AddonBase {
             topItem, itemNotes, copyNoteImage, editor
           */
 
-        const itemNotes: Zotero.Item[] = Zotero.Items.get(
-          topItem.getNotes()
-        ) as Zotero.Item[];
+        const itemNotes: Zotero.Item[] = topItem.isNote()
+          ? []
+          : (Zotero.Items.get(topItem.getNotes()) as Zotero.Item[]);
 
         renderredTemplate =
           await this._Addon.TemplateController.renderTemplateAsync(
@@ -914,132 +912,6 @@ class ZoteroEvents extends AddonBase {
           message.content.params.templateName,
           "items, copyNoteImage, editor, sharedObj",
           [items, copyNoteImage, editor, sharedObj],
-          true,
-          "afterloop"
-        );
-
-      if (renderredTemplate) {
-        newLines.push(renderredTemplate);
-        newLines.push("<p> </p>");
-      }
-
-      if (newLines) {
-        const html = newLines.join("\n");
-        if (!targetItem) {
-          console.log(html);
-
-          new CopyHelper()
-            .addText(html, "text/html")
-            .addText(this._Addon.NoteParse.parseHTMLToMD(html), "text/unicode")
-            .copy();
-          progressWindow.changeHeadline("Template Copied");
-        } else {
-          const forceMetadata = toCopyImage.length > 0;
-          console.log(toCopyImage);
-          await this._Addon.NoteUtils.addLineToNote(
-            targetItem,
-            html,
-            -1,
-            forceMetadata
-          );
-          await Zotero.DB.executeTransaction(async () => {
-            for (const subNote of toCopyImage) {
-              await Zotero.Notes.copyEmbeddedImages(subNote, targetItem);
-            }
-          });
-          progressWindow.changeHeadline("Running Template Finished");
-        }
-      } else {
-        progressWindow.changeHeadline("Running Template Failed");
-      }
-      progressWindow.startCloseTimer(5000);
-    } else if (message.type === "insertNoteUsingTemplate") {
-      /*
-        message.content = {
-          params: {templateName}
-        }
-      */
-      const targetItem = Zotero.Items.get(
-        message.content.params.targetItemId
-      ) as Zotero.Item;
-      const ids = await this._Addon.ZoteroViews.openSelectItemsWindow();
-      const notes = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
-        (item: Zotero.Item) => item.isNote()
-      );
-      if (notes.length === 0) {
-        return;
-      }
-      const progressWindow = this._Addon.ZoteroViews.showProgressWindow(
-        "Running Template",
-        message.content.params.templateName,
-        "default",
-        -1
-      );
-      const newLines: string[] = [];
-      newLines.push("<p> </p>");
-
-      const toCopyImage: Zotero.Item[] = [];
-
-      const copyNoteImage = (noteItem: Zotero.Item) => {
-        toCopyImage.push(noteItem);
-      };
-
-      const editor =
-        await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance(
-          "main",
-          false
-        );
-      const sharedObj = {};
-
-      let renderredTemplate =
-        await this._Addon.TemplateController.renderTemplateAsync(
-          message.content.params.templateName,
-          "notes, copyNoteImage, editor, sharedObj",
-          [notes, copyNoteImage, editor, sharedObj],
-          true,
-          "beforeloop"
-        );
-
-      if (renderredTemplate) {
-        newLines.push(renderredTemplate);
-        newLines.push("<p> </p>");
-      }
-
-      for (const noteItem of notes) {
-        /*
-          Available variables:
-          noteItem, topItem, link, copyNoteImage, editor
-        */
-        let topItem = noteItem.parentItem;
-        while (topItem && !topItem.isRegularItem()) {
-          topItem = topItem.parentItem;
-        }
-        const linkURL = this._Addon.NoteUtils.getNoteLink(noteItem);
-        const linkText = noteItem.getNoteTitle().trim();
-        const link = `<p><a href="${linkURL}">${
-          linkText ? linkText : linkURL
-        }</a></p>`;
-
-        renderredTemplate =
-          await this._Addon.TemplateController.renderTemplateAsync(
-            message.content.params.templateName,
-            "noteItem, topItem, link, copyNoteImage, editor, sharedObj",
-            [noteItem, topItem, link, copyNoteImage, editor, sharedObj],
-            true,
-            "default"
-          );
-
-        if (renderredTemplate) {
-          newLines.push(renderredTemplate);
-          newLines.push("<p> </p>");
-        }
-      }
-
-      renderredTemplate =
-        await this._Addon.TemplateController.renderTemplateAsync(
-          message.content.params.templateName,
-          "notes, copyNoteImage, editor, sharedObj",
-          [notes, copyNoteImage, editor, sharedObj],
           true,
           "afterloop"
         );

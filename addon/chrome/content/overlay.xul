@@ -65,9 +65,6 @@
         <menu id="menu_insertTextTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
             <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text');" />
         </menu>
-        <menu id="menu_insertNoteTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertNoteTemplate;">
-            <menupopup id="menu_insertNoteTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Note');" />
-        </menu>
         <menu id="menu_insertItemTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
             <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item');" />
         </menu>

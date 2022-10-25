@@ -23,7 +23,6 @@ Copy The Name & template text to a new template and save it!
 These templates can have different names. The keyword must be incluede in the template name.
 
 - Text: indicate it's a normal template
-- Note: indicate it's a note template. Must select notes before inserting
 - Item: indicate it's an item template. Must select items before inserting
 
 ### System Templates
@@ -40,21 +39,3 @@ Only the template with specific name will be called.
 ## Template Examples
 
 Welcome to share & contribute your template! See [Templates From Community](https://github.com/windingwind/zotero-better-notes/issues/85) for more templates.
-
-### [Note] with meta-data
-
-```js
-<p><span style="background-color: #ffd40080">Note: ${link}</span></p>
-${topItem?`<p>Title: ${topItem.getField('title')}</p>
-<p>Author: ${topItem.getField('firstCreator')}</p>
-<p>Date: ${topItem.getField('date')}</p>`:''}
-```
-
-### [Item] meta-data
-
-```js
-<h2>Item Meta Data:</h2>
-<p>Title: ${topItem.getField('title')}</p>
-<p>Author: ${topItem.getField('firstCreator')}</p>
-<p>Date: ${topItem.getField('date')}</p>
-```
