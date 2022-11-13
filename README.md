@@ -4,60 +4,9 @@
 
 Everything about note management. All in Zotero.
 
-[Better Notes Handbook(Chinese, provide translation)](https://zotero.yuque.com/books/share/f3fe159f-956c-4f10-ade3-c87559cacb60/biigg4) | [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+[Better Notes Handbook(中文 Chinese, provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
 
-## Easy to Use
-
-New to note-taking? Install and start now!
-
-Already an Obsidian/Logseq/... user? Archive annotations with double chain and export with just one click!
-
-It works out of the box. No complicated and annoying configuration!
-
-## Bi-directional Link Support
-
-Bi-directional link note(双链笔记) is supported! Link your notes inside Zotero with just one click.
-
-Export with its' linked sub-notes to Obsidian:
-![Obsidian example](./image/README/markdown-ob.png)
-
-## Templates
-
-Use customized templates to import data from items/notes!
-![template](./image/README/template.gif)
-
-[Learn more about template](./Template.md)
-
-See what templates can do and find templates contributed by the community here: [Template Market](https://github.com/windingwind/zotero-better-notes/issues/85)
-
-## Auto-Sync to Files
-
-Keep the MarkDown version of your notes in sync with the latest changes inside Zotero is extremely easy now!
-
-Just click 'Auto Sync to Export Path' the first time you export your note. Do not require any third-party tools!
-
-And the linked sub-notes will also be updated automatically!
-
-![template](./image/README/sync.png)
-
-## Note Enhancements
-
-- Outline
-
-- Annotation2Note  
-   <img src="./image/README/markdowncomment.png" width="400px"></img>  
-  Create a note from annotation by just on click. `markdown` is supported!
-
-- Heading mark  
-  <img src="./image/README/headingmark.png" width="400px"></img>
-
-- Linked Notes Preview
-
-- Cite Items(`"` button)
-
-- Image resizing(right click on images)
-
-# Quick Start Guide
+Out-dated docs: [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
 
 ## Install
 
@@ -69,21 +18,82 @@ And the linked sub-notes will also be updated automatically!
 - Restart Zotero, by clicking `restart now` in the extensions list where the
   Zotero PDF Translate plugin is now listed.
 
-## Usage
+## Easy to Use
 
-### All in Zotero: Best Note Practice
+> See [Handbook:Quick Start](https://zotero.yuque.com/staff-gkhviy/better-notes/gw5d7v) for more details.
 
-https://user-images.githubusercontent.com/33902321/167992626-34adfd97-c2df-48b0-b9ff-e245bd792d5c.mp4
+New to note-taking? Install and start now!
 
-For new users, a **User Guide** will help you get started quickly and create a user guide note for you. Use it as a playground and explore your own workflow!
+Already an Obsidian/Logseq/... user? Archive annotations with double chain and export with just one click!
 
-### Important Changes
+It works out of the box. No complicated and annoying configuration!
 
-- Since v0.2.0, most of the workspace bottom-left buttons are moved to menu bar.
-- Since v0.5.0, workspace will open as a Zotero tab by default. `Menu -> File -> Open in New Window` or press `shift` while clicking the Open Workspace button to use the standalone mode.
+## Note Workspace
 
-Documentation:  
-[User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+> See [Handbook:Workspace](https://zotero.yuque.com/staff-gkhviy/better-notes/yul2qm) for more details.
+
+The workspace allows you to focus on the note, as shown in the teaser on top of the README.
+
+- Note outline(tree view, mindmap, and bubble map)
+- Note links Preview
+
+## Bi-directional Link Support
+
+> See [Handbook:Bi-directional Link](https://zotero.yuque.com/staff-gkhviy/better-notes/yxpiew) for more details.
+
+Bi-directional link note(双链笔记) is supported! Link your notes inside Zotero with just one click.
+
+Export with its' linked sub-notes to Obsidian:
+![Obsidian example](./image/README/markdown-ob.png)
+
+## Note Templates
+
+> See [Handbook:Note Templates](https://zotero.yuque.com/staff-gkhviy/better-notes/un54wc) for more details.
+
+Use customized templates to import data from items/notes!
+![template](./image/README/template.gif)
+
+[Learn more about template](./Template.md)
+
+See what templates can do and find templates contributed by the community here: [Note Templates from Community](https://github.com/windingwind/zotero-better-notes/issues/85)
+
+## Export
+
+> See [Handbook:Export](https://zotero.yuque.com/staff-gkhviy/better-notes/nxlngg) for more details.
+
+- To new note in Zotero
+- To MarkDown file(embed or link, with images)
+- To MS Word document(.docx)
+- To PDF document(.pdf)
+
+## Syncing: Note->MarkDown
+
+> See [Handbook:Sycn](https://zotero.yuque.com/staff-gkhviy/better-notes/aid2c3) for more details.
+
+> We are planning to have a two-path sycning for note<->MarkDown. Discuss here: https://github.com/windingwind/zotero-better-notes/issues/147
+
+Keep the MarkDown version of your notes in sync with the latest changes inside Zotero is extremely easy now.
+
+Just click 'Auto Sync to Export Path' the first time you export your note. Do not require any third-party tools!
+
+![template](./image/README/sync.png)
+
+## Other Features
+
+> See [Handbook:Other Features](https://zotero.yuque.com/staff-gkhviy/better-notes/sh4v2y) for more details.
+
+- Annotation2Note  
+   <img src="./image/README/markdowncomment.png" width="400px"></img>  
+  Create a note from annotation by just on click. `markdown` is supported!
+
+- Heading mark  
+  <img src="./image/README/headingmark.png" width="400px"></img>
+
+- Cite Items(`"` button)
+
+- Image resizing(right click on images)
+
+- ...
 
 ## Development & Contributing
 
