@@ -15,8 +15,7 @@ Out-dated docs: [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./User
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
 - Browse to where you downloaded the `.xpi` file and select it.
-- Restart Zotero, by clicking `restart now` in the extensions list where the
-  Zotero PDF Translate plugin is now listed.
+- Restart Zotero, by clicking `restart now` in the extensions list where the plugin is now listed.
 
 ## Easy to Use
 
@@ -41,7 +40,7 @@ The workspace allows you to focus on the note, as shown in the teaser on top of 
 
 > See [Handbook:Bi-directional Link](https://zotero.yuque.com/staff-gkhviy/better-notes/yxpiew) for more details.
 
-Bi-directional link note(双链笔记) is supported! Link your notes inside Zotero with just one click.
+The bi-directional link note(双链笔记) is supported. Link your notes inside Zotero with just one click.
 
 Export with its' linked sub-notes to Obsidian:
 ![Obsidian example](./image/README/markdown-ob.png)
@@ -70,9 +69,9 @@ See what templates can do and find templates contributed by the community here: 
 
 > See [Handbook:Sycn](https://zotero.yuque.com/staff-gkhviy/better-notes/aid2c3) for more details.
 
-> We are planning to have a two-path sycning for note<->MarkDown. Discuss here: https://github.com/windingwind/zotero-better-notes/issues/147
+> We are planning to have a two-path syncing for note<->MarkDown. Discuss here: https://github.com/windingwind/zotero-better-notes/issues/147
 
-Keep the MarkDown version of your notes in sync with the latest changes inside Zotero is extremely easy now.
+Keeping the MarkDown version of your notes in sync with the latest changes inside Zotero is extremely easy now.
 
 Just click 'Auto Sync to Export Path' the first time you export your note. Do not require any third-party tools!
 
@@ -97,7 +96,7 @@ Just click 'Auto Sync to Export Path' the first time you export your note. Do no
 
 ## Development & Contributing
 
-This add-on is built on the Zotero Addon Template of [zotero-pdf-translate](https://github.com/windingwind/zotero-pdf-translate).
+This addon is built based on the [Zotero Addon Template](https://github.com/windingwind/zotero-addon-template).
 
 ### Build
 
@@ -109,14 +108,6 @@ npm run release
 ```
 
 Alternatively, build it directly using build.js: `npm run build`
-
-### Build Steps
-
-1. Clean `./builds`
-2. Copy `./addon` to `./builds`
-3. Esbuild to `./builds/addon/chrome/content/scripts`
-4. Replace `__buildVersion__` and `__buildTime__` in `./builds/addon`
-5. Zip the `./builds/addon` to `./builds/*.xpi`
 
 ### Debug
 
