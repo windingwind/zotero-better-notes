@@ -33,6 +33,20 @@ class EditorController extends AddonBase {
       messageScript.innerHTML = `__placeholder:editorScript.js__`;
       _window.document.head.append(messageScript);
     }
+    _window.addEventListener("BNMessage", (e: CustomEvent) => {
+      console.log("BN: note editor event", e.detail);
+      switch (e.detail.type) {
+        case "exportPDFDone":
+          this._Addon.NoteExport._pdfPrintPromise.resolve();
+          break;
+        case "exportDocxDone":
+          this._Addon.NoteExport._docxBlob = e.detail.docxBlob;
+          this._Addon.NoteExport._docxPromise.resolve();
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   recordEditor(instance: Zotero.EditorInstance) {

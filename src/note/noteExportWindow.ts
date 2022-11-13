@@ -84,13 +84,13 @@ class NoteExportWindow extends AddonBase {
         ) as XUL.Checkbox
       ).checked = exportNote;
     }
-    let exportCopy = Zotero.Prefs.get("Knowledge4Zotero.exportCopy") as boolean;
-    if (typeof exportCopy !== "undefined") {
+    let exportDocx = Zotero.Prefs.get("Knowledge4Zotero.exportDocx") as boolean;
+    if (typeof exportDocx !== "undefined") {
       (
         this._window.document.getElementById(
-          "Knowledge4Zotero-export-enablecopy"
+          "Knowledge4Zotero-export-enabledocx"
         ) as XUL.Checkbox
-      ).checked = exportCopy;
+      ).checked = exportDocx;
     }
     let exportPDF = Zotero.Prefs.get("Knowledge4Zotero.exportPDF") as boolean;
     if (typeof exportPDF !== "undefined") {
@@ -195,9 +195,9 @@ class NoteExportWindow extends AddonBase {
         "Knowledge4Zotero-export-enablenote"
       ) as XUL.Checkbox
     ).checked as boolean;
-    let exportCopy = (
+    let exportDocx = (
       this._window.document.getElementById(
-        "Knowledge4Zotero-export-enablecopy"
+        "Knowledge4Zotero-export-enabledocx"
       ) as XUL.Checkbox
     ).checked as boolean;
     let exportPDF = (
@@ -212,7 +212,7 @@ class NoteExportWindow extends AddonBase {
     Zotero.Prefs.set("Knowledge4Zotero.convertSquare", convertSquare);
     Zotero.Prefs.set("Knowledge4Zotero.embedLink", embedLink);
     Zotero.Prefs.set("Knowledge4Zotero.exportNote", exportNote);
-    Zotero.Prefs.set("Knowledge4Zotero.exportCopy", exportCopy);
+    Zotero.Prefs.set("Knowledge4Zotero.exportDocx", exportDocx);
     Zotero.Prefs.set("Knowledge4Zotero.exportPDF", exportPDF);
     Zotero.debug(this.io);
     Zotero.debug(this.io.dataOut);
@@ -223,7 +223,7 @@ class NoteExportWindow extends AddonBase {
       exportHighlight: exportHighlight,
       embedLink: embedLink,
       exportNote: exportNote,
-      exportCopy: exportCopy,
+      exportDocx: exportDocx,
       exportPDF: exportPDF,
     };
   }

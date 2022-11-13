@@ -33,7 +33,6 @@ class EditorViews extends AddonBase {
     const isMainNote = noteItem.id === mainNote.id;
     const isPreviewNote =
       noteItem.id === this._Addon.WorkspaceWindow.previewItemID;
-    const isPrint = this._Addon.NoteExport._pdfNoteId === noteItem.id;
 
     const _window = instance._iframeWindow;
 
@@ -284,9 +283,9 @@ class EditorViews extends AddonBase {
     );
 
     // Title style only for normal window
-    if (!isPrint) {
-      const style = _window.document.createElement("style");
-      style.innerHTML = `
+    const style = _window.document.createElement("style");
+    style.id = "bn-headings";
+    style.innerHTML = `
           .primary-editor h1::before {
             margin-left: -64px !important;
             padding-left: 40px !important;
@@ -321,8 +320,7 @@ class EditorViews extends AddonBase {
             max-width: unset
           }
         `;
-      _window.document.body.append(style);
-    }
+    _window.document.body.append(style);
 
     this._Addon.EditorController.injectScripts(_window);
 

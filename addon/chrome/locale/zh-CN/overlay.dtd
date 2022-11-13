@@ -40,16 +40,15 @@
 <!ENTITY zotero.__addonRef__.export.option.label "通用">
 <!ENTITY zotero.__addonRef__.export.link.enable.label "嵌入链接的子笔记">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
-<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown设置">
+<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "导出为MarkDown文件">
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "导出链接的子笔记为MarkDown文件">
 <!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "修改时自动同步到导出路径">
 <!ENTITY zotero.__addonRef__.export.highlight.enable.label "显示高亮">
 <!ENTITY zotero.__addonRef__.export.convertsquare.enable.label "转换方括号[]">
-<!ENTITY zotero.__addonRef__.export.richtext.label "富文本(MS Word)设置">
-<!ENTITY zotero.__addonRef__.export.copy.enable.label "导出到剪贴板">
-<!ENTITY zotero.__addonRef__.export.pdf.label "PDF设置">
-<!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF">
+<!ENTITY zotero.__addonRef__.export.document.label "文档">
+<!ENTITY zotero.__addonRef__.export.docx.enable.label "导出到Word文档">
+<!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF文档">
 
 <!ENTITY zotero.__addonRef__.sync.title "同步状态">
 <!ENTITY zotero.__addonRef__.sync.export.label "导出为...">

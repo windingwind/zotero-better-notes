@@ -40,16 +40,15 @@
 <!ENTITY zotero.__addonRef__.export.option.label "General">
 <!ENTITY zotero.__addonRef__.export.link.enable.label "Embed Linked Notes">
 <!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
-<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown Settings">
+<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown">
 <!ENTITY zotero.__addonRef__.export.file.enable.label "Export to MarkDown File">
 <!ENTITY zotero.__addonRef__.export.singlefile.enable.label "Export Linked Notes to MarkDown File">
 <!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "Auto Sync to Export Path">
 <!ENTITY zotero.__addonRef__.export.highlight.enable.label "Show Highlight">
 <!ENTITY zotero.__addonRef__.export.convertsquare.enable.label "Convert Square Brackets[]">
-<!ENTITY zotero.__addonRef__.export.richtext.label "RichText(MS Word) Settings">
-<!ENTITY zotero.__addonRef__.export.copy.enable.label "Export to clipboard">
-<!ENTITY zotero.__addonRef__.export.pdf.label "PDF Settings">
-<!ENTITY zotero.__addonRef__.export.pdf.enable.label "Export to PDF">
+<!ENTITY zotero.__addonRef__.export.document.label "Document Settings">
+<!ENTITY zotero.__addonRef__.export.docx.enable.label "Export to MS Word Document">
+<!ENTITY zotero.__addonRef__.export.pdf.enable.label "Export to PDF Document">
 
 <!ENTITY zotero.__addonRef__.sync.title "Sync Status">
 <!ENTITY zotero.__addonRef__.sync.export.label "Export to...">

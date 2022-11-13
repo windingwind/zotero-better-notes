@@ -53,17 +53,12 @@
             </rows>
         </groupbox>
         <groupbox flex="1">
-            <caption label="&zotero.__addonRef__.export.richtext.label;"></caption>
+            <caption label="&zotero.__addonRef__.export.document.label;"></caption>
             <rows flex="1">
                 <row>
-                    <checkbox id="__addonRef__-export-enablecopy" checked="false" />
-                    <label value="&zotero.__addonRef__.export.copy.enable.label;" />
+                    <checkbox id="__addonRef__-export-enabledocx" checked="false" />
+                    <label value="&zotero.__addonRef__.export.docx.enable.label;" />
                 </row>
-            </rows>
-        </groupbox>
-        <groupbox flex="1">
-            <caption label="&zotero.__addonRef__.export.pdf.label;"></caption>
-            <rows flex="1">
                 <row>
                     <checkbox id="__addonRef__-export-enablepdf" checked="false" />
                     <label value="&zotero.__addonRef__.export.pdf.enable.label;" />

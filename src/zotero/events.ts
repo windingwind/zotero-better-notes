@@ -307,7 +307,6 @@ class ZoteroEvents extends AddonBase {
         instance._knowledgeUIInitialized = false;
 
         const noteItem = instance._item;
-        const isPrint = this._Addon.NoteExport._pdfNoteId === noteItem.id;
 
         // item.getNote may not be initialized yet
         if (Zotero.ItemTypes.getID("note") !== noteItem.itemTypeID) {
@@ -326,13 +325,6 @@ class ZoteroEvents extends AddonBase {
             }
           );
           instance._knowledgeSelectionInitialized = true;
-        }
-
-        // Check if this is a window for print
-        if (isPrint) {
-          instance._iframeWindow.postMessage({ type: "exportPDF" }, "*");
-          this._Addon.NoteExport._pdfNoteId = -1;
-          return;
         }
 
         instance._popup.setAttribute(
@@ -1019,7 +1011,7 @@ class ZoteroEvents extends AddonBase {
           options.embedLink,
           options.exportFile,
           options.exportNote,
-          options.exportCopy,
+          options.exportDocx,
           options.exportPDF
         );
       }

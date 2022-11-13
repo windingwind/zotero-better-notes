@@ -1,6 +1,7 @@
-// TODO: Move this somewhere else
+// DO NOT USE BACKTICK IN THIS FILE
 const { Fragment, Slice } = require("prosemirror-model");
 const { Step, StepResult } = require("prosemirror-transform");
+import { asBlob } from "html-docx-js-typescript";
 
 class SetAttrsStep extends Step {
   // :: (number, Object | null)
@@ -69,67 +70,156 @@ window.updateImageDimensions = function (
 window.addEventListener(
   "message",
   async (e) => {
-    if (e.data.type === "exportPDF") {
-      console.log("exportPDF");
-      const container = document.getElementById(
-        "editor-container"
-      ) as HTMLElement;
-      container.style.display = "none";
-
-      const fullPageStyle = document.createElement("style");
-      fullPageStyle.innerHTML =
-        "@page { margin: 0; } @media print{ body { height : auto; -webkit-print-color-adjust: exact; color-adjust: exact; }}";
-      document.body.append(fullPageStyle);
-
-      let t = 0;
-      let imageFlag = false;
-      while (!imageFlag && t < 500) {
-        await new Promise(function (resolve) {
-          setTimeout(resolve, 10);
-        });
-        imageFlag = !Array.prototype.find.call(
-          document.querySelectorAll("img"),
-          (e) => !e.getAttribute("src") || e.style.display === "none"
-        );
-        t += 1;
-      }
-
-      const editNode = document.querySelector(".primary-editor") as HTMLElement;
-      const printNode = editNode.cloneNode(true) as HTMLElement;
-      printNode.style.padding = "20px";
-      document.body.append(printNode);
-
-      let printFlag = false;
-      window.onafterprint = (e) => {
-        console.log("Print Dialog Closed..");
-        printFlag = true;
-        document.title = "Printed";
-      };
-      window.onmouseover = (e) => {
-        if (printFlag) {
-          document.title = "Printed";
-          printNode.remove();
-          container.style.removeProperty("display");
-        }
-      };
-      document.title = (printNode?.firstChild as HTMLElement).innerText;
-      console.log(document.title);
-      window.print();
-    } else if (e.data.type === "resizeImage") {
-      console.log("resizeImage");
-      // @ts-ignore
-      window.updateImageDimensions(
-        // @ts-ignore
-        _currentEditorInstance._editorCore.view.state.selection.node.attrs
-          .nodeID,
-        e.data.width,
-        undefined,
-        // @ts-ignore
-        _currentEditorInstance._editorCore.view.state,
-        // @ts-ignore
-        _currentEditorInstance._editorCore.view.dispatch
+    console.log(e);
+    const editNode = document.querySelector(".primary-editor") as HTMLElement;
+    let t = 0;
+    let imageFlag = false;
+    while (!imageFlag && t < 500) {
+      await new Promise(function (resolve) {
+        setTimeout(resolve, 10);
+      });
+      imageFlag = !Array.prototype.find.call(
+        document.querySelectorAll("img"),
+        (e) => !e.getAttribute("src") || e.style.display === "none"
       );
+      t += 1;
+    }
+    switch (e.data.type) {
+      case "exportPDF":
+        console.log("exportPDF");
+        const container = document.getElementById(
+          "editor-container"
+        ) as HTMLElement;
+        container.style.display = "none";
+
+        const fullPageStyle = document.createElement("style");
+        fullPageStyle.innerHTML =
+          "@page { margin: 0; } @media print{ body { height : auto; -webkit-print-color-adjust: exact; color-adjust: exact; }}";
+        document.body.append(fullPageStyle);
+
+        const printNode = editNode.cloneNode(true) as HTMLElement;
+        printNode.style.padding = "20px";
+        document.body.append(printNode);
+
+        let printFlag = false;
+        window.onafterprint = (_e) => {
+          console.log("Print Dialog Closed..");
+          printFlag = true;
+          // document.title = "Printed";
+          window.dispatchEvent(
+            new CustomEvent("BNMessage", {
+              detail: {
+                type: "exportPDFDone",
+              },
+            })
+          );
+        };
+        window.onmouseover = (e) => {
+          if (printFlag) {
+            document.title = "Printed";
+            printNode.remove();
+            container.style.removeProperty("display");
+          }
+        };
+        document.title = (printNode?.firstChild as HTMLElement).innerText;
+        console.log(document.title);
+        window.print();
+        break;
+      case "exportDocx":
+        // @ts-ignore
+        const docxBlob: Blob = await window.getDocx(editNode);
+        console.log(docxBlob);
+        window.dispatchEvent(
+          new CustomEvent("BNMessage", {
+            detail: {
+              type: "exportDocxDone",
+              docxBlob: docxBlob,
+            },
+          })
+        );
+        break;
+      case "resizeImage":
+        console.log("resizeImage");
+        // @ts-ignore
+        window.updateImageDimensions(
+          // @ts-ignore
+          _currentEditorInstance._editorCore.view.state.selection.node.attrs
+            .nodeID,
+          e.data.width,
+          undefined,
+          // @ts-ignore
+          _currentEditorInstance._editorCore.view.state,
+          // @ts-ignore
+          _currentEditorInstance._editorCore.view.dispatch
+        );
+        break;
+      default:
+        break;
     }
   },
   false
 );
+
+// @ts-ignore
+window.getDocx = async (
+  dom: HTMLElement,
+  config: object,
+  { title = document.title, width = undefined } = {}
+) => {
+  if (!dom) return;
+  config = config || {};
+  let copyDom = document.createElement("span");
+  // const styleDom = document.querySelectorAll('style, link, meta')
+  const titleDom = document.createElement("title");
+  titleDom.innerText = title;
+
+  copyDom.appendChild(titleDom);
+  // Array.from(styleDom).forEach(item => {
+  //   copyDom.appendChild(item.cloneNode(true))
+  // })
+  const cloneDom = dom.cloneNode(true) as HTMLElement;
+  if (width) {
+    const domTables = cloneDom.getElementsByTagName("table");
+    if (domTables.length) {
+      for (const table of domTables) {
+        table.style.width = width + "px";
+      }
+    }
+  }
+  copyDom.appendChild(cloneDom);
+
+  const htmlTemp = copyDom.innerHTML;
+  copyDom = null;
+  const iframeDom = document.createElement("iframe");
+  const attrObj = {
+    height: 0,
+    width: 0,
+    border: 0,
+    wmode: "Opaque",
+  };
+  const styleObj = {
+    position: "absolute",
+    top: "-999px",
+    left: "-999px",
+  };
+  Object.entries(attrObj).forEach(([key, value]) => {
+    iframeDom.setAttribute(key, String(value));
+  });
+  Object.entries(styleObj).forEach(([key, value]) => {
+    iframeDom.style[key] = value;
+  });
+  document.body.insertBefore(iframeDom, document.body.children[0]);
+  const iframeWin = iframeDom.contentWindow;
+  const iframeDocs = iframeWin.document;
+  iframeDocs.write("<!doctype html>");
+  iframeDocs.write(htmlTemp);
+
+  let htmlDoc =
+    '<!DOCTYPE html>\n<html lang="en"><head><meta charset="UTF-8"></head>\n';
+  htmlDoc += iframeDocs.documentElement.innerHTML;
+  htmlDoc += "\n</html>";
+  var converted = await asBlob(htmlDoc, config);
+  console.log(converted);
+  document.body.removeChild(iframeDom);
+  return converted;
+};

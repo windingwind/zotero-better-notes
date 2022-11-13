@@ -14,12 +14,12 @@ class NoteExport extends AddonBase {
     note: Zotero.Item;
     filename: string;
   }>;
-  _pdfNoteId: number;
   _pdfPrintPromise: ZoteroPromise;
+  _docxPromise: ZoteroPromise;
+  _docxBlob: Blob;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
-    this._pdfNoteId = -1;
     this._exportFileInfo = [];
   }
 
@@ -28,10 +28,10 @@ class NoteExport extends AddonBase {
     convertNoteLinks: boolean = true,
     saveMD: boolean = true,
     saveNote: boolean = false,
-    doCopy: boolean = false,
+    saveDocx: boolean = false,
     savePDF: boolean = false
   ) {
-    if (!saveMD && !saveNote && !doCopy && !savePDF) {
+    if (!saveMD && !saveNote && !saveDocx && !savePDF) {
       return;
     }
     this._exportFileInfo = [];
@@ -57,6 +57,8 @@ class NoteExport extends AddonBase {
           await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
         }
       });
+
+      
     } else {
       newNote = note;
     }
@@ -73,35 +75,30 @@ class NoteExport extends AddonBase {
           Zotero.File.pathToFile(filename).parent.path + "/attachments";
         // Convert to unix format
         this._exportPath = this._exportPath.replace(/\\/g, "/");
-        await this._export(newNote, filename, false);
+        await this._exportMD(newNote, filename, false);
       }
     }
-    if (doCopy) {
-      if (!convertNoteLinks) {
-        Zotero_File_Interface.exportItemsToClipboard(
-          [newNote],
-          Zotero.Translators.TRANSLATOR_ID_MARKDOWN_AND_RICH_TEXT
-        );
-        this._Addon.ZoteroViews.showProgressWindow(
-          "Better Notes",
-          "Note Copied"
-        );
-      } else {
-        alert(
-          "Select all in the new note window and copy-paste to other applications."
-        );
-        ZoteroPane.openNoteWindow(newNote.id);
-        alert(
-          "Waiting for paste finish...\nImages may not be copied correctly if OK is pressed before paste."
-        );
+    if (saveDocx) {
+      const instance: Zotero.EditorInstance =
+        this._Addon.WorkspaceWindow.getEditorInstance(newNote);
+      this._docxPromise = Zotero.Promise.defer();
+      instance._iframeWindow.postMessage({ type: "exportDocx" }, "*");
+      await this._docxPromise.promise;
+      console.log(this._docxBlob);
+      const filename = await pick(
+        Zotero.getString("fileInterface.export"),
+        "save",
+        [["MS Word Document(*.docx)", "*.docx"]],
+        `${newNote.getNoteTitle()}.docx`
+      );
+      if (filename) {
+        await this._exportDocx(filename);
       }
     }
     if (savePDF) {
       console.log(newNote);
       let _w: Window;
       let t = 0;
-      this._pdfNoteId = newNote.id;
-      this._pdfPrintPromise = Zotero.Promise.defer();
       ZoteroPane.selectItem(note.id);
       do {
         ZoteroPane.openNoteWindow(newNote.id);
@@ -112,19 +109,23 @@ class NoteExport extends AddonBase {
       } while (!_w && t < 500);
       ZoteroPane.selectItem(note.id);
       _w.resizeTo(900, 650);
-      const checkPrint = () => {
-        try {
-          const editor: any = _w.document.querySelector("#zotero-note-editor");
-          const instance: Zotero.EditorInstance = editor.getCurrentInstance();
-          console.log(instance._iframeWindow.document.title);
-          if (instance._iframeWindow.document.title === "Printed") {
-            this._pdfPrintPromise.resolve();
-            return;
-          }
-        } catch (e) {}
-        setTimeout(checkPrint, 300);
-      };
-      checkPrint();
+      const editor: any = _w.document.querySelector("#zotero-note-editor");
+      t = 0;
+      while (
+        !(
+          editor.getCurrentInstance &&
+          editor.getCurrentInstance() &&
+          editor.getCurrentInstance()._knowledgeSelectionInitialized
+        ) &&
+        t < 500
+      ) {
+        t += 1;
+        await Zotero.Promise.delay(10);
+      }
+      const instance: Zotero.EditorInstance = editor.getCurrentInstance();
+      instance._iframeWindow.document.querySelector("#bn-headings")?.remove();
+      this._pdfPrintPromise = Zotero.Promise.defer();
+      instance._iframeWindow.postMessage({ type: "exportPDF" }, "*");
       await this._pdfPrintPromise.promise;
       console.log("print finish detected");
       const closeFlag = _w.confirm(
@@ -205,7 +206,7 @@ class NoteExport extends AddonBase {
         }/${await this._getFileName(note)}`;
         filename = filename.replace(/\\/g, "/");
 
-        await this._export(newNote, filename, newNote.id !== note.id);
+        await this._exportMD(newNote, filename, newNote.id !== note.id);
       }
     } else {
       // Export every linked note as a markdown file
@@ -248,7 +249,7 @@ class NoteExport extends AddonBase {
         let exportPath = `${Zotero.File.pathToFile(filepath).path}/${
           noteInfo.filename
         }`;
-        await this._export(noteInfo.note, exportPath, false);
+        await this._exportMD(noteInfo.note, exportPath, false);
         if (useSync) {
           this._Addon.SyncController.updateNoteSyncStatus(
             noteInfo.note,
@@ -305,12 +306,20 @@ class NoteExport extends AddonBase {
       let exportPath = `${decodeURIComponent(
         syncInfo.path
       )}/${decodeURIComponent(syncInfo.filename)}`;
-      await this._export(note, exportPath, false);
+      await this._exportMD(note, exportPath, false);
       this._Addon.SyncController.updateNoteSyncStatus(note);
     }
   }
 
-  private async _export(
+  private async _exportDocx(filename: string) {
+    await Zotero.File.putContentsAsync(filename, this._docxBlob);
+    this._Addon.ZoteroViews.showProgressWindow(
+      "Better Notes",
+      `Note Saved to ${filename}`
+    );
+  }
+
+  private async _exportMD(
     note: Zotero.Item,
     filename: string,
     deleteAfterExport: boolean
