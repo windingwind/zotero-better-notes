@@ -754,44 +754,44 @@ class EditorViews extends AddonBase {
         ".link-popup"
       ) as HTMLElement;
 
-      let previewContainer =
-        _window.document.getElementById("note-link-preview");
-      if (previewContainer) {
-        previewContainer.remove();
-      }
-      previewContainer = _window.document.createElementNS(
-        "http://www.w3.org/1999/xhtml",
-        "div"
-      );
-      previewContainer.id = "note-link-preview";
-      previewContainer.className = "ProseMirror primary-editor";
-      previewContainer.innerHTML =
-        await this._Addon.NoteParse.parseNoteStyleHTML(note);
-      previewContainer.addEventListener("click", (e) => {
-        this._Addon.WorkspaceWindow.setWorkspaceNote("preview", note);
-      });
       if (linkPopup) {
-        linkPopup.append(
-          insertButton,
-          updateButton,
-          openInWindowButton,
-          previewContainer
-        );
-        previewContainer.setAttribute(
-          "style",
-          `width: 98%;height: ${
-            linkPopup ? Math.min(linkPopup.offsetTop, 300) : 300
-          }px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;`
-        );
-        previewContainer
-          .querySelector("div[data-schema-version]")
-          .childNodes.forEach((node) => {
-            if ((node as Element).setAttribute) {
-              (node as Element).setAttribute("style", "margin: 0");
-            } else {
-              node.remove();
-            }
+        linkPopup.append(insertButton, updateButton, openInWindowButton);
+        if (
+          Zotero.Prefs.get("Knowledge4Zotero.linkAction.preview") as boolean
+        ) {
+          let previewContainer =
+            _window.document.getElementById("note-link-preview");
+          if (previewContainer) {
+            previewContainer.remove();
+          }
+          previewContainer = _window.document.createElementNS(
+            "http://www.w3.org/1999/xhtml",
+            "div"
+          );
+          previewContainer.id = "note-link-preview";
+          previewContainer.className = "ProseMirror primary-editor";
+          previewContainer.innerHTML =
+            await this._Addon.NoteParse.parseNoteStyleHTML(note);
+          previewContainer.addEventListener("click", (e) => {
+            this._Addon.WorkspaceWindow.setWorkspaceNote("preview", note);
           });
+          linkPopup.append(previewContainer);
+          previewContainer.setAttribute(
+            "style",
+            `width: 98%;height: ${
+              linkPopup ? Math.min(linkPopup.offsetTop, 300) : 300
+            }px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;`
+          );
+          previewContainer
+            .querySelector("div[data-schema-version]")
+            .childNodes.forEach((node) => {
+              if ((node as Element).setAttribute) {
+                (node as Element).setAttribute("style", "margin: 0");
+              } else {
+                node.remove();
+              }
+            });
+        }
       }
     } else {
       const insertLink = _window.document.querySelector("#insert-note-link");

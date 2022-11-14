@@ -20,3 +20,5 @@ pref("extensions.zotero.Knowledge4Zotero.OCRMathpix.APIKey", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.click", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.shiftclick", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.ctrlclick", "");
+pref("extensions.zotero.Knowledge4Zotero.linkAction.altclick", "");
+pref("extensions.zotero.Knowledge4Zotero.linkAction.preview", true);

@@ -619,18 +619,19 @@ class NoteUtils extends AddonBase {
     const params = this._Addon.NoteParse.parseParamsFromLink(uri);
     if (!params.libraryID) {
       return {
-        item: false,
+        item: undefined,
+        args: {},
         infoText: "Library does not exist or access denied.",
       };
     }
     Zotero.debug(params);
-    let item = await Zotero.Items.getByLibraryAndKeyAsync(
+    let item: Zotero.Item = await Zotero.Items.getByLibraryAndKeyAsync(
       params.libraryID,
       params.noteKey
     );
     if (!item || !item.isNote()) {
       return {
-        item: false,
+        item: undefined,
         args: params,
         infoText: "Note does not exist or is not a note.",
       };
@@ -721,7 +722,7 @@ class NoteUtils extends AddonBase {
           !(
             linkPopup &&
             (linkPopup.querySelector("a") as unknown as HTMLLinkElement)
-              .href === link
+              ?.href === link
           ) &&
           t < 100
         ) {

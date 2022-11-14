@@ -57,8 +57,6 @@ class NoteExport extends AddonBase {
           await Zotero.Notes.copyEmbeddedImages(subNote, newNote);
         }
       });
-
-      
     } else {
       newNote = note;
     }
