@@ -2,6 +2,7 @@
  * This file contains the life-time and UI events.
  */
 
+import TreeModel = require("tree-model");
 import Knowledge4Zotero from "../addon";
 import { CopyHelper, EditorMessage } from "../utils";
 import AddonBase from "../module";
@@ -333,9 +334,7 @@ class ZoteroEvents extends AddonBase {
                   // @ts-ignore
                   openLink: () => window.openURL(link),
                   openLinkIfNote: () => {
-                    link.includes("zotero://note")
-                      ? actions.openLink()
-                      : null;
+                    link.includes("zotero://note") ? actions.openLink() : null;
                   },
                   openLinkIfSelect: () => {
                     link.includes("zotero://select")
@@ -1089,20 +1088,13 @@ class ZoteroEvents extends AddonBase {
         return;
       }
       if (options.exportFile && options.exportSingleFile) {
-        await this._Addon.NoteExport.exportNotesToFile(
+        await this._Addon.NoteExport.exportNotesToMDFiles(
           [item],
           false,
           options.exportAutoSync
         );
       } else {
-        await this._Addon.NoteExport.exportNoteToFile(
-          item,
-          options.embedLink,
-          options.exportFile,
-          options.exportNote,
-          options.exportDocx,
-          options.exportPDF
-        );
+        await this._Addon.NoteExport.exportNote(item, options);
       }
     } else if (message.type === "exportNotes") {
       /*
@@ -1133,7 +1125,7 @@ class ZoteroEvents extends AddonBase {
         );
       } else {
         const useSingleFile = confirm("Export linked notes to markdown files?");
-        await this._Addon.NoteExport.exportNotesToFile(
+        await this._Addon.NoteExport.exportNotesToMDFiles(
           noteItems,
           !useSingleFile
         );
@@ -1148,7 +1140,7 @@ class ZoteroEvents extends AddonBase {
       if (this._Addon.SyncController.isSyncNote(note)) {
         this._Addon.SyncController.doSync([note], true, false);
       } else {
-        await this._Addon.NoteExport.exportNotesToFile([note], false, true);
+        await this._Addon.NoteExport.exportNotesToMDFiles([note], false, true);
       }
     } else if (message.type === "openAttachment") {
       /*

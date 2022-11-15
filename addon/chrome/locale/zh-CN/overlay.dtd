@@ -49,6 +49,8 @@
 <!ENTITY zotero.__addonRef__.export.document.label "文档">
 <!ENTITY zotero.__addonRef__.export.docx.enable.label "导出到Word文档">
 <!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF文档">
+<!ENTITY zotero.__addonRef__.export.mindmap.label "思维导图">
+<!ENTITY zotero.__addonRef__.export.freemind.enable.label "FreeMind">
 
 <!ENTITY zotero.__addonRef__.sync.title "同步状态">
 <!ENTITY zotero.__addonRef__.sync.export.label "导出为...">

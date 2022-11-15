@@ -64,6 +64,7 @@ See what templates can do and find templates contributed by the community here: 
 - To MarkDown file(embed or link, with images)
 - To MS Word document(.docx)
 - To PDF document(.pdf)
+- To FreeMind file(.mm)
 
 ## Syncing: Note->MarkDown
 

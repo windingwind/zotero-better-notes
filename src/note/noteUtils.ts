@@ -2,6 +2,7 @@
  * This file realizes note tools.
  */
 
+import TreeModel = require("tree-model");
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
 
@@ -738,6 +739,15 @@ class NoteUtils extends AddonBase {
         );
       }
     }
+  }
+
+  public formatPath(path: string) {
+    path = path.replace(/\\/g, "/");
+    path = OS.Path.join(...path.split(/\//));
+    if (!Zotero.isWin && path.charAt(0) !== "/") {
+      path = "/" + path;
+    }
+    return path;
   }
 }
 

@@ -46,9 +46,11 @@
 <!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "Auto Sync to Export Path">
 <!ENTITY zotero.__addonRef__.export.highlight.enable.label "Show Highlight">
 <!ENTITY zotero.__addonRef__.export.convertsquare.enable.label "Convert Square Brackets[]">
-<!ENTITY zotero.__addonRef__.export.document.label "Document Settings">
+<!ENTITY zotero.__addonRef__.export.document.label "Document">
 <!ENTITY zotero.__addonRef__.export.docx.enable.label "Export to MS Word Document">
 <!ENTITY zotero.__addonRef__.export.pdf.enable.label "Export to PDF Document">
+<!ENTITY zotero.__addonRef__.export.mindmap.label "Mind Map">
+<!ENTITY zotero.__addonRef__.export.freemind.enable.label "FreeMind">
 
 <!ENTITY zotero.__addonRef__.sync.title "Sync Status">
 <!ENTITY zotero.__addonRef__.sync.export.label "Export to...">

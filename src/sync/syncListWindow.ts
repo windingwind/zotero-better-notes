@@ -132,7 +132,7 @@ class SyncListWindow extends AddonBase {
     if (selectedItems.length === 0) {
       return;
     }
-    await this._Addon.NoteExport.exportNotesToFile(selectedItems, false, true);
+    await this._Addon.NoteExport.exportNotesToMDFiles(selectedItems, false, true);
     this.doUpdate();
   }
 

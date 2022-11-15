@@ -154,7 +154,7 @@ class SyncController extends AddonBase {
     }
     console.log(toExport);
     for (const filepath of Object.keys(toExport)) {
-      await this._Addon.NoteExport.syncNotesToFile(
+      await this._Addon.NoteExport.syncNotesToMDFiles(
         toExport[filepath],
         filepath
       );

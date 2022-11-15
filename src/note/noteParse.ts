@@ -6,7 +6,7 @@ import AddonBase from "../module";
 import { HTML2Markdown, Markdown2HTML } from "./convertMD";
 import TurndownService = require("turndown");
 const turndownPluginGfm = require("turndown-plugin-gfm");
-const TreeModel = require("tree-model");
+import TreeModel = require("tree-model");
 const asciidoctor = require("asciidoctor")();
 const seedrandom = require("seedrandom");
 
@@ -452,8 +452,36 @@ class NoteParse extends AddonBase {
     return asciidoctor.convert(str);
   }
 
+  parseNoteToFreemind(noteItem: Zotero.Item, options: {} = {}) {
+    const root = this.parseNoteTree(noteItem);
+    const html2Escape = (sHtml: string) => {
+      return sHtml.replace(/[<>&"]/g, function (c) {
+        return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c];
+      });
+    };
+    const convertNode = (node: TreeModel.Node<object>) => {
+      mmXML += `<node ID="${node.model.id}" TEXT="${html2Escape(
+        node.model.name || noteItem.getNoteTitle()
+      )}"><attribute NAME="expanded" VALUE="true" />`;
+      if (node.hasChildren()) {
+        node.children.forEach((child: TreeModel.Node<object>) => {
+          convertNode(child);
+        });
+      }
+      mmXML += "</node>";
+    };
+    let mmXML = '<map version="1.0.1">';
+    convertNode(root);
+    mmXML += "</map>";
+    console.log(mmXML);
+    return mmXML;
+  }
+
   // A realization of Markdown Note.js translator
-  async parseNoteToMD(noteItem: Zotero.Item, options: any = {}) {
+  async parseNoteToMD(
+    noteItem: Zotero.Item,
+    options: { wrapCitation?: boolean } = {}
+  ) {
     const parser = this.getDOMParser();
     const doc = parser.parseFromString(noteItem.getNote() || "", "text/html");
     Components.utils.import("resource://gre/modules/osfile.jsm");
@@ -565,12 +593,9 @@ class NoteParse extends AddonBase {
       let oldFile = String(await attachmentItem.getFilePathAsync());
       Zotero.debug(oldFile);
       let ext = oldFile.split(".").pop();
-      let newAbsPath = OS.Path.join(
-        ...`${this._Addon.NoteExport._exportPath}/${imgKey}.${ext}`.split(/\//)
+      let newAbsPath = this._Addon.NoteUtils.formatPath(
+        `${this._Addon.NoteExport._exportPath}/${imgKey}.${ext}`
       );
-      if (!Zotero.isWin && newAbsPath.charAt(0) !== "/") {
-        newAbsPath = "/" + newAbsPath;
-      }
       Zotero.debug(newAbsPath);
       let newFile = oldFile;
       try {
