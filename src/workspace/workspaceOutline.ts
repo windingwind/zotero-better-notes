@@ -23,6 +23,12 @@ class WorkspaceOutline extends AddonBase {
     if (newType > OutlineType.bubbleMap) {
       newType = OutlineType.treeView;
     }
+    this._Addon.WorkspaceWindow.workspaceWindow.document.getElementById(
+      "outline-saveImage"
+    ).hidden = newType === OutlineType.treeView;
+    this._Addon.WorkspaceWindow.workspaceWindow.document.getElementById(
+      "outline-saveFreeMind"
+    ).hidden = newType === OutlineType.treeView;
     const mindmap =
       this._Addon.WorkspaceWindow.workspaceWindow.document.getElementById(
         "mindmap-container"
@@ -74,6 +80,23 @@ class WorkspaceOutline extends AddonBase {
           true,
           false
         ),
+      },
+      "*"
+    );
+  }
+
+  public saveImage() {
+    Zotero.debug("Knowledge4Zotero: saveImage");
+    const _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
+    if (!_window) {
+      return;
+    }
+    const iframe = _window.document.getElementById(
+      "mindmapIframe"
+    ) as HTMLIFrameElement;
+    iframe.contentWindow.postMessage(
+      {
+        type: "saveSVG",
       },
       "*"
     );

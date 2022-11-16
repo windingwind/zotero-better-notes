@@ -3,7 +3,7 @@
  */
 
 import Knowledge4Zotero from "../addon";
-import { EditorMessage, OutlineType } from "../utils";
+import { EditorMessage, OutlineType, pick } from "../utils";
 import AddonBase from "../module";
 
 class WorkspaceWindow extends AddonBase {
@@ -143,6 +143,18 @@ class WorkspaceWindow extends AddonBase {
       .addEventListener("click", async (e) => {
         this._Addon.WorkspaceOutline.switchView();
       });
+    this.workspaceWindow.document
+      .getElementById("outline-saveImage")
+      .addEventListener("click", (e) => {
+        this._Addon.WorkspaceOutline.saveImage();
+      });
+    this.workspaceWindow.document
+      .getElementById("outline-saveFreeMind")
+      .addEventListener("click", (e) => {
+        this._Addon.NoteExport.exportNote(this.getWorkspaceNote(), {
+          exportFreeMind: true,
+        });
+      });
     this.workspaceWindow.addEventListener("resize", (e) =>
       this._Addon.WorkspaceOutline.resizeOutline()
     );
@@ -184,6 +196,24 @@ class WorkspaceWindow extends AddonBase {
         e.data.toID,
         e.data.moveType
       );
+    } else if (e.data.type === "saveSVGReturn") {
+      console.log(e.data.image);
+      const filename = await pick(
+        `${Zotero.getString("fileInterface.export")} SVG Image`,
+        "save",
+        [["SVG File(*.svg)", "*.svg"]],
+        `${this._Addon.WorkspaceWindow.getWorkspaceNote().getNoteTitle()}.svg`
+      );
+      if (filename) {
+        await Zotero.File.putContentsAsync(
+          this._Addon.NoteUtils.formatPath(filename),
+          e.data.image
+        );
+        this._Addon.ZoteroViews.showProgressWindow(
+          "Better Notes",
+          `Image Saved to ${filename}`
+        );
+      }
     }
   }
 

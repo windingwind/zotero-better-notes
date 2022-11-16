@@ -298,8 +298,34 @@
 
         function handler(e) {
           console.log(e);
-          if (e.data.type === "setMindMapData") {
-            setData(e.data.nodes);
+          switch (e.data.type) {
+            case "setMindMapData":
+              setData(e.data.nodes);
+              break;
+            case "saveImage":
+              const imgString = Diagram.makeImageData({
+                scale: 1,
+              });
+              window.parent.postMessage(
+                {
+                  type: "saveImageReturn",
+                  image: imgString,
+                },
+                "*"
+              );
+            case "saveSVG":
+              const svgElement = Diagram.makeSvg({
+                scale: 1,
+              });
+              window.parent.postMessage(
+                {
+                  type: "saveSVGReturn",
+                  image: svgElement.outerHTML,
+                },
+                "*"
+              );
+            default:
+              break;
           }
         }
 

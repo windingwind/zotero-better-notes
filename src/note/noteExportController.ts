@@ -26,16 +26,16 @@ class NoteExport extends AddonBase {
   async exportNote(
     note: Zotero.Item,
     options: {
-      embedLink: boolean;
-      exportNote: boolean;
-      exportMD: boolean;
-      exportSubMD: boolean;
-      exportAutoSync: boolean;
-      exportHighlight: boolean;
-      convertSquare: boolean;
-      exportDocx: boolean;
-      exportPDF: boolean;
-      exportFreeMind: boolean;
+      embedLink?: boolean;
+      exportNote?: boolean;
+      exportMD?: boolean;
+      exportSubMD?: boolean;
+      exportAutoSync?: boolean;
+      exportHighlight?: boolean;
+      convertSquare?: boolean;
+      exportDocx?: boolean;
+      exportPDF?: boolean;
+      exportFreeMind?: boolean;
     } = {
       embedLink: true,
       exportNote: false,
@@ -87,7 +87,7 @@ class NoteExport extends AddonBase {
 
     if (options.exportMD) {
       const filename = await pick(
-        Zotero.getString("fileInterface.export"),
+        `${Zotero.getString("fileInterface.export")} MarkDown Document`,
         "save",
         [["MarkDown File(*.md)", "*.md"]],
         `${newNote.getNoteTitle()}.md`
