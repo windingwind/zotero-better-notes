@@ -742,9 +742,11 @@ class NoteUtils extends AddonBase {
   }
 
   public formatPath(path: string) {
-    path = path.replace(/\\/g, "/");
-    path = OS.Path.join(...path.split(/\//));
-    if (!Zotero.isWin && path.charAt(0) !== "/") {
+    if (Zotero.isWin) {
+      path = path.replace(/\\/g, "/");
+      path = OS.Path.join(...path.split(/\//));
+    }
+    if (Zotero.isMac && path.charAt(0) !== "/") {
       path = "/" + path;
     }
     return path;
