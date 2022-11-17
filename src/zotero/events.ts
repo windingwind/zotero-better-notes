@@ -329,6 +329,15 @@ class ZoteroEvents extends AddonBase {
           instance._iframeWindow.document.addEventListener(
             "click",
             async (e) => {
+              if (
+                (e.target as HTMLElement).tagName === "IMG" &&
+                e.ctrlKey &&
+                (Zotero.Prefs.get(
+                  "Knowledge4Zotero.imagePreview.ctrlclick"
+                ) as boolean)
+              ) {
+                openPreview(e);
+              }
               if ((e.target as HTMLElement).tagName === "A") {
                 const link = (e.target as HTMLLinkElement).href;
                 const actions = {
@@ -413,16 +422,25 @@ class ZoteroEvents extends AddonBase {
               }
             }
           );
+          const openPreview = (e: MouseEvent) => {
+            const imgs = instance._iframeWindow.document
+              .querySelector(".primary-editor")
+              ?.querySelectorAll("img");
+            this._Addon.EditorImageViewer.onInit(
+              Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
+              Array.prototype.indexOf.call(imgs, e.target),
+              instance._item.getNoteTitle(),
+              this._Addon.EditorImageViewer.pined
+            );
+          };
           instance._iframeWindow.document.addEventListener("dblclick", (e) => {
-            if ((e.target as HTMLElement).tagName === "IMG") {
-              const imgs = instance._iframeWindow.document
-                .querySelector(".primary-editor")
-                ?.querySelectorAll("img");
-              this._Addon.EditorImageViewer.onInit(
-                Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
-                Array.prototype.indexOf.call(imgs, e.target),
-                instance._item.getNoteTitle()
-              );
+            if (
+              (e.target as HTMLElement).tagName === "IMG" &&
+              (Zotero.Prefs.get(
+                "Knowledge4Zotero.imagePreview.ctrlclick"
+              ) as Boolean)
+            ) {
+              openPreview(e);
             }
           });
           instance._knowledgeSelectionInitialized = true;

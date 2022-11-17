@@ -23,3 +23,5 @@ pref("extensions.zotero.Knowledge4Zotero.linkAction.shiftclick", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.ctrlclick", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.altclick", "");
 pref("extensions.zotero.Knowledge4Zotero.linkAction.preview", true);
+pref("extensions.zotero.Knowledge4Zotero.imagePreview.ctrlclick", true);
+pref("extensions.zotero.Knowledge4Zotero.imagePreview.dblclick", true);

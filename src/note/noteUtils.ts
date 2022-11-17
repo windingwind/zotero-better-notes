@@ -709,10 +709,11 @@ class NoteUtils extends AddonBase {
     }
     Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
     console.log(currentLineIndex);
-    Zotero.debug(
-      `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
-    );
+    // Zotero.debug(
+    //   `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
+    // );
     this.currentLine[editor._item.id] = currentLineIndex;
+    console.log(realElement);
     if (realElement.tagName === "A") {
       let link = (realElement as HTMLLinkElement).href;
       let linkedNote = (await this.getNoteFromLink(link)).item;
@@ -731,12 +732,21 @@ class NoteUtils extends AddonBase {
           linkPopup = _window.document.querySelector(".link-popup");
           await Zotero.Promise.delay(30);
         }
-        await this._Addon.EditorViews.updateEditorPopupButtons(editor, link);
+        await this._Addon.EditorViews.updateEditorLinkPopup(editor, link);
       } else {
-        await this._Addon.EditorViews.updateEditorPopupButtons(
-          editor,
-          undefined
-        );
+        await this._Addon.EditorViews.updateEditorLinkPopup(editor, undefined);
+      }
+    }
+    if (_window.document.querySelector(".regular-image.selected")) {
+      let t = 0;
+      let imagePopup = _window.document.querySelector(".image-popup");
+      while (!imagePopup && t < 100) {
+        t += 1;
+        imagePopup = _window.document.querySelector(".image-popup");
+        await Zotero.Promise.delay(30);
+      }
+      if (imagePopup) {
+        this._Addon.EditorViews.updateEditorImagePopup(editor);
       }
     }
   }

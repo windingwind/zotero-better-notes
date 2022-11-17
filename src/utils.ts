@@ -38,6 +38,7 @@ class CopyHelper {
     this.clipboardService = Components.classes[
       "@mozilla.org/widget/clipboard;1"
     ].getService(Components.interfaces.nsIClipboard);
+    this.transferable.init(null);
   }
 
   public addText(source: string, type: "text/html" | "text/unicode") {
@@ -51,24 +52,26 @@ class CopyHelper {
   }
 
   public addImage(source: string) {
-    const io = Components.classes[
-      "@mozilla.org/network/io-service;1"
-    ].getService(Components.interfaces.nsIIOService);
-    const channel = io.newChannel(source, null, null);
-    const input = channel.open();
-    const imgTools = Components.classes[
-      "@mozilla.org/image/tools;1"
-    ].getService(Components.interfaces.imgITools);
-
-    const buffer = NetUtil.readInputStreamToString(input, input.available());
-    const container = imgTools.decodeImageFromBuffer(
-      buffer,
-      buffer.length,
-      channel.contentType
+    let parts = source.split(",");
+    if (!parts[0].includes("base64")) {
+      return;
+    }
+    let mime = parts[0].match(/:(.*?);/)[1];
+    let bstr = atob(parts[1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    let imgTools = Components.classes["@mozilla.org/image/tools;1"].getService(
+      Components.interfaces.imgITools
     );
-
-    this.transferable.addDataFlavor(channel.contentType);
-    this.transferable.setTransferData(channel.contentType, container, -1);
+    let imgPtr = Components.classes[
+      "@mozilla.org/supports-interface-pointer;1"
+    ].createInstance(Components.interfaces.nsISupportsInterfacePointer);
+    imgPtr.data = imgTools.decodeImageFromArrayBuffer(u8arr.buffer, mime);
+    this.transferable.addDataFlavor(mime);
+    this.transferable.setTransferData(mime, imgPtr, 0);
     return this;
   }
 
