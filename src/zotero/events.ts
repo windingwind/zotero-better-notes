@@ -319,6 +319,7 @@ class ZoteroEvents extends AddonBase {
         Zotero.debug(`Knowledge4Zotero: note editor initialized.`);
 
         if (!instance._knowledgeSelectionInitialized) {
+          // Put event listeners here to access Zotero instance
           instance._iframeWindow.document.addEventListener(
             "selectionchange",
             async (e) => {
@@ -412,6 +413,18 @@ class ZoteroEvents extends AddonBase {
               }
             }
           );
+          instance._iframeWindow.document.addEventListener("dblclick", (e) => {
+            if ((e.target as HTMLElement).tagName === "IMG") {
+              const imgs = instance._iframeWindow.document
+                .querySelector(".primary-editor")
+                ?.querySelectorAll("img");
+              this._Addon.EditorImageViewer.onInit(
+                Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
+                Array.prototype.indexOf.call(imgs, e.target),
+                instance._item.getNoteTitle()
+              );
+            }
+          });
           instance._knowledgeSelectionInitialized = true;
         }
 

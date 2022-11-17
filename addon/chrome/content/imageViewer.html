@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Image Preview</title>
+  </head>
+  <body>
+    <style>
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      #image {
+        position: relative;
+        /* top: 50%;
+        transform: translateY(-50%); */
+        vertical-align: middle;
+      }
+      .container {
+        height: calc(100% - 50px);
+        overflow: auto;
+        text-align: center;
+      }
+      .toolbar {
+        position: absolute;
+        bottom: 0px;
+        height: 50px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+    </style>
+    <link rel="stylesheet" href="chrome://__addonRef__/skin/workspace.css" />
+    <script>
+      window.addEventListener("DOMContentLoaded", (e) => {
+        document.querySelector(".container").style["line-height"] = `${
+          window.innerHeight - 50
+        }px`;
+        window.addEventListener("resize", (_e) => {
+          document.querySelector(".container").style["line-height"] = `${
+            window.innerHeight - 50
+          }px`;
+        });
+      });
+    </script>
+    <div class="container">
+      <img id="image" src="" alt="" />
+    </div>
+    <div class="toolbar">
+      <div class="tooltip" id="left-container">
+        <button id="left" class="tool-button">
+          <svg
+            t="1668665847719"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="6765"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M641.28 278.613333l-45.226667-45.226666-278.634666 278.762666 278.613333 278.485334 45.248-45.269334-233.365333-233.237333z"
+              p-id="6766"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Previous</span>
+      </div>
+      <div class="tooltip" id="right-container">
+        <button id="right" class="tool-button">
+          <svg
+            t="1668665870223"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="6907"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M593.450667 512.128L360.064 278.613333l45.290667-45.226666 278.613333 278.762666L405.333333 790.613333l-45.226666-45.269333z"
+              p-id="6908"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Next</span>
+      </div>
+    </div>
+  </body>
+</html>

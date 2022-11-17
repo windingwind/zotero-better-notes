@@ -19,6 +19,7 @@ import NoteExportWindow from "./note/noteExportWindow";
 import NoteExport from "./note/noteExportController";
 import EditorViews from "./editor/editorViews";
 import EditorController from "./editor/editorController";
+import EditorImageViewer from "./editor/imageViewerWindow";
 import TemplateWindow from "./template/templateWindow";
 
 class Knowledge4Zotero {
@@ -49,6 +50,7 @@ class Knowledge4Zotero {
   public NoteParse: NoteParse;
   public EditorViews: EditorViews;
   public EditorController: EditorController;
+  public EditorImageViewer: EditorImageViewer;
 
   constructor() {
     this.ZoteroEvents = new ZoteroEvents(this);
@@ -59,6 +61,7 @@ class Knowledge4Zotero {
     this.WorkspaceMenu = new WorkspaceMenu(this);
     this.EditorViews = new EditorViews(this);
     this.EditorController = new EditorController(this);
+    this.EditorImageViewer = new EditorImageViewer(this);
     this.WizardWindow = new WizardWindow(this);
     this.SyncInfoWindow = new SyncInfoWindow(this);
     this.SyncListWindow = new SyncListWindow(this);
