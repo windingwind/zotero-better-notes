@@ -17,10 +17,11 @@
         /* top: 50%;
         transform: translateY(-50%); */
         vertical-align: middle;
+        cursor: move;
       }
       .container {
         height: calc(100% - 50px);
-        overflow: auto;
+        overflow: hidden;
         text-align: center;
       }
       .toolbar {
@@ -91,6 +92,78 @@
         </button>
         <span class="tooltiptext">Next</span>
       </div>
+      <div class="tooltip" id="bigger-container">
+        <button id="bigger" class="tool-button">
+          <svg
+            t="1668693494267"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="14768"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M768 448a320 320 0 1 0-320 320 320 320 0 0 0 320-320z m64 0A384 384 0 1 1 448 64a384 384 0 0 1 384 384z"
+              p-id="14769"
+            ></path>
+            <path
+              d="M681.28 726.72a32 32 0 0 1 45.44-45.44l160 160a32 32 0 0 1-45.44 45.44zM320 480a32 32 0 0 1 0-64h256a32 32 0 0 1 0 64z"
+              p-id="14770"
+            ></path>
+            <path
+              d="M480 576a32 32 0 0 1-64 0V320a32 32 0 0 1 64 0z"
+              p-id="14771"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Zoom In</span>
+      </div>
+      <div class="tooltip" id="smaller-container">
+        <button id="smaller" class="tool-button">
+          <svg
+            t="1668693609992"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="1659"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M768 448a320 320 0 1 0-320 320 320 320 0 0 0 320-320z m64 0A384 384 0 1 1 448 64a384 384 0 0 1 384 384z"
+              p-id="1660"
+            ></path>
+            <path
+              d="M681.28 726.72a32 32 0 0 1 45.44-45.44l160 160a32 32 0 0 1-45.44 45.44zM288 480a32 32 0 0 1 0-64h320a32 32 0 0 1 0 64z"
+              p-id="1661"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Zoom Out</span>
+      </div>
+      <div class="tooltip">
+        <button id="resetwidth" class="tool-button">
+          <svg
+            t="1668693928032"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="4264"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M113.777 819.198 113.777 204.8c0-50.267 40.75-91.022 91.02-91.022l614.376 0c50.29 0 91.045 40.755 91.045 91.022l0 614.398c0 50.27-40.755 91.02-91.045 91.02L204.797 910.218C154.527 910.218 113.777 869.468 113.777 819.198zM796.438 841.953c25.125 0 45.51-20.385 45.51-45.51L841.948 227.554c0-25.122-20.385-45.51-45.505-45.51L227.552 182.044c-25.125 0-45.535 20.387-45.535 45.51l0 568.889c0 25.125 20.39 45.51 45.535 45.51L796.438 841.953zM623.043 603.269l57.115-57.14L344.357 546.129l55.5 55.505c13.31 13.335 13.335 34.93 0 48.265-13.335 13.33-34.95 13.33-48.29 0l-105.765-105.77c-3.415-1.615-6.78-3.525-9.625-6.37-7.08-7.1-10.1-16.475-9.67-25.76-0.46-9.262 2.59-18.66 9.69-25.76 2.85-2.842 6.15-4.8 9.58-6.348l105.79-105.79c13.34-13.335 34.955-13.335 48.29 0 13.31 13.332 13.335 34.927 0 48.262l-55.5 55.502 335.802 0-57.115-57.117c-13.355-13.335-13.335-34.952 0-48.287s34.93-13.335 48.265 0l115.37 115.395c13.335 13.332 13.36 34.927 0 48.262l-115.37 115.395c-13.335 13.335-34.95 13.335-48.265 0C609.708 638.198 609.708 616.583 623.043 603.269z"
+              p-id="4265"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Reset Width</span>
+      </div>
       <div class="tooltip">
         <button id="copy" class="tool-button">
           <svg
@@ -110,6 +183,26 @@
           </svg>
         </button>
         <span class="tooltiptext">Copy</span>
+      </div>
+      <div class="tooltip">
+        <button id="save" class="tool-button">
+          <svg
+            t="1668693439021"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="13783"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M782.54 912.837H241.46C167.323 912.837 107 852.56 107 778.4V245.623c0-74.16 60.323-134.483 134.46-134.483h541.102C856.678 111.162 917 171.462 917 245.623V778.4c0 74.16-60.3 134.438-134.46 134.438zM241.46 163.632c-45.225 0-82.012 36.765-82.012 82.013V778.4c0 45.225 36.787 82.035 82.012 82.035h541.102c45.225 0 82.013-36.81 82.013-82.035V245.623c0-45.248-36.788-82.013-82.013-82.013H241.46v0.022zM771.312 513.26H252.688V111.163h518.648V513.26h-0.022z m-466.2-52.47h413.775V163.632H305.114v297.159zM589.22 240.808h52.425v174.846H589.22V240.807z m0 0"
+              p-id="13784"
+            ></path>
+          </svg>
+        </button>
+        <span class="tooltiptext">Save</span>
       </div>
       <div class="tooltip">
         <button id="pin" class="tool-button"></button>

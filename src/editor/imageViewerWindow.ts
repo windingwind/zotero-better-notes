@@ -4,7 +4,7 @@
 
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
-import { CopyHelper } from "../utils";
+import { CopyHelper, pick } from "../utils";
 
 class EditorImageViewer extends AddonBase {
   _window: Window;
@@ -34,7 +34,7 @@ class EditorImageViewer extends AddonBase {
       this._window = window.open(
         "chrome://Knowledge4Zotero/content/imageViewer.html",
         "betternotes-note-imagepreview",
-        `chrome,centerscreen,resizable,status,width=400,height=450${
+        `chrome,centerscreen,resizable,status,width=500,height=550${
           pined ? ",alwaysRaised=yes" : ""
         }`
       );
@@ -44,11 +44,40 @@ class EditorImageViewer extends AddonBase {
         await Zotero.Promise.delay(10);
         t += 1;
       }
+      const container = this._window.document.querySelector(
+        ".container"
+      ) as HTMLDivElement;
+      const img = this._window.document.querySelector(
+        "#image"
+      ) as HTMLImageElement;
 
       this._window.document
         .querySelector("#left")
         .addEventListener("click", (e) => {
           this.setIndex("left");
+        });
+      this._window.document
+        .querySelector("#bigger")
+        .addEventListener("click", (e) => {
+          this.anchorPosition = {
+            left: img.scrollWidth / 2 - container.scrollLeft / 2,
+            top: img.scrollHeight / 2 - container.scrollLeft / 2,
+          };
+          this.setScale(this.scaling * 1.1);
+        });
+      this._window.document
+        .querySelector("#smaller")
+        .addEventListener("click", (e) => {
+          this.anchorPosition = {
+            left: img.scrollWidth / 2 - container.scrollLeft / 2,
+            top: img.scrollHeight / 2 - container.scrollLeft / 2,
+          };
+          this.setScale(this.scaling / 1.1);
+        });
+      this._window.document
+        .querySelector("#resetwidth")
+        .addEventListener("click", (e) => {
+          this.setScale(1);
         });
       this._window.document
         .querySelector("#right")
@@ -64,6 +93,38 @@ class EditorImageViewer extends AddonBase {
             "Image Copied."
           );
         });
+      this._window.document
+        .querySelector("#save")
+        .addEventListener("click", async (e) => {
+          let parts = this.srcList[this.idx].split(",");
+          if (!parts[0].includes("base64")) {
+            return;
+          }
+          let mime = parts[0].match(/:(.*?);/)[1];
+          let bstr = atob(parts[1]);
+          let n = bstr.length;
+          let u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          let ext = Zotero.MIME.getPrimaryExtension(mime, "");
+          const filename = await pick(
+            Zotero.getString("noteEditor.saveImageAs"),
+            "save",
+            [[`Image(*.${ext})`, `*.${ext}`]],
+            `${Zotero.getString("fileTypes.image").toLowerCase()}.${ext}`
+          );
+          if (filename) {
+            await OS.File.writeAtomic(
+              this._Addon.NoteUtils.formatPath(filename),
+              u8arr
+            );
+          }
+          this._Addon.ZoteroViews.showProgressWindow(
+            "Better Notes",
+            `Image Saved to ${filename}`
+          );
+        });
       this._window.document.querySelector("#pin").innerHTML =
         this.icons[pined ? "pined" : "pin"];
       this._window.document.querySelector("#pin-tooltip").innerHTML = pined
@@ -74,12 +135,6 @@ class EditorImageViewer extends AddonBase {
         .addEventListener("click", (e) => {
           this.setPin();
         });
-      const container = this._window.document.querySelector(
-        ".container"
-      ) as HTMLDivElement;
-      const img = this._window.document.querySelector(
-        "#image"
-      ) as HTMLImageElement;
       this._window.addEventListener("keydown", (e) => {
         // ctrl+w or esc
         if ((e.key === "w" && e.ctrlKey) || e.keyCode === 27) {
@@ -117,13 +172,37 @@ class EditorImageViewer extends AddonBase {
           }
           return delta;
         }
+        const delta = normalizeWheelEventDirection(e);
         if (e.ctrlKey) {
-          const delta = normalizeWheelEventDirection(e);
           this.setScale(
             this.scaling *
               Math.pow(delta > 0 ? 1.1 : 1 / 1.1, Math.round(Math.abs(delta)))
           );
+        } else if (e.shiftKey) {
+          container.scrollLeft -= delta * 10;
+        } else {
+          container.scrollLeft += e.deltaX * 10;
+          container.scrollTop += e.deltaY * 10;
         }
+      });
+      img.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        // if (this.scaling <= 1) {
+        //   return;
+        // }
+        img.onmousemove = (e) => {
+          e.preventDefault();
+          container.scrollLeft -= e.movementX;
+          container.scrollTop -= e.movementY;
+        };
+        img.onmouseleave = () => {
+          img.onmousemove = null;
+          img.onmouseup = null;
+        };
+        img.onmouseup = () => {
+          img.onmousemove = null;
+          img.onmouseup = null;
+        };
       });
     }
 
@@ -183,6 +262,19 @@ class EditorImageViewer extends AddonBase {
       container.scrollTop +=
         this.anchorPosition.top * (this.scaling - oldScale);
     }
+    (
+      this._window.document.querySelector(
+        "#bigger-container"
+      ) as HTMLButtonElement
+    ).style.opacity = this.scaling === 10 ? "0.5" : "1";
+    (
+      this._window.document.querySelector(
+        "#smaller-container"
+      ) as HTMLButtonElement
+    ).style.opacity = this.scaling === 0.1 ? "0.5" : "1";
+    // (
+    //   this._window.document.querySelector("#image") as HTMLImageElement
+    // ).style.cursor = this.scaling <= 1 ? "default" : "move";
   }
 
   private setTitle() {
