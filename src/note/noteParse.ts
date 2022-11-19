@@ -38,7 +38,10 @@ class NoteParse extends AddonBase {
     return randomstring;
   }
 
-  public parseNoteTree(note: Zotero.Item): TreeModel.Node<object> {
+  public parseNoteTree(
+    note: Zotero.Item,
+    parseLink: boolean = true
+  ): TreeModel.Node<object> {
     const noteLines = this._Addon.NoteUtils.getLinesInNote(note);
     let tree = new TreeModel();
     let root = tree.parse({
@@ -55,7 +58,8 @@ class NoteParse extends AddonBase {
       let currentRank = 7;
       let lineElement = noteLines[i];
       const isHeading = lineElement.search(headerStartReg) !== -1;
-      const isLink = lineElement.search(/zotero:\/\/note\//g) !== -1;
+      const isLink =
+        parseLink && lineElement.search(/zotero:\/\/note\//g) !== -1;
       if (isHeading || isLink) {
         let name = "";
         let link = "";
@@ -452,17 +456,73 @@ class NoteParse extends AddonBase {
     return asciidoctor.convert(str);
   }
 
-  parseNoteToFreemind(noteItem: Zotero.Item, options: {} = {}) {
-    const root = this.parseNoteTree(noteItem);
+  parseNoteToFreemind(
+    noteItem: Zotero.Item,
+    options: { withContent?: boolean } = { withContent: true }
+  ) {
+    const root = this.parseNoteTree(noteItem, false);
+    const textNodeForEach = (e: Node, callbackfn: Function) => {
+      if (e.nodeType === document.TEXT_NODE) {
+        callbackfn(e);
+        return;
+      }
+      e.childNodes.forEach((_e) => textNodeForEach(_e, callbackfn));
+    };
     const html2Escape = (sHtml: string) => {
       return sHtml.replace(/[<>&"]/g, function (c) {
         return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c];
       });
     };
+    let lines = [];
+    if (options.withContent) {
+      const instance = this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
+      const editorCopy = this._Addon.EditorViews.getEditorElement(
+        instance._iframeWindow.document
+      ).cloneNode(true) as HTMLElement;
+      textNodeForEach(editorCopy, (e: Text) => {
+        e.data = html2Escape(e.data);
+      });
+      lines = this.parseHTMLElements(editorCopy as HTMLElement);
+    }
+    const convertClosingTags = (htmlStr: string) => {
+      const regConfs = [
+        {
+          reg: /<br[^>]*?>/g,
+          cbk: (str) => "<br></br>",
+        },
+        {
+          reg: /<img[^>]*?>/g,
+          cbk: (str: string) => {
+            return `<img ${str.match(/src="[^"]+"/g)}></img>`;
+          },
+        },
+      ];
+      for (const regConf of regConfs) {
+        htmlStr = htmlStr.replace(regConf.reg, regConf.cbk);
+      }
+      return htmlStr;
+    };
     const convertNode = (node: TreeModel.Node<object>) => {
       mmXML += `<node ID="${node.model.id}" TEXT="${html2Escape(
         node.model.name || noteItem.getNoteTitle()
-      )}"><attribute NAME="expanded" VALUE="true" />`;
+      )}"><hook NAME="AlwaysUnfoldedNode" />`;
+      if (
+        options.withContent &&
+        node.model.lineIndex >= 0 &&
+        node.model.endIndex >= 0
+      ) {
+        mmXML += `<richcontent TYPE="NOTE" CONTENT-TYPE="xml/"><html><head></head><body>${convertClosingTags(
+          lines
+            .slice(
+              node.model.lineIndex,
+              node.hasChildren()
+                ? node.children[0].model.lineIndex
+                : node.model.endIndex + 1
+            )
+            .map((e) => e.outerHTML)
+            .join("\n")
+        )}</body></html></richcontent>`;
+      }
       if (node.hasChildren()) {
         node.children.forEach((child: TreeModel.Node<object>) => {
           convertNode(child);
@@ -470,7 +530,7 @@ class NoteParse extends AddonBase {
       }
       mmXML += "</node>";
     };
-    let mmXML = '<map version="1.0.1">';
+    let mmXML = '<map version="freeplane 1.9.0">';
     convertNode(root);
     mmXML += "</map>";
     console.log(mmXML);
