@@ -1118,7 +1118,7 @@ class ZoteroEvents extends AddonBase {
       if (!options) {
         return;
       }
-      if (options.exportFile && options.exportSingleFile) {
+      if (options.exportMD && options.exportSubMD) {
         await this._Addon.NoteExport.exportNotesToMDFiles(
           [item],
           false,
