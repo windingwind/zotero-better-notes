@@ -293,6 +293,20 @@ class WorkspaceWindow extends AddonBase {
       if (Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") !== note.id) {
         Zotero.Prefs.set("Knowledge4Zotero.mainKnowledgeID", note.id);
       }
+      if (
+        !note.isEditable() ||
+        // @ts-ignore
+        note.deleted ||
+        // @ts-ignore
+        (note.parentItem && note.parentItem.deleted)
+      ) {
+        this._Addon.ZoteroViews.showProgressWindow(
+          "Better Notes",
+          "The main note is readonly, because it's trashed or belongs to a readonly group library.",
+          "default",
+          20000
+        );
+      }
     }
     await this.waitWorkspaceReady();
     let noteEditor: any = await this.getWorkspaceEditor(type);
