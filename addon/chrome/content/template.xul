@@ -26,7 +26,7 @@
     </keyset>
     <command id="cmd_save" oncommand="Zotero.Knowledge4Zotero.TemplateWindow.saveSelectedTemplate();" />
     <command id="cmd_help" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/blob/master/Template.md');" />
-    <command id="cmd_more" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/issues/85');" />
+    <command id="cmd_more" oncommand="Zotero.launchURL('https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates');" />
     <command id="cmd_close" oncommand="window.close();" />
 
     <hbox flex="1">
