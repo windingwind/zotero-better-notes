@@ -4,9 +4,9 @@
 
 Everything about note management. All in Zotero.
 
-[Better Notes Handbook(中文 Chinese, provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
+Better Notes Handbook: [EN](https://github.com/windingwind/zotero-better-notes/wiki) | [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
 
-Out-dated docs: [User Guide(EN)](./UserGuide.md) | [用户指引(中文)](./UserGuideCN.md)
+User Guide(lacks maintenance|缺少维护): [EN](./UserGuide.md) | [中文](./UserGuideCN.md)
 
 ## Install
 
