@@ -198,7 +198,7 @@ class NoteExport extends AddonBase {
     }
 
     this._exportPath = this._Addon.NoteUtils.formatPath(
-      Zotero.File.pathToFile(filepath).parent.path + "/attachments"
+      Zotero.File.pathToFile(filepath).path + "/attachments"
     );
 
     notes = notes.filter((n) => n && n.getNote);
@@ -295,7 +295,7 @@ class NoteExport extends AddonBase {
 
   async syncNotesToMDFiles(notes: Zotero.Item[], filepath: string) {
     this._exportPath = this._Addon.NoteUtils.formatPath(
-      Zotero.File.pathToFile(filepath).parent.path + "/attachments"
+      Zotero.File.pathToFile(filepath).path + "/attachments"
     );
 
     // Export every linked note as a markdown file
