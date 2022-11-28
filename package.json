@@ -45,6 +45,6 @@
     "@types/node": "^17.0.31",
     "@types/turndown": "^5.0.1",
     "release-it": "^14.14.0",
-    "zotero-types": "^0.0.4"
+    "zotero-types": "^0.0.7"
   }
 }
