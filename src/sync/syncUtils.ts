@@ -897,7 +897,7 @@ class SyncUtils extends AddonBase {
           newFile = newFile.replace(/\\/g, "/");
         }
         newFile = Zotero.File.normalizeToUnix(
-          absolutePath ? newFile : `$attachments/${newFile.split(/\//).pop()}`
+          absolutePath ? newFile : `attachments/${newFile.split(/\//).pop()}`
         );
       } catch (e) {
         Zotero.debug(e);
