@@ -44,7 +44,7 @@ class SyncListWindow extends AddonBase {
       e.parentElement.removeChild(e);
     }
     for (const note of notes) {
-      const syncInfo = this._Addon.SyncController.getNoteSyncStatus(note);
+      const syncInfo = this._Addon.SyncUtils.getSyncStatus(note);
       const listitem: XUL.ListItem =
         this._window.document.createElement("listitem");
       listitem.setAttribute("id", note.id);
@@ -101,6 +101,7 @@ class SyncListWindow extends AddonBase {
         (period > 0 ? period + "s" : "disabled")
     );
     this._window.focus();
+    this.onSelect();
   }
 
   getSelectedItems(): Zotero.Item[] {
@@ -109,21 +110,39 @@ class SyncListWindow extends AddonBase {
         (this._window.document.getElementById("sync-list") as any)
           .selectedItems,
         (node) => node.id
-      )
-    ) as Zotero.Item[];
+      ) as string[]
+    );
+  }
+
+  onSelect() {
+    const selected =
+      (this._window.document.getElementById("sync-list") as any).selectedItems
+        .length > 0;
+    if (selected) {
+      this._window.document
+        .querySelector("#changesync")
+        .removeAttribute("disabled");
+      this._window.document
+        .querySelector("#removesync")
+        .removeAttribute("disabled");
+    } else {
+      this._window.document
+        .querySelector("#changesync")
+        .setAttribute("disabled", "true");
+      this._window.document
+        .querySelector("#removesync")
+        .setAttribute("disabled", "true");
+    }
   }
 
   useRelated(): Boolean {
-    return (this._window.document.getElementById("related") as XUL.Checkbox)
-      .checked;
+    return confirm(
+      "Apply changes to:\n[Yes] Selected note and it's linked notes\n[No] Only selected note"
+    );
   }
 
   async doSync() {
-    const selectedItems = this.getSelectedItems();
-    if (selectedItems.length === 0) {
-      return;
-    }
-    await this._Addon.SyncController.doSync(selectedItems, true, false);
+    await this._Addon.SyncController.doSync(this.getSelectedItems(), false);
     this.doUpdate();
   }
 
@@ -132,7 +151,10 @@ class SyncListWindow extends AddonBase {
     if (selectedItems.length === 0) {
       return;
     }
-    await this._Addon.NoteExport.exportNotesToMDFiles(selectedItems, false, true);
+    await this._Addon.NoteExport.exportNotesToMDFiles(selectedItems, {
+      useEmbed: false,
+      useSync: true,
+    });
     this.doUpdate();
   }
 

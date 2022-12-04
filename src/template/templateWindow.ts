@@ -137,8 +137,8 @@ class TemplateWindow extends AddonBase {
     );
     await io.deferred.promise;
 
-    const ids = io.dataOut;
-    const note: Zotero.Item = (Zotero.Items.get(ids) as Zotero.Item[]).filter(
+    const ids = io.dataOut as number[];
+    const note: Zotero.Item = Zotero.Items.get(ids).filter(
       (item: Zotero.Item) => item.isNote()
     )[0];
     if (!note) {

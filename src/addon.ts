@@ -17,10 +17,13 @@ import NoteUtils from "./note/noteUtils";
 import NoteParse from "./note/noteParse";
 import NoteExportWindow from "./note/noteExportWindow";
 import NoteExport from "./note/noteExportController";
+import NoteImport from "./note/noteImportController";
+import SyncDiffWindow from "./sync/syncDiffWindow";
 import EditorViews from "./editor/editorViews";
 import EditorController from "./editor/editorController";
 import EditorImageViewer from "./editor/imageViewerWindow";
 import TemplateWindow from "./template/templateWindow";
+import { SyncUtils } from "./sync/syncUtils";
 
 class Knowledge4Zotero {
   public ZoteroEvents: ZoteroEvents;
@@ -35,6 +38,7 @@ class Knowledge4Zotero {
   // First-run wizard
   public WizardWindow: WizardWindow;
   // Sync tools
+  public SyncUtils: SyncUtils;
   public SyncInfoWindow: SyncInfoWindow;
   public SyncListWindow: SyncListWindow;
   public SyncController: SyncController;
@@ -46,6 +50,8 @@ class Knowledge4Zotero {
   // Note tools
   public NoteUtils: NoteUtils;
   public NoteExport: NoteExport;
+  public NoteImport: NoteImport;
+  public SyncDiffWindow: SyncDiffWindow;
   public NoteExportWindow: NoteExportWindow;
   public NoteParse: NoteParse;
   public EditorViews: EditorViews;
@@ -63,13 +69,16 @@ class Knowledge4Zotero {
     this.EditorController = new EditorController(this);
     this.EditorImageViewer = new EditorImageViewer(this);
     this.WizardWindow = new WizardWindow(this);
+    this.SyncUtils = new SyncUtils(this);
     this.SyncInfoWindow = new SyncInfoWindow(this);
     this.SyncListWindow = new SyncListWindow(this);
     this.SyncController = new SyncController(this);
+    this.SyncDiffWindow = new SyncDiffWindow(this);
     this.TemplateWindow = new TemplateWindow(this);
     this.TemplateController = new TemplateController(this);
     this.NoteUtils = new NoteUtils(this);
     this.NoteExport = new NoteExport(this);
+    this.NoteImport = new NoteImport(this);
     this.NoteExportWindow = new NoteExportWindow(this);
     this.NoteParse = new NoteParse(this);
     this.knowledge = new TemplateAPI(this);

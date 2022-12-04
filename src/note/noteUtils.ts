@@ -10,7 +10,7 @@ class NoteUtils extends AddonBase {
   public currentLine: any;
   constructor(parent: Knowledge4Zotero) {
     super(parent);
-    this.currentLine = [];
+    this.currentLine = {};
   }
 
   public getLinesInNote(note: Zotero.Item): string[] {
@@ -26,7 +26,7 @@ class NoteUtils extends AddonBase {
       return [];
     }
     let noteText: string = note.getNote();
-    let containerIndex = noteText.search(/data-schema-version="8">/g);
+    let containerIndex = noteText.search(/data-schema-version="[0-9]*/g);
     if (containerIndex === -1) {
       note.setNote(
         `<div data-schema-version="8">${noteLines.join("\n")}</div>`
@@ -78,9 +78,28 @@ class NoteUtils extends AddonBase {
       while (temp.firstChild) {
         frag.appendChild(temp.firstChild);
       }
+      const defer = Zotero.Promise.defer();
+      const notifyName = `addLineToNote-${note.id}`;
+      this._Addon.ZoteroEvents.addNotifyListener(
+        notifyName,
+        (
+          event: string,
+          type: string,
+          ids: Array<number | string>,
+          extraData: object
+        ) => {
+          if (event === "modify" && type === "item" && ids.includes(note.id)) {
+            this._Addon.ZoteroEvents.removeNotifyListener(notifyName);
+            defer.resolve();
+          }
+        }
+      );
       position === "after"
         ? currentElement.after(frag)
         : currentElement.before(frag);
+
+      await defer.promise;
+
       this._Addon.EditorViews.scrollToPosition(
         editorInstance,
         currentElement.offsetTop
@@ -121,19 +140,52 @@ class NoteUtils extends AddonBase {
     return null;
   }
 
-  private async _importImage(note: Zotero.Item, src, download = false) {
-    let blob;
+  public async getAttachmentKeyFromFileName(
+    libraryID: number,
+    path: string
+  ): Promise<false | _ZoteroItem> {
+    return await Zotero.Items.getByLibraryAndKeyAsync(
+      libraryID,
+      Zotero.File.normalizeToUnix(path).split("/").pop().split(".").shift()
+    );
+  }
+
+  public async _importImage(
+    note: Zotero.Item,
+    src: string,
+    type: "b64" | "url" | "file" = "b64"
+  ): Promise<string | void> {
+    if (!note || !note.isNote()) {
+      return "";
+    }
+    let blob: Blob;
     if (src.startsWith("data:")) {
       blob = this._dataURLtoBlob(src);
-    } else if (download) {
+    } else if (type === "url") {
       let res;
-
       try {
         res = await Zotero.HTTP.request("GET", src, { responseType: "blob" });
       } catch (e) {
         return;
       }
       blob = res.response;
+    } else if (type === "file") {
+      src = Zotero.File.normalizeToUnix(src);
+      const noteAttachmentKeys = Zotero.Items.get(note.getAttachments()).map(
+        (_i) => _i.key
+      );
+      const filename = src.split("/").pop().split(".").shift();
+      // The exported image is KEY.png by default.
+      // If it is already an attachment, just keep it.
+      if (noteAttachmentKeys.includes(filename)) {
+        return filename;
+      }
+      const imageData = await Zotero.File.getBinaryContentsAsync(src);
+      const array = new Uint8Array(imageData.length);
+      for (let i = 0; i < imageData.length; i++) {
+        array[i] = imageData.charCodeAt(i);
+      }
+      blob = new Blob([array], { type: "image/png" });
     } else {
       return;
     }
@@ -150,10 +202,8 @@ class NoteUtils extends AddonBase {
   public async importImagesToNote(note: Zotero.Item, annotations: any) {
     for (let annotation of annotations) {
       if (annotation.image) {
-        annotation.imageAttachmentKey = await this._importImage(
-          note,
-          annotation.image
-        );
+        annotation.imageAttachmentKey =
+          (await this._importImage(note, annotation.image)) || "";
       }
       delete annotation.image;
     }
@@ -320,7 +370,24 @@ class NoteUtils extends AddonBase {
       while (temp.firstChild) {
         frag.appendChild(temp.firstChild);
       }
+      const defer = Zotero.Promise.defer();
+      const notifyName = `modifyLineInNote-${note.id}`;
+      this._Addon.ZoteroEvents.addNotifyListener(
+        notifyName,
+        (
+          event: string,
+          type: string,
+          ids: Array<number | string>,
+          extraData: object
+        ) => {
+          if (event === "modify" && type === "item" && ids.includes(note.id)) {
+            this._Addon.ZoteroEvents.removeNotifyListener(notifyName);
+            defer.resolve();
+          }
+        }
+      );
       currentElement.replaceWith(frag);
+      await defer.promise;
       this._Addon.EditorViews.scrollToPosition(
         editorInstance,
         currentElement.offsetTop
@@ -713,7 +780,7 @@ class NoteUtils extends AddonBase {
     //   `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
     // );
     this.currentLine[editor._item.id] = currentLineIndex;
-    console.log(realElement);
+    // console.log(realElement);
     if (realElement.tagName === "A") {
       let link = (realElement as HTMLLinkElement).href;
       let linkedNote = (await this.getNoteFromLink(link)).item;

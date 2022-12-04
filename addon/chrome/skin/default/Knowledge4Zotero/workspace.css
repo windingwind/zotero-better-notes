@@ -35,6 +35,8 @@
   background: #fbfbfb;
   border: solid #c9c9c9 1px;
   text-decoration: none;
+  user-select: none;
+  -moz-user-select: none;
 }
 
 .tool-button:hover {

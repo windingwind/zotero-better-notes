@@ -27,9 +27,7 @@ class SyncInfoWindow extends AddonBase {
   }
 
   doUpdate() {
-    const syncInfo = this._Addon.SyncController.getNoteSyncStatus(
-      this.io.dataIn
-    );
+    const syncInfo = this._Addon.SyncUtils.getSyncStatus(this.io.dataIn);
     const syncPathLable = this._window.document.getElementById(
       "Knowledge4Zotero-sync-path"
     );

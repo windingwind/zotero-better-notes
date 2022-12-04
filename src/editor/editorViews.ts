@@ -341,6 +341,13 @@ class EditorViews extends AddonBase {
             refreshButton.classList.add("option");
             refreshButton.innerText = "Refresh Editor";
             refreshButton.addEventListener("click", (e) => {
+              if (
+                !confirm(
+                  "Refresh before content is saved may cause note data loss. Only do refresh if tables are uneditable.\nAre you sure to continue?"
+                )
+              ) {
+                return;
+              }
               instance.init({
                 item: instance._item,
                 viewMode: instance._viewMode,
@@ -407,11 +414,21 @@ class EditorViews extends AddonBase {
                 } Copied`
               );
             });
+            const importButton = _window.document.createElement("button");
+            importButton.classList.add("option");
+            importButton.innerText = "Import from MarkDown";
+            importButton.addEventListener("click", async (e) => {
+              await this._Addon.NoteImport.doImport(noteItem, {
+                ignoreVersion: true,
+                append: true,
+              });
+            });
             dropdownPopup.append(
               previewButton,
               refreshButton,
               copyLinkButton,
-              copyLinkAtLineButton
+              copyLinkAtLineButton,
+              importButton
             );
           }
         }
@@ -611,7 +628,7 @@ class EditorViews extends AddonBase {
           );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
-        const notifyFlag: ZoteroPromise = Zotero.Promise.defer();
+        const notifyFlag: _ZoteroPromise = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
         this._Addon.ZoteroEvents.addNotifyListener(
           notifierName,

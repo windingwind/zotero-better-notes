@@ -30,10 +30,14 @@ class ZoteroEvents extends AddonBase {
             this._Addon.ZoteroViews.updateWordCount();
           }
           // Check Note Sync
-          const syncIds =
-            this._Addon.SyncController.getSyncNoteIds() as number[];
-          if (ids.filter((id) => syncIds.includes(id as number)).length > 0) {
-            this._Addon.SyncController.setSync();
+          const syncIds = this._Addon.SyncController.getSyncNoteIds();
+          const modifiedSyncIds = ids.filter((id) =>
+            syncIds.includes(id as number)
+          ) as number[];
+          if (modifiedSyncIds.length > 0) {
+            this._Addon.SyncController.doSync(
+              Zotero.Items.get(modifiedSyncIds)
+            );
             Zotero.debug("Better Notes: sync planned.");
           }
         }
@@ -323,6 +327,7 @@ class ZoteroEvents extends AddonBase {
           instance._iframeWindow.document.addEventListener(
             "selectionchange",
             async (e) => {
+              e.stopPropagation();
               await this._Addon.NoteUtils.onSelectionChange(instance);
             }
           );
@@ -924,7 +929,10 @@ class ZoteroEvents extends AddonBase {
           console.log(html);
           new CopyHelper()
             .addText(html, "text/html")
-            .addText(this._Addon.NoteParse.parseHTMLToMD(html), "text/unicode")
+            .addText(
+              await this._Addon.NoteParse.parseHTMLToMD(html),
+              "text/unicode"
+            )
             .copy();
           progressWindow.changeHeadline("Template Copied");
         } else {
@@ -1040,7 +1048,10 @@ class ZoteroEvents extends AddonBase {
 
           new CopyHelper()
             .addText(html, "text/html")
-            .addText(this._Addon.NoteParse.parseHTMLToMD(html), "text/unicode")
+            .addText(
+              await this._Addon.NoteParse.parseHTMLToMD(html),
+              "text/unicode"
+            )
             .copy();
           progressWindow.changeHeadline("Template Copied");
         } else {
@@ -1119,11 +1130,10 @@ class ZoteroEvents extends AddonBase {
         return;
       }
       if (options.exportMD && options.exportSubMD) {
-        await this._Addon.NoteExport.exportNotesToMDFiles(
-          [item],
-          false,
-          options.exportAutoSync
-        );
+        await this._Addon.NoteExport.exportNotesToMDFiles([item], {
+          useEmbed: false,
+          useSync: options.exportAutoSync,
+        });
       } else {
         await this._Addon.NoteExport.exportNote(item, options);
       }
@@ -1156,10 +1166,9 @@ class ZoteroEvents extends AddonBase {
         );
       } else {
         const useSingleFile = confirm("Export linked notes to markdown files?");
-        await this._Addon.NoteExport.exportNotesToMDFiles(
-          noteItems,
-          !useSingleFile
-        );
+        await this._Addon.NoteExport.exportNotesToMDFiles(noteItems, {
+          useEmbed: !useSingleFile,
+        });
       }
     } else if (message.type === "sync") {
       /*
@@ -1169,9 +1178,12 @@ class ZoteroEvents extends AddonBase {
       */
       const note = this._Addon.WorkspaceWindow.getWorkspaceNote();
       if (this._Addon.SyncController.isSyncNote(note)) {
-        this._Addon.SyncController.doSync([note], true, false);
+        this._Addon.SyncController.doSync([note]);
       } else {
-        await this._Addon.NoteExport.exportNotesToMDFiles([note], false, true);
+        await this._Addon.NoteExport.exportNotesToMDFiles([note], {
+          useEmbed: false,
+          useSync: true,
+        });
       }
     } else if (message.type === "openAttachment") {
       /*
@@ -1262,7 +1274,7 @@ class ZoteroEvents extends AddonBase {
         );
         return;
       }
-      const html = this._Addon.NoteParse.parseMDToHTML(source);
+      const html = await this._Addon.NoteParse.parseMDToHTML(source);
       console.log(source, html);
       new CopyHelper().addText(html, "text/html").copy();
 

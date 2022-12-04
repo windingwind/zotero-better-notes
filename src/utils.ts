@@ -109,7 +109,7 @@ async function pick(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return new Zotero.Promise((resolve) => {
+  return new Promise((resolve) => {
     fp.open((userChoice) => {
       switch (userChoice) {
         case Components.interfaces.nsIFilePicker.returnOK:
@@ -124,4 +124,38 @@ async function pick(
     });
   });
 }
-export { EditorMessage, OutlineType, NoteTemplate, CopyHelper, pick };
+
+enum SyncCode {
+  UpToDate = 0,
+  NoteAhead,
+  MDAhead,
+  NeedDiff,
+}
+
+enum NodeMode {
+  default = 0,
+  wrap,
+  replace,
+  direct,
+}
+
+function getDOMParser(): DOMParser {
+  if (Zotero.platformMajorVersion > 60) {
+    return new DOMParser();
+  } else {
+    return Components.classes[
+      "@mozilla.org/xmlextras/domparser;1"
+    ].createInstance(Components.interfaces.nsIDOMParser);
+  }
+}
+
+export {
+  EditorMessage,
+  OutlineType,
+  NoteTemplate,
+  CopyHelper,
+  pick,
+  SyncCode,
+  NodeMode,
+  getDOMParser,
+};
