@@ -98,6 +98,7 @@ class SyncUtils extends AddonBase {
       path: "",
       filename: "",
       md5: "",
+      noteMd5: "",
       lastsync: new Date().getTime(),
       itemID: -1,
     };

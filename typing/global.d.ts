@@ -22,6 +22,7 @@ declare interface SyncStatus {
   path: string;
   filename: string;
   md5: string;
+  noteMd5: string;
   lastsync: number;
   itemID: number;
 }

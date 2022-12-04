@@ -304,6 +304,10 @@ class NoteExport extends AddonBase {
               this._Addon.SyncUtils.getMDStatusFromContent(content).content,
               false
             ),
+            noteMd5: Zotero.Utilities.Internal.md5(
+              noteInfo.note.getNote(),
+              false
+            ),
             lastsync: new Date().getTime(),
             itemID: noteInfo.id,
           });
