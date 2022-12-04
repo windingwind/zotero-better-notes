@@ -35,9 +35,12 @@ class ZoteroEvents extends AddonBase {
             syncIds.includes(id as number)
           ) as number[];
           if (modifiedSyncIds.length > 0) {
-            this._Addon.SyncController.doSync(
-              Zotero.Items.get(modifiedSyncIds)
-            );
+            // Delay so that item content is ready
+            setTimeout(() => {
+              this._Addon.SyncController.doSync(
+                Zotero.Items.get(modifiedSyncIds)
+              );
+            }, 10000);
             Zotero.debug("Better Notes: sync planned.");
           }
         }
