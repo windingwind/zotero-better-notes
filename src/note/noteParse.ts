@@ -746,7 +746,7 @@ class NoteParse extends AddonBase {
       noteItem.libraryID,
       this._Addon.NoteExport._exportPath,
       options.skipSavingImages,
-      true,
+      false,
       NodeMode.direct
     );
     console.log("rehype", rehype);
@@ -852,6 +852,9 @@ class NoteParse extends AddonBase {
     //   }
     // }
     // Check if image already belongs to note
+    this._Addon.SyncUtils.processM2NRehypeMetaImageNodes(
+      this._Addon.SyncUtils.getM2NRehypeImageNodes(rehype)
+    );
 
     this._Addon.SyncUtils.processM2NRehypeHighlightNodes(
       this._Addon.SyncUtils.getM2NRehypeHighlightNodes(rehype)

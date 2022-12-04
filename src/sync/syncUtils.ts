@@ -910,8 +910,9 @@ class SyncUtils extends AddonBase {
         const newChild = h("span");
         this.replace(newChild, node);
         newChild.properties.ztype = "zimage";
-        const newNode = h("zimage", [newChild]);
-        this.replace(node, newNode);
+        // const newNode = h("zimage", [newChild]);
+        // this.replace(node, newNode);
+        node.properties.alt = toHtml(newChild);
       }
       console.log("zimage", node);
     }
@@ -971,6 +972,26 @@ class SyncUtils extends AddonBase {
       (node) => nodes.push(node)
     );
     return nodes;
+  }
+
+  processM2NRehypeMetaImageNodes(nodes) {
+    if (!nodes.length) {
+      return;
+    }
+
+    console.log("processing M2N meta images", nodes);
+    for (const node of nodes) {
+      if (/zimage/.test(node.properties.alt)) {
+        const newNode: any = unified()
+          .use(remarkGfm)
+          .use(remarkMath)
+          .use(rehypeParse, { fragment: true })
+          .parse(node.properties.alt);
+        console.log(newNode);
+        newNode.properties.src = node.properties.src;
+        this.replace(node, newNode);
+      }
+    }
   }
 
   processM2NRehypeHighlightNodes(nodes) {
