@@ -68,20 +68,56 @@ class ZoteroViews extends AddonBase {
     let addNoteItem = document
       .getElementById("zotero-tb-note-add")
       .getElementsByTagName("menuitem")[1];
-    let button = document.createElement("menuitem");
-    button.setAttribute("id", "zotero-tb-knowledge-openwindow");
-    button.setAttribute("label", "New Main Note");
-    button.addEventListener("click", (e) => {
-      this._Addon.ZoteroEvents.onEditorEvent(
-        new EditorMessage("createWorkspace", {})
-      );
+    let buttons = this.createXULElement(document, {
+      tag: "fragment",
+      subElementOptions: [
+        {
+          tag: "menuitem",
+          id: "zotero-tb-knowledge-create-mainnote",
+          attributes: [
+            ["label", "New Main Note"],
+            ["class", "menuitem-iconic"],
+            [
+              "style",
+              "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
+            ],
+          ],
+          listeners: [
+            [
+              "click",
+              (e) => {
+                this._Addon.ZoteroEvents.onEditorEvent(
+                  new EditorMessage("createWorkspace", {})
+                );
+              },
+              false,
+            ],
+          ],
+        },
+        {
+          tag: "menuitem",
+          id: "zotero-tb-knowledge-import-md",
+          attributes: [
+            ["label", "Import MarkDown as Note"],
+            ["class", "menuitem-iconic"],
+            [
+              "style",
+              "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
+            ],
+          ],
+          listeners: [
+            [
+              "click",
+              async (e) => {
+                await this._Addon.NoteImport.doImport();
+              },
+              false,
+            ],
+          ],
+        },
+      ],
     });
-    button.setAttribute("class", "menuitem-iconic");
-    button.setAttribute(
-      "style",
-      "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');"
-    );
-    addNoteItem.after(button);
+    addNoteItem.after(buttons);
   }
 
   public addOpenWorkspaceButton() {
@@ -111,10 +147,12 @@ class ZoteroViews extends AddonBase {
       : "Open Workspace";
     span1.append(span2, span3, span4);
     treeRow.append(span1);
-    treeRow.addEventListener("click", (e) => {
-      this._Addon.ZoteroEvents.onEditorEvent(
-        new EditorMessage("openWorkspace", { event: e })
-      );
+    treeRow.addEventListener("click", async (e) => {
+      if (e.shiftKey) {
+        await this._Addon.WorkspaceWindow.openWorkspaceWindow("window", true);
+      } else {
+        await this._Addon.WorkspaceWindow.openWorkspaceWindow();
+      }
     });
     treeRow.addEventListener("mouseover", (e: XUL.XULEvent) => {
       treeRow.setAttribute(
@@ -359,6 +397,16 @@ class ZoteroViews extends AddonBase {
       return;
     }
     progressWindow.progress._itemText.innerHTML = context;
+  }
+
+  public async waitProgressWindow(progressWindow) {
+    let t = 0;
+    // Wait for ready
+    while (!progressWindow.progress._itemText && t < 100) {
+      t += 1;
+      await Zotero.Promise.delay(10);
+    }
+    return;
   }
 
   public createXULElement(doc: Document, options: XULElementOptions) {

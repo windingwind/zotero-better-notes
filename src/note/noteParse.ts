@@ -2,40 +2,18 @@
  * This file realizes note parse (md, html, rich-text).
  */
 
-import AddonBase from "../module";
-import { HTML2Markdown, Markdown2HTML } from "./convertMD";
-import TurndownService = require("turndown");
-const turndownPluginGfm = require("turndown-plugin-gfm");
 import TreeModel = require("tree-model");
 const asciidoctor = require("asciidoctor")();
-const seedrandom = require("seedrandom");
+import YAML = require("yamljs");
+import AddonBase from "../module";
+import Knowledge4Zotero from "../addon";
+import { getDOMParser } from "../utils";
+import { NodeMode } from "../sync/syncUtils";
 
 class NoteParse extends AddonBase {
-  private getDOMParser(): DOMParser {
-    if (Zotero.platformMajorVersion > 60) {
-      return new DOMParser();
-    } else {
-      return Components.classes[
-        "@mozilla.org/xmlextras/domparser;1"
-      ].createInstance(Components.interfaces.nsIDOMParser);
-    }
-  }
-
-  // A seedable version of Zotero.Utilities.randomString
-  private randomString(len: number, chars: string, seed: string) {
-    if (!chars) {
-      chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    }
-    if (!len) {
-      len = 8;
-    }
-    let randomstring = "";
-    const random: Function = seedrandom(seed);
-    for (let i = 0; i < len; i++) {
-      const rnum = Math.floor(random() * chars.length);
-      randomstring += chars.substring(rnum, rnum + 1);
-    }
-    return randomstring;
+  tools: any;
+  constructor(parent: Knowledge4Zotero) {
+    super(parent);
   }
 
   public parseNoteTree(
@@ -107,7 +85,7 @@ class NoteParse extends AddonBase {
     return root;
   }
   public parseHTMLLines(html: string): string[] {
-    let containerIndex = html.search(/data-schema-version="8">/g);
+    let containerIndex = html.search(/data-schema-version="[0-9]*">/g);
     if (containerIndex != -1) {
       html = html.substring(
         containerIndex + 'data-schema-version="8">'.length,
@@ -256,7 +234,9 @@ class NoteParse extends AddonBase {
       if (!annotationItem || !annotationItem.isAnnotation()) {
         return null;
       }
-      let json = await Zotero.Annotations.toJSON(annotationItem);
+      let json: AnnotationJson = await Zotero.Annotations.toJSON(
+        annotationItem
+      );
       json.id = annotationItem.key;
       json.attachmentItemID = annotationItem.parentItem.id;
       delete json.key;
@@ -271,15 +251,180 @@ class NoteParse extends AddonBase {
     }
   }
 
-  async parseAnnotationHTML(
-    note: Zotero.Item,
-    annotations: Zotero.Item[],
-    ignoreComment: boolean = false
+  // Zotero.EditorInstanceUtilities.serializeAnnotations
+  serializeAnnotations(
+    annotations: AnnotationJson[],
+    skipEmbeddingItemData: boolean = false,
+    skipCitation: boolean = false
   ) {
-    if (!note) {
-      return;
+    let storedCitationItems = [];
+    let html = "";
+    for (let annotation of annotations) {
+      let attachmentItem = Zotero.Items.get(annotation.attachmentItemID);
+      if (!attachmentItem) {
+        continue;
+      }
+
+      if (
+        (!annotation.text &&
+          !annotation.comment &&
+          !annotation.imageAttachmentKey) ||
+        annotation.type === "ink"
+      ) {
+        continue;
+      }
+
+      let citationHTML = "";
+      let imageHTML = "";
+      let highlightHTML = "";
+      let quotedHighlightHTML = "";
+      let commentHTML = "";
+
+      let storedAnnotation: any = {
+        attachmentURI: Zotero.URI.getItemURI(attachmentItem),
+        annotationKey: annotation.id,
+        color: annotation.color,
+        pageLabel: annotation.pageLabel,
+        position: annotation.position,
+      };
+
+      // Citation
+      let parentItem = skipCitation
+        ? undefined
+        : attachmentItem.parentID && Zotero.Items.get(attachmentItem.parentID);
+      if (parentItem) {
+        let uris = [Zotero.URI.getItemURI(parentItem)];
+        let citationItem: any = {
+          uris,
+          locator: annotation.pageLabel,
+        };
+
+        // Note: integration.js` uses `Zotero.Cite.System.prototype.retrieveItem`,
+        // which produces a little bit different CSL JSON
+        let itemData = Zotero.Utilities.Item.itemToCSLJSON(parentItem);
+        if (!skipEmbeddingItemData) {
+          citationItem.itemData = itemData;
+        }
+
+        let item = storedCitationItems.find((item) =>
+          item.uris.some((uri) => uris.includes(uri))
+        );
+        if (!item) {
+          storedCitationItems.push({ uris, itemData });
+        }
+
+        storedAnnotation.citationItem = citationItem;
+        let citation = {
+          citationItems: [citationItem],
+          properties: {},
+        };
+
+        let citationWithData = JSON.parse(JSON.stringify(citation));
+        citationWithData.citationItems[0].itemData = itemData;
+        let formatted =
+          Zotero.EditorInstanceUtilities.formatCitation(citationWithData);
+        citationHTML = `<span class="citation" data-citation="${encodeURIComponent(
+          JSON.stringify(citation)
+        )}">${formatted}</span>`;
+      }
+
+      // Image
+      if (annotation.imageAttachmentKey) {
+        // // let imageAttachmentKey = await this._importImage(annotation.image);
+        // delete annotation.image;
+
+        // Normalize image dimensions to 1.25 of the print size
+        let rect = annotation.position.rects[0];
+        let rectWidth = rect[2] - rect[0];
+        let rectHeight = rect[3] - rect[1];
+        // Constants from pdf.js
+        const CSS_UNITS = 96.0 / 72.0;
+        const PDFJS_DEFAULT_SCALE = 1.25;
+        let width = Math.round(rectWidth * CSS_UNITS * PDFJS_DEFAULT_SCALE);
+        let height = Math.round((rectHeight * width) / rectWidth);
+        imageHTML = `<img data-attachment-key="${
+          annotation.imageAttachmentKey
+        }" width="${width}" height="${height}" data-annotation="${encodeURIComponent(
+          JSON.stringify(storedAnnotation)
+        )}"/>`;
+      }
+
+      // Text
+      if (annotation.text) {
+        let text = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
+          Zotero.EditorInstanceUtilities,
+          annotation.text.trim()
+        );
+        highlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
+          JSON.stringify(storedAnnotation)
+        )}">${text}</span>`;
+        quotedHighlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
+          JSON.stringify(storedAnnotation)
+        )}">${Zotero.getString(
+          "punctuation.openingQMark"
+        )}${text}${Zotero.getString("punctuation.closingQMark")}</span>`;
+      }
+
+      // Note
+      if (annotation.comment) {
+        commentHTML = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
+          Zotero.EditorInstanceUtilities,
+          annotation.comment.trim()
+        );
+      }
+
+      let template;
+      if (annotation.type === "highlight") {
+        template = Zotero.Prefs.get("annotations.noteTemplates.highlight");
+      } else if (annotation.type === "note") {
+        template = Zotero.Prefs.get("annotations.noteTemplates.note");
+      } else if (annotation.type === "image") {
+        template = "<p>{{image}}<br/>{{citation}} {{comment}}</p>";
+      }
+
+      Zotero.debug("Using note template:");
+      Zotero.debug(template);
+
+      template = template.replace(
+        /(<blockquote>[^<>]*?)({{highlight}})([\s\S]*?<\/blockquote>)/g,
+        (match, p1, p2, p3) => p1 + "{{highlight quotes='false'}}" + p3
+      );
+
+      let vars = {
+        color: annotation.color || "",
+        // Include quotation marks by default, but allow to disable with `quotes='false'`
+        highlight: (attrs) =>
+          attrs.quotes === "false" ? highlightHTML : quotedHighlightHTML,
+        comment: commentHTML,
+        citation: citationHTML,
+        image: imageHTML,
+        tags: (attrs) =>
+          (
+            (annotation.tags && annotation.tags.map((tag) => tag.name)) ||
+            []
+          ).join(attrs.join || " "),
+      };
+
+      let templateHTML = Zotero.Utilities.Internal.generateHTMLFromTemplate(
+        template,
+        vars
+      );
+      // Remove some spaces at the end of paragraph
+      templateHTML = templateHTML.replace(/([\s]*)(<\/p)/g, "$2");
+      // Remove multiple spaces
+      templateHTML = templateHTML.replace(/\s\s+/g, " ");
+      html += templateHTML;
     }
-    let annotationJSONList = [];
+    return { html, citationItems: storedCitationItems };
+  }
+
+  async parseAnnotationHTML(
+    note: Zotero.Item, // If you are sure there are no image annotations, note is not required.
+    annotations: Zotero.Item[],
+    ignoreComment: boolean = false,
+    skipCitation: boolean = false
+  ) {
+    let annotationJSONList: AnnotationJson[] = [];
     for (const annot of annotations) {
       const annotJson = await this._Addon.NoteParse.parseAnnotation(annot);
       if (ignoreComment && annotJson.comment) {
@@ -288,10 +433,45 @@ class NoteParse extends AddonBase {
       annotationJSONList.push(annotJson);
     }
     await this._Addon.NoteUtils.importImagesToNote(note, annotationJSONList);
-    const html =
-      Zotero.EditorInstanceUtilities.serializeAnnotations(
-        annotationJSONList
-      ).html;
+    const html = this.serializeAnnotations(
+      annotationJSONList,
+      false,
+      skipCitation
+    ).html;
+    return html;
+  }
+
+  async parseCitationHTML(citationIds: number[]) {
+    let html = "";
+    let items = await Zotero.Items.getAsync(citationIds);
+    for (let item of items) {
+      if (
+        item.isNote() &&
+        !(await Zotero.Notes.ensureEmbeddedImagesAreAvailable(item)) &&
+        !Zotero.Notes.promptToIgnoreMissingImage()
+      ) {
+        return null;
+      }
+    }
+
+    for (let item of items) {
+      if (item.isRegularItem()) {
+        let itemData = Zotero.Utilities.Item.itemToCSLJSON(item);
+        let citation = {
+          citationItems: [
+            {
+              uris: [Zotero.URI.getItemURI(item)],
+              itemData,
+            },
+          ],
+          properties: {},
+        };
+        let formatted = Zotero.EditorInstanceUtilities.formatCitation(citation);
+        html += `<p><span class="citation" data-citation="${encodeURIComponent(
+          JSON.stringify(citation)
+        )}">${formatted}</span></p>`;
+      }
+    }
     return html;
   }
 
@@ -306,7 +486,7 @@ class NoteParse extends AddonBase {
       .join("\n")}</div>`;
     console.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
 
-    let parser = this.getDOMParser();
+    let parser = getDOMParser();
     let doc = parser.parseFromString(note, "text/html");
 
     // Make sure this is the new note
@@ -419,7 +599,7 @@ class NoteParse extends AddonBase {
     if (noteText.search(/data-schema-version/g) === -1) {
       noteText = `<div data-schema-version="8">${noteText}\n</div>`;
     }
-    let parser = this.getDOMParser();
+    let parser = getDOMParser();
     let doc = parser.parseFromString(noteText, "text/html");
 
     let metadataContainer: HTMLElement = doc.querySelector(
@@ -429,7 +609,7 @@ class NoteParse extends AddonBase {
   }
 
   parseLineText(line: string): string {
-    const parser = this.getDOMParser();
+    const parser = getDOMParser();
     try {
       if (line.search(/data-schema-version/g) === -1) {
         line = `<div data-schema-version="8">${line}</div>`;
@@ -444,12 +624,12 @@ class NoteParse extends AddonBase {
     }
   }
 
-  parseMDToHTML(str: string): string {
-    return Markdown2HTML(str.replace(/\u00A0/gu, " "));
+  async parseMDToHTML(str: string): Promise<string> {
+    return await this._Addon.SyncUtils.md2note(str.replace(/\u00A0/gu, " "));
   }
 
-  parseHTMLToMD(str: string): string {
-    return HTML2Markdown(str);
+  async parseHTMLToMD(str: string): Promise<string> {
+    return await this._Addon.SyncUtils.note2md(str);
   }
 
   parseAsciiDocToHTML(str: string): string {
@@ -537,280 +717,172 @@ class NoteParse extends AddonBase {
     return mmXML;
   }
 
-  // A realization of Markdown Note.js translator
   async parseNoteToMD(
     noteItem: Zotero.Item,
-    options: { wrapCitation?: boolean } = {}
+    options: {
+      withMeta?: boolean;
+      skipSavingImages?: boolean;
+      backend?: "turndown" | "unified";
+    } = {}
   ) {
-    const parser = this.getDOMParser();
-    const doc = parser.parseFromString(noteItem.getNote() || "", "text/html");
-    Components.utils.import("resource://gre/modules/osfile.jsm");
-    doc.querySelectorAll("span").forEach(function (span) {
-      if (span.style.textDecoration === "line-through") {
-        let s = doc.createElement("s");
-        s.append(...span.childNodes);
-        span.replaceWith(s);
-      }
-    });
+    const noteStatus = this._Addon.SyncUtils.getNoteStatus(noteItem);
+    const rehype = this._Addon.SyncUtils.note2rehype(noteStatus.content);
+    console.log(rehype);
+    this._Addon.SyncUtils.processN2MRehypeHighlightNodes(
+      this._Addon.SyncUtils.getN2MRehypeHighlightNodes(rehype),
+      NodeMode.direct
+    );
+    this._Addon.SyncUtils.processN2MRehypeCitationNodes(
+      this._Addon.SyncUtils.getN2MRehypeCitationNodes(rehype),
+      NodeMode.direct
+    );
+    this._Addon.SyncUtils.processN2MRehypeNoteLinkNodes(
+      this._Addon.SyncUtils.getN2MRehypeNoteLinkNodes(rehype),
+      this._Addon.NoteExport._exportFileInfo,
+      NodeMode.direct
+    );
+    await this._Addon.SyncUtils.processN2MRehypeImageNodes(
+      this._Addon.SyncUtils.getN2MRehypeImageNodes(rehype),
+      noteItem.libraryID,
+      this._Addon.NoteExport._exportPath,
+      options.skipSavingImages,
+      true,
+      NodeMode.direct
+    );
+    console.log("rehype", rehype);
+    const remark = await this._Addon.SyncUtils.rehype2remark(rehype);
+    console.log("remark", remark);
+    let md = this._Addon.SyncUtils.remark2md(remark);
 
-    // Turndown wants pre content inside additional code block
-    doc.querySelectorAll("pre").forEach(function (pre) {
-      let code = doc.createElement("code");
-      code.append(...pre.childNodes);
-      pre.append(code);
-    });
-
-    // Insert a PDF link for highlight and image annotation nodes
-    doc
-      .querySelectorAll('span[class="highlight"], img[data-annotation]')
-      .forEach((node) => {
-        Zotero.debug(node.outerHTML);
-        try {
-          var annotation = JSON.parse(
-            decodeURIComponent(node.getAttribute("data-annotation"))
-          );
-        } catch (e) {
-          Zotero.debug(e);
-        }
-
-        if (annotation) {
-          // annotation.uri was used before note-editor v4
-          let uri = annotation.attachmentURI || annotation.uri;
-          let position = annotation.position;
-          Zotero.debug("----Debug Link----");
-          Zotero.debug(annotation);
-          if (typeof uri === "string" && typeof position === "object") {
-            Zotero.debug(uri);
-            let openURI;
-            let uriParts = uri.split("/");
-            let libraryType = uriParts[3];
-            let key = uriParts[uriParts.length - 1];
-            Zotero.debug(key);
-            if (libraryType === "users") {
-              openURI = "zotero://open-pdf/library/items/" + key;
-            }
-            // groups
-            else {
-              let groupID = uriParts[4];
-              openURI = "zotero://open-pdf/groups/" + groupID + "/items/" + key;
-            }
-
-            openURI +=
-              "?page=" +
-              (position.pageIndex + 1) +
-              (annotation.annotationKey
-                ? "&annotation=" + annotation.annotationKey
-                : "");
-
-            let a = doc.createElement("a");
-            a.href = openURI;
-            a.append("pdf");
-            let fragment = doc.createDocumentFragment();
-            fragment.append(" (", a, ") ");
-
-            if (options.wrapCitation) {
-              const citationKey = annotation.annotationKey
-                ? annotation.annotationKey
-                : this.randomString(
-                    8,
-                    Zotero.Utilities.allowedKeyChars,
-                    Zotero.Utilities.Internal.md5(
-                      node.getAttribute("data-annotation")
-                    )
-                  );
-              Zotero.Utilities.Internal.md5(
-                node.getAttribute("data-annotation")
-              );
-              const beforeCitationDecorator = doc.createElement("span");
-              beforeCitationDecorator.innerHTML = `&lt;!-- bn::${citationKey} --&gt;`;
-              const afterCitationDecorator = doc.createElement("span");
-              afterCitationDecorator.innerHTML = `&lt;!-- bn::${citationKey} --&gt;`;
-              node.before(beforeCitationDecorator);
-              fragment.append(afterCitationDecorator);
-            }
-
-            let nextNode = node.nextElementSibling;
-            if (nextNode && nextNode.classList.contains("citation")) {
-              nextNode.parentNode.insertBefore(fragment, nextNode.nextSibling);
-            } else {
-              node.parentNode.insertBefore(fragment, node.nextSibling);
-            }
-          }
-        }
-      });
-
-    console.log(doc);
-
-    for (const img of doc.querySelectorAll("img[data-attachment-key]")) {
-      let imgKey = img.getAttribute("data-attachment-key");
-
-      const attachmentItem = await Zotero.Items.getByLibraryAndKeyAsync(
-        noteItem.libraryID,
-        imgKey
-      );
-      Zotero.debug(attachmentItem);
-
-      let oldFile = String(await attachmentItem.getFilePathAsync());
-      Zotero.debug(oldFile);
-      let ext = oldFile.split(".").pop();
-      let newAbsPath = this._Addon.NoteUtils.formatPath(
-        `${this._Addon.NoteExport._exportPath}/${imgKey}.${ext}`
-      );
-      Zotero.debug(newAbsPath);
-      let newFile = oldFile;
-      try {
-        // Don't overwrite
-        if (await OS.File.exists(newAbsPath)) {
-          newFile = newAbsPath.replace(/\\/g, "/");
-        } else {
-          newFile = Zotero.File.copyToUnique(oldFile, newAbsPath).path;
-          newFile = newFile.replace(/\\/g, "/");
-        }
-        newFile = `attachments/${newFile.split(/\//).pop()}`;
-      } catch (e) {
-        Zotero.debug(e);
-      }
-      Zotero.debug(newFile);
-
-      img.setAttribute("src", newFile ? newFile : oldFile);
-      img.setAttribute("alt", "image");
-    }
-
-    // Transform citations to links
-    doc.querySelectorAll('span[class="citation"]').forEach(function (span) {
-      try {
-        var citation = JSON.parse(
-          decodeURIComponent(span.getAttribute("data-citation"))
-        );
-      } catch (e) {}
-
-      if (citation && citation.citationItems && citation.citationItems.length) {
-        let uris = [];
-        for (let citationItem of citation.citationItems) {
-          let uri = citationItem.uris[0];
-          if (typeof uri === "string") {
-            let uriParts = uri.split("/");
-            let libraryType = uriParts[3];
-            let key = uriParts[uriParts.length - 1];
-            Zotero.debug(key);
-            if (libraryType === "users") {
-              uris.push("zotero://select/library/items/" + key);
-            }
-            // groups
-            else {
-              let groupID = uriParts[4];
-              uris.push("zotero://select/groups/" + groupID + "/items/" + key);
-            }
-          }
-        }
-
-        let items = Array.from(span.querySelectorAll(".citation-item")).map(
-          (x) => x.textContent
-        );
-        // Fallback to pre v5 note-editor schema that was serializing citations as plain text i.e.:
-        // <span class="citation" data-citation="...">(Jang et al., 2005, p. 14; Kongsgaard et al., 2009, p. 790)</span>
-        if (!items.length) {
-          items = span.textContent.slice(1, -1).split("; ");
-        }
-
-        span.innerHTML =
-          "(" +
-          items
-            .map((item, i) => {
-              return `<a href="${uris[i]}">${item}</a>`;
-            })
-            .join("; ") +
-          ")";
-      }
-    });
-    // Overwrite escapes
-    const escapes: [RegExp, string][] = [
-      // [/\\/g, '\\\\'],
-      // [/\*/g, '\\*'],
-      // [/^-/g, "\\-"],
-      [/^\+ /g, "\\+ "],
-      [/^(=+)/g, "\\$1"],
-      [/^(#{1,6}) /g, "\\$1 "],
-      [/`/g, "\\`"],
-      [/^~~~/g, "\\~~~"],
-      // [/^>/g, "\\>"],
-      // [/_/g, "\\_"],
-      [/^(\d+)\. /g, "$1\\. "],
-    ];
-    if (Zotero.Prefs.get("Knowledge4Zotero.convertSquare")) {
-      escapes.push([/\[/g, "\\["]);
-      escapes.push([/\]/g, "\\]"]);
-    }
-    TurndownService.prototype.escape = function (string) {
-      return escapes.reduce(function (accumulator, escape) {
-        return accumulator.replace(escape[0], escape[1]);
-      }, string);
-    };
-    // Initialize Turndown Service
-    let turndownService = new TurndownService({
-      headingStyle: "atx",
-      bulletListMarker: "-",
-      emDelimiter: "*",
-      codeBlockStyle: "fenced",
-    });
-    turndownService.use(turndownPluginGfm.gfm);
-    // Add math block rule
-    turndownService.addRule("mathBlock", {
-      filter: function (node) {
-        return node.nodeName === "PRE" && node.className === "math";
-      },
-
-      replacement: function (content, node, options) {
-        return (
-          "\n\n$$\n" + node.firstChild.textContent.slice(2, -2) + "\n$$\n\n"
-        );
-      },
-    });
-    turndownService.addRule("inlineLinkCustom", {
-      filter: function (node, options) {
-        return (
-          options.linkStyle === "inlined" &&
-          node.nodeName === "A" &&
-          node.getAttribute("href").length > 0
-        );
-      },
-
-      replacement: (content, node: HTMLElement, options) => {
-        var href = node.getAttribute("href");
-        const cleanAttribute = (attribute) =>
-          attribute ? attribute.replace(/(\n+\s*)+/g, "\n") : "";
-        var title = cleanAttribute(node.getAttribute("title"));
-        if (title) title = ' "' + title + '"';
-        if (href.search(/zotero:\/\/note\/\w+\/\w+\//g) !== -1) {
-          // A note link should be converted if it is in the _exportFileDict
-          const noteInfo = this._Addon.NoteExport._exportFileInfo.find((i) =>
-            href.includes(i.link)
-          );
-          if (noteInfo) {
-            href = `./${noteInfo.filename}`;
-          }
-        }
-        return "[" + content + "](" + href + title + ")";
-      },
-    });
-
-    if (Zotero.Prefs.get("Knowledge4Zotero.exportHighlight")) {
-      turndownService.addRule("backgroundColor", {
-        filter: function (node, options) {
-          return node.nodeName === "SPAN" && node.style["background-color"];
+    if (options.withMeta) {
+      let yamlFrontMatter = `---\n${YAML.stringify(
+        {
+          version: noteItem._version,
+          // "data-citation-items": JSON.parse(
+          //   decodeURIComponent(
+          //     doc
+          //       .querySelector("div[data-citation-items]")
+          //       .getAttribute("data-citation-items")
+          //   )
+          // ),
         },
-
-        replacement: function (content, node) {
-          return `<span style="background-color: ${
-            (node as HTMLElement).style["background-color"]
-          }">${content}</span>`;
-        },
-      });
+        10
+      )}\n---`;
+      md = `${yamlFrontMatter}\n${md}`;
     }
+    console.log(md);
+    return md;
+  }
 
-    const parsedMD = turndownService.turndown(doc.body);
-    console.log(parsedMD);
-    return parsedMD;
+  async parseMDToNote(
+    mdStatus: MDStatus,
+    noteItem: Zotero.Item,
+    isImport: boolean = false
+  ) {
+    // let editorInstance =
+    //   this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
+    // if (!editorInstance) {
+    //   ZoteroPane.openNoteWindow(noteItem.id);
+    //   editorInstance = this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
+    //   let t = 0;
+    //   // Wait for editor instance
+    //   while (t < 10 && !editorInstance) {
+    //     await Zotero.Promise.delay(500);
+    //     t += 1;
+    //     editorInstance =
+    //       this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
+    //   }
+    // }
+    // if (!editorInstance) {
+    //   Zotero.debug("BN:Import: failed to open note.");
+    //   return;
+    // }
+    console.log("md", mdStatus);
+    const remark = this._Addon.SyncUtils.md2remark(mdStatus.content);
+    console.log("remark", remark);
+    const _rehype = await this._Addon.SyncUtils.remark2rehype(remark);
+    console.log("_rehype", _rehype);
+    const _note = this._Addon.SyncUtils.rehype2note(_rehype);
+    console.log("_note", _note);
+    const rehype = this._Addon.SyncUtils.note2rehype(_note);
+    console.log("rehype", rehype);
+    // Import highlight to note meta
+    // Annotations don't need to be processed.
+    // Image annotations are imported with normal images.
+    // const annotationNodes = getM2NRehypeAnnotationNodes(mdRehype);
+    // for (const node of annotationNodes) {
+    //   try {
+    //     // {
+    //     //   "attachmentURI": "http://zotero.org/users/uid/items/itemkey",
+    //     //   "annotationKey": "4FLVQRDG",
+    //     //   "color": "#5fb236",
+    //     //   "pageLabel": "2503",
+    //     //   "position": {
+    //     //     "pageIndex": 0,
+    //     //     "rects": [
+    //     //       [
+    //     //         101.716,
+    //     //         298.162,
+    //     //         135.469,
+    //     //         307.069
+    //     //       ]
+    //     //     ]
+    //     //   },
+    //     //   "citationItem": {
+    //     //     "uris": [
+    //     //       "http://zotero.org/users/uid/items/itemkey"
+    //     //     ],
+    //     //     "locator": "2503"
+    //     //   }
+    //     // }
+    //     const dataAnnotation = JSON.parse(
+    //       decodeURIComponent(node.properties.dataAnnotation)
+    //     );
+    //     const id = dataAnnotation.citationItems.map((c) =>
+    //       Zotero.URI.getURIItemID(dataAnnotation.attachmentURI)
+    //     );
+    //     const html = await this.parseAnnotationHTML(noteItem, []);
+    //     const newNode = note2rehype(html);
+    //     // root -> p -> span(cite, this is what we actually want)
+    //     replace(node, (newNode.children[0] as any).children[0]);
+    //   } catch (e) {
+    //     Zotero.debug(e);
+    //     console.log(e);
+    //     continue;
+    //   }
+    // }
+    // Check if image already belongs to note
+
+    this._Addon.SyncUtils.processM2NRehypeHighlightNodes(
+      this._Addon.SyncUtils.getM2NRehypeHighlightNodes(rehype)
+    );
+    await this._Addon.SyncUtils.processM2NRehypeCitationNodes(
+      this._Addon.SyncUtils.getM2NRehypeCitationNodes(rehype),
+      isImport
+    );
+    this._Addon.SyncUtils.processM2NRehypeNoteLinkNodes(
+      this._Addon.SyncUtils.getM2NRehypeNoteLinkNodes(rehype)
+    );
+    await this._Addon.SyncUtils.processM2NRehypeImageNodes(
+      this._Addon.SyncUtils.getM2NRehypeImageNodes(rehype),
+      noteItem,
+      mdStatus.filedir,
+      isImport
+    );
+    console.log(rehype);
+    const noteContent = this._Addon.SyncUtils.rehype2note(rehype);
+    return noteContent;
+  }
+
+  async parseNoteForDiff(noteItem: Zotero.Item) {
+    const noteStatus = this._Addon.SyncUtils.getNoteStatus(noteItem);
+    const rehype = this._Addon.SyncUtils.note2rehype(noteStatus.content);
+    await this._Addon.SyncUtils.processM2NRehypeCitationNodes(
+      this._Addon.SyncUtils.getM2NRehypeCitationNodes(rehype),
+      true
+    );
+    // Prse content like ciations
+    return this._Addon.SyncUtils.rehype2note(rehype);
   }
 }
 

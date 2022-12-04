@@ -4,12 +4,14 @@
 
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
+import { SyncCode } from "../utils";
 
 class SyncController extends AddonBase {
-  triggerTime: number;
+  sycnLock: boolean;
 
   constructor(parent: Knowledge4Zotero) {
     super(parent);
+    this.sycnLock = false;
   }
 
   getSyncNoteIds(): number[] {
@@ -65,103 +67,208 @@ class SyncController extends AddonBase {
       "Knowledge4Zotero.syncNoteIds",
       ids.filter((id) => id !== noteItem.id).join(",")
     );
-    const sycnTag = noteItem.getTags().find((t) => t.tag.includes("sync://"));
-    if (sycnTag) {
-      noteItem.removeTag(sycnTag.tag);
-    }
-    await noteItem.saveTx();
+    Zotero.Prefs.clear(`Knowledge4Zotero.syncDetail-${noteItem.id}`);
   }
 
-  getNoteSyncStatus(noteItem: Zotero.Item): any {
-    const sycnInfo = noteItem.getTags().find((t) => t.tag.includes("sync://"));
-    if (!sycnInfo) {
-      return false;
+  async doCompare(noteItem: Zotero.Item): Promise<SyncCode> {
+    const syncStatus = this._Addon.SyncUtils.getSyncStatus(noteItem);
+    const MDStatus = await this._Addon.SyncUtils.getMDStatus(noteItem);
+    // No file found
+    if (!MDStatus.meta) {
+      return SyncCode.NoteAhead;
     }
-    const params = {};
-    sycnInfo.tag
-      .split("?")
-      .pop()
-      .split("&")
-      .forEach((p) => {
-        params[p.split("=")[0]] = p.split("=")[1];
-      });
-    return params;
+    // File meta is unavailable
+    if (MDStatus.meta.version < 0) {
+      return SyncCode.NeedDiff;
+    }
+    let MDAhead = false;
+    let noteAhead = false;
+    const md5 = Zotero.Utilities.Internal.md5(MDStatus.content, false);
+    // MD5 doesn't match (md side change)
+    if (md5 !== syncStatus.md5) {
+      MDAhead = true;
+    }
+    // Note version doesn't match (note side change)
+    if (Number(MDStatus.meta.version) !== noteItem._version) {
+      noteAhead = true;
+    }
+    if (noteAhead && MDAhead) {
+      return SyncCode.NeedDiff;
+    } else if (noteAhead) {
+      return SyncCode.NoteAhead;
+    } else if (MDAhead) {
+      return SyncCode.MDAhead;
+    } else {
+      return SyncCode.UpToDate;
+    }
   }
 
-  async updateNoteSyncStatus(
-    noteItem: Zotero.Item,
-    path: string = "",
-    filename: string = ""
-  ) {
+  async updateNoteSyncStatus(noteItem: Zotero.Item, status: SyncStatus) {
     this.addSyncNote(noteItem);
-    const syncInfo = this.getNoteSyncStatus(noteItem);
-    const sycnTag = noteItem.getTags().find((t) => t.tag.includes("sync://"));
-    if (sycnTag) {
-      noteItem.removeTag(sycnTag.tag);
-    }
-    noteItem.addTag(
-      `sync://note/?version=${noteItem._version + 1}&path=${
-        path ? encodeURIComponent(path) : syncInfo["path"]
-      }&filename=${
-        filename ? encodeURIComponent(filename) : syncInfo["filename"]
-      }&lastsync=${new Date().getTime()}`,
-      undefined
+    Zotero.Prefs.set(
+      `Knowledge4Zotero.syncDetail-${noteItem.id}`,
+      JSON.stringify(status)
     );
-    await noteItem.saveTx();
   }
 
   setSync() {
-    const _t = new Date().getTime();
-    this.triggerTime = _t;
-    const syncPeriod = Number(Zotero.Prefs.get("Knowledge4Zotero.syncPeriod"));
+    const syncPeriod = Zotero.Prefs.get(
+      "Knowledge4Zotero.syncPeriod"
+    ) as number;
     if (syncPeriod > 0) {
-      setTimeout(() => {
-        if (this.triggerTime === _t) {
+      setInterval(() => {
+        // Only when Zotero is active and focused
+        if (document.hasFocus()) {
           this.doSync();
         }
       }, syncPeriod);
     }
   }
 
-  async doSync(
-    items: Zotero.Item[] = null,
-    force: boolean = false,
-    useIO: boolean = true
-  ) {
-    Zotero.debug("Better Notes: sync start");
-    items = items || (Zotero.Items.get(this.getSyncNoteIds()) as Zotero.Item[]);
-    const toExport = {};
-    const forceNoteIds = force
-      ? await this.getRelatedNoteIdsFromNotes(
-          useIO ? [this._Addon.SyncInfoWindow.io.dataIn] : items
-        )
-      : [];
-    for (const item of items) {
-      const syncInfo = this.getNoteSyncStatus(item);
-      const filepath = decodeURIComponent(syncInfo.path);
-      const filename = decodeURIComponent(syncInfo.filename);
-      if (
-        Number(syncInfo.version) < item._version ||
-        !(await OS.File.exists(`${filepath}/${filename}`)) ||
-        forceNoteIds.includes(item.id)
-      ) {
-        if (Object.keys(toExport).includes(filepath)) {
-          toExport[filepath].push(item);
-        } else {
-          toExport[filepath] = [item];
-        }
+  // We set quiet false by default in pre-releases
+  // to test the syncing
+  async doSync(items: Zotero.Item[] = null, quiet: boolean = false) {
+    if (this.sycnLock) {
+      // Only allow one task
+      return;
+    }
+    // Wrap the code in try...catch so that the lock can be released anyway
+    try {
+      Zotero.debug("Better Notes: sync start");
+      this.sycnLock = true;
+      if (!items || !items.length) {
+        items = Zotero.Items.get(this.getSyncNoteIds());
       }
+      console.log("BN:Sync", items);
+      let progress;
+      if (!quiet) {
+        progress = this._Addon.ZoteroViews.showProgressWindow(
+          "[Syncing] Better Notes",
+          `[Check Status] 0/${items.length} ...`,
+          "default",
+          -1
+        );
+        progress.progress.setProgress(1);
+        await this._Addon.ZoteroViews.waitProgressWindow(progress);
+      }
+      // Export items of same dir in batch
+      const toExport = {};
+      const toImport: SyncStatus[] = [];
+      const toDiff: SyncStatus[] = [];
+      let i = 1;
+      for (const item of items) {
+        const syncStatus = this._Addon.SyncUtils.getSyncStatus(item);
+        const filepath = decodeURIComponent(syncStatus.path);
+        let compareResult = await this.doCompare(item);
+        switch (compareResult) {
+          case SyncCode.NoteAhead:
+            if (Object.keys(toExport).includes(filepath)) {
+              toExport[filepath].push(item);
+            } else {
+              toExport[filepath] = [item];
+            }
+            break;
+          case SyncCode.MDAhead:
+            toImport.push(syncStatus);
+            break;
+          case SyncCode.NeedDiff:
+            toDiff.push(syncStatus);
+            break;
+          default:
+            break;
+        }
+        if (progress) {
+          this._Addon.ZoteroViews.changeProgressWindowDescription(
+            progress,
+            `[Check Status] ${i}/${items.length} ...`
+          );
+          progress.progress.setProgress((i / items.length) * 100);
+        }
+        i += 1;
+      }
+      console.log(toExport, toImport, toDiff);
+      i = 1;
+      let totalCount = Object.keys(toExport).length;
+      for (const filepath of Object.keys(toExport)) {
+        if (progress) {
+          this._Addon.ZoteroViews.changeProgressWindowDescription(
+            progress,
+            `[Update MD] ${i}/${totalCount}, ${
+              toImport.length + toDiff.length
+            } queuing...`
+          );
+          progress.progress.setProgress(((i - 1) / totalCount) * 100);
+        }
+
+        await this._Addon.NoteExport.exportNotesToMDFiles(toExport[filepath], {
+          useEmbed: false,
+          useSync: true,
+          filedir: filepath,
+        });
+        i += 1;
+      }
+      i = 1;
+      totalCount = toImport.length;
+      for (const syncStatus of toImport) {
+        if (progress) {
+          this._Addon.ZoteroViews.changeProgressWindowDescription(
+            progress,
+            `[Update Note] ${i}/${totalCount}, ${toDiff.length} queuing...`
+          );
+          progress.progress.setProgress(((i - 1) / totalCount) * 100);
+        }
+        const item = Zotero.Items.get(syncStatus.itemID);
+        const filepath = OS.Path.join(syncStatus.path, syncStatus.filename);
+        await this._Addon.NoteImport.importMDFileToNote(filepath, item, {});
+        await this._Addon.NoteExport.exportNotesToMDFiles([item], {
+          useEmbed: false,
+          useSync: true,
+          filedir: syncStatus.path,
+        });
+        i += 1;
+      }
+      i = 1;
+      totalCount = toDiff.length;
+      for (const syncStatus of toDiff) {
+        if (progress) {
+          this._Addon.ZoteroViews.changeProgressWindowDescription(
+            progress,
+            `[Compare Diff] ${i}/${totalCount}...`
+          );
+          progress.progress.setProgress(((i - 1) / totalCount) * 100);
+        }
+
+        const item = Zotero.Items.get(syncStatus.itemID);
+        await this._Addon.SyncDiffWindow.doDiff(
+          item,
+          OS.Path.join(syncStatus.path, syncStatus.filename)
+        );
+        i += 1;
+      }
+      if (
+        this._Addon.SyncInfoWindow._window &&
+        !this._Addon.SyncInfoWindow._window.closed
+      ) {
+        this._Addon.SyncInfoWindow.doUpdate();
+      }
+      if (progress) {
+        const syncCount =
+          Object.keys(toExport).length + toImport.length + toDiff.length;
+
+        this._Addon.ZoteroViews.changeProgressWindowDescription(
+          progress,
+          syncCount
+            ? `[Finish] Sync ${syncCount} notes successfully`
+            : "[Finish] Already up to date"
+        );
+        progress.progress.setProgress(100);
+        progress.startCloseTimer(5000);
+      }
+    } catch (e) {
+      Zotero.debug(e);
+      console.log(e);
     }
-    console.log(toExport);
-    for (const filepath of Object.keys(toExport)) {
-      await this._Addon.NoteExport.syncNotesToMDFiles(
-        toExport[filepath],
-        filepath
-      );
-    }
-    if (this._Addon.SyncInfoWindow._window && !this._Addon.SyncInfoWindow._window.closed) {
-      this._Addon.SyncInfoWindow.doUpdate();
-    }
+    this.sycnLock = false;
   }
 }
 

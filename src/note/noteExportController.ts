@@ -14,8 +14,8 @@ class NoteExport extends AddonBase {
     note: Zotero.Item;
     filename: string;
   }>;
-  _pdfPrintPromise: ZoteroPromise;
-  _docxPromise: ZoteroPromise;
+  _pdfPrintPromise: _ZoteroPromise;
+  _docxPromise: _ZoteroPromise;
   _docxBlob: Blob;
 
   constructor(parent: Knowledge4Zotero) {
@@ -182,28 +182,37 @@ class NoteExport extends AddonBase {
 
   async exportNotesToMDFiles(
     notes: Zotero.Item[],
-    useEmbed: boolean,
-    useSync: boolean = false
+    options: {
+      useEmbed?: boolean;
+      useSync?: boolean;
+      filedir?: string;
+    } = {}
   ) {
     Components.utils.import("resource://gre/modules/osfile.jsm");
     this._exportFileInfo = [];
-    const filepath = await pick(
-      Zotero.getString(useSync ? "sync.sync" : "fileInterface.export") +
-        " MarkDown",
-      "folder"
-    );
+    let filedir =
+      options.filedir ||
+      (await pick(
+        Zotero.getString(
+          options.useSync ? "sync.sync" : "fileInterface.export"
+        ) + " MarkDown",
+        "folder"
+      ));
 
-    if (!filepath) {
+    filedir = Zotero.File.normalizeToUnix(filedir);
+
+    if (!filedir) {
+      Zotero.debug("BN:export, filepath invalid");
       return;
     }
 
     this._exportPath = this._Addon.NoteUtils.formatPath(
-      Zotero.File.pathToFile(filepath).path + "/attachments"
+      OS.Path.join(filedir, "attachments")
     );
 
     notes = notes.filter((n) => n && n.getNote);
 
-    if (useEmbed) {
+    if (options.useEmbed) {
       for (const note of notes) {
         let newNote: Zotero.Item;
         if (this._Addon.NoteParse.parseLinkInText(note.getNote())) {
@@ -233,9 +242,7 @@ class NoteExport extends AddonBase {
           newNote = note;
         }
 
-        let filename = `${
-          Zotero.File.pathToFile(filepath).path
-        }/${await this._getFileName(note)}`;
+        let filename = OS.Path.join(filedir, await this._getFileName(note));
         filename = filename.replace(/\\/g, "/");
 
         await this._exportMD(newNote, filename, newNote.id !== note.id);
@@ -243,6 +250,7 @@ class NoteExport extends AddonBase {
     } else {
       // Export every linked note as a markdown file
       // Find all linked notes that need to be exported
+      const inputIds = notes.map((n) => n.id);
       let allNoteIds: number[] = notes.map((n) => n.id);
       for (const note of notes) {
         const linkMatches = note
@@ -272,74 +280,35 @@ class NoteExport extends AddonBase {
           link: this._Addon.NoteUtils.getNoteLink(_note),
           id: _note.id,
           note: _note,
-          filename: await this._getFileName(_note),
+          filename: await this._getFileName(_note, filedir),
         });
       }
       this._exportFileInfo = noteLinkDict;
 
       for (const noteInfo of noteLinkDict) {
-        let exportPath = `${Zotero.File.pathToFile(filepath).path}/${
-          noteInfo.filename
-        }`;
-        await this._exportMD(noteInfo.note, exportPath, false);
-        if (useSync) {
-          this._Addon.SyncController.updateNoteSyncStatus(
-            noteInfo.note,
-            Zotero.File.pathToFile(filepath).path,
-            noteInfo.filename
-          );
+        let exportPath = OS.Path.join(filedir, noteInfo.filename);
+        if (
+          options.useSync &&
+          !inputIds.includes(noteInfo.id) &&
+          (await OS.File.exists(exportPath))
+        ) {
+          // Avoid overwrite existing notes that are waiting to be synced.
+          continue;
+        }
+        const content = await this._exportMD(noteInfo.note, exportPath, false);
+        if (options.useSync) {
+          this._Addon.SyncController.updateNoteSyncStatus(noteInfo.note, {
+            path: filedir,
+            filename: noteInfo.filename,
+            md5: Zotero.Utilities.Internal.md5(
+              this._Addon.SyncUtils.getMDStatusFromContent(content).content,
+              false
+            ),
+            lastsync: new Date().getTime(),
+            itemID: noteInfo.id,
+          });
         }
       }
-    }
-  }
-
-  async syncNotesToMDFiles(notes: Zotero.Item[], filepath: string) {
-    this._exportPath = this._Addon.NoteUtils.formatPath(
-      Zotero.File.pathToFile(filepath).path + "/attachments"
-    );
-
-    // Export every linked note as a markdown file
-    // Find all linked notes that need to be exported
-    let allNoteIds: number[] = notes.map((n) => n.id);
-    for (const note of notes) {
-      const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
-      if (!linkMatches) {
-        continue;
-      }
-      const subNoteIds = (
-        await Promise.all(
-          linkMatches.map(async (link) =>
-            this._Addon.NoteUtils.getNoteFromLink(link)
-          )
-        )
-      )
-        .filter((res) => res.item)
-        .map((res) => res.item.id);
-      allNoteIds = allNoteIds.concat(subNoteIds);
-    }
-    allNoteIds = new Array(...new Set(allNoteIds));
-    // console.log(allNoteIds);
-    const allNoteItems: Zotero.Item[] = Zotero.Items.get(
-      allNoteIds
-    ) as Zotero.Item[];
-    const noteLinkDict = [];
-    for (const _note of allNoteItems) {
-      noteLinkDict.push({
-        link: this._Addon.NoteUtils.getNoteLink(_note),
-        id: _note.id,
-        note: _note,
-        filename: await this._getFileName(_note),
-      });
-    }
-    this._exportFileInfo = noteLinkDict;
-
-    for (const note of notes) {
-      const syncInfo = this._Addon.SyncController.getNoteSyncStatus(note);
-      let exportPath = `${decodeURIComponent(
-        syncInfo.path
-      )}/${decodeURIComponent(syncInfo.filename)}`;
-      await this._exportMD(note, exportPath, false);
-      this._Addon.SyncController.updateNoteSyncStatus(note);
     }
   }
 
@@ -362,7 +331,9 @@ class NoteExport extends AddonBase {
     }
 
     filename = this._Addon.NoteUtils.formatPath(filename);
-    const content: string = await this._Addon.NoteParse.parseNoteToMD(note);
+    const content: string = await this._Addon.NoteParse.parseNoteToMD(note, {
+      withMeta: true,
+    });
     console.log(
       `Exporting MD file: ${filename}, content length: ${content.length}`
     );
@@ -378,6 +349,7 @@ class NoteExport extends AddonBase {
       }
       await Zotero.Items.erase(note.id);
     }
+    return content;
   }
 
   private async _exportFreeMind(noteItem: Zotero.Item, filename: string) {
@@ -392,7 +364,35 @@ class NoteExport extends AddonBase {
     );
   }
 
-  private async _getFileName(noteItem: Zotero.Item) {
+  private async _getFileName(
+    noteItem: Zotero.Item,
+    filedir: string = undefined
+  ) {
+    if (filedir !== undefined && (await OS.File.exists(filedir))) {
+      const mdRegex = /\.(md|MD|Md|mD)$/;
+      let matchedFileName = null;
+      let matchedDate = new Date(0);
+      await Zotero.File.iterateDirectory(
+        filedir,
+        async (entry: OS.File.Entry) => {
+          if (entry.isDir) return;
+          if (mdRegex.test(entry.name)) {
+            if (
+              entry.name.split(".").shift().split("-").pop() === noteItem.key
+            ) {
+              const stat = await OS.File.stat(entry.path);
+              if (stat.lastModificationDate > matchedDate) {
+                matchedFileName = entry.name;
+                matchedDate = stat.lastModificationDate;
+              }
+            }
+          }
+        }
+      );
+      if (matchedFileName) {
+        return matchedFileName;
+      }
+    }
     return (
       (await this._Addon.TemplateController.renderTemplateAsync(
         "[ExportMDFileName]",

@@ -69,7 +69,7 @@
 <!ENTITY zotero.__addonRef__.syncList.changesyncperiod.label "Sync Period:">
 <!ENTITY zotero.__addonRef__.syncList.dosync.label "Sync">
 <!ENTITY zotero.__addonRef__.syncList.changesync.label "Change Folder">
-<!ENTITY zotero.__addonRef__.syncList.removesync.label "Remove This">
+<!ENTITY zotero.__addonRef__.syncList.removesync.label "Remove">
 <!ENTITY zotero.__addonRef__.syncList.related.label "Apply to Related Notes">
 
 <!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">

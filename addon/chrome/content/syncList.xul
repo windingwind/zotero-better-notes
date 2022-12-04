@@ -22,12 +22,14 @@
     <keyset>
         <key id="key_close" key="W" modifiers="accel" command="cmd_close" />
         <key id="key_selectall" key="A" modifiers="accel" command="cmd_selectall" />
+        <key id="key_selectall" keyCode="27" command="cmd_unselectall" />
     </keyset>
     <command id="cmd_close" oncommand="window.close();" />
     <command id="cmd_selectall" oncommand="window.document.getElementById('sync-list').selectAll();" />
+    <command id="cmd_unselectall" oncommand="window.document.getElementById('sync-list').clearSelection();" />
 
     <vbox flex="1">
-        <listbox id="sync-list" flex="1" seltype="multiple">
+        <listbox id="sync-list" flex="1" seltype="multiple" onselect="Zotero.Knowledge4Zotero.SyncListWindow.onSelect();">
             <listhead>
                 <listheader id="icon" label="#" flex="1" />
                 <listheader id="notename" label="&zotero.__addonRef__.syncList.notename.label;" flex="1" />
@@ -44,7 +46,6 @@
             <button id="dosync" label="&zotero.__addonRef__.syncList.dosync.label;" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.doSync();"></button>
             <button id="changesync" label="&zotero.__addonRef__.syncList.changesync.label;" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.changeSync();"></button>
             <button id="removesync" label="&zotero.__addonRef__.syncList.removesync.label;" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.removeSync();"></button>
-            <checkbox id="related" label="&zotero.__addonRef__.syncList.related.label;"></checkbox>
         </hbox>
     </vbox>
 
