@@ -91,7 +91,7 @@ class SyncController extends AddonBase {
     }
     // MD5 doesn't match (note side change)
     if (noteMd5 !== syncStatus.noteMd5) {
-      MDAhead = true;
+      noteAhead = true;
     }
     // Note version doesn't match (note side change)
     // This might be unreliable when Zotero account is not login
