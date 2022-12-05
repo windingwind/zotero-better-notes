@@ -10,6 +10,8 @@ import { toHtml } from "hast-util-to-html";
 import { toText } from "hast-util-to-text";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+// visit may push nodes twice, use new Array(...new Set(nodes))
+// if the you want to process nodes outside visit
 import { visit } from "unist-util-visit";
 import { visitParents } from "unist-util-visit-parents";
 import rehypeFormat from "rehype-format";
@@ -603,7 +605,7 @@ class SyncUtils extends AddonBase {
         node.properties?.className?.includes("highlight"),
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));
   }
 
   getN2MRehypeCitationNodes(rehype) {
@@ -615,7 +617,7 @@ class SyncUtils extends AddonBase {
         node.properties?.className?.includes("citation"),
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));
   }
 
   getN2MRehypeNoteLinkNodes(rehype) {
@@ -629,7 +631,9 @@ class SyncUtils extends AddonBase {
         /zotero:\/\/note\/\w+\/\w+\//.test(node.properties?.href),
       (node) => nodes.push(node)
     );
-    return nodes;
+    Zotero.debug("BN:N2M link");
+    Zotero.debug(JSON.stringify(nodes));
+    return new Array(...new Set(nodes));
   }
 
   getN2MRehypeImageNodes(rehype) {
@@ -642,7 +646,7 @@ class SyncUtils extends AddonBase {
         node.properties?.dataAttachmentKey,
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   processN2MRehypeHighlightNodes(nodes, mode: NodeMode = NodeMode.default) {
@@ -926,7 +930,7 @@ class SyncUtils extends AddonBase {
       (node: any) => node.type === "element" && node.properties?.dataAnnotation,
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   getM2NRehypeHighlightNodes(rehype) {
@@ -938,7 +942,7 @@ class SyncUtils extends AddonBase {
       (node) => nodes.push(node)
     );
     console.log("N2M:highlight", nodes);
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   getM2NRehypeCitationNodes(rehype) {
@@ -951,7 +955,7 @@ class SyncUtils extends AddonBase {
           node.properties?.dataCitation),
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   getM2NRehypeNoteLinkNodes(rehype) {
@@ -962,7 +966,7 @@ class SyncUtils extends AddonBase {
         node.type === "element" && node.properties?.ztype === "znotelink",
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   getM2NRehypeImageNodes(rehype) {
@@ -972,7 +976,7 @@ class SyncUtils extends AddonBase {
       (node: any) => node.type === "element" && node.tagName === "img",
       (node) => nodes.push(node)
     );
-    return nodes;
+    return new Array(...new Set(nodes));;
   }
 
   processM2NRehypeMetaImageNodes(nodes) {

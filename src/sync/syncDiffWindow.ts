@@ -14,6 +14,7 @@ class SyncDiffWindow extends AddonBase {
   }
 
   async doDiff(noteItem: Zotero.Item, mdPath: string) {
+    const syncStatus = this._Addon.SyncUtils.getSyncStatus(noteItem);
     const noteStatus = this._Addon.SyncUtils.getNoteStatus(noteItem);
     mdPath = Zotero.File.normalizeToUnix(mdPath);
     if (!noteItem || !noteItem.isNote() || !(await OS.File.exists(mdPath))) {
@@ -39,9 +40,8 @@ class SyncDiffWindow extends AddonBase {
       type: "skip",
     };
 
-    const addedCount = changes.filter((c) => c.added).length;
-    const removedCount = changes.filter((c) => c.removed).length;
-    if (addedCount === 0 || removedCount === 0) {
+    const syncDate = new Date(syncStatus.lastsync);
+    if (!(noteStatus.lastmodify > syncDate && mdStatus.lastmodify > syncDate)) {
       // If only one kind of changes, merge automatically
       if (noteStatus.lastmodify >= mdStatus.lastmodify) {
         // refuse all, keep note
@@ -97,9 +97,7 @@ class SyncDiffWindow extends AddonBase {
         noteModify: noteStatus.lastmodify.toISOString(),
         mdName: mdPath,
         mdModify: mdStatus.lastmodify.toISOString(),
-        syncTime: new Date(
-          this._Addon.SyncUtils.getSyncStatus(noteItem).lastsync
-        ).toISOString(),
+        syncTime: syncDate.toISOString(),
       };
       this._window.diffData = changes.map((change, id) =>
         Object.assign(change, {

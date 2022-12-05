@@ -138,6 +138,7 @@ class SyncController extends AddonBase {
       // Only allow one task
       return;
     }
+    let progress;
     // Wrap the code in try...catch so that the lock can be released anyway
     try {
       Zotero.debug("Better Notes: sync start");
@@ -146,7 +147,7 @@ class SyncController extends AddonBase {
         items = Zotero.Items.get(this.getSyncNoteIds());
       }
       console.log("BN:Sync", items);
-      let progress;
+
       if (!quiet) {
         progress = this._Addon.ZoteroViews.showProgressWindow(
           "[Syncing] Better Notes",
@@ -273,6 +274,15 @@ class SyncController extends AddonBase {
     } catch (e) {
       Zotero.debug(e);
       console.log(e);
+      this._Addon.ZoteroViews.showProgressWindow(
+        "[Syncing] Better Notes",
+        String(e),
+        "fail"
+      );
+    } finally {
+      if (progress) {
+        progress.startCloseTimer(5000);
+      }
     }
     this.sycnLock = false;
   }
