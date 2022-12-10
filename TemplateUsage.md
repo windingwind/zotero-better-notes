@@ -1,8 +1,8 @@
-# Template Usage
+# How to Use Templates
 
 This documentation is for beginners.
 
-If you want to customize your own template, see [template doc](./TemplateDoc.md). Post an issue if you need help.
+If you want to customize your own template, see [How to Write Your Own Template](./TemplateDoc.md). Post an issue if you need help.
 
 You can find templates under the Workspace Tab/Window->Edit:
 ![image](https://user-images.githubusercontent.com/33902321/169189492-ab27b5ef-d6b2-4e4b-9035-2c11a91d53a1.png)
@@ -35,7 +35,8 @@ Only the template with specific name will be called.
 - QuickNoteV3: Called when creating a note from an annotation.
   > QuickNote is deprecated since v0.6.25
 - ExportMDFileName: Called when exporting notes to markdown in batch/linked notes to markdown mode. The rendered template will be file name.
+- ExportMDFileHeader: Called when exporting notes to markdown in batch/linked notes to markdown mode. The rendered template will be YAML header.
 
 ## Template Examples
 
-Welcome to share & contribute your template! See [Templates From Community](https://github.com/windingwind/zotero-better-notes/issues/85) for more templates.
+Welcome to share & contribute your template! See [Templates From Community](https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates) for more templates.

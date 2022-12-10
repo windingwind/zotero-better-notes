@@ -1,6 +1,6 @@
-# Template Documentation
+# How to Write Your Own Template
 
-This documentation is like a dictionary. For beginners, see [template usage](./TemplateUsage.md).
+This documentation is like a dictionary. For beginners, see [How to Use Templates](./TemplateUsage.md).
 
 Use `Ctrl+F` to look up what you need and make your own template!
 
@@ -47,6 +47,12 @@ In other type of templates, the default stage is called.
 ### ExportMDFileName
 
 > variables: noteItem
+
+### ExportMDFileHeader
+
+> variables: noteItem
+
+The return value must be a JSON string.
 
 ### Text
 

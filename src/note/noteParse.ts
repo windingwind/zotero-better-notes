@@ -755,19 +755,22 @@ class NoteParse extends AddonBase {
     let md = this._Addon.SyncUtils.remark2md(remark);
 
     if (options.withMeta) {
-      let yamlFrontMatter = `---\n${YAML.stringify(
-        {
-          version: noteItem._version,
-          // "data-citation-items": JSON.parse(
-          //   decodeURIComponent(
-          //     doc
-          //       .querySelector("div[data-citation-items]")
-          //       .getAttribute("data-citation-items")
-          //   )
-          // ),
-        },
-        10
-      )}\n---`;
+      let header = {};
+      try {
+        header = JSON.parse(
+          await this._Addon.TemplateController.renderTemplateAsync(
+            "[ExportMDFileHeader]",
+            "noteItem",
+            [noteItem]
+          )
+        );
+      } catch (e) {}
+      Object.assign(header, {
+        version: noteItem._version,
+        libraryID: noteItem.libraryID,
+        itemKey: noteItem.key,
+      });
+      let yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
       md = `${yamlFrontMatter}\n${md}`;
     }
     console.log(md);

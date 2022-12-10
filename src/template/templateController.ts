@@ -17,6 +17,7 @@ class TemplateController extends AddonBase {
       "[QuickImport]",
       "[QuickNoteV3]",
       "[ExportMDFileName]",
+      "[ExportMDFileHeader]",
     ];
     this._defaultTemplates = [
       {
@@ -42,6 +43,11 @@ class TemplateController extends AddonBase {
       {
         name: "[ExportMDFileName]",
         text: '${(noteItem.getNoteTitle ? noteItem.getNoteTitle().replace(/[/\\\\?%*:|"<> ]/g, "-") + "-" : "")}${noteItem.key}.md',
+        disabled: false,
+      },
+      {
+        name: "[ExportMDFileHeader]",
+        text: '${await new Promise(async (r) => {\n  let header = {};\n  header.tags = noteItem.getTags().map((_t) => _t.tag);\n  header.parent = noteItem.parentItem? noteItem.parentItem.getField("title") : "";\n  header.collections = (\n    await Zotero.Collections.getCollectionsContainingItems([\n      (noteItem.parentItem || noteItem).id,\n    ])\n  ).map((c) => c.name);\n  r(JSON.stringify(header));\n})}\n',
         disabled: false,
       },
       {
