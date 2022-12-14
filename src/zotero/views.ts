@@ -409,6 +409,11 @@ class ZoteroViews extends AddonBase {
     return;
   }
 
+  public async getProgressDocument(progressWindow): Promise<Document> {
+    await this.waitProgressWindow(progressWindow);
+    return progressWindow.progress._hbox.ownerDocument;
+  }
+
   public createXULElement(doc: Document, options: XULElementOptions) {
     const createElement: () => XUL.Element =
       options.tag === "fragment"

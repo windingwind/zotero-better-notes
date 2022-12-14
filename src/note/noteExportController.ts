@@ -318,10 +318,20 @@ class NoteExport extends AddonBase {
 
   private async _exportDocx(filename: string) {
     await Zotero.File.putContentsAsync(filename, this._docxBlob);
-    this._Addon.ZoteroViews.showProgressWindow(
+    const progress = this._Addon.ZoteroViews.showProgressWindow(
       "Better Notes",
       `Note Saved to ${filename}`
     );
+    // Just a placeholder
+    progress.addDescription('<a href="https://zotero.org">Open Folder</a>');
+    (await this._Addon.ZoteroViews.getProgressDocument(progress))
+      .querySelector("label[href]")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        await Zotero.File.reveal(filename);
+      });
+    progress.setProgress(100);
   }
 
   private async _exportMD(
@@ -342,10 +352,20 @@ class NoteExport extends AddonBase {
       `Exporting MD file: ${filename}, content length: ${content.length}`
     );
     await Zotero.File.putContentsAsync(filename, content);
-    this._Addon.ZoteroViews.showProgressWindow(
+    const progress = this._Addon.ZoteroViews.showProgressWindow(
       "Better Notes",
       `Note Saved to ${filename}`
     );
+    // Just a placeholder
+    progress.addDescription('<a href="https://zotero.org">Open Folder</a>');
+    (await this._Addon.ZoteroViews.getProgressDocument(progress))
+      .querySelector("label[href]")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        await Zotero.File.reveal(filename);
+      });
+    progress.setProgress(100);
     if (deleteAfterExport) {
       const _w: Window = ZoteroPane.findNoteWindow(note.id);
       if (_w) {
@@ -362,10 +382,20 @@ class NoteExport extends AddonBase {
       filename,
       this._Addon.NoteParse.parseNoteToFreemind(noteItem)
     );
-    this._Addon.ZoteroViews.showProgressWindow(
+    const progress = this._Addon.ZoteroViews.showProgressWindow(
       "Better Notes",
       `Note Saved to ${filename}`
     );
+    // Just a placeholder
+    progress.addDescription('<a href="https://zotero.org">Open Folder</a>');
+    (await this._Addon.ZoteroViews.getProgressDocument(progress))
+      .querySelector("label[href]")
+      .addEventListener("click", async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        await Zotero.File.reveal(filename);
+      });
+    progress.setProgress(100);
   }
 
   private async _getFileName(

@@ -131,9 +131,7 @@ class SyncController extends AddonBase {
     }
   }
 
-  // We set quiet false by default in pre-releases
-  // to test the syncing
-  async doSync(items: Zotero.Item[] = null, quiet: boolean = false) {
+  async doSync(items: Zotero.Item[] = null, quiet: boolean = true) {
     if (this.sycnLock) {
       // Only allow one task
       return;
