@@ -132,18 +132,19 @@ class EditorViews extends AddonBase {
         addLinkDropDown.append(header);
       } else {
         const normalHintText =
-          "Insert at the end of section.\nHold shift to insert before section.";
+          "[Bi-directional Link] Insert at the end of section. Hold shift to insert before section, Esc to hide hint.";
         const shiftHintText =
-          "Insert before section.\nRelease shift to insert at the end of section.";
+          "[Bi-directional Link] Insert before section. Release shift to insert at the end of section, Esc to hide hint.";
         addLinkDropDown.addEventListener(
           "mouseover",
           async (e: KeyboardEvent) => {
             if (addLinkDropDown.getElementsByClassName("popup").length > 0) {
               return;
             }
+            _window.focus();
             let isShift = e.shiftKey;
             const hintWindow = this._Addon.ZoteroViews.showProgressWindow(
-              "Bi-directional Link",
+              "Better Notes",
               isShift ? shiftHintText : normalHintText,
               "default",
               // Disable auto close
@@ -197,11 +198,13 @@ class EditorViews extends AddonBase {
             });
             ob.observe(addLinkDropDown, { childList: true });
             const keyAction = (e: KeyboardEvent) => {
+              if (e.key === "Escape") {
+                hintWindow?.close();
+              }
               if (isShift === e.shiftKey) {
                 return;
               }
               isShift = e.shiftKey;
-              console.log(hintWindow);
               popup.style.backgroundColor = isShift ? "#f0f9fe" : "";
               this._Addon.ZoteroViews.changeProgressWindowDescription(
                 hintWindow,
