@@ -149,7 +149,7 @@ class ReaderViews extends AddonBase {
 
     const renderredTemplate =
       await this._Addon.TemplateController.renderTemplateAsync(
-        "[QuickNoteV3]",
+        "[QuickNoteV4]",
         "annotationItem, topItem, noteItem",
         [annotationItem, annotationItem.parentItem.parentItem, note]
       );

@@ -15,7 +15,7 @@ class TemplateController extends AddonBase {
       "[QuickInsert]",
       "[QuickBackLink]",
       "[QuickImport]",
-      "[QuickNoteV3]",
+      "[QuickNoteV4]",
       "[ExportMDFileName]",
       "[ExportMDFileHeader]",
     ];
@@ -36,8 +36,8 @@ class TemplateController extends AddonBase {
         disabled: false,
       },
       {
-        name: "[QuickNoteV3]",
-        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += Zotero.Knowledge4Zotero.NoteParse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.NoteParse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
+        name: "[QuickNoteV4]",
+        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += await Zotero.Knowledge4Zotero.NoteParse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.NoteParse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
         disabled: false,
       },
       {
