@@ -132,9 +132,9 @@ class EditorViews extends AddonBase {
         addLinkDropDown.append(header);
       } else {
         const normalHintText =
-          "[Bi-directional Link] Insert at the end of section. Hold shift to insert before section, Esc to hide hint.";
+          "[Bi-directional Link] Insert at the end of section. Hold shift to insert before section, Ctrl/Cmd to hide hint.";
         const shiftHintText =
-          "[Bi-directional Link] Insert before section. Release shift to insert at the end of section, Esc to hide hint.";
+          "[Bi-directional Link] Insert before section. Release shift to insert at the end of section, Ctrl/Cmd to hide hint.";
         addLinkDropDown.addEventListener(
           "mouseover",
           async (e: KeyboardEvent) => {
@@ -198,8 +198,12 @@ class EditorViews extends AddonBase {
             });
             ob.observe(addLinkDropDown, { childList: true });
             const keyAction = (e: KeyboardEvent) => {
-              if (e.key === "Escape") {
+              console.log(e);
+              if (e.key === "Control") {
                 hintWindow?.close();
+                e.preventDefault();
+                e.stopPropagation();
+                return;
               }
               if (isShift === e.shiftKey) {
                 return;
