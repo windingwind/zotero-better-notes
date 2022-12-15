@@ -331,7 +331,7 @@ class NoteExport extends AddonBase {
         e.preventDefault();
         await Zotero.File.reveal(filename);
       });
-    progress.setProgress(100);
+    progress.progress.setProgress(100);
   }
 
   private async _exportMD(
@@ -365,7 +365,7 @@ class NoteExport extends AddonBase {
         e.preventDefault();
         await Zotero.File.reveal(filename);
       });
-    progress.setProgress(100);
+    progress.progress.setProgress(100);
     if (deleteAfterExport) {
       const _w: Window = ZoteroPane.findNoteWindow(note.id);
       if (_w) {
@@ -395,7 +395,7 @@ class NoteExport extends AddonBase {
         e.preventDefault();
         await Zotero.File.reveal(filename);
       });
-    progress.setProgress(100);
+    progress.progress.setProgress(100);
   }
 
   private async _getFileName(
