@@ -674,7 +674,7 @@ class ZoteroEvents extends AddonBase {
         null,
         0
       );
-      this._Addon.NoteUtils.addLineToNote(noteItem, cite.html, -1);
+      await this._Addon.NoteUtils.addLineToNote(noteItem, cite.html, -1);
       this._Addon.ZoteroViews.showProgressWindow(
         "Better Notes",
         `${

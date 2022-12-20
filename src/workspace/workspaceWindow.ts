@@ -7,13 +7,13 @@ import { EditorMessage, OutlineType, pick } from "../utils";
 import AddonBase from "../module";
 
 class WorkspaceWindow extends AddonBase {
-  private _initIframe: _ZoteroPromise;
+  private _initIframe: _ZoteroPromiseObject;
   public workspaceWindow: Window;
   public workspaceTabId: string;
   public workspaceNoteEditor: Zotero.EditorInstance | undefined;
   public previewItemID: number;
   private _firstInit: boolean;
-  public _workspacePromise: _ZoteroPromise;
+  public _workspacePromise: _ZoteroPromiseObject;
   private _DOMParser: any;
 
   constructor(parent: Knowledge4Zotero) {

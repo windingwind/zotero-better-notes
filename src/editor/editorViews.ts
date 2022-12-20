@@ -635,7 +635,7 @@ class EditorViews extends AddonBase {
           );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
-        const notifyFlag: _ZoteroPromise = Zotero.Promise.defer();
+        const notifyFlag: _ZoteroPromiseObject = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
         this._Addon.ZoteroEvents.addNotifyListener(
           notifierName,

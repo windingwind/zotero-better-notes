@@ -45,8 +45,9 @@ class SyncListWindow extends AddonBase {
     }
     for (const note of notes) {
       const syncInfo = this._Addon.SyncUtils.getSyncStatus(note);
-      const listitem: XUL.ListItem =
-        this._window.document.createElement("listitem");
+      const listitem = this._window.document.createElement(
+        "listitem"
+      ) as XUL.ListItem;
       listitem.setAttribute("id", note.id);
 
       const icon = this._window.document.createElement("listcell");

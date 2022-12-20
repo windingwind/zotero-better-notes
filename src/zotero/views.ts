@@ -53,7 +53,7 @@ class ZoteroViews extends AddonBase {
       .forEach((el) => ((el as HTMLElement).hidden = hidden));
 
     // Disable Zotero pdf export
-    (document.getElementById("menu_export_files") as XUL.Element).disabled =
+    (document.getElementById("menu_export_files") as XUL.Menuitem).disabled =
       !hidden;
   }
 
@@ -262,7 +262,7 @@ class ZoteroViews extends AddonBase {
         id: style.styleID,
         locale: "",
       });
-      const itemNode: XUL.Element = document.createElement("menuitem");
+      const itemNode = document.createElement("menuitem") as XUL.Menuitem;
       itemNode.setAttribute("value", val);
       itemNode.setAttribute("label", style.title);
       itemNode.setAttribute("type", "checkbox");
@@ -340,9 +340,9 @@ class ZoteroViews extends AddonBase {
       Zotero.Prefs.set("Knowledge4Zotero.autoAnnotation", autoAnnotation);
     }
 
-    const menuitem: XUL.Element = _window.document.getElementById(
+    const menuitem = _window.document.getElementById(
       "menu_autoannotation_betternotes"
-    );
+    ) as XUL.Menuitem;
     if (autoAnnotation) {
       menuitem.setAttribute("checked", true);
     } else {

@@ -30,8 +30,9 @@ class TemplateWindow extends AddonBase {
   }
 
   getSelectedTemplateName(): string {
-    const listbox: XUL.ListItem =
-      this._window.document.getElementById("template-list");
+    const listbox = this._window.document.getElementById(
+      "template-list"
+    ) as XUL.ListItem;
     const selectedItem = listbox.selectedItem;
     if (selectedItem) {
       const name = selectedItem.getAttribute("id");
@@ -73,10 +74,12 @@ class TemplateWindow extends AddonBase {
     const name = this.getSelectedTemplateName();
     const templateText = this._Addon.TemplateController.getTemplateText(name);
 
-    const header: XUL.Textbox =
-      this._window.document.getElementById("editor-name");
-    const text: XUL.Textbox =
-      this._window.document.getElementById("editor-textbox");
+    const header = this._window.document.getElementById(
+      "editor-name"
+    ) as XUL.Textbox;
+    const text = this._window.document.getElementById(
+      "editor-textbox"
+    ) as XUL.Textbox;
     const saveTemplate = this._window.document.getElementById("save-template");
     const deleteTemplate =
       this._window.document.getElementById("delete-template");
@@ -155,10 +158,12 @@ class TemplateWindow extends AddonBase {
 
   saveSelectedTemplate() {
     const name = this.getSelectedTemplateName();
-    const header: XUL.Textbox =
-      this._window.document.getElementById("editor-name");
-    const text: XUL.Textbox =
-      this._window.document.getElementById("editor-textbox");
+    const header = this._window.document.getElementById(
+      "editor-name"
+    ) as XUL.Textbox;
+    const text = this._window.document.getElementById(
+      "editor-textbox"
+    ) as XUL.Textbox;
 
     if (
       this._Addon.TemplateController._systemTemplateNames.includes(name) &&
@@ -202,8 +207,9 @@ class TemplateWindow extends AddonBase {
   resetSelectedTemplate() {
     const name = this.getSelectedTemplateName();
     if (this._Addon.TemplateController._systemTemplateNames.includes(name)) {
-      const text: XUL.Textbox =
-        this._window.document.getElementById("editor-textbox");
+      const text = this._window.document.getElementById(
+        "editor-textbox"
+      ) as XUL.Textbox;
       text.value = this._Addon.TemplateController._defaultTemplates.find(
         (t) => t.name === name
       ).text;
