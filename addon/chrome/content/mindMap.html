@@ -57,7 +57,8 @@
               // remember not only the text string but the scale and the font in the node data
               new go.Binding("text", "text").makeTwoWay(),
               new go.Binding("scale", "scale").makeTwoWay(),
-              new go.Binding("font", "font").makeTwoWay()
+              new go.Binding("font", "font").makeTwoWay(),
+              new go.Binding("stroke", "stroke").makeTwoWay()
             ),
             $(
               go.Shape,
@@ -266,6 +267,7 @@
               text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
                 node.model.name
               )}`,
+              stroke: "-moz-DialogText",
               parent: parent,
               lineIndex: node.model.lineIndex,
               noteLink: node.model.rank === 7 ? node.model.link : "",

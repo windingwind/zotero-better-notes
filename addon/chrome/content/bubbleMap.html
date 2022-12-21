@@ -121,7 +121,8 @@
             $(
               go.TextBlock,
               { textAlign: "center", maxSize: new go.Size(100, NaN) },
-              new go.Binding("text", "text")
+              new go.Binding("text", "text").makeTwoWay(),
+              new go.Binding("stroke", "stroke")
             )
           );
           // the rest of this app is the same as samples/conceptMap.html
@@ -193,6 +194,7 @@
               text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
                 node.model.name
               )}`,
+              stroke: "-moz-DialogText",
               lineIndex: node.model.lineIndex,
               noteLink: node.model.rank === 7 ? node.model.link : "",
             });
