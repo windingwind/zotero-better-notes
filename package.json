@@ -57,7 +57,7 @@
     "@types/diff": "^5.0.2",
     "@types/jquery": "^3.5.14",
     "@types/node": "^17.0.31",
-    "esbuild": "^0.14.34",
+    "esbuild": "^0.16.10",
     "compressing": "^1.5.1",
     "release-it": "^14.14.0",
     "zotero-types": "^0.1.2"
