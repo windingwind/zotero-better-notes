@@ -59,7 +59,7 @@
     "@types/node": "^17.0.31",
     "esbuild": "^0.14.34",
     "compressing": "^1.5.1",
-    "release-it": "^14.14.0",
+    "release-it": "^15.5.1",
     "zotero-types": "^0.1.2"
   }
 }
