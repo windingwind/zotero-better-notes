@@ -556,6 +556,8 @@ class SyncUtils extends AddonBase {
 
     rehype.children = tempChildren;
 
+    console.log("before n2r", rehype);
+
     return unified()
       .use(rehypeStringify, {
         allowDangerousCharacters: true,
@@ -577,8 +579,11 @@ class SyncUtils extends AddonBase {
 
   async md2note(str) {
     const remark = this.md2remark(str);
+    console.log(remark);
     let rehype = await this.remark2rehype(remark);
+    console.log(rehype);
     const html = this.rehype2note(rehype);
+    console.log(html);
     return html;
   }
 
@@ -717,7 +722,7 @@ class SyncUtils extends AddonBase {
         } else if (mode === NodeMode.direct) {
           const newChild = h("span");
           this.replace(newChild, node);
-          newChild.children = [h("a", { href: openURI }, toText(node))];
+          newChild.children = [h("a", { href: openURI }, node.children)];
           newChild.properties.ztype = "zhighlight";
           newNode = h("zhighlight", [newChild]);
         }
@@ -1010,7 +1015,8 @@ class SyncUtils extends AddonBase {
       return;
     }
     for (const node of nodes) {
-      node.children = [{ type: "text", value: toText(node) }];
+      // node.children[0] is <a>, its children is the real children
+      node.children = node.children[0].children;
       delete node.properties.ztype;
     }
   }

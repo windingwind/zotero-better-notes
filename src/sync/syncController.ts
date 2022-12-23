@@ -209,6 +209,7 @@ class SyncController extends AddonBase {
           useEmbed: false,
           useSync: true,
           filedir: filepath,
+          withMeta: true,
         });
         i += 1;
       }
@@ -229,6 +230,7 @@ class SyncController extends AddonBase {
           useEmbed: false,
           useSync: true,
           filedir: syncStatus.path,
+          withMeta: true,
         });
         i += 1;
       }

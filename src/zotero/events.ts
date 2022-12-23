@@ -1136,6 +1136,7 @@ class ZoteroEvents extends AddonBase {
         await this._Addon.NoteExport.exportNotesToMDFiles([item], {
           useEmbed: false,
           useSync: options.exportAutoSync,
+          withMeta: options.exportYAMLHeader,
         });
       } else {
         await this._Addon.NoteExport.exportNote(item, options);
@@ -1169,8 +1170,10 @@ class ZoteroEvents extends AddonBase {
         );
       } else {
         const useSingleFile = confirm("Export linked notes to markdown files?");
+        const withMeta = confirm("With YAML header?");
         await this._Addon.NoteExport.exportNotesToMDFiles(noteItems, {
           useEmbed: !useSingleFile,
+          withMeta: withMeta,
         });
       }
     } else if (message.type === "sync") {
@@ -1186,6 +1189,7 @@ class ZoteroEvents extends AddonBase {
         await this._Addon.NoteExport.exportNotesToMDFiles([note], {
           useEmbed: false,
           useSync: true,
+          withMeta: true,
         });
       }
     } else if (message.type === "openAttachment") {

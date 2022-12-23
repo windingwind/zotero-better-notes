@@ -155,6 +155,7 @@ class SyncListWindow extends AddonBase {
     await this._Addon.NoteExport.exportNotesToMDFiles(selectedItems, {
       useEmbed: false,
       useSync: true,
+      withMeta: true,
     });
     this.doUpdate();
   }

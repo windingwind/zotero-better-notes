@@ -31,8 +31,7 @@ class NoteExport extends AddonBase {
       exportMD?: boolean;
       exportSubMD?: boolean;
       exportAutoSync?: boolean;
-      exportHighlight?: boolean;
-      convertSquare?: boolean;
+      exportYAMLHeader?: boolean;
       exportDocx?: boolean;
       exportPDF?: boolean;
       exportFreeMind?: boolean;
@@ -42,8 +41,7 @@ class NoteExport extends AddonBase {
       exportMD: true,
       exportSubMD: false,
       exportAutoSync: false,
-      exportHighlight: false,
-      convertSquare: false,
+      exportYAMLHeader: true,
       exportDocx: false,
       exportPDF: false,
       exportFreeMind: false,
@@ -96,7 +94,12 @@ class NoteExport extends AddonBase {
         this._exportPath = this._Addon.NoteUtils.formatPath(
           Zotero.File.pathToFile(filename).parent.path + "/attachments"
         );
-        await this._exportMD(newNote, filename, false);
+        await this._exportMD(
+          newNote,
+          filename,
+          false,
+          options.exportYAMLHeader
+        );
       }
     }
     if (options.exportDocx) {
@@ -186,6 +189,7 @@ class NoteExport extends AddonBase {
       useEmbed?: boolean;
       useSync?: boolean;
       filedir?: string;
+      withMeta?: boolean;
     } = {}
   ) {
     Components.utils.import("resource://gre/modules/osfile.jsm");
@@ -245,7 +249,12 @@ class NoteExport extends AddonBase {
         let filename = OS.Path.join(filedir, await this._getFileName(note));
         filename = filename.replace(/\\/g, "/");
 
-        await this._exportMD(newNote, filename, newNote.id !== note.id);
+        await this._exportMD(
+          newNote,
+          filename,
+          newNote.id !== note.id,
+          options.withMeta
+        );
       }
     } else {
       // Export every linked note as a markdown file
@@ -295,7 +304,12 @@ class NoteExport extends AddonBase {
           // Avoid overwrite existing notes that are waiting to be synced.
           continue;
         }
-        const content = await this._exportMD(noteInfo.note, exportPath, false);
+        const content = await this._exportMD(
+          noteInfo.note,
+          exportPath,
+          false,
+          options.withMeta
+        );
         if (options.useSync) {
           this._Addon.SyncController.updateNoteSyncStatus(noteInfo.note, {
             path: filedir,
@@ -337,7 +351,8 @@ class NoteExport extends AddonBase {
   private async _exportMD(
     note: Zotero.Item,
     filename: string,
-    deleteAfterExport: boolean
+    deleteAfterExport: boolean,
+    withMeta: boolean
   ) {
     const hasImage = note.getNote().includes("<img");
     if (hasImage) {
@@ -346,7 +361,7 @@ class NoteExport extends AddonBase {
 
     filename = this._Addon.NoteUtils.formatPath(filename);
     const content: string = await this._Addon.NoteParse.parseNoteToMD(note, {
-      withMeta: true,
+      withMeta: withMeta,
     });
     console.log(
       `Exporting MD file: ${filename}, content length: ${content.length}`

@@ -151,6 +151,7 @@ class SyncDiffWindow extends AddonBase {
           useEmbed: false,
           useSync: true,
           filedir: mdStatus.filedir,
+          withMeta: true,
         });
         break;
       default:

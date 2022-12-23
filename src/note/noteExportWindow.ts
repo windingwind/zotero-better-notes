@@ -22,8 +22,7 @@ class NoteExportWindow extends AddonBase {
       "exportMD",
       "exportSubMD",
       "exportAutoSync",
-      "exportHighlight",
-      "convertSquare",
+      "exportYAMLHeader",
       "exportDocx",
       "exportPDF",
       "exportFreeMind",
@@ -84,8 +83,6 @@ class NoteExportWindow extends AddonBase {
       "exportAutoSync",
       !this.getOption("exportMD") || !this.getOption("exportSubMD")
     );
-    this.setOptionDisabled("exportHighlight", !this.getOption("exportMD"));
-    this.setOptionDisabled("convertSquare", !this.getOption("exportMD"));
   }
 
   doUnload() {
