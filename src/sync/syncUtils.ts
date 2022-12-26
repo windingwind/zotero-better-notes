@@ -864,6 +864,7 @@ class SyncUtils extends AddonBase {
         newChild.properties.zhref = node.properties.href;
         newChild.properties.href = link;
         newChild.properties.ztype = "znotelink";
+        newChild.properties.class = "internal-link"; // required for obsidian compatibility
         const newNode = h("znotelink", [newChild]);
         this.replace(node, newNode);
         console.log("direct link", node, newNode, newChild);
@@ -1072,6 +1073,7 @@ class SyncUtils extends AddonBase {
     }
     for (const node of nodes) {
       node.properties.href = node.properties.zhref;
+      delete node.properties.class;
       delete node.properties.zhref;
       delete node.properties.ztype;
     }
