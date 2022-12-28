@@ -4,7 +4,6 @@
 
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
-import { pick } from "../utils";
 
 class NoteImport extends AddonBase {
   constructor(parent: Knowledge4Zotero) {
@@ -18,7 +17,7 @@ class NoteImport extends AddonBase {
       append?: boolean;
     } = {}
   ) {
-    const filepath = await pick(
+    const filepath = await this._Addon.toolkit.Tool.openFilePicker(
       `${Zotero.getString("fileInterface.import")} MarkDown Document`,
       "open",
       [["MarkDown File(*.md)", "*.md"]]

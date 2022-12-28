@@ -51,14 +51,15 @@
     "unified": "^10.1.2",
     "unist-util-visit": "^4.1.1",
     "unist-util-visit-parents": "^5.1.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "zotero-plugin-toolkit": "^0.0.9"
   },
   "devDependencies": {
     "@types/diff": "^5.0.2",
     "@types/jquery": "^3.5.14",
     "@types/node": "^17.0.31",
-    "esbuild": "^0.14.34",
     "compressing": "^1.5.1",
+    "esbuild": "^0.14.34",
     "release-it": "^14.14.0",
     "zotero-types": "^0.1.2"
   }

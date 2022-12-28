@@ -3,7 +3,7 @@
  */
 
 import Knowledge4Zotero from "../addon";
-import { EditorMessage, OutlineType, pick } from "../utils";
+import { EditorMessage, OutlineType } from "../utils";
 import AddonBase from "../module";
 
 class WorkspaceWindow extends AddonBase {
@@ -83,7 +83,11 @@ class WorkspaceWindow extends AddonBase {
         onClose: () => (this.workspaceTabId = ""),
       });
       this.workspaceTabId = id;
-      const _iframe = window.document.createElement("browser");
+      const _iframe = this._Addon.toolkit.UI.createElement(
+        document,
+        "browser",
+        "xul"
+      ) as XUL.Element;
       _iframe.setAttribute("class", "reader");
       _iframe.setAttribute("flex", "1");
       _iframe.setAttribute("type", "content");
@@ -198,7 +202,7 @@ class WorkspaceWindow extends AddonBase {
       );
     } else if (e.data.type === "saveSVGReturn") {
       console.log(e.data.image);
-      const filename = await pick(
+      const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} SVG Image`,
         "save",
         [["SVG File(*.svg)", "*.svg"]],

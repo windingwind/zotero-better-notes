@@ -4,7 +4,6 @@
 
 import Knowledge4Zotero from "../addon";
 import AddonBase from "../module";
-import { CopyHelper, pick } from "../utils";
 
 class EditorImageViewer extends AddonBase {
   _window: Window;
@@ -87,7 +86,9 @@ class EditorImageViewer extends AddonBase {
       this._window.document
         .querySelector("#copy")
         .addEventListener("click", (e) => {
-          new CopyHelper().addImage(this.srcList[this.idx]).copy();
+          this._Addon.toolkit.Tool.getCopyHelper()
+            .addImage(this.srcList[this.idx])
+            .copy();
           this._Addon.ZoteroViews.showProgressWindow(
             "Better Notes",
             "Image Copied."
@@ -108,7 +109,7 @@ class EditorImageViewer extends AddonBase {
             u8arr[n] = bstr.charCodeAt(n);
           }
           let ext = Zotero.MIME.getPrimaryExtension(mime, "");
-          const filename = await pick(
+          const filename = await this._Addon.toolkit.Tool.openFilePicker(
             Zotero.getString("noteEditor.saveImageAs"),
             "save",
             [[`Image(*.${ext})`, `*.${ext}`]],

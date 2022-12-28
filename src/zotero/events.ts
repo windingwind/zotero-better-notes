@@ -4,7 +4,7 @@
 
 import TreeModel = require("tree-model");
 import Knowledge4Zotero from "../addon";
-import { CopyHelper, EditorMessage } from "../utils";
+import { EditorMessage } from "../utils";
 import AddonBase from "../module";
 
 class ZoteroEvents extends AddonBase {
@@ -377,7 +377,7 @@ class ZoteroEvents extends AddonBase {
                     }
                   },
                   copyLink: async () => {
-                    new CopyHelper()
+                    this._Addon.toolkit.Tool.getCopyHelper()
                       .addText(link, "text/unicode")
                       .addText(
                         (e.target as HTMLLinkElement).outerHTML,
@@ -767,10 +767,10 @@ class ZoteroEvents extends AddonBase {
 
         if (currentLine >= 0) {
           // Compute annotation lines length
-          const temp = document.createElementNS(
-            "http://www.w3.org/1999/xhtml",
+          const temp = this._Addon.toolkit.UI.createElement(
+            document,
             "div"
-          );
+          ) as HTMLDivElement;
           temp.innerHTML = html;
           const elementList = this._Addon.NoteParse.parseHTMLElements(temp);
           // Move cursor foward
@@ -930,7 +930,7 @@ class ZoteroEvents extends AddonBase {
         const html = newLines.join("\n");
         if (!targetItem) {
           console.log(html);
-          new CopyHelper()
+          this._Addon.toolkit.Tool.getCopyHelper()
             .addText(html, "text/html")
             .addText(
               await this._Addon.NoteParse.parseHTMLToMD(html),
@@ -1049,7 +1049,7 @@ class ZoteroEvents extends AddonBase {
         if (!targetItem) {
           console.log(html);
 
-          new CopyHelper()
+          this._Addon.toolkit.Tool.getCopyHelper()
             .addText(html, "text/html")
             .addText(
               await this._Addon.NoteParse.parseHTMLToMD(html),
@@ -1283,7 +1283,9 @@ class ZoteroEvents extends AddonBase {
       }
       const html = await this._Addon.NoteParse.parseMDToHTML(source);
       console.log(source, html);
-      new CopyHelper().addText(html, "text/html").copy();
+      this._Addon.toolkit.Tool.getCopyHelper()
+        .addText(html, "text/html")
+        .copy();
 
       this._Addon.ZoteroViews.showProgressWindow(
         "Better Notes",
@@ -1303,7 +1305,9 @@ class ZoteroEvents extends AddonBase {
       }
       const html = this._Addon.NoteParse.parseAsciiDocToHTML(source);
       console.log(source, html);
-      new CopyHelper().addText(html, "text/html").copy();
+      this._Addon.toolkit.Tool.getCopyHelper()
+        .addText(html, "text/html")
+        .copy();
 
       this._Addon.ZoteroViews.showProgressWindow(
         "Better Notes",

@@ -48,10 +48,11 @@ class WorkspaceOutline extends AddonBase {
       "chrome://Knowledge4Zotero/content/mindMap.html",
       "chrome://Knowledge4Zotero/content/bubbleMap.html",
     ];
-    const iframe =
-      this._Addon.WorkspaceWindow.workspaceWindow.document.createElement(
-        "iframe"
-      );
+    const iframe = this._Addon.toolkit.UI.createElement(
+      this._Addon.WorkspaceWindow.workspaceWindow.document,
+      "iframe",
+      "xul"
+    ) as XUL.Element;
     iframe.setAttribute("id", "mindmapIframe");
     iframe.setAttribute("src", srcList[this.currentOutline]);
     mindmap.append(iframe);

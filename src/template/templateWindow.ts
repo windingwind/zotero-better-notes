@@ -51,9 +51,17 @@ class TemplateWindow extends AddonBase {
       e.parentElement.removeChild(e);
     }
     for (const template of templates) {
-      const listitem = this._window.document.createElement("listitem");
+      const listitem = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listitem",
+        "xul"
+      ) as XUL.ListItem;
       listitem.setAttribute("id", template.name);
-      const name = this._window.document.createElement("listcell");
+      const name = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listcell",
+        "xul"
+      ) as XUL.Element;
       name.setAttribute("label", template.name);
       if (
         this._Addon.TemplateController._systemTemplateNames.includes(

@@ -73,7 +73,10 @@ class NoteUtils extends AddonBase {
         lineIndex
       );
       const frag = _document.createDocumentFragment();
-      const temp = _document.createElement("div");
+      const temp = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       temp.innerHTML = text;
       while (temp.firstChild) {
         frag.appendChild(temp.firstChild);
@@ -365,7 +368,10 @@ class NoteUtils extends AddonBase {
           lineIndex
         );
       const frag = _document.createDocumentFragment();
-      const temp = _document.createElement("div");
+      const temp = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       temp.innerHTML = noteLines[lineIndex];
       while (temp.firstChild) {
         frag.appendChild(temp.firstChild);

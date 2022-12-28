@@ -3,7 +3,6 @@
  */
 
 import Knowledge4Zotero from "../addon";
-import { pick } from "../utils";
 import AddonBase from "../module";
 
 class NoteExport extends AddonBase {
@@ -84,7 +83,7 @@ class NoteExport extends AddonBase {
     }
 
     if (options.exportMD) {
-      const filename = await pick(
+      const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} MarkDown Document`,
         "save",
         [["MarkDown File(*.md)", "*.md"]],
@@ -109,7 +108,7 @@ class NoteExport extends AddonBase {
       instance._iframeWindow.postMessage({ type: "exportDocx" }, "*");
       await this._docxPromise.promise;
       console.log(this._docxBlob);
-      const filename = await pick(
+      const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} MS Word Document`,
         "save",
         [["MS Word Document(*.docx)", "*.docx"]],
@@ -160,7 +159,7 @@ class NoteExport extends AddonBase {
       }
     }
     if (options.exportFreeMind) {
-      const filename = await pick(
+      const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} FreeMind`,
         "save",
         [["FreeMind(*.mm)", "*.mm"]],
@@ -196,7 +195,7 @@ class NoteExport extends AddonBase {
     this._exportFileInfo = [];
     let filedir =
       options.filedir ||
-      (await pick(
+      (await this._Addon.toolkit.Tool.openFilePicker(
         Zotero.getString(
           options.useSync ? "sync.sync" : "fileInterface.export"
         ) + " MarkDown",

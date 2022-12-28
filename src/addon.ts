@@ -24,6 +24,7 @@ import EditorController from "./editor/editorController";
 import EditorImageViewer from "./editor/imageViewerWindow";
 import TemplateWindow from "./template/templateWindow";
 import { SyncUtils } from "./sync/syncUtils";
+import ZoteroToolkit from "zotero-plugin-toolkit";
 
 class Knowledge4Zotero {
   public ZoteroEvents: ZoteroEvents;
@@ -58,6 +59,8 @@ class Knowledge4Zotero {
   public EditorController: EditorController;
   public EditorImageViewer: EditorImageViewer;
 
+  public toolkit: ZoteroToolkit;
+
   constructor() {
     this.ZoteroEvents = new ZoteroEvents(this);
     this.ZoteroViews = new ZoteroViews(this);
@@ -82,6 +85,10 @@ class Knowledge4Zotero {
     this.NoteExportWindow = new NoteExportWindow(this);
     this.NoteParse = new NoteParse(this);
     this.knowledge = new TemplateAPI(this);
+
+    this.toolkit = new ZoteroToolkit();
+    // Disable since we are still using overlay
+    this.toolkit.UI.enableElementRecordGlobal = false
   }
 }
 

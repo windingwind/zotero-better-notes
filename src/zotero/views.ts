@@ -68,51 +68,45 @@ class ZoteroViews extends AddonBase {
     let addNoteItem = document
       .getElementById("zotero-tb-note-add")
       .getElementsByTagName("menuitem")[1];
-    let buttons = this.createXULElement(document, {
+    let buttons = this._Addon.toolkit.UI.creatElementsFromJSON(document, {
       tag: "fragment",
       subElementOptions: [
         {
           tag: "menuitem",
           id: "zotero-tb-knowledge-create-mainnote",
-          attributes: [
-            ["label", "New Main Note"],
-            ["class", "menuitem-iconic"],
-            [
-              "style",
+          attributes: {
+            label: "New Main Note",
+            class: "menuitem-iconic",
+            style:
               "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
-            ],
-          ],
+          },
           listeners: [
-            [
-              "click",
-              (e) => {
+            {
+              type: "click",
+              listener: (e) => {
                 this._Addon.ZoteroEvents.onEditorEvent(
                   new EditorMessage("createWorkspace", {})
                 );
               },
-              false,
-            ],
+            },
           ],
         },
         {
           tag: "menuitem",
           id: "zotero-tb-knowledge-import-md",
-          attributes: [
-            ["label", "Import MarkDown as Note"],
-            ["class", "menuitem-iconic"],
-            [
-              "style",
+          attributes: {
+            label: "Import MarkDown as Note",
+            class: "menuitem-iconic",
+            style:
               "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
-            ],
-          ],
+          },
           listeners: [
-            [
-              "click",
-              async (e) => {
+            {
+              type: "click",
+              listener: async (e) => {
                 await this._Addon.NoteImport.doImport();
               },
-              false,
-            ],
+            },
           ],
         },
       ],
@@ -122,62 +116,95 @@ class ZoteroViews extends AddonBase {
 
   public addOpenWorkspaceButton() {
     // Left collection tree view button
-    const treeRow = document.createElement("html:div");
-    treeRow.setAttribute("class", "row");
-    treeRow.setAttribute(
-      "style",
-      "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
-    );
-    const span1 = document.createElement("span");
-    span1.setAttribute("class", "cell label primary");
-    const span2 = document.createElement("span");
-    span2.setAttribute("class", "icon icon-twisty twisty open");
-    span2.innerHTML = this.icons["openWorkspaceCollectionView"];
-    const span3 = document.createElement("span");
-    span3.setAttribute("class", "icon icon-bg cell-icon");
-    span3.setAttribute(
-      "style",
-      "background-image:url(chrome://Knowledge4Zotero/skin/favicon.png)"
-    );
-    const span4 = document.createElement("span");
-    span4.setAttribute("class", "cell-text");
-    span4.setAttribute("style", "margin-left: 6px;");
-    span4.innerHTML = Zotero.locale.includes("zh")
-      ? "打开工作区"
-      : "Open Workspace";
-    span1.append(span2, span3, span4);
-    treeRow.append(span1);
-    treeRow.addEventListener("click", async (e) => {
-      if (e.shiftKey) {
-        await this._Addon.WorkspaceWindow.openWorkspaceWindow("window", true);
-      } else {
-        await this._Addon.WorkspaceWindow.openWorkspaceWindow();
-      }
-    });
-    treeRow.addEventListener("mouseover", (e: XUL.XULEvent) => {
-      treeRow.setAttribute(
-        "style",
-        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; background-color: grey;"
-      );
-    });
-    treeRow.addEventListener("mouseleave", (e: XUL.XULEvent) => {
-      treeRow.setAttribute(
-        "style",
-        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
-      );
-    });
-    treeRow.addEventListener("mousedown", (e: XUL.XULEvent) => {
-      treeRow.setAttribute(
-        "style",
-        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; color: #FFFFFF;"
-      );
-    });
-    treeRow.addEventListener("mouseup", (e: XUL.XULEvent) => {
-      treeRow.setAttribute(
-        "style",
-        "height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
-      );
-    });
+    const treeRow = this._Addon.toolkit.UI.creatElementsFromJSON(document, {
+      tag: "html:div",
+      attributes: {
+        class: "row",
+        style: "max-height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;",
+      },
+      listeners: [
+        {
+          type: "click",
+          listener: async (e: MouseEvent) => {
+            if (e.shiftKey) {
+              await this._Addon.WorkspaceWindow.openWorkspaceWindow(
+                "window",
+                true
+              );
+            } else {
+              await this._Addon.WorkspaceWindow.openWorkspaceWindow();
+            }
+          },
+        },
+        {
+          type: "mouseover",
+          listener: (e) => {
+            treeRow.setAttribute(
+              "style",
+              "max-height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; background-color: grey;"
+            );
+          },
+        },
+        {
+          type: "mouseleave",
+          listener: (e) => {
+            treeRow.setAttribute(
+              "style",
+              "max-height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
+            );
+          },
+        },
+        {
+          type: "mousedown",
+          listener: (e) => {
+            treeRow.setAttribute(
+              "style",
+              "max-height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px; color: #FFFFFF;"
+            );
+          },
+        },
+        {
+          type: "mouseup",
+          listener: (e) => {
+            treeRow.setAttribute(
+              "style",
+              "max-height: 22px; margin: 0 0 0 0; padding: 0 6px 0 6px;"
+            );
+          },
+        },
+      ],
+      subElementOptions: [
+        {
+          tag: "div",
+          attributes: {
+            class: "icon icon-twisty twisty open",
+          },
+          directAttributes: {
+            innerHTML: this.icons["openWorkspaceCollectionView"],
+          },
+        },
+        {
+          tag: "div",
+          attributes: {
+            class: "icon icon-bg cell-icon",
+            style:
+              "background-image:url(chrome://Knowledge4Zotero/skin/favicon.png)",
+          },
+        },
+        {
+          tag: "div",
+          attributes: {
+            class: "cell-text",
+            style: "margin-left: 6px;",
+          },
+          directAttributes: {
+            innerHTML: Zotero.locale.includes("zh")
+              ? "打开工作区"
+              : "Open Workspace",
+          },
+        },
+      ],
+    }) as HTMLDivElement;
     document
       .getElementById("zotero-collections-tree-container")
       .children[0].before(treeRow);
@@ -223,7 +250,11 @@ class ZoteroViews extends AddonBase {
       ];
     }
     for (const template of templates) {
-      const menuitem = _document.createElement("menuitem");
+      const menuitem = this._Addon.toolkit.UI.createElement(
+        _document,
+        "menuitem",
+        "xul"
+      ) as XUL.MenuItem;
       // menuitem.setAttribute("id", template.name);
       menuitem.setAttribute("label", template.name);
       menuitem.setAttribute(
@@ -244,6 +275,7 @@ class ZoteroViews extends AddonBase {
     }
   }
 
+  // To deprecate
   public updateCitationStyleMenu() {
     const _window = this._Addon.WorkspaceMenu.getWorkspaceMenuWindow();
     Zotero.debug(`updateCitationStyleMenu`);
@@ -255,14 +287,18 @@ class ZoteroViews extends AddonBase {
 
     // add styles to list
     const styles = Zotero.Styles.getVisible();
-    styles.forEach(function (style) {
+    styles.forEach((style) => {
       const val = JSON.stringify({
         mode: "bibliography",
         contentType: "html",
         id: style.styleID,
         locale: "",
       });
-      const itemNode = document.createElement("menuitem") as XUL.MenuItem;
+      const itemNode = this._Addon.toolkit.UI.createElement(
+        _window.document,
+        "menuitem",
+        "xul"
+      ) as XUL.MenuItem;
       itemNode.setAttribute("value", val);
       itemNode.setAttribute("label", style.title);
       itemNode.setAttribute("type", "checkbox");
@@ -412,68 +448,6 @@ class ZoteroViews extends AddonBase {
   public async getProgressDocument(progressWindow): Promise<Document> {
     await this.waitProgressWindow(progressWindow);
     return progressWindow.progress._hbox.ownerDocument;
-  }
-
-  public createXULElement(doc: Document, options: XULElementOptions) {
-    const createElement: () => XUL.Element =
-      options.tag === "fragment"
-        ? () => doc.createDocumentFragment()
-        : Zotero.platformMajorVersion <= 60
-        ? () =>
-            doc.createElementNS(
-              "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-              options.tag
-            )
-        : // @ts-ignore
-          () => doc.createXULElement(options.tag);
-    if (
-      options.id &&
-      (options.checkExistanceParent
-        ? options.checkExistanceParent
-        : doc
-      ).querySelector(`#${options.id}`)
-    ) {
-      if (options.ignoreIfExists) {
-        return undefined;
-      }
-      if (options.removeIfExists) {
-        doc.querySelector(`#${options.id}`).remove();
-      }
-    }
-    if (options.customCheck && !options.customCheck()) {
-      return undefined;
-    }
-    const element = createElement();
-    if (options.id) {
-      element.id = options.id;
-    }
-    if (options.styles?.length) {
-      options.styles.forEach(([k, v]) => {
-        element.style[k] = v;
-      });
-    }
-    if (options.directAttributes?.length) {
-      options.directAttributes.forEach(([k, v]) => {
-        element[k] = v;
-      });
-    }
-    if (options.attributes?.length) {
-      options.attributes.forEach(([k, v]) => {
-        element.setAttribute(k, v);
-      });
-    }
-    if (options.listeners?.length) {
-      options.listeners.forEach(([type, cbk, option]) => {
-        element.addEventListener(type, cbk, option);
-      });
-    }
-    if (options.subElementOptions?.length) {
-      const subElements = options.subElementOptions
-        .map((options) => this.createXULElement(doc, options))
-        .filter((e) => e);
-      element.append(...subElements);
-    }
-    return element;
   }
 }
 

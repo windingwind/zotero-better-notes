@@ -45,16 +45,26 @@ class SyncListWindow extends AddonBase {
     }
     for (const note of notes) {
       const syncInfo = this._Addon.SyncUtils.getSyncStatus(note);
-      const listitem = this._window.document.createElement(
-        "listitem"
+      const listitem = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listitem",
+        "xul"
       ) as XUL.ListItem;
       listitem.setAttribute("id", note.id);
 
-      const icon = this._window.document.createElement("listcell");
+      const icon = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listcell",
+        "xul"
+      ) as XUL.Element;
       icon.setAttribute("class", "listcell-iconic");
       icon.setAttribute("image", "chrome://zotero/skin/treeitem-note.png");
 
-      const name = this._window.document.createElement("listcell");
+      const name = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listcell",
+        "xul"
+      ) as XUL.Element;
       name.setAttribute("label", `${note.getNoteTitle()}-${note.key}`);
 
       let lastSyncString: string;
@@ -71,10 +81,18 @@ class SyncListWindow extends AddonBase {
       } else {
         lastSyncString = new Date(lastSyncTime).toLocaleString();
       }
-      const lastSync = this._window.document.createElement("listcell");
+      const lastSync = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listcell",
+        "xul"
+      ) as XUL.Element;
       lastSync.setAttribute("label", lastSyncString);
 
-      const syncPath = this._window.document.createElement("listcell");
+      const syncPath = this._Addon.toolkit.UI.createElement(
+        this._window.document,
+        "listcell",
+        "xul"
+      ) as XUL.Element;
       syncPath.setAttribute(
         "label",
         `${decodeURIComponent(syncInfo.path)}/${decodeURIComponent(

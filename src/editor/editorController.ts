@@ -28,7 +28,10 @@ class EditorController extends AddonBase {
 
   injectScripts(_window: Window) {
     if (!_window.document.getElementById("betternotes-script")) {
-      const messageScript = _window.document.createElement("script");
+      const messageScript = this._Addon.toolkit.UI.createElement(
+        _window.document,
+        "script"
+      ) as HTMLScriptElement;
       messageScript.id = "betternotes-script";
       messageScript.innerHTML = `__placeholder:editorScript.js__`;
       _window.document.head.append(messageScript);

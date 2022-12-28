@@ -31,7 +31,10 @@ class ReaderViews extends AddonBase {
         continue;
       }
       moreButton.setAttribute("knowledgeinit", "true");
-      const createNoteButton = _document.createElement("div");
+      const createNoteButton = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       createNoteButton.setAttribute("style", "margin: 5px;");
       createNoteButton.title = "Quick Note";
       createNoteButton.innerHTML = this.icons["createNote"];
@@ -66,7 +69,10 @@ class ReaderViews extends AddonBase {
       moreButton.before(createNoteButton);
       if (annotationItem.annotationType === "image") {
         // Image OCR
-        const ocrButton = _document.createElement("div");
+        const ocrButton = this._Addon.toolkit.UI.createElement(
+          _document,
+          "div"
+        ) as HTMLDivElement;
         ocrButton.setAttribute("style", "margin: 5px;");
         ocrButton.innerHTML = this.icons["ocrTex"];
         ocrButton.title = "OCR LaTex";

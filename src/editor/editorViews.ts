@@ -3,7 +3,7 @@
  */
 
 import Knowledge4Zotero from "../addon";
-import { CopyHelper, EditorMessage } from "../utils";
+import { EditorMessage } from "../utils";
 import AddonBase from "../module";
 
 class EditorViews extends AddonBase {
@@ -95,13 +95,19 @@ class EditorViews extends AddonBase {
           setMainNoteDropDown,
           "left"
         );
-        const titleNode = _window.document.createElement("div");
+        const titleNode = this._Addon.toolkit.UI.createElement(
+          _window.document,
+          "div"
+        ) as HTMLDivElement;
         titleNode.innerHTML = "Set Recent Main Notes";
         titleNode.title = "Click item to set it main note";
         titleNode.style.textAlign = "center";
         popup.childNodes[0].before(
           titleNode,
-          _window.document.createElement("hr")
+          this._Addon.toolkit.UI.createElement(
+            _window.document,
+            "hr"
+          ) as HTMLHRElement
         );
         setMainNoteDropDown.addEventListener("mouseleave", (e) => {
           popup.remove();
@@ -125,7 +131,10 @@ class EditorViews extends AddonBase {
       if (isMainNote) {
         // This is a main knowledge, hide all buttons except the export button and add title
         addLinkDropDown.innerHTML = "";
-        const header = _window.document.createElement("div");
+        const header = this._Addon.toolkit.UI.createElement(
+          _window.document,
+          "div"
+        ) as HTMLDivElement;
         header.setAttribute("title", "This is a Main Note");
         header.innerHTML = "Main Note";
         header.setAttribute("style", "font-size: medium");
@@ -290,7 +299,10 @@ class EditorViews extends AddonBase {
     );
 
     // Title style only for normal window
-    const style = _window.document.createElement("style");
+    const style = this._Addon.toolkit.UI.createElement(
+      _window.document,
+      "style"
+    ) as HTMLStyleElement;
     style.id = "bn-headings";
     style.innerHTML = `
           .primary-editor h1::before {
@@ -344,7 +356,10 @@ class EditorViews extends AddonBase {
         ) {
           const dropdownPopup = moreDropdown.querySelector(".popup");
           if (dropdownPopup) {
-            const refreshButton = _window.document.createElement("button");
+            const refreshButton = this._Addon.toolkit.UI.createElement(
+              _window.document,
+              "button"
+            ) as HTMLButtonElement;
             refreshButton.classList.add("option");
             refreshButton.innerText = "Refresh Editor";
             refreshButton.addEventListener("click", (e) => {
@@ -366,7 +381,10 @@ class EditorViews extends AddonBase {
                 state: instance._state,
               });
             });
-            const previewButton = _window.document.createElement("button");
+            const previewButton = this._Addon.toolkit.UI.createElement(
+              _window.document,
+              "button"
+            ) as HTMLButtonElement;
             previewButton.classList.add("option");
             previewButton.innerText = "Preview in Workspace";
             previewButton.addEventListener("click", async (e) => {
@@ -376,7 +394,10 @@ class EditorViews extends AddonBase {
                 instance._item
               );
             });
-            const copyLinkButton = _window.document.createElement("button");
+            const copyLinkButton = this._Addon.toolkit.UI.createElement(
+              _window.document,
+              "button"
+            ) as HTMLButtonElement;
             copyLinkButton.classList.add("option");
             copyLinkButton.innerText = "Copy Note Link";
             copyLinkButton.addEventListener("click", (e) => {
@@ -387,7 +408,7 @@ class EditorViews extends AddonBase {
                   : linkText
               }</a></p>`;
 
-              new CopyHelper()
+              this._Addon.toolkit.Tool.getCopyHelper()
                 .addText(linkText, "text/unicode")
                 .addText(linkHTML, "text/html")
                 .copy();
@@ -397,8 +418,10 @@ class EditorViews extends AddonBase {
               );
             });
 
-            const copyLinkAtLineButton =
-              _window.document.createElement("button");
+            const copyLinkAtLineButton = this._Addon.toolkit.UI.createElement(
+              _window.document,
+              "button"
+            ) as HTMLButtonElement;
             copyLinkAtLineButton.classList.add("option");
             copyLinkAtLineButton.innerText = "Copy Note Link of Current Line";
             copyLinkAtLineButton.addEventListener("click", (e) => {
@@ -410,7 +433,7 @@ class EditorViews extends AddonBase {
                   ? noteItem.getNoteTitle().trim()
                   : linkText
               }</a></p>`;
-              new CopyHelper()
+              this._Addon.toolkit.Tool.getCopyHelper()
                 .addText(linkText, "text/unicode")
                 .addText(linkHTML, "text/html")
                 .copy();
@@ -421,7 +444,10 @@ class EditorViews extends AddonBase {
                 } Copied`
               );
             });
-            const importButton = _window.document.createElement("button");
+            const importButton = this._Addon.toolkit.UI.createElement(
+              _window.document,
+              "button"
+            ) as HTMLButtonElement;
             importButton.classList.add("option");
             importButton.innerText = "Import from MarkDown";
             importButton.addEventListener("click", async (e) => {
@@ -457,16 +483,28 @@ class EditorViews extends AddonBase {
 
     await new Promise<void>((resolve, reject) => {
       const _document = editorInstances._iframeWindow.document;
-      const knowledgeToolBar = _document.createElement("div");
+      const knowledgeToolBar = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       knowledgeToolBar.setAttribute("id", "knowledge-tools");
       knowledgeToolBar.setAttribute("class", "toolbar");
-      const start = _document.createElement("div");
+      const start = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       start.setAttribute("id", "knowledge-tools-start");
       start.setAttribute("class", "start");
-      const middle = _document.createElement("div");
+      const middle = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       middle.setAttribute("id", "knowledge-tools-middle");
       middle.setAttribute("class", "middle");
-      const end = _document.createElement("div");
+      const end = this._Addon.toolkit.UI.createElement(
+        _document,
+        "div"
+      ) as HTMLDivElement;
       end.setAttribute("id", "knowledge-tools-end");
       end.setAttribute("class", "end");
       knowledgeToolBar.append(start, middle, end);
@@ -506,10 +544,16 @@ class EditorViews extends AddonBase {
         (e) => e.getAttribute("id") !== `knowledge-tools-${position}`
       );
     }
-    const dropdown = _document.createElement("div");
+    const dropdown = this._Addon.toolkit.UI.createElement(
+      _document,
+      "div"
+    ) as HTMLDivElement;
     dropdown.setAttribute("class", "dropdown");
     dropdown.setAttribute("id", id);
-    const button = _document.createElement("button");
+    const button = this._Addon.toolkit.UI.createElement(
+      _document,
+      "button"
+    ) as HTMLButtonElement;
     button.setAttribute("class", "toolbar-button");
     button.setAttribute("title", title);
     button.setAttribute("eventType", eventType);
@@ -544,11 +588,17 @@ class EditorViews extends AddonBase {
     if (!knowledgeToolBar) {
       await this.addEditorToolBar(editorInstances);
     }
-    const popup = _document.createElement("div");
+    const popup = this._Addon.toolkit.UI.createElement(
+      _document,
+      "div"
+    ) as HTMLDivElement;
     popup.setAttribute("class", "popup");
     popup.setAttribute("id", id);
     for (let buttonParam of buttons) {
-      const button = _document.createElement("button");
+      const button = this._Addon.toolkit.UI.createElement(
+        _document,
+        "button"
+      ) as HTMLButtonElement;
       button.setAttribute("class", "option");
       button.setAttribute(
         "style",
@@ -604,7 +654,10 @@ class EditorViews extends AddonBase {
       if (insertButton) {
         insertButton.remove();
       }
-      insertButton = _window.document.createElement("button");
+      insertButton = this._Addon.toolkit.UI.createElement(
+        _window.document,
+        "button"
+      ) as HTMLButtonElement;
       insertButton.setAttribute("id", insertButtonId);
       insertButton.setAttribute(
         "title",
@@ -700,7 +753,10 @@ class EditorViews extends AddonBase {
       if (updateButton) {
         updateButton.remove();
       }
-      updateButton = _window.document.createElement("button");
+      updateButton = this._Addon.toolkit.UI.createElement(
+        _window.document,
+        "button"
+      ) as HTMLButtonElement;
       updateButton.setAttribute("id", updateButtonId);
       updateButton.setAttribute(
         "title",
@@ -765,7 +821,10 @@ class EditorViews extends AddonBase {
       if (openInWindowButton) {
         openInWindowButton.remove();
       }
-      openInWindowButton = _window.document.createElement("button");
+      openInWindowButton = this._Addon.toolkit.UI.createElement(
+        _window.document,
+        "button"
+      ) as HTMLButtonElement;
       openInWindowButton.setAttribute("id", openInWindowButtonId);
       openInWindowButton.setAttribute("title", "Open In New Window");
       openInWindowButton.innerHTML = this.icons["openInNewWindow"];
@@ -788,10 +847,10 @@ class EditorViews extends AddonBase {
           if (previewContainer) {
             previewContainer.remove();
           }
-          previewContainer = _window.document.createElementNS(
-            "http://www.w3.org/1999/xhtml",
+          previewContainer = this._Addon.toolkit.UI.createElement(
+            _window.document,
             "div"
-          );
+          ) as HTMLDivElement;
           previewContainer.id = "note-link-preview";
           previewContainer.className = "ProseMirror primary-editor";
           previewContainer.innerHTML =
@@ -840,7 +899,10 @@ class EditorViews extends AddonBase {
     const _window = instance._iframeWindow;
 
     _window.document.querySelector("#bn-image-preview")?.remove();
-    const previewButton = _window.document.createElement("button");
+    const previewButton = this._Addon.toolkit.UI.createElement(
+      _window.document,
+      "button"
+    ) as HTMLButtonElement;
     previewButton.innerHTML = `<div class="icon"><svg t="1668689809930" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8872" width="16" height="16"><path d="M978.346667 149.333333c0 11.776-9.557333 21.333333-21.333333 21.333333L167.68 170.666667l0 448c0 35.285333 28.714667 64 64 64l554.666667 0c35.285333 0 64-28.714667 64-42.666667l0-154.496L850.346667 356.309333 850.346667 277.930667c0-11.776 9.557333-21.333333 21.333333-21.333333s21.333333 9.557333 21.333333 21.333333l0 78.378667 0 129.194667L893.013333 640c0 37.504-47.829333 85.333333-106.666667 85.333333l-205.568 0 169.557333 169.514667c8.32 8.32 8.32 21.845333 0 30.165333-8.362667 8.362667-21.845333 8.362667-30.208 0L520.405333 725.333333l-16.810667 0-199.722667 199.68c-8.32 8.362667-21.845333 8.362667-30.165333 0-8.32-8.32-8.32-21.845333 0-30.165333L443.306667 725.333333 231.68 725.333333c-58.837333 0-106.666667-47.829333-106.666667-106.666667L125.013333 170.666667l-64 0c-11.776 0-21.333333-9.557333-21.333333-21.333333S49.194667 128 61.013333 128l405.333333 0L466.346667 85.333333l85.333333 0 0 42.666667 405.333333 0C968.789333 128 978.346667 137.557333 978.346667 149.333333zM618.666667 405.333333l-194.986667-128 0 256L618.666667 405.333333z" p-id="8873"></path></svg>Preview</div>`;
     previewButton.id = "bn-image-preview";
     previewButton.addEventListener("click", (e) => {
@@ -904,7 +966,7 @@ class EditorViews extends AddonBase {
       );
     };
 
-    const elementOptions: XULElementOptions = {
+    const elementOptions = {
       tag: "fragment",
       subElementOptions: [
         {
@@ -918,12 +980,12 @@ class EditorViews extends AddonBase {
           id: "menupopup-resizeImage",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [["label", "Resize Image"]],
+          attributes: { label: "Resize Image" },
           customCheck: checkImageSelected,
           listeners: [
-            [
-              "command",
-              (e) => {
+            {
+              type: "command",
+              listener: (e: Event) => {
                 const newWidth = parseFloat(
                   prompt(
                     "Enter new width (px):",
@@ -939,8 +1001,7 @@ class EditorViews extends AddonBase {
                   );
                 }
               },
-              undefined,
-            ],
+            },
           ],
         },
         {
@@ -955,11 +1016,11 @@ class EditorViews extends AddonBase {
           id: "menupopup-copylink",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [["label", "Copy Note Link"]],
+          attributes: { label: "Copy Note Link" },
           listeners: [
-            [
-              "command",
-              (e) => {
+            {
+              type: "command",
+              listener: (e: Event) => {
                 const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
                 const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
                   noteItem.getNoteTitle().trim()
@@ -967,7 +1028,7 @@ class EditorViews extends AddonBase {
                     : linkText
                 }</a></p>`;
 
-                new CopyHelper()
+                this._Addon.toolkit.Tool.getCopyHelper()
                   .addText(linkText, "text/unicode")
                   .addText(linkHTML, "text/html")
                   .copy();
@@ -976,8 +1037,7 @@ class EditorViews extends AddonBase {
                   "Note Link Copied"
                 );
               },
-              undefined,
-            ],
+            },
           ],
         },
         {
@@ -985,11 +1045,11 @@ class EditorViews extends AddonBase {
           id: "menupopup-copylinkline",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [["label", `Copy Note Link of Line ${lineIndex + 1}`]],
+          attributes: { label: `Copy Note Link of Line ${lineIndex + 1}` },
           listeners: [
-            [
-              "command",
-              (e) => {
+            {
+              type: "command",
+              listener: ((e: Event) => {
                 const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
                   withLine: true,
                 });
@@ -998,7 +1058,7 @@ class EditorViews extends AddonBase {
                     ? noteItem.getNoteTitle().trim()
                     : linkText
                 }</a></p>`;
-                new CopyHelper()
+                this._Addon.toolkit.Tool.getCopyHelper()
                   .addText(linkText, "text/unicode")
                   .addText(linkHTML, "text/html")
                   .copy();
@@ -1006,9 +1066,8 @@ class EditorViews extends AddonBase {
                   "Better Notes",
                   `Note Link of Line ${lineIndex + 1} Copied`
                 );
-              },
-              undefined,
-            ],
+              }) as EventListener,
+            },
           ],
         },
         {
@@ -1016,18 +1075,15 @@ class EditorViews extends AddonBase {
           id: "menupopup-insertTextTemplateMenu",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [["label", "Insert Template (Text)"]],
+          attributes: { label: "Insert Template (Text)" },
           subElementOptions: [
             {
               tag: "menupopup",
               id: `menu_insert${instance._item.id}TextTemplatePopup`,
               ignoreIfExists: true,
-              attributes: [
-                [
-                  "onpopupshowing",
-                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
-                ],
-              ],
+              attributes: {
+                onpopupshowing: `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
+              },
             },
           ],
         },
@@ -1036,18 +1092,15 @@ class EditorViews extends AddonBase {
           id: "menupopup-insertItemTemplate",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [["label", "Insert Template (Item)"]],
+          attributes: { label: "Insert Template (Item)" },
           subElementOptions: [
             {
               tag: "menupopup",
               id: `menu_insert${instance._item.id}ItemTemplatePopup`,
               ignoreIfExists: true,
-              attributes: [
-                [
-                  "onpopupshowing",
-                  `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
-                ],
-              ],
+              attributes: {
+                onpopupshowing: `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
+              },
             },
           ],
         },
@@ -1062,49 +1115,42 @@ class EditorViews extends AddonBase {
           id: "menupopup-lineprevious",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [
-            [
-              "label",
-              `L${lineIndex + 1}:${shorten(
-                lineElements[lineIndex].innerText,
-                25
-              )}`,
-            ],
-            ["disabled", true],
-          ],
+          attributes: {
+            label: `L${lineIndex + 1}:${shorten(
+              lineElements[lineIndex].innerText,
+              25
+            )}`,
+
+            disabled: true,
+          },
         },
         {
           tag: "menuitem",
           id: "menupopup-insertposition",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [
-            ["label", "<--- Insert Anchor"],
-            ["disabled", true],
-          ],
+          attributes: { label: "<--- Insert Anchor", disabled: true },
         },
         {
           tag: "menuitem",
           id: "menupopup-linenext",
           checkExistanceParent: instance._popup,
           ignoreIfExists: true,
-          attributes: [
-            [
-              "label",
+          attributes: {
+            label:
               lineIndex + 1 >= lineElements.length
                 ? "End of Note"
                 : `L${lineIndex + 2}:${shorten(
                     lineElements[lineIndex + 1].innerText,
                     25
                   )}`,
-            ],
-            ["disabled", true],
-          ],
+            disabled: true,
+          },
         },
       ],
     };
 
-    const fragment = this._Addon.ZoteroViews.createXULElement(
+    const fragment = this._Addon.toolkit.UI.creatElementsFromJSON(
       instance._popup.ownerDocument,
       elementOptions
     );

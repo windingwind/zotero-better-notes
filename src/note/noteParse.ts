@@ -7,7 +7,6 @@ const asciidoctor = require("asciidoctor")();
 import YAML = require("yamljs");
 import AddonBase from "../module";
 import Knowledge4Zotero from "../addon";
-import { getDOMParser } from "../utils";
 import { NodeMode } from "../sync/syncUtils";
 
 class NoteParse extends AddonBase {
@@ -486,7 +485,7 @@ class NoteParse extends AddonBase {
       .join("\n")}</div>`;
     console.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
 
-    let parser = getDOMParser();
+    const parser = this._Addon.toolkit.Compat.getDOMParser();
     let doc = parser.parseFromString(note, "text/html");
 
     // Make sure this is the new note
@@ -599,7 +598,7 @@ class NoteParse extends AddonBase {
     if (noteText.search(/data-schema-version/g) === -1) {
       noteText = `<div data-schema-version="8">${noteText}\n</div>`;
     }
-    let parser = getDOMParser();
+    const parser = this._Addon.toolkit.Compat.getDOMParser();
     let doc = parser.parseFromString(noteText, "text/html");
 
     let metadataContainer: HTMLElement = doc.querySelector(
@@ -609,7 +608,7 @@ class NoteParse extends AddonBase {
   }
 
   parseLineText(line: string): string {
-    const parser = getDOMParser();
+    const parser = this._Addon.toolkit.Compat.getDOMParser();
     try {
       if (line.search(/data-schema-version/g) === -1) {
         line = `<div data-schema-version="8">${line}</div>`;
