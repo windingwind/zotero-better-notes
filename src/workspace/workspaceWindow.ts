@@ -175,8 +175,7 @@ class WorkspaceWindow extends AddonBase {
   }
 
   private async messageHandler(e) {
-    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: view message ${e.data.type}`);
-    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: view message ${e.data.type}`);
+    this._Addon.toolkit.Tool.log(`view message ${e.data.type}`);
     if (e.data.type === "ready") {
       this._initIframe.resolve();
     } else if (e.data.type === "getMindMapData") {

@@ -134,11 +134,10 @@ class SyncDiffWindow extends AddonBase {
         this._window.closed || this._window.close();
         break;
       case "unsync":
-        this._Addon.toolkit.Tool.log("remove synce" + noteItem.getNote());
+        this._Addon.toolkit.Tool.log("remove synce", noteItem.getNote());
         await this._Addon.SyncController.removeSyncNote(noteItem);
         break;
       case "finish":
-        this._Addon.toolkit.Tool.log("Diff result:" + io.result);
         this._Addon.toolkit.Tool.log("Diff result:", io.result);
         // return io.result;
         noteItem.setNote(noteStatus.meta + io.result + noteStatus.tail);

@@ -37,7 +37,7 @@ class EditorController extends AddonBase {
       _window.document.head.append(messageScript);
     }
     _window.addEventListener("BNMessage", (e: CustomEvent) => {
-      this._Addon.toolkit.Tool.log("BN: note editor event", e.detail);
+      this._Addon.toolkit.Tool.log("note editor event", e.detail);
       switch (e.detail.type) {
         case "exportPDFDone":
           this._Addon.NoteExport._pdfPrintPromise.resolve();

@@ -588,9 +588,6 @@ class NoteUtils extends AddonBase {
       toID,
       tree
     );
-    this._Addon.toolkit.Tool.log(fromNode.model);
-    this._Addon.toolkit.Tool.log(toNode.model);
-    this._Addon.toolkit.Tool.log(moveType);
     this._Addon.toolkit.Tool.log(toNode.model, fromNode.model, moveType);
     this.moveHeaderLineInNote(
       this._Addon.WorkspaceWindow.getWorkspaceNote(),
@@ -775,10 +772,7 @@ class NoteUtils extends AddonBase {
         }
       }
     }
-    this._Addon.toolkit.Tool.log(
-      `Knowledge4Zotero: line ${currentLineIndex} selected.`
-    );
-    this._Addon.toolkit.Tool.log(currentLineIndex);
+    this._Addon.toolkit.Tool.log(`line ${currentLineIndex} selected.`);
     // Zotero.debug(
     //   `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
     // );

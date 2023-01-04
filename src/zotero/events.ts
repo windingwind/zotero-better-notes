@@ -21,7 +21,7 @@ class ZoteroEvents extends AddonBase {
     this._Addon.toolkit.Tool.logOptionsGlobal.prefix = `[${addonName}]`;
     this._Addon.toolkit.Tool.logOptionsGlobal.disableConsole =
       this._Addon.env === "production";
-    this._Addon.toolkit.Tool.log("init called")
+    this._Addon.toolkit.Tool.log("init called");
     this.initProxyHandler();
 
     this.addEditorInstanceListener();
@@ -121,22 +121,26 @@ class ZoteroEvents extends AddonBase {
     await instance._initPromise;
     instance._knowledgeUIInitialized = false;
 
-    const noteItem = instance._item;
     // item.getNote may not be initialized yet
-    if (Zotero.ItemTypes.getID("note") !== noteItem.itemTypeID) {
+    if (Zotero.ItemTypes.getID("note") !== instance._item.itemTypeID) {
       return;
     }
 
-    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: note editor initializing...`);
+    this._Addon.toolkit.Tool.log("note editor initializing...");
     await this._Addon.EditorViews.initEditor(instance);
-    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: note editor initialized.`);
+    this._Addon.toolkit.Tool.log("note editor initialized.");
 
-    if (!instance._knowledgeSelectionInitialized) {
+    if (
+      instance._iframeWindow.document.body.getAttribute(
+        "betternotes-status"
+      ) !== "initialized"
+    ) {
       // Put event listeners here to access Zotero instance
       instance._iframeWindow.document.addEventListener(
         "selectionchange",
         async (e) => {
           e.stopPropagation();
+          e.preventDefault();
           await this._Addon.NoteUtils.onSelectionChange(instance);
         }
       );
@@ -244,7 +248,10 @@ class ZoteroEvents extends AddonBase {
           openPreview(e);
         }
       });
-      instance._knowledgeSelectionInitialized = true;
+      instance._iframeWindow.document.body.setAttribute(
+        "betternotes-status",
+        "initialized"
+      );
     }
 
     instance._popup.setAttribute(
@@ -285,7 +292,9 @@ class ZoteroEvents extends AddonBase {
   }
 
   public async onEditorEvent(message: EditorMessage) {
-    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
+    this._Addon.toolkit.Tool.log(
+      `Knowledge4Zotero: onEditorEvent\n${message.type}`
+    );
     const mainNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
     if (message.type === "openUserGuide") {
       /*
@@ -399,7 +408,7 @@ class ZoteroEvents extends AddonBase {
           params: {itemID, enableConfirm, enableOpen}
         }
       */
-      this._Addon.toolkit.Tool.log("setMainNote")
+      this._Addon.toolkit.Tool.log("setMainNote");
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") as string
       );
@@ -497,7 +506,7 @@ class ZoteroEvents extends AddonBase {
           editorInstance
         }
       */
-      this._Addon.toolkit.Tool.log("addToNoteEnd")
+      this._Addon.toolkit.Tool.log("addToNoteEnd");
       await this._Addon.NoteUtils.addLinkToNote(
         mainNote,
         (message.content.editorInstance as Zotero.EditorInstance)._item,
@@ -517,7 +526,7 @@ class ZoteroEvents extends AddonBase {
           }
         }
       */
-      this._Addon.toolkit.Tool.log("addToNote")
+      this._Addon.toolkit.Tool.log("addToNote");
       let lineIndex = message.content.params?.lineIndex;
       if (typeof lineIndex === "undefined") {
         const eventInfo = (message.content.event as XUL.XULEvent).target.id;
@@ -581,9 +590,13 @@ class ZoteroEvents extends AddonBase {
       const forceStandalone = message.content.params.forceStandalone;
       let _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
       if (!noteItem) {
-        this._Addon.toolkit.Tool.log(`Knowledge4Zotero: ${message.content.params.infoText}`);
+        this._Addon.toolkit.Tool.log(
+          `Knowledge4Zotero: ${message.content.params.infoText}`
+        );
       }
-      this._Addon.toolkit.Tool.log(`Knowledge4Zotero: onNoteLink ${noteItem.id}`);
+      this._Addon.toolkit.Tool.log(
+        `Knowledge4Zotero: onNoteLink ${noteItem.id}`
+      );
       if (
         !forceStandalone &&
         _window &&
@@ -968,7 +981,7 @@ class ZoteroEvents extends AddonBase {
           }
           Zotero.Notifier.trigger("open", "file", attachment.id);
         } catch (e) {
-          this._Addon.toolkit.Tool.log("Open attachment failed:")
+          this._Addon.toolkit.Tool.log("Open attachment failed:");
           this._Addon.toolkit.Tool.log(attachment);
           this._Addon.ZoteroViews.showProgressWindow(
             "Better Notes",
@@ -1068,7 +1081,7 @@ class ZoteroEvents extends AddonBase {
         "Converted AsciiDoc is updated to the clipboard. You can paste them in the note."
       );
     } else {
-      this._Addon.toolkit.Tool.log(`Knowledge4Zotero: message not handled.`);
+      this._Addon.toolkit.Tool.log("message not handled.");
     }
   }
 }

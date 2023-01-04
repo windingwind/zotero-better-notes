@@ -200,14 +200,12 @@ class EditorViews extends AddonBase {
             addLinkDropDown.addEventListener("click", leaveAction);
             // Observe the popup remove triggered by button click
             const ob = new MutationObserver((e) => {
-              this._Addon.toolkit.Tool.log(e);
               if (e[0].removedNodes) {
                 leaveAction();
               }
             });
             ob.observe(addLinkDropDown, { childList: true });
             const keyAction = (e: KeyboardEvent) => {
-              this._Addon.toolkit.Tool.log(e);
               if (e.key === "Control") {
                 hintWindow?.close();
                 e.preventDefault();
@@ -629,7 +627,6 @@ class EditorViews extends AddonBase {
       });
     }
     parentDropDown.append(popup);
-    this._Addon.toolkit.Tool.log(popup.offsetWidth);
     let style: string = "";
     if (align === "center") {
       style = `right: -${popup.offsetWidth / 2 - 15}px;`;
@@ -715,14 +712,12 @@ class EditorViews extends AddonBase {
         await this._Addon.NoteUtils.modifyLineInNote(
           targetNote,
           (oldLine: string) => {
-            this._Addon.toolkit.Tool.log(oldLine);
             const params = this._Addon.NoteParse.parseParamsFromLink(link);
             const newLink = !params.ignore
               ? link + (link.includes("?") ? "&ignore=1" : "?ignore=1")
               : link;
             const linkIndex =
               this._Addon.NoteParse.parseLinkIndexInText(oldLine);
-            this._Addon.toolkit.Tool.log(linkIndex);
             return `${oldLine.slice(0, linkIndex[0])}${newLink}${oldLine.slice(
               linkIndex[1]
             )}\n${newLineString}`;
@@ -768,10 +763,9 @@ class EditorViews extends AddonBase {
       );
       updateButton.innerHTML = this.icons["updateLinkText"];
       updateButton.addEventListener("click", async (e) => {
-        this._Addon.toolkit.Tool.log("ZBN: Update Link Text");
         const noteLines = this._Addon.NoteUtils.getLinesInNote(targetNote);
         let line = noteLines[this._Addon.NoteUtils.currentLine[targetNote.id]];
-        this._Addon.toolkit.Tool.log(line);
+        this._Addon.toolkit.Tool.log("Update Link Text", line);
 
         let linkStart = line.search(/<a /g);
         let linkEnd = line.search(/<\/a>/g) + 4;
@@ -833,7 +827,7 @@ class EditorViews extends AddonBase {
       openInWindowButton.setAttribute("title", "Open In New Window");
       openInWindowButton.innerHTML = this.icons["openInNewWindow"];
       openInWindowButton.addEventListener("click", async (e) => {
-        this._Addon.toolkit.Tool.log("ZBN: Open link in new window");
+        this._Addon.toolkit.Tool.log("Open link in new window");
         ZoteroPane.openNoteWindow(note.id);
       });
 
@@ -1185,7 +1179,6 @@ class EditorViews extends AddonBase {
         eleList.push(ele);
       }
     }
-    this._Addon.toolkit.Tool.log(eleList, lineIndex);
     if (lineIndex >= eleList.length) {
       lineIndex = eleList.length - 1;
     } else if (lineIndex < 0) {

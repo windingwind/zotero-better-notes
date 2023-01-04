@@ -52,7 +52,7 @@ class NoteExport extends AddonBase {
         .filter((k) => k.includes("export"))
         .find((k) => options[k])
     ) {
-      this._Addon.toolkit.Tool.log("[BN] options containing 'export' all false");
+      this._Addon.toolkit.Tool.log("options containing 'export' all false");
       return;
     }
     this._exportFileInfo = [];
@@ -70,7 +70,6 @@ class NoteExport extends AddonBase {
       );
 
       await this._Addon.NoteUtils.setLinesToNote(newNote, convertResult.lines);
-      this._Addon.toolkit.Tool.log(convertResult.subNotes);
 
       await Zotero.DB.executeTransaction(async () => {
         await Zotero.Notes.copyEmbeddedImages(note, newNote);
@@ -107,7 +106,6 @@ class NoteExport extends AddonBase {
       this._docxPromise = Zotero.Promise.defer();
       instance._iframeWindow.postMessage({ type: "exportDocx" }, "*");
       await this._docxPromise.promise;
-      this._Addon.toolkit.Tool.log(this._docxBlob);
       const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} MS Word Document`,
         "save",
@@ -126,7 +124,6 @@ class NoteExport extends AddonBase {
       do {
         ZoteroPane.openNoteWindow(newNote.id);
         _w = ZoteroPane.findNoteWindow(newNote.id);
-        this._Addon.toolkit.Tool.log(_w);
         await Zotero.Promise.delay(10);
         t += 1;
       } while (!_w && t < 500);
@@ -138,7 +135,10 @@ class NoteExport extends AddonBase {
         !(
           editor.getCurrentInstance &&
           editor.getCurrentInstance() &&
-          editor.getCurrentInstance()._knowledgeSelectionInitialized
+          editor
+            .getCurrentInstance()
+            ._iframeWindow.document.body.getAttribute("betternotes-status") !==
+            "initialized"
         ) &&
         t < 500
       ) {
@@ -205,7 +205,7 @@ class NoteExport extends AddonBase {
     filedir = Zotero.File.normalizeToUnix(filedir);
 
     if (!filedir) {
-      this._Addon.toolkit.Tool.log("BN:export, filepath invalid");
+      this._Addon.toolkit.Tool.log("export, filepath invalid");
       return;
     }
 
@@ -233,7 +233,6 @@ class NoteExport extends AddonBase {
             newNote,
             convertResult.lines
           );
-          this._Addon.toolkit.Tool.log(convertResult.subNotes);
 
           await Zotero.DB.executeTransaction(async () => {
             await Zotero.Notes.copyEmbeddedImages(note, newNote);

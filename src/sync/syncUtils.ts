@@ -130,7 +130,6 @@ class SyncUtils extends AddonBase {
         ret.meta = YAML.parse(yaml);
       } catch (e) {
         this._Addon.toolkit.Tool.log(e);
-        this._Addon.toolkit.Tool.log(e);
       }
     }
     return ret;
@@ -167,7 +166,6 @@ class SyncUtils extends AddonBase {
         ret.lastmodify = stat.lastModificationDate;
       }
     } catch (e) {
-      this._Addon.toolkit.Tool.log(e);
       this._Addon.toolkit.Tool.log(e);
     }
     return ret;
@@ -636,7 +634,7 @@ class SyncUtils extends AddonBase {
         /zotero:\/\/note\/\w+\/\w+\//.test(node.properties?.href),
       (node) => nodes.push(node)
     );
-    this._Addon.toolkit.Tool.log("BN:N2M link");
+    this._Addon.toolkit.Tool.log("N2M link");
     this._Addon.toolkit.Tool.log(JSON.stringify(nodes));
     return new Array(...new Set(nodes));
   }
@@ -1051,7 +1049,6 @@ class SyncUtils extends AddonBase {
           this.replace(node, (newNode.children[0] as any).children[0]);
         } catch (e) {
           this._Addon.toolkit.Tool.log(e);
-          this._Addon.toolkit.Tool.log(e);
           continue;
         }
       } else {
@@ -1105,7 +1102,7 @@ class SyncUtils extends AddonBase {
           if (!(await OS.File.exists(src))) {
             src = OS.Path.join(fileDir, src);
             if (!(await OS.File.exists(src))) {
-              this._Addon.toolkit.Tool.log("BN:parse image, path invalid");
+              this._Addon.toolkit.Tool.log("parse image, path invalid");
               continue;
             }
           }

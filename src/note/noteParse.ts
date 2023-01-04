@@ -211,7 +211,6 @@ class NoteParse extends AddonBase {
             if (currentLineIndex <= lineIndex) {
               currentLineIndex += 1;
               currentElement = _e;
-              // this._Addon.toolkit.Tool.log(currentLineIndex, _e);
             }
           }
         } else {
@@ -221,7 +220,6 @@ class NoteParse extends AddonBase {
       } else {
         currentLineIndex += 1;
         currentElement = e as HTMLElement;
-        // this._Addon.toolkit.Tool.log(currentLineIndex, e);
       }
     }
     this._Addon.toolkit.Tool.log(currentLineIndex);
@@ -431,7 +429,10 @@ class NoteParse extends AddonBase {
       }
       annotationJSONList.push(annotJson);
     }
-    await this._Addon.NoteUtils.importAnnotationImagesToNote(note, annotationJSONList);
+    await this._Addon.NoteUtils.importAnnotationImagesToNote(
+      note,
+      annotationJSONList
+    );
     const html = this.serializeAnnotations(
       annotationJSONList,
       false,
@@ -483,7 +484,6 @@ class NoteParse extends AddonBase {
     )
       .slice(0, lineCount)
       .join("\n")}</div>`;
-    this._Addon.toolkit.Tool.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
 
     const parser = this._Addon.toolkit.Compat.getDOMParser();
     let doc = parser.parseFromString(note, "text/html");
@@ -781,24 +781,6 @@ class NoteParse extends AddonBase {
     noteItem: Zotero.Item,
     isImport: boolean = false
   ) {
-    // let editorInstance =
-    //   this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
-    // if (!editorInstance) {
-    //   ZoteroPane.openNoteWindow(noteItem.id);
-    //   editorInstance = this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
-    //   let t = 0;
-    //   // Wait for editor instance
-    //   while (t < 10 && !editorInstance) {
-    //     await Zotero.Promise.delay(500);
-    //     t += 1;
-    //     editorInstance =
-    //       this._Addon.WorkspaceWindow.getEditorInstance(noteItem);
-    //   }
-    // }
-    // if (!editorInstance) {
-    //   this._Addon.toolkit.Tool.log("BN:Import: failed to open note.");
-    //   return;
-    // }
     this._Addon.toolkit.Tool.log("md", mdStatus);
     const remark = this._Addon.SyncUtils.md2remark(mdStatus.content);
     this._Addon.toolkit.Tool.log("remark", remark);
@@ -808,51 +790,7 @@ class NoteParse extends AddonBase {
     this._Addon.toolkit.Tool.log("_note", _note);
     const rehype = this._Addon.SyncUtils.note2rehype(_note);
     this._Addon.toolkit.Tool.log("rehype", rehype);
-    // Import highlight to note meta
-    // Annotations don't need to be processed.
-    // Image annotations are imported with normal images.
-    // const annotationNodes = getM2NRehypeAnnotationNodes(mdRehype);
-    // for (const node of annotationNodes) {
-    //   try {
-    //     // {
-    //     //   "attachmentURI": "http://zotero.org/users/uid/items/itemkey",
-    //     //   "annotationKey": "4FLVQRDG",
-    //     //   "color": "#5fb236",
-    //     //   "pageLabel": "2503",
-    //     //   "position": {
-    //     //     "pageIndex": 0,
-    //     //     "rects": [
-    //     //       [
-    //     //         101.716,
-    //     //         298.162,
-    //     //         135.469,
-    //     //         307.069
-    //     //       ]
-    //     //     ]
-    //     //   },
-    //     //   "citationItem": {
-    //     //     "uris": [
-    //     //       "http://zotero.org/users/uid/items/itemkey"
-    //     //     ],
-    //     //     "locator": "2503"
-    //     //   }
-    //     // }
-    //     const dataAnnotation = JSON.parse(
-    //       decodeURIComponent(node.properties.dataAnnotation)
-    //     );
-    //     const id = dataAnnotation.citationItems.map((c) =>
-    //       Zotero.URI.getURIItemID(dataAnnotation.attachmentURI)
-    //     );
-    //     const html = await this.parseAnnotationHTML(noteItem, []);
-    //     const newNode = note2rehype(html);
-    //     // root -> p -> span(cite, this is what we actually want)
-    //     replace(node, (newNode.children[0] as any).children[0]);
-    //   } catch (e) {
-    //     this._Addon.toolkit.Tool.log(e);
-    //     this._Addon.toolkit.Tool.log(e);
-    //     continue;
-    //   }
-    // }
+
     // Check if image already belongs to note
     this._Addon.SyncUtils.processM2NRehypeMetaImageNodes(
       this._Addon.SyncUtils.getM2NRehypeImageNodes(rehype)

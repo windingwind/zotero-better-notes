@@ -98,7 +98,6 @@ class NoteExportWindow extends AddonBase {
     };
     this.options.forEach(saveOptions);
 
-    this._Addon.toolkit.Tool.log(this.io);
     this._Addon.toolkit.Tool.log(this.io.dataOut);
   }
 }

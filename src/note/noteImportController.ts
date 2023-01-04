@@ -39,7 +39,7 @@ class NoteImport extends AddonBase {
     try {
       mdStatus = await this._Addon.SyncUtils.getMDStatus(file);
     } catch (e) {
-      this._Addon.toolkit.Tool.log(`BN Import: ${String(e)}`);
+      this._Addon.toolkit.Tool.log(`Import: ${String(e)}`);
     }
     if (!options.ignoreVersion && mdStatus.meta?.version < noteItem?._version) {
       if (
@@ -75,7 +75,7 @@ class NoteImport extends AddonBase {
       noteItem,
       true
     );
-    this._Addon.toolkit.Tool.log("bn import", noteStatus);
+    this._Addon.toolkit.Tool.log("import", noteStatus);
 
     if (options.append) {
       await this._Addon.NoteUtils.addLineToNote(

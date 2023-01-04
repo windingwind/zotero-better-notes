@@ -273,7 +273,6 @@ class SyncController extends AddonBase {
       }
     } catch (e) {
       this._Addon.toolkit.Tool.log(e);
-      this._Addon.toolkit.Tool.log(e);
       this._Addon.ZoteroViews.showProgressWindow(
         "[Syncing] Better Notes",
         String(e),
