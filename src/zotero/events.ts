@@ -301,173 +301,161 @@ class ZoteroEvents extends AddonBase {
     });
   }
 
-  private addEditorInstanceListener() {
-    if (!Zotero.Notes._knowledgeInit) {
-      Zotero.Notes._knowledgeInit = true;
-      Zotero.Notes._registerEditorInstance =
-        Zotero.Notes.registerEditorInstance;
-      Zotero.Notes.registerEditorInstance = async (
-        instance: Zotero.EditorInstance
-      ) => {
-        Zotero.Notes._registerEditorInstance(instance);
-        await instance._initPromise;
+  private async onEditorInstanceCreated(instance: _ZoteroEditorInstance) {
+    await instance._initPromise;
+    instance._knowledgeUIInitialized = false;
 
-        instance._knowledgeUIInitialized = false;
-
-        const noteItem = instance._item;
-
-        // item.getNote may not be initialized yet
-        if (Zotero.ItemTypes.getID("note") !== noteItem.itemTypeID) {
-          return;
-        }
-
-        Zotero.debug(`Knowledge4Zotero: note editor initializing...`);
-        await this._Addon.EditorViews.initEditor(instance);
-        Zotero.debug(`Knowledge4Zotero: note editor initialized.`);
-
-        if (!instance._knowledgeSelectionInitialized) {
-          // Put event listeners here to access Zotero instance
-          instance._iframeWindow.document.addEventListener(
-            "selectionchange",
-            async (e) => {
-              e.stopPropagation();
-              await this._Addon.NoteUtils.onSelectionChange(instance);
-            }
-          );
-          instance._iframeWindow.document.addEventListener(
-            "click",
-            async (e) => {
-              if (
-                (e.target as HTMLElement).tagName === "IMG" &&
-                e.ctrlKey &&
-                (Zotero.Prefs.get(
-                  "Knowledge4Zotero.imagePreview.ctrlclick"
-                ) as boolean)
-              ) {
-                openPreview(e);
-              }
-              if ((e.target as HTMLElement).tagName === "A") {
-                const link = (e.target as HTMLLinkElement).href;
-                const actions = {
-                  // @ts-ignore
-                  openLink: () => window.openURL(link),
-                  openLinkIfNote: () => {
-                    link.includes("zotero://note") ? actions.openLink() : null;
-                  },
-                  openLinkIfSelect: () => {
-                    link.includes("zotero://select")
-                      ? actions.openLink()
-                      : null;
-                  },
-                  openLinkIfPDF: () => {
-                    link.includes("zotero://open-pdf")
-                      ? actions.openLink()
-                      : null;
-                  },
-                  openLinkInNewWindow: async () => {
-                    if (link.includes("zotero://note")) {
-                      ZoteroPane.openNoteWindow(
-                        (
-                          (await this._Addon.NoteUtils.getNoteFromLink(link))
-                            .item as Zotero.Item
-                        )?.id
-                      );
-                    } else {
-                      actions.openLink();
-                    }
-                  },
-                  copyLink: async () => {
-                    this._Addon.toolkit.Tool.getCopyHelper()
-                      .addText(link, "text/unicode")
-                      .addText(
-                        (e.target as HTMLLinkElement).outerHTML,
-                        "text/html"
-                      )
-                      .copy();
-                  },
-                  setMainNote: async () => {
-                    const noteItem = (
-                      await this._Addon.NoteUtils.getNoteFromLink(link)
-                    ).item as Zotero.Item;
-                    if (!noteItem) {
-                      return;
-                    }
-                    await this.onEditorEvent(
-                      new EditorMessage("setMainNote", {
-                        params: {
-                          itemID: noteItem.id,
-                          enableConfirm: false,
-                          enableOpen: true,
-                        },
-                      })
-                    );
-                  },
-                };
-                const shiftAction = Zotero.Prefs.get(
-                  "Knowledge4Zotero.linkAction.shiftclick"
-                ) as string;
-                const ctrlAction = Zotero.Prefs.get(
-                  "Knowledge4Zotero.linkAction.ctrlclick"
-                ) as string;
-                const altAction = Zotero.Prefs.get(
-                  "Knowledge4Zotero.linkAction.altclick"
-                ) as string;
-                const clickAction = Zotero.Prefs.get(
-                  "Knowledge4Zotero.linkAction.click"
-                ) as string;
-                if (e.shiftKey && shiftAction) {
-                  actions[shiftAction]();
-                } else if (e.ctrlKey && ctrlAction) {
-                  actions[ctrlAction]();
-                } else if (e.altKey && altAction) {
-                  actions[altAction]();
-                } else if (
-                  clickAction &&
-                  !(e.shiftKey || e.ctrlKey || e.altKey)
-                ) {
-                  actions[clickAction]();
-                }
-              }
-            }
-          );
-          const openPreview = (e: MouseEvent) => {
-            const imgs = instance._iframeWindow.document
-              .querySelector(".primary-editor")
-              ?.querySelectorAll("img");
-            this._Addon.EditorImageViewer.onInit(
-              Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
-              Array.prototype.indexOf.call(imgs, e.target),
-              instance._item.getNoteTitle(),
-              this._Addon.EditorImageViewer.pined
-            );
-          };
-          instance._iframeWindow.document.addEventListener("dblclick", (e) => {
-            if (
-              (e.target as HTMLElement).tagName === "IMG" &&
-              (Zotero.Prefs.get(
-                "Knowledge4Zotero.imagePreview.ctrlclick"
-              ) as Boolean)
-            ) {
-              openPreview(e);
-            }
-          });
-          instance._knowledgeSelectionInitialized = true;
-        }
-
-        instance._popup.setAttribute(
-          "onpopupshowing",
-          "Zotero.Knowledge4Zotero.EditorViews.updatePopupMenu()"
-        );
-
-        instance._iframeWindow.addEventListener("mousedown", (e) => {
-          this._Addon.EditorController.activeEditor = instance;
-        });
-
-        instance._knowledgeUIInitialized = true;
-
-        this._Addon.EditorController.recordEditor(instance);
-      };
+    const noteItem = instance._item;
+    // item.getNote may not be initialized yet
+    if (Zotero.ItemTypes.getID("note") !== noteItem.itemTypeID) {
+      return;
     }
+
+    Zotero.debug(`Knowledge4Zotero: note editor initializing...`);
+    await this._Addon.EditorViews.initEditor(instance);
+    Zotero.debug(`Knowledge4Zotero: note editor initialized.`);
+
+    if (!instance._knowledgeSelectionInitialized) {
+      // Put event listeners here to access Zotero instance
+      instance._iframeWindow.document.addEventListener(
+        "selectionchange",
+        async (e) => {
+          e.stopPropagation();
+          await this._Addon.NoteUtils.onSelectionChange(instance);
+        }
+      );
+      instance._iframeWindow.document.addEventListener("click", async (e) => {
+        if (
+          (e.target as HTMLElement).tagName === "IMG" &&
+          e.ctrlKey &&
+          (Zotero.Prefs.get(
+            "Knowledge4Zotero.imagePreview.ctrlclick"
+          ) as boolean)
+        ) {
+          openPreview(e);
+        }
+        if ((e.target as HTMLElement).tagName === "A") {
+          const link = (e.target as HTMLLinkElement).href;
+          const actions = {
+            // @ts-ignore
+            openLink: () => window.openURL(link),
+            openLinkIfNote: () => {
+              link.includes("zotero://note") ? actions.openLink() : null;
+            },
+            openLinkIfSelect: () => {
+              link.includes("zotero://select") ? actions.openLink() : null;
+            },
+            openLinkIfPDF: () => {
+              link.includes("zotero://open-pdf") ? actions.openLink() : null;
+            },
+            openLinkInNewWindow: async () => {
+              if (link.includes("zotero://note")) {
+                ZoteroPane.openNoteWindow(
+                  (
+                    (await this._Addon.NoteUtils.getNoteFromLink(link))
+                      .item as Zotero.Item
+                  )?.id
+                );
+              } else {
+                actions.openLink();
+              }
+            },
+            copyLink: async () => {
+              this._Addon.toolkit.Tool.getCopyHelper()
+                .addText(link, "text/unicode")
+                .addText((e.target as HTMLLinkElement).outerHTML, "text/html")
+                .copy();
+            },
+            setMainNote: async () => {
+              const noteItem = (
+                await this._Addon.NoteUtils.getNoteFromLink(link)
+              ).item as Zotero.Item;
+              if (!noteItem) {
+                return;
+              }
+              await this.onEditorEvent(
+                new EditorMessage("setMainNote", {
+                  params: {
+                    itemID: noteItem.id,
+                    enableConfirm: false,
+                    enableOpen: true,
+                  },
+                })
+              );
+            },
+          };
+          const shiftAction = Zotero.Prefs.get(
+            "Knowledge4Zotero.linkAction.shiftclick"
+          ) as string;
+          const ctrlAction = Zotero.Prefs.get(
+            "Knowledge4Zotero.linkAction.ctrlclick"
+          ) as string;
+          const altAction = Zotero.Prefs.get(
+            "Knowledge4Zotero.linkAction.altclick"
+          ) as string;
+          const clickAction = Zotero.Prefs.get(
+            "Knowledge4Zotero.linkAction.click"
+          ) as string;
+          if (e.shiftKey && shiftAction) {
+            actions[shiftAction]();
+          } else if (e.ctrlKey && ctrlAction) {
+            actions[ctrlAction]();
+          } else if (e.altKey && altAction) {
+            actions[altAction]();
+          } else if (clickAction && !(e.shiftKey || e.ctrlKey || e.altKey)) {
+            actions[clickAction]();
+          }
+        }
+      });
+      const openPreview = (e: MouseEvent) => {
+        const imgs = instance._iframeWindow.document
+          .querySelector(".primary-editor")
+          ?.querySelectorAll("img");
+        this._Addon.EditorImageViewer.onInit(
+          Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
+          Array.prototype.indexOf.call(imgs, e.target),
+          instance._item.getNoteTitle(),
+          this._Addon.EditorImageViewer.pined
+        );
+      };
+      instance._iframeWindow.document.addEventListener("dblclick", (e) => {
+        if (
+          (e.target as HTMLElement).tagName === "IMG" &&
+          (Zotero.Prefs.get(
+            "Knowledge4Zotero.imagePreview.ctrlclick"
+          ) as Boolean)
+        ) {
+          openPreview(e);
+        }
+      });
+      instance._knowledgeSelectionInitialized = true;
+    }
+
+    instance._popup.setAttribute(
+      "onpopupshowing",
+      "Zotero.Knowledge4Zotero.EditorViews.updatePopupMenu()"
+    );
+
+    instance._iframeWindow.addEventListener("mousedown", (e) => {
+      this._Addon.EditorController.activeEditor = instance;
+    });
+
+    instance._knowledgeUIInitialized = true;
+
+    this._Addon.EditorController.recordEditor(instance);
+  }
+
+  private addEditorInstanceListener() {
+    Zotero.Notes.registerEditorInstance = new Proxy(
+      Zotero.Notes.registerEditorInstance,
+      {
+        apply: (target, thisArg, argumentsList) => {
+          target.apply(thisArg, argumentsList);
+          this.onEditorInstanceCreated &&
+            argumentsList.forEach(this.onEditorInstanceCreated.bind(this));
+        },
+      }
+    );
   }
 
   private resetState(): void {
