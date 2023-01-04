@@ -2,7 +2,7 @@
  * This file realizes editor watch.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class EditorController extends AddonBase {
@@ -13,7 +13,7 @@ class EditorController extends AddonBase {
   editorPromise: _ZoteroPromiseObject;
   activeEditor: Zotero.EditorInstance;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.editorHistory = [];
   }
@@ -37,7 +37,7 @@ class EditorController extends AddonBase {
       _window.document.head.append(messageScript);
     }
     _window.addEventListener("BNMessage", (e: CustomEvent) => {
-      console.log("BN: note editor event", e.detail);
+      this._Addon.toolkit.Tool.log("BN: note editor event", e.detail);
       switch (e.detail.type) {
         case "exportPDFDone":
           this._Addon.NoteExport._pdfPrintPromise.resolve();

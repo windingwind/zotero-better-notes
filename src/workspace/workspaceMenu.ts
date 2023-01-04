@@ -2,12 +2,12 @@
  * This file contains workspace menu related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { OutlineType } from "../utils";
 import AddonBase from "../module";
 
 class WorkspaceMenu extends AddonBase {
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 

@@ -2,11 +2,11 @@
  * This file realizes md import.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class NoteImport extends AddonBase {
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 
@@ -39,7 +39,7 @@ class NoteImport extends AddonBase {
     try {
       mdStatus = await this._Addon.SyncUtils.getMDStatus(file);
     } catch (e) {
-      Zotero.debug(`BN Import: ${String(e)}`);
+      this._Addon.toolkit.Tool.log(`BN Import: ${String(e)}`);
     }
     if (!options.ignoreVersion && mdStatus.meta?.version < noteItem?._version) {
       if (
@@ -75,7 +75,7 @@ class NoteImport extends AddonBase {
       noteItem,
       true
     );
-    console.log("bn import", noteStatus);
+    this._Addon.toolkit.Tool.log("bn import", noteStatus);
 
     if (options.append) {
       await this._Addon.NoteUtils.addLineToNote(

@@ -2,14 +2,14 @@
  * This file realizes note diff with markdown file.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 import { diffChars } from "diff";
 
 class SyncDiffWindow extends AddonBase {
   _window: any | Window;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 
@@ -30,9 +30,9 @@ class SyncDiffWindow extends AddonBase {
       true
     );
     const noteContent = await this._Addon.NoteParse.parseNoteForDiff(noteItem);
-    console.log(mdNoteContent, noteContent);
+    this._Addon.toolkit.Tool.log(mdNoteContent, noteContent);
     const changes = diffChars(noteContent, mdNoteContent);
-    console.log("changes", changes);
+    this._Addon.toolkit.Tool.log("changes", changes);
 
     const io = {
       defer: Zotero.Promise.defer(),
@@ -68,7 +68,7 @@ class SyncDiffWindow extends AddonBase {
           const b64 = await this._Addon.SyncUtils._getDataURL(image);
           imageData[image.key] = b64;
         } catch (e) {
-          Zotero.debug(e);
+          this._Addon.toolkit.Tool.log(e);
         }
       }
 
@@ -113,7 +113,7 @@ class SyncDiffWindow extends AddonBase {
       this._window.initDiffViewer();
       this._window.updateDiffRender([]);
       const abort = () => {
-        console.log("unloaded");
+        this._Addon.toolkit.Tool.log("unloaded");
         io.defer.resolve();
       };
       // If closed by user, abort syncing
@@ -134,12 +134,12 @@ class SyncDiffWindow extends AddonBase {
         this._window.closed || this._window.close();
         break;
       case "unsync":
-        Zotero.debug("remove synce" + noteItem.getNote());
+        this._Addon.toolkit.Tool.log("remove synce" + noteItem.getNote());
         await this._Addon.SyncController.removeSyncNote(noteItem);
         break;
       case "finish":
-        Zotero.debug("Diff result:" + io.result);
-        console.log("Diff result:", io.result);
+        this._Addon.toolkit.Tool.log("Diff result:" + io.result);
+        this._Addon.toolkit.Tool.log("Diff result:", io.result);
         // return io.result;
         noteItem.setNote(noteStatus.meta + io.result + noteStatus.tail);
         await noteItem.saveTx({

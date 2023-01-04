@@ -2,7 +2,7 @@
  * This file contains workspace window related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { EditorMessage, OutlineType } from "../utils";
 import AddonBase from "../module";
 
@@ -16,7 +16,7 @@ class WorkspaceWindow extends AddonBase {
   public _workspacePromise: _ZoteroPromiseObject;
   private _DOMParser: any;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this._initIframe = Zotero.Promise.defer();
     this.workspaceTabId = "";
@@ -37,7 +37,7 @@ class WorkspaceWindow extends AddonBase {
   ) {
     if (this.getWorkspaceWindow()) {
       if (!reopen) {
-        Zotero.debug("openWorkspaceWindow: focus");
+        this._Addon.toolkit.Tool.log("openWorkspaceWindow: focus");
         if (this.workspaceTabId !== "WINDOW") {
           Zotero_Tabs.select(this.workspaceTabId);
         } else {
@@ -45,7 +45,7 @@ class WorkspaceWindow extends AddonBase {
         }
         return;
       } else {
-        Zotero.debug("openWorkspaceWindow: reopen");
+        this._Addon.toolkit.Tool.log("openWorkspaceWindow: reopen");
         this.closeWorkspaceWindow();
       }
     }
@@ -53,7 +53,7 @@ class WorkspaceWindow extends AddonBase {
     this._workspacePromise = Zotero.Promise.defer();
     this._firstInit = true;
     if (type === "window") {
-      Zotero.debug("openWorkspaceWindow: as window");
+      this._Addon.toolkit.Tool.log("openWorkspaceWindow: as window");
       this._initIframe = Zotero.Promise.defer();
       let win = window.open(
         "chrome://Knowledge4Zotero/content/workspace.xul",
@@ -70,7 +70,7 @@ class WorkspaceWindow extends AddonBase {
       this._Addon.WorkspaceOutline.updateOutline();
       this._Addon.ZoteroViews.updateAutoInsertAnnotationsMenu();
     } else {
-      Zotero.debug("openWorkspaceWindow: as tab");
+      this._Addon.toolkit.Tool.log("openWorkspaceWindow: as tab");
       this._initIframe = Zotero.Promise.defer();
       // Avoid sidebar show up
       Zotero_Tabs.jump(0);
@@ -175,8 +175,8 @@ class WorkspaceWindow extends AddonBase {
   }
 
   private async messageHandler(e) {
-    Zotero.debug(`Knowledge4Zotero: view message ${e.data.type}`);
-    console.log(`Knowledge4Zotero: view message ${e.data.type}`);
+    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: view message ${e.data.type}`);
+    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: view message ${e.data.type}`);
     if (e.data.type === "ready") {
       this._initIframe.resolve();
     } else if (e.data.type === "getMindMapData") {
@@ -188,7 +188,7 @@ class WorkspaceWindow extends AddonBase {
         })
       );
     } else if (e.data.type === "jumpNote") {
-      Zotero.debug(e.data);
+      this._Addon.toolkit.Tool.log(e.data);
       this._Addon.ZoteroEvents.onEditorEvent(
         new EditorMessage("onNoteLink", {
           params: await this._Addon.NoteUtils.getNoteFromLink(e.data.link),
@@ -201,7 +201,7 @@ class WorkspaceWindow extends AddonBase {
         e.data.moveType
       );
     } else if (e.data.type === "saveSVGReturn") {
-      console.log(e.data.image);
+      this._Addon.toolkit.Tool.log(e.data.image);
       const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} SVG Image`,
         "save",

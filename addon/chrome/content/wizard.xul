@@ -11,7 +11,7 @@
     %knowledgeDTD;
 ]>
 
-<wizard xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="knowledge-wizard" windowtype="knowledge-wizard" title="&zotero.__addonRef__.wizard.title;" width="788" height="600" onwizardfinish="Zotero.Knowledge4Zotero.WizardWindow.setup()">
+<wizard xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="knowledge-wizard" windowtype="knowledge-wizard" title="&zotero.__addonRef__.wizard.title;" width="788" height="600" onwizardfinish="Zotero.BetterNotes.WizardWindow.setup()">
     <script src="chrome://zotero/content/include.js" />
 
     <wizardpage label="&zotero.__addonRef__.wizard.title;">
@@ -43,19 +43,19 @@
         <description style="white-space: pre-wrap; color: red;">&zotero.__addonRef__.wizard.page6.description2;</description>
         <rows>
             <row>
-                <checkbox id="__addonRef__-setup-enable" checked="true" oncommand="Zotero.Knowledge4Zotero.WizardWindow.changeSetup()" />
+                <checkbox id="__addonRef__-setup-enable" checked="true" oncommand="Zotero.BetterNotes.WizardWindow.changeSetup()" />
                 <label value="&zotero.__addonRef__.wizard.setup.enable.label;" />
             </row>
             <row>
-                <checkbox id="__addonRef__-setup-collectionenable" checked="true" oncommand="Zotero.Knowledge4Zotero.WizardWindow.updateCollectionSetup()" />
+                <checkbox id="__addonRef__-setup-collectionenable" checked="true" oncommand="Zotero.BetterNotes.WizardWindow.updateCollectionSetup()" />
                 <label value="&zotero.__addonRef__.wizard.setup.collectionenable.label;" />
-                <textbox id="__addonRef__-setup-collectionname" value="My Notes" oninput="Zotero.Knowledge4Zotero.WizardWindow.updateCollectionSetup()" />
+                <textbox id="__addonRef__-setup-collectionname" value="My Notes" oninput="Zotero.BetterNotes.WizardWindow.updateCollectionSetup()" />
             </row>
             <row>
-                <checkbox id="__addonRef__-setup-noteenable" checked="true" oncommand="Zotero.Knowledge4Zotero.WizardWindow.updateNoteSetup()" />
+                <checkbox id="__addonRef__-setup-noteenable" checked="true" oncommand="Zotero.BetterNotes.WizardWindow.updateNoteSetup()" />
                 <label value="&zotero.__addonRef__.wizard.setup.noteenable.label;" />
             </row>
         </rows>
     </wizardpage>
-    <script>Zotero.Knowledge4Zotero.WizardWindow.init(document)</script>
+    <script>Zotero.BetterNotes.WizardWindow.init(document)</script>
 </wizard>

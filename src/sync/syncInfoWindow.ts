@@ -2,7 +2,7 @@
  * This file contains sync info window related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class SyncInfoWindow extends AddonBase {
@@ -13,7 +13,7 @@ class SyncInfoWindow extends AddonBase {
     deferred?: typeof Promise;
   };
   public _window: Window;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 

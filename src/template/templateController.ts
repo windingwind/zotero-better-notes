@@ -2,14 +2,14 @@
  * This file realizes the template feature.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { NoteTemplate } from "../utils";
 import AddonBase from "../module";
 
 class TemplateController extends AddonBase {
   _systemTemplateNames: string[];
   _defaultTemplates: NoteTemplate[];
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this._systemTemplateNames = [
       "[QuickInsert]",
@@ -27,7 +27,7 @@ class TemplateController extends AddonBase {
       },
       {
         name: "[QuickBackLink]",
-        text: '<p>Referred in <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}?ignore=1&line=${lineIndex}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}${sectionName?`/${sectionName}`:""}</a></p>',
+        text: '<p>Referred in <a href="${Zotero.BetterNotes.knowledge.getNoteLink(noteItem)}?ignore=1&line=${lineIndex}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle().trim() ? noteItem.getNoteTitle().trim() : "Main Note"}${sectionName?`/${sectionName}`:""}</a></p>',
         disabled: false,
       },
       {
@@ -37,7 +37,7 @@ class TemplateController extends AddonBase {
       },
       {
         name: "[QuickNoteV4]",
-        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += await Zotero.Knowledge4Zotero.NoteParse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.Knowledge4Zotero.NoteParse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
+        text: '${await new Promise(async (r) => {\nlet res = ""\nif(annotationItem.annotationComment){\nres += await Zotero.BetterNotes.NoteParse.parseMDToHTML(annotationItem.annotationComment);\n}\nres += await Zotero.BetterNotes.NoteParse.parseAnnotationHTML(noteItem, [annotationItem], true);\nr(res);})}',
         disabled: false,
       },
       {
@@ -52,7 +52,7 @@ class TemplateController extends AddonBase {
       },
       {
         name: "[Item] item-notes with metadata",
-        text: '<h1>${topItem.getField("title")}</h1>\n<h2 style="color:red; background-color: #efe3da;">💡 Meta Data</h2>\n<table>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Title </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'title\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Journal </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getField(\'publicationTitle\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">1<sup>st</sup> Author </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'firstCreator\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Authors </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getCreators().map((v)=>v.firstName+" "+v.lastName).join("; ")}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Pub. date </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'date\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">DOI </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            <a href="https://doi.org/${topItem.getField(\'DOI\')}">${topItem.getField(\'DOI\')}</a>\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Archive </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'archive\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Archive Location </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getField(\'archiveLocation\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Call No. </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'callNumber\')}\n        </td>\n    </tr>\n</table>\n${itemNotes.map((noteItem)=>{\nconst noteLine = `<h2  style="color:red; background-color: #efe3da;">📜 Note:  <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}" rel="noopener noreferrer nofollow">${noteItem.key}</a></h2>\n<blockquote>\n    ${noteItem.getNote()}\n    <p style="background-color: pink;"><strong>Merge Date: </strong> ${new Date().toISOString().substr(0,10)+" "+ new Date().toTimeString()}</p>\n</blockquote>\n<p style="color:red; background-color: #efe3da;"><strong>📝 Comments</strong></p>\n<blockquote>\n    <p>Make your comments</p>\n    <p></p>\n</blockquote>`;\ncopyNoteImage(noteItem);\nreturn noteLine;\n}).join("\\n")}\n',
+        text: '<h1>${topItem.getField("title")}</h1>\n<h2 style="color:red; background-color: #efe3da;">💡 Meta Data</h2>\n<table>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Title </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'title\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Journal </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getField(\'publicationTitle\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">1<sup>st</sup> Author </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'firstCreator\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Authors </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getCreators().map((v)=>v.firstName+" "+v.lastName).join("; ")}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Pub. date </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'date\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">DOI </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            <a href="https://doi.org/${topItem.getField(\'DOI\')}">${topItem.getField(\'DOI\')}</a>\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Archive </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'archive\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#f3faf4;">\n            <p style="text-align: right">Archive Location </p>\n        </th>\n        <td style="background-color:#f3faf4;">\n            ${topItem.getField(\'archiveLocation\')}\n        </td>\n    </tr>\n    <tr>\n        <th style="background-color:#dbeedd;">\n            <p style="text-align: right">Call No. </p>\n        </th>\n        <td style="background-color:#dbeedd;">\n            ${topItem.getField(\'callNumber\')}\n        </td>\n    </tr>\n</table>\n${itemNotes.map((noteItem)=>{\nconst noteLine = `<h2  style="color:red; background-color: #efe3da;">📜 Note:  <a href="${Zotero.BetterNotes.knowledge.getNoteLink(noteItem)}" rel="noopener noreferrer nofollow">${noteItem.key}</a></h2>\n<blockquote>\n    ${noteItem.getNote()}\n    <p style="background-color: pink;"><strong>Merge Date: </strong> ${new Date().toISOString().substr(0,10)+" "+ new Date().toTimeString()}</p>\n</blockquote>\n<p style="color:red; background-color: #efe3da;"><strong>📝 Comments</strong></p>\n<blockquote>\n    <p>Make your comments</p>\n    <p></p>\n</blockquote>`;\ncopyNoteImage(noteItem);\nreturn noteLine;\n}).join("\\n")}\n',
         disabled: false,
       },
       {
@@ -67,7 +67,7 @@ class TemplateController extends AddonBase {
       },
       {
         name: "[Item] note links",
-        text: '<p><a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(topItem)}">${topItem.getNoteTitle().trim() ? topItem.getNoteTitle().trim() : Zotero.Knowledge4Zotero.knowledge.getNoteLink(topItem)}</a></p>',
+        text: '<p><a href="${Zotero.BetterNotes.knowledge.getNoteLink(topItem)}">${topItem.getNoteTitle().trim() ? topItem.getNoteTitle().trim() : Zotero.BetterNotes.knowledge.getNoteLink(topItem)}</a></p>',
         disabled: false,
       },
       {
@@ -85,7 +85,7 @@ class TemplateController extends AddonBase {
     useDefault: boolean = true,
     stage: string = "default"
   ) {
-    Zotero.debug(`renderTemplateAsync: ${key}`);
+    this._Addon.toolkit.Tool.log(`renderTemplateAsync: ${key}`);
     let templateText = this.getTemplateText(key);
     if (useDefault && !templateText) {
       templateText = this._defaultTemplates.find((t) => t.name === key).text;
@@ -117,11 +117,11 @@ class TemplateController extends AddonBase {
         async function () {}
       ).constructor;
       const _ = new AsyncFunction(argString, "return `" + templateText + "`");
-      console.log(_);
+      this._Addon.toolkit.Tool.log(_);
       _newLine = await _(...argList);
     } catch (e) {
       alert(`Template ${key} Error: ${e}`);
-      console.log(e);
+      this._Addon.toolkit.Tool.log(e);
       return "";
     }
     return _newLine;
@@ -258,7 +258,7 @@ class TemplateController extends AddonBase {
  * to keep API consistency
  */
 class TemplateAPI extends AddonBase {
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 

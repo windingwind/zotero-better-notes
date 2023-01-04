@@ -2,7 +2,7 @@
  * This file contains the Zotero UI code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { EditorMessage } from "../utils";
 import AddonBase from "../module";
 
@@ -10,7 +10,7 @@ class ZoteroViews extends AddonBase {
   progressWindowIcon: object;
   icons: object;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.progressWindowIcon = {
       success: "chrome://zotero/skin/tick.png",
@@ -229,7 +229,7 @@ class ZoteroViews extends AddonBase {
         : Zotero_Tabs.selectedID === this._Addon.WorkspaceWindow.workspaceTabId
         ? this._Addon.WorkspaceWindow.getWorkspaceNote().id
         : -1;
-    Zotero.debug(`updateTemplateMenu`);
+    this._Addon.toolkit.Tool.log(`updateTemplateMenu`);
     let templates = this._Addon.TemplateController.getTemplateKeys()
       .filter((e) => e.name.indexOf(type) !== -1)
       .filter(
@@ -260,7 +260,7 @@ class ZoteroViews extends AddonBase {
       menuitem.setAttribute(
         "oncommand",
         `
-        Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({
+        Zotero.BetterNotes.ZoteroEvents.onEditorEvent({
           type: "insert${type}UsingTemplate",
           content: {
             params: { templateName: "${template.name}", targetItemId: ${targetItemId}, useMainNote: ${useMainNote} },
@@ -278,7 +278,7 @@ class ZoteroViews extends AddonBase {
   // To deprecate
   public updateCitationStyleMenu() {
     const _window = this._Addon.WorkspaceMenu.getWorkspaceMenuWindow();
-    Zotero.debug(`updateCitationStyleMenu`);
+    this._Addon.toolkit.Tool.log(`updateCitationStyleMenu`);
 
     const popup = _window.document.getElementById("menu_citeSettingPopup");
     popup.innerHTML = "";
@@ -315,7 +315,7 @@ class ZoteroViews extends AddonBase {
   }
 
   public updateOCRStyleMenu() {
-    Zotero.debug(`updateOCRStyleMenu`);
+    this._Addon.toolkit.Tool.log(`updateOCRStyleMenu`);
     const popup = document.getElementById("menu_ocrsettingpopup");
     Array.prototype.forEach.call(popup.children, (e) =>
       e.setAttribute("checked", false)
@@ -335,7 +335,7 @@ class ZoteroViews extends AddonBase {
     if (!_window) {
       return;
     }
-    Zotero.debug("updateWordCount");
+    this._Addon.toolkit.Tool.log("updateWordCount");
 
     const menuitem = _window.document.getElementById(
       "menu_wordcount_betternotes"
@@ -368,7 +368,7 @@ class ZoteroViews extends AddonBase {
   public updateAutoInsertAnnotationsMenu() {
     const _window = this._Addon.WorkspaceMenu.getWorkspaceMenuWindow();
 
-    Zotero.debug("updateAutoInsertAnnotationsMenu");
+    this._Addon.toolkit.Tool.log("updateAutoInsertAnnotationsMenu");
 
     let autoAnnotation = Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation");
     if (typeof autoAnnotation === "undefined") {

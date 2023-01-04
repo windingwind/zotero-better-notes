@@ -3,11 +3,11 @@
  */
 
 
-import Knowledge4Zotero from "./addon";
+import BetterNotes from "./addon";
 
 class AddonBase {
-  protected _Addon: Knowledge4Zotero;
-  constructor(parent: Knowledge4Zotero) {
+  protected _Addon: BetterNotes;
+  constructor(parent: BetterNotes) {
     this._Addon = parent;
   }
 }

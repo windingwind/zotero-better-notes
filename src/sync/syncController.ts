@@ -2,14 +2,14 @@
  * This file realizes the sycn feature.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 import { SyncCode } from "../utils";
 
 class SyncController extends AddonBase {
   sycnLock: boolean;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.sycnLock = false;
   }
@@ -139,12 +139,12 @@ class SyncController extends AddonBase {
     let progress;
     // Wrap the code in try...catch so that the lock can be released anyway
     try {
-      Zotero.debug("Better Notes: sync start");
+      this._Addon.toolkit.Tool.log("sync start")
       this.sycnLock = true;
       if (!items || !items.length) {
         items = Zotero.Items.get(this.getSyncNoteIds());
       }
-      console.log("BN:Sync", items);
+      this._Addon.toolkit.Tool.log("BN:Sync", items);
 
       if (!quiet) {
         progress = this._Addon.ZoteroViews.showProgressWindow(
@@ -191,7 +191,7 @@ class SyncController extends AddonBase {
         }
         i += 1;
       }
-      console.log(toExport, toImport, toDiff);
+      this._Addon.toolkit.Tool.log(toExport, toImport, toDiff);
       i = 1;
       let totalCount = Object.keys(toExport).length;
       for (const filepath of Object.keys(toExport)) {
@@ -272,8 +272,8 @@ class SyncController extends AddonBase {
         progress.startCloseTimer(5000);
       }
     } catch (e) {
-      Zotero.debug(e);
-      console.log(e);
+      this._Addon.toolkit.Tool.log(e);
+      this._Addon.toolkit.Tool.log(e);
       this._Addon.ZoteroViews.showProgressWindow(
         "[Syncing] Better Notes",
         String(e),

@@ -3,12 +3,12 @@
  */
 
 import TreeModel = require("tree-model");
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class NoteUtils extends AddonBase {
   public currentLine: any;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.currentLine = {};
   }
@@ -52,7 +52,9 @@ class NoteUtils extends AddonBase {
       return;
     }
     let noteLines = this.getLinesInNote(note);
+    let autoLineIndex = false;
     if (lineIndex < 0) {
+      autoLineIndex = true;
       lineIndex = this.currentLine[note.id];
       lineIndex = lineIndex && lineIndex >= 0 ? lineIndex : noteLines.length;
     } else if (lineIndex >= noteLines.length) {
@@ -61,12 +63,12 @@ class NoteUtils extends AddonBase {
     Zotero.debug(
       `insert to ${lineIndex}, it used to be ${noteLines[lineIndex]}`
     );
-    Zotero.debug(text);
+    this._Addon.toolkit.Tool.log(text);
 
     const editorInstance = this._Addon.WorkspaceWindow.getEditorInstance(note);
     if (editorInstance && !forceMetadata) {
       // The note is opened. Add line via note editor
-      console.log("Add note line via note editor");
+      this._Addon.toolkit.Tool.log("Add note line via note editor");
       const _document = editorInstance._iframeWindow.document;
       const currentElement = this._Addon.NoteParse.parseHTMLLineElement(
         this._Addon.EditorViews.getEditorElement(_document) as HTMLElement,
@@ -85,7 +87,7 @@ class NoteUtils extends AddonBase {
       }
       const defer = Zotero.Promise.defer();
       const notifyName = `addLineToNote-${note.id}`;
-      this._Addon.ZoteroEvents.addNotifyListener(
+      this._Addon.ZoteroNotifies.registerNotifyListener(
         notifyName,
         (
           event: string,
@@ -94,7 +96,7 @@ class NoteUtils extends AddonBase {
           extraData: object
         ) => {
           if (event === "modify" && type === "item" && ids.includes(note.id)) {
-            this._Addon.ZoteroEvents.removeNotifyListener(notifyName);
+            this._Addon.ZoteroNotifies.unregisterNotifyListener(notifyName);
             defer.resolve();
           }
         }
@@ -111,7 +113,7 @@ class NoteUtils extends AddonBase {
       );
     } else {
       // The note editor does not exits yet. Fall back to modify the metadata
-      console.log("Add note line via note metadata");
+      this._Addon.toolkit.Tool.log("Add note line via note metadata");
 
       // insert after/before current line
       if (position === "after") {
@@ -122,6 +124,18 @@ class NoteUtils extends AddonBase {
       if (this._Addon.WorkspaceWindow.getWorkspaceNote().id === note.id) {
         await this.scrollWithRefresh(lineIndex);
       }
+    }
+
+    if (autoLineIndex) {
+      // Compute annotation lines length
+      const temp = this._Addon.toolkit.UI.createElement(
+        document,
+        "div"
+      ) as HTMLDivElement;
+      temp.innerHTML = text;
+      const elementList = this._Addon.NoteParse.parseHTMLElements(temp);
+      // Move cursor foward
+      this._Addon.NoteUtils.currentLine[note.id] += elementList.length;
     }
   }
 
@@ -150,17 +164,7 @@ class NoteUtils extends AddonBase {
     return null;
   }
 
-  public async getAttachmentKeyFromFileName(
-    libraryID: number,
-    path: string
-  ): Promise<false | _ZoteroItem> {
-    return await Zotero.Items.getByLibraryAndKeyAsync(
-      libraryID,
-      Zotero.File.normalizeToUnix(path).split("/").pop().split(".").shift()
-    );
-  }
-
-  public async _importImage(
+  public async importImageToNote(
     note: Zotero.Item,
     src: string,
     type: "b64" | "url" | "file" = "b64"
@@ -209,11 +213,14 @@ class NoteUtils extends AddonBase {
     return attachment.key;
   }
 
-  public async importImagesToNote(note: Zotero.Item, annotations: any) {
+  public async importAnnotationImagesToNote(
+    note: Zotero.Item,
+    annotations: AnnotationJson[]
+  ) {
     for (let annotation of annotations) {
       if (annotation.image) {
         annotation.imageAttachmentKey =
-          (await this._importImage(note, annotation.image)) || "";
+          (await this.importImageToNote(note, annotation.image)) || "";
       }
       delete annotation.image;
     }
@@ -222,7 +229,8 @@ class NoteUtils extends AddonBase {
   public async addAnnotationsToNote(
     note: Zotero.Item,
     annotations: Zotero.Item[],
-    lineIndex: number
+    lineIndex: number,
+    showMsg: boolean = false
   ) {
     if (!note) {
       return;
@@ -231,7 +239,16 @@ class NoteUtils extends AddonBase {
       note,
       annotations
     );
-    await this.addLineToNote(note, html, lineIndex);
+    await this.addLineToNote(note, html, lineIndex, showMsg);
+    const noteTitle = note.getNoteTitle();
+    this._Addon.ZoteroViews.showProgressWindow(
+      "Better Notes",
+      `Insert lines into ${
+        lineIndex >= 0 ? `line ${lineIndex} in` : "end of"
+      } note ${
+        noteTitle.length > 15 ? noteTitle.slice(0, 12) + "..." : noteTitle
+      }`
+    );
     return html;
   }
 
@@ -277,7 +294,7 @@ class NoteUtils extends AddonBase {
 
     this._Addon.ZoteroViews.showProgressWindow(
       "Better Notes",
-      `Link is added to workspace${lineIndex >= 0 ? ` line ${lineIndex}` : ""}`
+      `Link is added to ${lineIndex >= 0 ? ` line ${lineIndex}` : ""}`
     );
   }
 
@@ -367,7 +384,7 @@ class NoteUtils extends AddonBase {
     const editorInstance = this._Addon.WorkspaceWindow.getEditorInstance(note);
     if (editorInstance && !forceMetadata) {
       // The note is opened. Add line via note editor
-      console.log("Modify note line via note editor");
+      this._Addon.toolkit.Tool.log("Modify note line via note editor");
       const _document = editorInstance._iframeWindow.document;
       const currentElement: HTMLElement =
         this._Addon.NoteParse.parseHTMLLineElement(
@@ -387,7 +404,7 @@ class NoteUtils extends AddonBase {
       }
       const defer = Zotero.Promise.defer();
       const notifyName = `modifyLineInNote-${note.id}`;
-      this._Addon.ZoteroEvents.addNotifyListener(
+      this._Addon.ZoteroNotifies.registerNotifyListener(
         notifyName,
         (
           event: string,
@@ -396,7 +413,7 @@ class NoteUtils extends AddonBase {
           extraData: object
         ) => {
           if (event === "modify" && type === "item" && ids.includes(note.id)) {
-            this._Addon.ZoteroEvents.removeNotifyListener(notifyName);
+            this._Addon.ZoteroNotifies.unregisterNotifyListener(notifyName);
             defer.resolve();
           }
         }
@@ -411,39 +428,6 @@ class NoteUtils extends AddonBase {
       await this.setLinesToNote(note, noteLines);
       await this.scrollWithRefresh(lineIndex);
     }
-  }
-
-  async changeHeadingLineInNote(
-    note: Zotero.Item,
-    rankChange: number,
-    lineIndex: number
-  ) {
-    if (!note) {
-      return;
-    }
-    const noteLines = this.getLinesInNote(note);
-    if (lineIndex < 0 || lineIndex >= noteLines.length) {
-      return;
-    }
-    const headerStartReg = new RegExp("<h[1-6]>");
-    const headerStopReg = new RegExp("</h[1-6]>");
-    let headerStart = noteLines[lineIndex].search(headerStartReg);
-    if (headerStart === -1) {
-      return;
-    }
-    let lineRank = parseInt(noteLines[lineIndex][headerStart + 2]) + rankChange;
-    if (lineRank > 6) {
-      lineRank = 6;
-    } else if (lineRank < 1) {
-      lineRank = 1;
-    }
-    this.modifyLineInNote(
-      note,
-      noteLines[lineIndex]
-        .replace(headerStartReg, `<h${lineRank}>`)
-        .replace(headerStopReg, `</h${lineRank}>`),
-      lineIndex
-    );
   }
 
   async moveHeaderLineInNote(
@@ -509,15 +493,15 @@ class NoteUtils extends AddonBase {
     if (currentNode.model.endIndex <= targetIndex) {
       targetIndex -= movedLines.length;
     }
-    Zotero.debug(`move to ${targetIndex}`);
+    this._Addon.toolkit.Tool.log(`move to ${targetIndex}`);
 
     let newLines = lines
       .slice(0, targetIndex + 1)
       .concat(movedLines, lines.slice(targetIndex + 1));
-    console.log("new lines", newLines);
-    console.log("moved", movedLines);
-    console.log("insert after", lines[targetIndex]);
-    console.log("next line", lines[targetIndex + 1]);
+    this._Addon.toolkit.Tool.log("new lines", newLines);
+    this._Addon.toolkit.Tool.log("moved", movedLines);
+    this._Addon.toolkit.Tool.log("insert after", lines[targetIndex]);
+    this._Addon.toolkit.Tool.log("next line", lines[targetIndex + 1]);
     await this.setLinesToNote(note, newLines);
   }
 
@@ -604,10 +588,10 @@ class NoteUtils extends AddonBase {
       toID,
       tree
     );
-    Zotero.debug(fromNode.model);
-    Zotero.debug(toNode.model);
-    Zotero.debug(moveType);
-    console.log(toNode.model, fromNode.model, moveType);
+    this._Addon.toolkit.Tool.log(fromNode.model);
+    this._Addon.toolkit.Tool.log(toNode.model);
+    this._Addon.toolkit.Tool.log(moveType);
+    this._Addon.toolkit.Tool.log(toNode.model, fromNode.model, moveType);
     this.moveHeaderLineInNote(
       this._Addon.WorkspaceWindow.getWorkspaceNote(),
       fromNode,
@@ -631,7 +615,7 @@ class NoteUtils extends AddonBase {
     rootNoteIds: number[],
     convertNoteLinks: boolean = true
   ): Promise<{ lines: string[]; subNotes: Zotero.Item[] }> {
-    Zotero.debug(`convert note ${currentNote.id}`);
+    this._Addon.toolkit.Tool.log(`convert note ${currentNote.id}`);
 
     let subNotes: Zotero.Item[] = [];
     const [..._rootNoteIds] = rootNoteIds;
@@ -652,7 +636,7 @@ class NoteUtils extends AddonBase {
             // Ignore links that are not in <a>
             !noteLines[i].slice(linkIndex - 8, linkIndex).includes("href")
           ) {
-            Zotero.debug("ignore link");
+            this._Addon.toolkit.Tool.log("ignore link");
             noteLines[i] = noteLines[i].substring(
               noteLines[i].search(/zotero:\/\/note\//g)
             );
@@ -662,11 +646,13 @@ class NoteUtils extends AddonBase {
             link = this._Addon.NoteParse.parseLinkInText(noteLines[i]);
             continue;
           }
-          Zotero.debug("convert link");
+          this._Addon.toolkit.Tool.log("convert link");
           let res = await this.getNoteFromLink(link);
           const subNote = res.item;
           if (subNote && _rootNoteIds.indexOf(subNote.id) === -1) {
-            Zotero.debug(`Knowledge4Zotero: Exporting sub-note ${link}`);
+            this._Addon.toolkit.Tool.log(
+              `Knowledge4Zotero: Exporting sub-note ${link}`
+            );
             const convertResult = await this.convertNoteLines(
               subNote,
               _rootNoteIds,
@@ -694,7 +680,7 @@ class NoteUtils extends AddonBase {
         }
       }
     }
-    Zotero.debug(subNotes);
+    this._Addon.toolkit.Tool.log(subNotes);
     return { lines: newLines, subNotes: subNotes };
   }
 
@@ -707,7 +693,7 @@ class NoteUtils extends AddonBase {
         infoText: "Library does not exist or access denied.",
       };
     }
-    Zotero.debug(params);
+    this._Addon.toolkit.Tool.log(params);
     let item: Zotero.Item = await Zotero.Items.getByLibraryAndKeyAsync(
       params.libraryID,
       params.noteKey
@@ -789,13 +775,15 @@ class NoteUtils extends AddonBase {
         }
       }
     }
-    Zotero.debug(`Knowledge4Zotero: line ${currentLineIndex} selected.`);
-    console.log(currentLineIndex);
+    this._Addon.toolkit.Tool.log(
+      `Knowledge4Zotero: line ${currentLineIndex} selected.`
+    );
+    this._Addon.toolkit.Tool.log(currentLineIndex);
     // Zotero.debug(
     //   `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
     // );
     this.currentLine[editor._item.id] = currentLineIndex;
-    // console.log(realElement);
+    // this._Addon.toolkit.Tool.log(realElement);
     if (realElement.tagName === "A") {
       let link = (realElement as HTMLLinkElement).href;
       let linkedNote = (await this.getNoteFromLink(link)).item;

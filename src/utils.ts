@@ -41,21 +41,4 @@ enum NodeMode {
   direct,
 }
 
-function getDOMParser(): DOMParser {
-  if (Zotero.platformMajorVersion > 60) {
-    return new DOMParser();
-  } else {
-    return Components.classes[
-      "@mozilla.org/xmlextras/domparser;1"
-    ].createInstance(Components.interfaces.nsIDOMParser);
-  }
-}
-
-export {
-  EditorMessage,
-  OutlineType,
-  NoteTemplate,
-  SyncCode,
-  NodeMode,
-  getDOMParser,
-};
+export { EditorMessage, OutlineType, NoteTemplate, SyncCode, NodeMode };

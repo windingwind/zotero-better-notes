@@ -2,7 +2,7 @@
  * This file contains workspace ontline related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { OutlineType } from "../utils";
 import AddonBase from "../module";
 
@@ -10,7 +10,7 @@ class WorkspaceOutline extends AddonBase {
   public currentOutline: OutlineType;
   public currentNodeID: number;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.currentOutline = OutlineType.treeView;
     this.currentNodeID = -1;
@@ -64,7 +64,7 @@ class WorkspaceOutline extends AddonBase {
   }
 
   public async updateOutline() {
-    Zotero.debug("Knowledge4Zotero: updateMindMap");
+    this._Addon.toolkit.Tool.log("updateMindMap")
     // await this._initIframe.promise;
     const _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
     if (!_window) {
@@ -87,7 +87,7 @@ class WorkspaceOutline extends AddonBase {
   }
 
   public saveImage() {
-    Zotero.debug("Knowledge4Zotero: saveImage");
+    this._Addon.toolkit.Tool.log("saveImage")
     const _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
     if (!_window) {
       return;

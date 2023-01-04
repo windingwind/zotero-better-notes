@@ -11,7 +11,7 @@
     %knowledgeDTD;
 ]>
 
-<dialog id="betternotes-sync-dialog" windowtype="betternotes-sync" title="&zotero.__addonRef__.sync.title;" orient="vertical" width="300" height="300" buttons="cancel,accept,help" ondialogaccept="Zotero.Knowledge4Zotero.SyncInfoWindow.doAccept();" ondialoghelp="Zotero.Knowledge4Zotero.SyncInfoWindow.doExport();" onload="Zotero.Knowledge4Zotero.SyncInfoWindow.doLoad(window);" onunload="Zotero.Knowledge4Zotero.SyncInfoWindow.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height" buttonlabelhelp="&zotero.__addonRef__.sync.export.label;">
+<dialog id="betternotes-sync-dialog" windowtype="betternotes-sync" title="&zotero.__addonRef__.sync.title;" orient="vertical" width="300" height="300" buttons="cancel,accept,help" ondialogaccept="Zotero.BetterNotes.SyncInfoWindow.doAccept();" ondialoghelp="Zotero.BetterNotes.SyncInfoWindow.doExport();" onload="Zotero.BetterNotes.SyncInfoWindow.doLoad(window);" onunload="Zotero.BetterNotes.SyncInfoWindow.doUnload();" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em" persist="screenX screenY width height" buttonlabelhelp="&zotero.__addonRef__.sync.export.label;">
     <script src="chrome://zotero/content/include.js" />
     <vbox flex="1">
         <label value="&zotero.__addonRef__.sync.path.label;" />
@@ -20,8 +20,8 @@
         <label id="__addonRef__-sync-lastsync" />
         <hbox>
             <checkbox id="__addonRef__-sync-enable" label="&zotero.__addonRef__.sync.enable.label;" checked="true" />
-            <button flex="0" label="&zotero.__addonRef__.sync.dosync.label;" oncommand="Zotero.Knowledge4Zotero.SyncController.doSync(null, true)"></button>
-            <button flex="0" label="&zotero.__addonRef__.sync.synclist.label;" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.openSyncList()"></button>
+            <button flex="0" label="&zotero.__addonRef__.sync.dosync.label;" oncommand="Zotero.BetterNotes.SyncController.doSync(null, true)"></button>
+            <button flex="0" label="&zotero.__addonRef__.sync.synclist.label;" oncommand="Zotero.BetterNotes.SyncListWindow.openSyncList()"></button>
         </hbox>
     </vbox>
 </dialog>

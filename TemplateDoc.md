@@ -287,7 +287,7 @@ Required Variable: noteItem/subNoteItem.
 
 ```js
 <p>
-  <a href="${Zotero.Knowledge4Zotero.knowledge.getNoteLink(noteItem)}">
+  <a href="${Zotero.BetterNotes.knowledge.getNoteLink(noteItem)}">
     ${noteItem.key}
   </a>
 </p>

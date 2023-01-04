@@ -2,14 +2,17 @@
  * This file is the esbuild entrance.
  */
 
-import Knowledge4Zotero from "./addon";
+import BetterNotes from "./addon";
 
-Zotero.Knowledge4Zotero = new Knowledge4Zotero();
+const addon = new BetterNotes();
+Zotero.BetterNotes = addon;
+// For compatibility
+Zotero.Knowledge4Zotero = addon;
 
 window.addEventListener(
   "load",
   async function (e) {
-    Zotero.Knowledge4Zotero.ZoteroEvents.onInit();
+    Zotero.BetterNotes.ZoteroEvents.onInit();
   },
   false
 );

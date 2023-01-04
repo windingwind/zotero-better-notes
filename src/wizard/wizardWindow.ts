@@ -2,7 +2,7 @@
  * This file contains the first-run wizard window code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { EditorMessage } from "../utils";
 import AddonBase from "../module";
 
@@ -14,7 +14,7 @@ class WizardWindow extends AddonBase {
   template: string;
   templateCN: string;
   private _document: Document;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.enableSetup = true;
     this.enableCollection = true;
@@ -209,7 +209,7 @@ class WizardWindow extends AddonBase {
   }
   init(_document: Document) {
     this._document = _document;
-    Zotero.debug("Knowledge4Zotero: Initialize AddonWizard.");
+    this._Addon.toolkit.Tool.log("Initialize AddonWizard.")
     this.updateCollectionSetup();
   }
   changeSetup() {

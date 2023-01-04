@@ -2,7 +2,7 @@
  * This file contains note export window code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class NoteExportWindow extends AddonBase {
@@ -14,7 +14,7 @@ class NoteExportWindow extends AddonBase {
   private _window: Window;
   private options: string[];
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.options = [
       "embedLink",
@@ -98,8 +98,8 @@ class NoteExportWindow extends AddonBase {
     };
     this.options.forEach(saveOptions);
 
-    Zotero.debug(this.io);
-    Zotero.debug(this.io.dataOut);
+    this._Addon.toolkit.Tool.log(this.io);
+    this._Addon.toolkit.Tool.log(this.io.dataOut);
   }
 }
 

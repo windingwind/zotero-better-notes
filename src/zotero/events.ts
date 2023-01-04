@@ -2,214 +2,30 @@
  * This file contains the life-time and UI events.
  */
 
-import TreeModel = require("tree-model");
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { EditorMessage } from "../utils";
 import AddonBase from "../module";
+import { addonName } from "../../package.json";
 
 class ZoteroEvents extends AddonBase {
-  notifierCallback: any;
-  notifierCbkDict: any;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
-    this.notifierCallback = {
-      notify: async (
-        event: string,
-        type: string,
-        ids: Array<number | string>,
-        extraData: object
-      ) => {
-        if (event === "modify" && type === "item") {
-          if (
-            ids.indexOf(
-              Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") as number
-            ) >= 0
-          ) {
-            Zotero.debug("Knowledge4Zotero: main knowledge modify check.");
-            this._Addon.WorkspaceOutline.updateOutline();
-            this._Addon.ZoteroViews.updateWordCount();
-          }
-          // Check Note Sync
-          const syncIds = this._Addon.SyncController.getSyncNoteIds();
-          const modifiedSyncIds = ids.filter((id) =>
-            syncIds.includes(id as number)
-          ) as number[];
-          if (modifiedSyncIds.length > 0) {
-            // Delay so that item content is ready
-            setTimeout(() => {
-              this._Addon.SyncController.doSync(
-                Zotero.Items.get(modifiedSyncIds)
-              );
-            }, 10000);
-            Zotero.debug("Better Notes: sync planned.");
-          }
-        }
-        if (
-          (event == "select" &&
-            type == "tab" &&
-            extraData[ids[0]].type == "reader") ||
-          (event === "add" &&
-            type === "item" &&
-            (Zotero.Items.get(ids as number[]) as Zotero.Item[]).filter(
-              (item) => {
-                return item.isAnnotation();
-              }
-            ).length > 0) ||
-          (event === "close" && type === "tab") ||
-          (event === "open" && type === "file")
-        ) {
-          await this._Addon.ReaderViews.buildReaderAnnotationButtons();
-        }
-        if (event == "add" && type == "tab") {
-          if (ids[0] === this._Addon.WorkspaceWindow.workspaceTabId) {
-            const tabItem = document.querySelector(`.tab[data-id=${ids[0]}]`);
-            const tabTitle = tabItem && tabItem.querySelector(".tab-name");
-            tabTitle &&
-              (tabTitle.innerHTML = `${this._Addon.ZoteroViews.icons["tabIcon"]}${tabTitle.innerHTML}`);
-          }
-        }
-        if (event == "select" && type == "tab") {
-          if (extraData[ids[0]].type == "betternotes") {
-            let t = 0;
-            await this._Addon.WorkspaceWindow.waitWorkspaceReady();
-            while (
-              !(await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance(
-                "main",
-                false
-              )) &&
-              t < 100
-            ) {
-              t += 1;
-              this._Addon.WorkspaceWindow.setWorkspaceNote(
-                "main",
-                undefined,
-                false
-              );
-              await Zotero.Promise.delay(100);
-            }
-
-            const _tabCover = document.getElementById("zotero-tab-cover");
-            const _contextPane = document.getElementById(
-              "zotero-context-pane"
-            ) as XUL.Element;
-            const _contextPaneSplitter = document.getElementById(
-              "zotero-context-splitter"
-            ) as XUL.Element;
-            const _tabToolbar = document.getElementById("zotero-tab-toolbar");
-            _contextPaneSplitter.setAttribute("hidden", true);
-            _contextPane.setAttribute("collapsed", true);
-            _tabToolbar && (_tabToolbar.hidden = true);
-            _tabCover && (_tabCover.hidden = true);
-            this._Addon.ZoteroViews.switchRealMenuBar(false);
-            this._Addon.ZoteroViews.switchKey(false);
-            this._Addon.ZoteroViews.updateWordCount();
-          } else {
-            this._Addon.ZoteroViews.switchRealMenuBar(true);
-            this._Addon.ZoteroViews.switchKey(true);
-          }
-        }
-        if (
-          Zotero.Prefs.get("Knowledge4Zotero.autoAnnotation") &&
-          event === "add" &&
-          type === "item" &&
-          (Zotero.Items.get(ids as number[]) as Zotero.Item[]).filter(
-            (item) => {
-              return item.isAnnotation();
-            }
-          ).length > 0
-        ) {
-          Zotero.debug("Knowledge4Zotero: autoAnnotation");
-          const annotations = (
-            Zotero.Items.get(ids as number[]) as Zotero.Item[]
-          ).filter((item) => {
-            return item.isAnnotation();
-          });
-          this.onEditorEvent(
-            new EditorMessage("addAnnotationToNote", {
-              params: { annotations: annotations },
-            })
-          );
-        }
-        if (event === "add" && type === "item-tag") {
-          const nodes: TreeModel.Node<object>[] =
-            this._Addon.NoteUtils.getNoteTreeAsList(
-              this._Addon.WorkspaceWindow.getWorkspaceNote()
-            );
-          const headings: string[] = nodes.map((node) => node.model.name);
-          console.log(ids, extraData, headings);
-
-          for (const tagId of ids.filter((t) => extraData[t].tag[0] === "#")) {
-            const tagName = (extraData[tagId].tag as string).slice(1).trim();
-            if (headings.includes(tagName) || tagName === "#") {
-              let lineIndex: number;
-              let sectionName: string;
-              if (tagName === "#") {
-                lineIndex = -1;
-                sectionName = "";
-              } else {
-                const targetNode = nodes.find(
-                  (node) => node.model.name === tagName
-                );
-                lineIndex = targetNode.model.endIndex;
-                sectionName = targetNode.model.name;
-              }
-
-              const item = Zotero.Items.get(
-                (tagId as string).split("-")[0]
-              ) as Zotero.Item;
-              if (item.isAnnotation()) {
-                this.onEditorEvent(
-                  new EditorMessage("addAnnotationToNote", {
-                    params: {
-                      annotations: [item],
-                      lineIndex: lineIndex,
-                      sectionName: sectionName,
-                    },
-                  })
-                );
-              } else if (item.isNote()) {
-                this.onEditorEvent(
-                  new EditorMessage("addToNote", {
-                    params: {
-                      itemID: item.id,
-                      lineIndex: lineIndex,
-                      sectionName: sectionName,
-                    },
-                  })
-                );
-              }
-            }
-          }
-        }
-        for (const cbk of Object.values(this.notifierCbkDict)) {
-          (cbk as Function)(event, type, ids, extraData);
-        }
-      },
-    };
-    this.notifierCbkDict = {};
   }
 
   public async onInit() {
-    Zotero.debug("Knowledge4Zotero: init called");
+    const development = "development";
+    const production = "production";
+    // The env will be replaced after esbuild
+    // @ts-ignore
+    this._Addon.env = __env__;
+    this._Addon.toolkit.Tool.logOptionsGlobal.prefix = `[${addonName}]`;
+    this._Addon.toolkit.Tool.logOptionsGlobal.disableConsole =
+      this._Addon.env === "production";
+    this._Addon.toolkit.Tool.log("init called")
     this.initProxyHandler();
 
     this.addEditorInstanceListener();
-    // Register the callback in Zotero as an item observer
-    let notifierID = Zotero.Notifier.registerObserver(this.notifierCallback, [
-      "item",
-      "tab",
-      "file",
-      "item-tag",
-    ]);
-
-    // Unregister callback when the window closes (important to avoid a memory leak)
-    window.addEventListener(
-      "unload",
-      (e) => {
-        Zotero.Notifier.unregisterObserver(notifierID);
-      },
-      false
-    );
+    this._Addon.ZoteroNotifies.initNotifyCallback();
 
     await Zotero.uiReadyPromise;
     this._Addon.ZoteroViews.addOpenWorkspaceButton();
@@ -254,11 +70,11 @@ class ZoteroEvents extends AddonBase {
 
   private async initWorkspaceTab() {
     let state = Zotero.Session.state.windows.find((x) => x.type === "pane");
-    Zotero.debug("initWorkspaceTab");
-    Zotero.debug(state);
+    this._Addon.toolkit.Tool.log("initWorkspaceTab");
+    this._Addon.toolkit.Tool.log(state);
     if (state) {
       const noteTab = state.tabs.find((t) => t.type === "betternotes");
-      Zotero.debug(noteTab);
+      this._Addon.toolkit.Tool.log(noteTab);
       if (noteTab) {
         let t = 0;
         while (t < 5) {
@@ -311,9 +127,9 @@ class ZoteroEvents extends AddonBase {
       return;
     }
 
-    Zotero.debug(`Knowledge4Zotero: note editor initializing...`);
+    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: note editor initializing...`);
     await this._Addon.EditorViews.initEditor(instance);
-    Zotero.debug(`Knowledge4Zotero: note editor initialized.`);
+    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: note editor initialized.`);
 
     if (!instance._knowledgeSelectionInitialized) {
       // Put event listeners here to access Zotero instance
@@ -433,7 +249,7 @@ class ZoteroEvents extends AddonBase {
 
     instance._popup.setAttribute(
       "onpopupshowing",
-      "Zotero.Knowledge4Zotero.EditorViews.updatePopupMenu()"
+      "Zotero.BetterNotes.EditorViews.updatePopupMenu()"
     );
 
     instance._iframeWindow.addEventListener("mousedown", (e) => {
@@ -468,16 +284,8 @@ class ZoteroEvents extends AddonBase {
     this._Addon.ZoteroViews.updateAutoInsertAnnotationsMenu();
   }
 
-  public addNotifyListener(name: string, cbk: Function) {
-    this.notifierCbkDict[name] = cbk;
-  }
-
-  public removeNotifyListener(name: string) {
-    delete this.notifierCbkDict[name];
-  }
-
   public async onEditorEvent(message: EditorMessage) {
-    Zotero.debug(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
+    this._Addon.toolkit.Tool.log(`Knowledge4Zotero: onEditorEvent\n${message.type}`);
     const mainNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
     if (message.type === "openUserGuide") {
       /*
@@ -591,7 +399,7 @@ class ZoteroEvents extends AddonBase {
           params: {itemID, enableConfirm, enableOpen}
         }
       */
-      Zotero.debug("Knowledge4Zotero: setMainNote");
+      this._Addon.toolkit.Tool.log("setMainNote")
       let mainKnowledgeID = parseInt(
         Zotero.Prefs.get("Knowledge4Zotero.mainKnowledgeID") as string
       );
@@ -638,7 +446,7 @@ class ZoteroEvents extends AddonBase {
         ? message.content.editorInstance._item
         : message.content.params.noteItem;
       let topItems: Zotero.Item[] = [];
-      console.log(message);
+      this._Addon.toolkit.Tool.log(message);
       if (message.content.event) {
         const topItemID = Number(
           message.content.event.target.id.split("-").pop()
@@ -689,7 +497,7 @@ class ZoteroEvents extends AddonBase {
           editorInstance
         }
       */
-      Zotero.debug("Knowledge4Zotero: addToNoteEnd");
+      this._Addon.toolkit.Tool.log("addToNoteEnd")
       await this._Addon.NoteUtils.addLinkToNote(
         mainNote,
         (message.content.editorInstance as Zotero.EditorInstance)._item,
@@ -709,11 +517,11 @@ class ZoteroEvents extends AddonBase {
           }
         }
       */
-      Zotero.debug("Knowledge4Zotero: addToNote");
+      this._Addon.toolkit.Tool.log("addToNote")
       let lineIndex = message.content.params?.lineIndex;
       if (typeof lineIndex === "undefined") {
         const eventInfo = (message.content.event as XUL.XULEvent).target.id;
-        Zotero.debug(eventInfo);
+        this._Addon.toolkit.Tool.log(eventInfo);
         const idSplit = eventInfo.split("-");
         lineIndex = parseInt(idSplit.pop());
       }
@@ -730,55 +538,13 @@ class ZoteroEvents extends AddonBase {
         lineIndex,
         sectionName
       );
-    } else if (message.type === "addAnnotationToNote") {
-      /*
-        message.content = {
-          params: {
-            annotations: Zotero.Item[],
-            lineIndex?: number
-          }
-        }
-      */
-      const useLineIndex = message.content.params?.lineIndex >= 0;
-      let currentLine = useLineIndex ? message.content.params?.lineIndex : -1;
-      const annotations = message.content.params.annotations;
-      const workspaceNote = this._Addon.WorkspaceWindow.getWorkspaceNote();
-
-      const html = await this._Addon.NoteUtils.addAnnotationsToNote(
-        workspaceNote,
-        annotations,
-        currentLine
-      );
-      if (!useLineIndex) {
-        currentLine = this._Addon.NoteUtils.currentLine[workspaceNote.id];
-        currentLine = currentLine >= 0 ? currentLine : -1;
-
-        if (currentLine >= 0) {
-          // Compute annotation lines length
-          const temp = this._Addon.toolkit.UI.createElement(
-            document,
-            "div"
-          ) as HTMLDivElement;
-          temp.innerHTML = html;
-          const elementList = this._Addon.NoteParse.parseHTMLElements(temp);
-          // Move cursor foward
-          this._Addon.NoteUtils.currentLine[workspaceNote.id] +=
-            elementList.length;
-        }
-      }
-      this._Addon.ZoteroViews.showProgressWindow(
-        "Better Notes",
-        `Insert Annotation to ${
-          currentLine >= 0 ? `line ${currentLine} in` : "end of"
-        } main note`
-      );
     } else if (message.type === "jumpNode") {
       /*
         message.content = {
           params: {id, lineIndex}
         }
       */
-      Zotero.debug(message.content.params);
+      this._Addon.toolkit.Tool.log(message.content.params);
       let editorInstance =
         await this._Addon.WorkspaceWindow.getWorkspaceEditorInstance();
       // Set node id
@@ -815,9 +581,9 @@ class ZoteroEvents extends AddonBase {
       const forceStandalone = message.content.params.forceStandalone;
       let _window = this._Addon.WorkspaceWindow.getWorkspaceWindow();
       if (!noteItem) {
-        Zotero.debug(`Knowledge4Zotero: ${message.content.params.infoText}`);
+        this._Addon.toolkit.Tool.log(`Knowledge4Zotero: ${message.content.params.infoText}`);
       }
-      Zotero.debug(`Knowledge4Zotero: onNoteLink ${noteItem.id}`);
+      this._Addon.toolkit.Tool.log(`Knowledge4Zotero: onNoteLink ${noteItem.id}`);
       if (
         !forceStandalone &&
         _window &&
@@ -917,7 +683,7 @@ class ZoteroEvents extends AddonBase {
         newLines.push("<p> </p>");
         const html = newLines.join("\n");
         if (!targetItem) {
-          console.log(html);
+          this._Addon.toolkit.Tool.log(html);
           this._Addon.toolkit.Tool.getCopyHelper()
             .addText(html, "text/html")
             .addText(
@@ -1035,7 +801,7 @@ class ZoteroEvents extends AddonBase {
       if (newLines) {
         const html = newLines.join("\n");
         if (!targetItem) {
-          console.log(html);
+          this._Addon.toolkit.Tool.log(html);
 
           this._Addon.toolkit.Tool.getCopyHelper()
             .addText(html, "text/html")
@@ -1047,7 +813,7 @@ class ZoteroEvents extends AddonBase {
           progressWindow.changeHeadline("Template Copied");
         } else {
           const forceMetadata = toCopyImage.length > 0;
-          console.log(toCopyImage);
+          this._Addon.toolkit.Tool.log(toCopyImage);
           await this._Addon.NoteUtils.addLineToNote(
             targetItem,
             html,
@@ -1190,20 +956,20 @@ class ZoteroEvents extends AddonBase {
       const note = editor._item;
       if (note.parentItem) {
         const attachment = await note.parentItem.getBestAttachment();
-        Zotero.debug(attachment);
+        this._Addon.toolkit.Tool.log(attachment);
         if (!attachment) {
           return;
         }
         try {
-          Zotero.debug("Launching PDF without page number");
+          this._Addon.toolkit.Tool.log("Launching PDF without page number");
           let zp = Zotero.getActiveZoteroPane();
           if (zp) {
             zp.viewAttachment([attachment.id]);
           }
           Zotero.Notifier.trigger("open", "file", attachment.id);
         } catch (e) {
-          Zotero.debug("Knowledge4Zotero: Open attachment failed:");
-          Zotero.debug(attachment);
+          this._Addon.toolkit.Tool.log("Open attachment failed:")
+          this._Addon.toolkit.Tool.log(attachment);
           this._Addon.ZoteroViews.showProgressWindow(
             "Better Notes",
             "Error occurred on opening attachemnts.",
@@ -1270,7 +1036,7 @@ class ZoteroEvents extends AddonBase {
         return;
       }
       const html = await this._Addon.NoteParse.parseMDToHTML(source);
-      console.log(source, html);
+      this._Addon.toolkit.Tool.log(source, html);
       this._Addon.toolkit.Tool.getCopyHelper()
         .addText(html, "text/html")
         .copy();
@@ -1292,7 +1058,7 @@ class ZoteroEvents extends AddonBase {
         return;
       }
       const html = this._Addon.NoteParse.parseAsciiDocToHTML(source);
-      console.log(source, html);
+      this._Addon.toolkit.Tool.log(source, html);
       this._Addon.toolkit.Tool.getCopyHelper()
         .addText(html, "text/html")
         .copy();
@@ -1302,7 +1068,7 @@ class ZoteroEvents extends AddonBase {
         "Converted AsciiDoc is updated to the clipboard. You can paste them in the note."
       );
     } else {
-      Zotero.debug(`Knowledge4Zotero: message not handled.`);
+      this._Addon.toolkit.Tool.log(`Knowledge4Zotero: message not handled.`);
     }
   }
 }

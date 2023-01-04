@@ -3,6 +3,7 @@
  */
 
 import ZoteroEvents from "./zotero/events";
+import ZoteroNotifies from "./zotero/notifies";
 import ZoteroViews from "./zotero/views";
 import ReaderViews from "./reader/readerViews";
 import WizardWindow from "./wizard/wizardWindow";
@@ -26,8 +27,10 @@ import TemplateWindow from "./template/templateWindow";
 import { SyncUtils } from "./sync/syncUtils";
 import ZoteroToolkit from "zotero-plugin-toolkit";
 
-class Knowledge4Zotero {
+class BetterNotes {
+  public env: "development" | "production";
   public ZoteroEvents: ZoteroEvents;
+  public ZoteroNotifies: ZoteroNotifies;
   // Zotero UI
   public ZoteroViews: ZoteroViews;
   // Reader UI
@@ -63,6 +66,7 @@ class Knowledge4Zotero {
 
   constructor() {
     this.ZoteroEvents = new ZoteroEvents(this);
+    this.ZoteroNotifies = new ZoteroNotifies(this);
     this.ZoteroViews = new ZoteroViews(this);
     this.ReaderViews = new ReaderViews(this);
     this.WorkspaceOutline = new WorkspaceOutline(this);
@@ -88,8 +92,8 @@ class Knowledge4Zotero {
 
     this.toolkit = new ZoteroToolkit();
     // Disable since we are still using overlay
-    this.toolkit.UI.enableElementRecordGlobal = false
+    this.toolkit.UI.enableElementRecordGlobal = false;
   }
 }
 
-export default Knowledge4Zotero;
+export default BetterNotes;

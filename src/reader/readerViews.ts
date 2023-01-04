@@ -3,14 +3,14 @@
  */
 
 const CryptoJS = require("crypto-js");
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 import { EditorMessage } from "../utils";
 
 class ReaderViews extends AddonBase {
   icons: object;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.icons = {
       createNote: `<svg t="1651630304116" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14011" width="16" height="16"><path d="M791.30324 369.7c-5 5-6.2 12.7-2.8 18.9 17.5 31.9 27.4 68.5 27.4 107.4 0 56.2-20.7 107.6-54.9 147-4.5 5.1-5.1 12.6-1.8 18.4l39.2 67.9c3.3 5.7 9.6 8.7 16.1 7.8 6-0.8 12.1-1.2 18.3-1.2 70.1 0.5 128 59.7 127.1 129.7-0.9 69.7-57.4 125.9-127.1 126.4-70.9 0.5-128.9-57.1-128.9-128 0-38.1 16.7-72.3 43.1-95.8l-37-64c-4.2-7.3-13.3-10-20.9-6.4-29.3 14.2-62.3 22.2-97.2 22.2-26.7 0-52.3-4.7-76-13.2-7.3-2.6-15.4 0.3-19.3 7l-24.9 43.1c-3.1 5.4-2.8 12.1 0.8 17.2 15 21.2 23.7 47.1 23.5 75.1-0.7 69.5-57.5 126.2-127 126.8-71.6 0.6-129.8-57.7-129.1-129.4 0.8-69.7 58-126.5 127.8-126.6 12 0 23.7 1.6 34.8 4.7 7 2 14.5-1.1 18.2-7.4l21.7-37.6c3.7-6.4 2.5-14.6-2.9-19.6-33.6-31.2-57.5-72.6-67-119.2-1.5-7.5-8-12.9-15.7-12.9h-92c-6.9 0-13.1 4.5-15.2 11.1C232.80324 590.2 184.70324 627 128.00324 627 57.00324 627-0.49676 569.2 0.00324 498.1 0.40324 427.5 58.60324 370.3 129.20324 371c54.2 0.5 100.4 34.8 118.5 82.8C250.00324 460 256.00324 464 262.60324 464h94.1c7.6 0 14.2-5.3 15.7-12.7 11-54.2 41.5-101.3 84-133.6 6.4-4.9 8.2-13.8 4.2-20.8l-2.2-3.8c-3.5-6-10.3-9-17.1-7.7-8.8 1.8-18 2.7-27.4 2.5-69.5-1-126.9-60.1-126-129.6 0.9-70.3 58.4-126.9 129-126.3 69.3 0.6 126 57 127 126.2 0.4 31.6-10.6 60.7-29.3 83.2-4.3 5.2-5 12.5-1.6 18.3l6.6 11.4c3.6 6.2 10.8 9.3 17.7 7.5 17.5-4.4 35.8-6.7 54.6-6.7 52.3 0 100.4 17.9 138.6 48 6.4 5 15.5 4.5 21.2-1.2l24.2-24.2c4.7-4.7 6-11.8 3.3-17.8-7.3-16.1-11.3-34-11.3-52.8 0-70.7 57.3-128 128-128 70.6 0 128 57.4 128 128 0 70.7-57.3 128-128 128-20.7 0-40.2-4.9-57.5-13.6-6.2-3.1-13.7-2-18.7 2.9l-28.4 28.5z" p-id="14012" fill="#ffd400"></path></svg>`,
@@ -101,9 +101,9 @@ class ReaderViews extends AddonBase {
   }
 
   public async buildReaderAnnotationButtons() {
-    Zotero.debug("Knowledge4Zotero: buildReaderAnnotationButton");
+    this._Addon.toolkit.Tool.log("buildReaderAnnotationButton")
     for (const reader of Zotero.Reader._readers) {
-      Zotero.debug("reader found");
+      this._Addon.toolkit.Tool.log("reader found");
       let t = 0;
       while (t < 100 && !(await this.addReaderAnnotationButton(reader))) {
         await Zotero.Promise.delay(50);
@@ -207,7 +207,7 @@ class ReaderViews extends AddonBase {
           responseType: "json",
         }
       );
-      console.log(xhr);
+      this._Addon.toolkit.Tool.log(xhr);
       if (xhr && xhr.status && xhr.status === 200 && xhr.response.text) {
         result = xhr.response.text;
         success = true;
@@ -255,7 +255,7 @@ class ReaderViews extends AddonBase {
           .map((r) => r.recog.content)
           .join(" ")
           .replace(/ifly-latex-(begin)?(end)?/g, "$");
-        console.log(xhr);
+        this._Addon.toolkit.Tool.log(xhr);
         success = true;
       } else {
         result =

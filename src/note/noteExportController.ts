@@ -2,7 +2,7 @@
  * This file realizes note export.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class NoteExport extends AddonBase {
@@ -17,7 +17,7 @@ class NoteExport extends AddonBase {
   _docxPromise: _ZoteroPromiseObject;
   _docxBlob: Blob;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this._exportFileInfo = [];
   }
@@ -52,7 +52,7 @@ class NoteExport extends AddonBase {
         .filter((k) => k.includes("export"))
         .find((k) => options[k])
     ) {
-      console.log("[BN] options containing 'export' all false");
+      this._Addon.toolkit.Tool.log("[BN] options containing 'export' all false");
       return;
     }
     this._exportFileInfo = [];
@@ -70,7 +70,7 @@ class NoteExport extends AddonBase {
       );
 
       await this._Addon.NoteUtils.setLinesToNote(newNote, convertResult.lines);
-      Zotero.debug(convertResult.subNotes);
+      this._Addon.toolkit.Tool.log(convertResult.subNotes);
 
       await Zotero.DB.executeTransaction(async () => {
         await Zotero.Notes.copyEmbeddedImages(note, newNote);
@@ -107,7 +107,7 @@ class NoteExport extends AddonBase {
       this._docxPromise = Zotero.Promise.defer();
       instance._iframeWindow.postMessage({ type: "exportDocx" }, "*");
       await this._docxPromise.promise;
-      console.log(this._docxBlob);
+      this._Addon.toolkit.Tool.log(this._docxBlob);
       const filename = await this._Addon.toolkit.Tool.openFilePicker(
         `${Zotero.getString("fileInterface.export")} MS Word Document`,
         "save",
@@ -119,14 +119,14 @@ class NoteExport extends AddonBase {
       }
     }
     if (options.exportPDF) {
-      console.log(newNote);
+      this._Addon.toolkit.Tool.log(newNote);
       let _w: Window;
       let t = 0;
       ZoteroPane.selectItem(note.id);
       do {
         ZoteroPane.openNoteWindow(newNote.id);
         _w = ZoteroPane.findNoteWindow(newNote.id);
-        console.log(_w);
+        this._Addon.toolkit.Tool.log(_w);
         await Zotero.Promise.delay(10);
         t += 1;
       } while (!_w && t < 500);
@@ -150,7 +150,7 @@ class NoteExport extends AddonBase {
       this._pdfPrintPromise = Zotero.Promise.defer();
       instance._iframeWindow.postMessage({ type: "exportPDF" }, "*");
       await this._pdfPrintPromise.promise;
-      console.log("print finish detected");
+      this._Addon.toolkit.Tool.log("print finish detected");
       const closeFlag = _w.confirm(
         "Printing finished. Do you want to close the preview window?"
       );
@@ -205,7 +205,7 @@ class NoteExport extends AddonBase {
     filedir = Zotero.File.normalizeToUnix(filedir);
 
     if (!filedir) {
-      Zotero.debug("BN:export, filepath invalid");
+      this._Addon.toolkit.Tool.log("BN:export, filepath invalid");
       return;
     }
 
@@ -233,7 +233,7 @@ class NoteExport extends AddonBase {
             newNote,
             convertResult.lines
           );
-          Zotero.debug(convertResult.subNotes);
+          this._Addon.toolkit.Tool.log(convertResult.subNotes);
 
           await Zotero.DB.executeTransaction(async () => {
             await Zotero.Notes.copyEmbeddedImages(note, newNote);

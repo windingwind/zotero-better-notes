@@ -2,12 +2,12 @@
  * This file contains sync list window related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class SyncListWindow extends AddonBase {
   private _window: Window;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 

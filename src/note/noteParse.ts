@@ -6,12 +6,12 @@ import TreeModel = require("tree-model");
 const asciidoctor = require("asciidoctor")();
 import YAML = require("yamljs");
 import AddonBase from "../module";
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { NodeMode } from "../sync/syncUtils";
 
 class NoteParse extends AddonBase {
   tools: any;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 
@@ -211,7 +211,7 @@ class NoteParse extends AddonBase {
             if (currentLineIndex <= lineIndex) {
               currentLineIndex += 1;
               currentElement = _e;
-              // console.log(currentLineIndex, _e);
+              // this._Addon.toolkit.Tool.log(currentLineIndex, _e);
             }
           }
         } else {
@@ -221,10 +221,10 @@ class NoteParse extends AddonBase {
       } else {
         currentLineIndex += 1;
         currentElement = e as HTMLElement;
-        // console.log(currentLineIndex, e);
+        // this._Addon.toolkit.Tool.log(currentLineIndex, e);
       }
     }
-    console.log(currentLineIndex);
+    this._Addon.toolkit.Tool.log(currentLineIndex);
     return currentElement;
   }
 
@@ -381,8 +381,8 @@ class NoteParse extends AddonBase {
         template = "<p>{{image}}<br/>{{citation}} {{comment}}</p>";
       }
 
-      Zotero.debug("Using note template:");
-      Zotero.debug(template);
+      this._Addon.toolkit.Tool.log("Using note template:");
+      this._Addon.toolkit.Tool.log(template);
 
       template = template.replace(
         /(<blockquote>[^<>]*?)({{highlight}})([\s\S]*?<\/blockquote>)/g,
@@ -431,7 +431,7 @@ class NoteParse extends AddonBase {
       }
       annotationJSONList.push(annotJson);
     }
-    await this._Addon.NoteUtils.importImagesToNote(note, annotationJSONList);
+    await this._Addon.NoteUtils.importAnnotationImagesToNote(note, annotationJSONList);
     const html = this.serializeAnnotations(
       annotationJSONList,
       false,
@@ -483,7 +483,7 @@ class NoteParse extends AddonBase {
     )
       .slice(0, lineCount)
       .join("\n")}</div>`;
-    console.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
+    this._Addon.toolkit.Tool.log(this.parseHTMLLines(item.getNote()).slice(0, lineCount));
 
     const parser = this._Addon.toolkit.Compat.getDOMParser();
     let doc = parser.parseFromString(note, "text/html");
@@ -712,7 +712,7 @@ class NoteParse extends AddonBase {
     let mmXML = '<map version="freeplane 1.9.0">';
     convertNode(root);
     mmXML += "</map>";
-    console.log(mmXML);
+    this._Addon.toolkit.Tool.log(mmXML);
     return mmXML;
   }
 
@@ -726,7 +726,7 @@ class NoteParse extends AddonBase {
   ) {
     const noteStatus = this._Addon.SyncUtils.getNoteStatus(noteItem);
     const rehype = this._Addon.SyncUtils.note2rehype(noteStatus.content);
-    console.log(rehype);
+    this._Addon.toolkit.Tool.log(rehype);
     this._Addon.SyncUtils.processN2MRehypeHighlightNodes(
       this._Addon.SyncUtils.getN2MRehypeHighlightNodes(rehype),
       NodeMode.direct
@@ -748,9 +748,9 @@ class NoteParse extends AddonBase {
       false,
       NodeMode.direct
     );
-    console.log("rehype", rehype);
+    this._Addon.toolkit.Tool.log("rehype", rehype);
     const remark = await this._Addon.SyncUtils.rehype2remark(rehype);
-    console.log("remark", remark);
+    this._Addon.toolkit.Tool.log("remark", remark);
     let md = this._Addon.SyncUtils.remark2md(remark);
 
     if (options.withMeta) {
@@ -772,7 +772,7 @@ class NoteParse extends AddonBase {
       let yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
       md = `${yamlFrontMatter}\n${md}`;
     }
-    console.log(md);
+    this._Addon.toolkit.Tool.log(md);
     return md;
   }
 
@@ -796,18 +796,18 @@ class NoteParse extends AddonBase {
     //   }
     // }
     // if (!editorInstance) {
-    //   Zotero.debug("BN:Import: failed to open note.");
+    //   this._Addon.toolkit.Tool.log("BN:Import: failed to open note.");
     //   return;
     // }
-    console.log("md", mdStatus);
+    this._Addon.toolkit.Tool.log("md", mdStatus);
     const remark = this._Addon.SyncUtils.md2remark(mdStatus.content);
-    console.log("remark", remark);
+    this._Addon.toolkit.Tool.log("remark", remark);
     const _rehype = await this._Addon.SyncUtils.remark2rehype(remark);
-    console.log("_rehype", _rehype);
+    this._Addon.toolkit.Tool.log("_rehype", _rehype);
     const _note = this._Addon.SyncUtils.rehype2note(_rehype);
-    console.log("_note", _note);
+    this._Addon.toolkit.Tool.log("_note", _note);
     const rehype = this._Addon.SyncUtils.note2rehype(_note);
-    console.log("rehype", rehype);
+    this._Addon.toolkit.Tool.log("rehype", rehype);
     // Import highlight to note meta
     // Annotations don't need to be processed.
     // Image annotations are imported with normal images.
@@ -848,8 +848,8 @@ class NoteParse extends AddonBase {
     //     // root -> p -> span(cite, this is what we actually want)
     //     replace(node, (newNode.children[0] as any).children[0]);
     //   } catch (e) {
-    //     Zotero.debug(e);
-    //     console.log(e);
+    //     this._Addon.toolkit.Tool.log(e);
+    //     this._Addon.toolkit.Tool.log(e);
     //     continue;
     //   }
     // }
@@ -874,7 +874,7 @@ class NoteParse extends AddonBase {
       mdStatus.filedir,
       isImport
     );
-    console.log(rehype);
+    this._Addon.toolkit.Tool.log(rehype);
     const noteContent = this._Addon.SyncUtils.rehype2note(rehype);
     return noteContent;
   }

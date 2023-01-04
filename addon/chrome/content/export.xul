@@ -12,9 +12,9 @@
 
 <dialog id="betternotes-export-dialog" windowtype="betternotes-export"
     title="&zotero.__addonRef__.export.title;" orient="vertical" width="300" height="300"
-    buttons="cancel,accept" ondialogaccept="Zotero.Knowledge4Zotero.NoteExportWindow.doAccept();"
-    onload="Zotero.Knowledge4Zotero.NoteExportWindow.doLoad(window);"
-    onunload="Zotero.Knowledge4Zotero.NoteExportWindow.doUnload();"
+    buttons="cancel,accept" ondialogaccept="Zotero.BetterNotes.NoteExportWindow.doAccept();"
+    onload="Zotero.BetterNotes.NoteExportWindow.doLoad(window);"
+    onunload="Zotero.BetterNotes.NoteExportWindow.doUnload();"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:html="http://www.w3.org/1999/xhtml" style="padding:2em"
     persist="screenX screenY width height">
@@ -27,7 +27,7 @@
                     <checkbox id="embedLink"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.singlefile.enable.label;"
                         checked="true"
-                        oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
+                        oncommand="Zotero.BetterNotes.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.link.enable.label;"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>
@@ -42,14 +42,14 @@
             <rows flex="1">
                 <row>
                     <checkbox id="exportMD" checked="true"
-                        oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
+                        oncommand="Zotero.BetterNotes.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.file.enable.label;" />
                 </row>
                 <row>
                     <checkbox id="exportSubMD"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;"
                         checked="false"
-                        oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
+                        oncommand="Zotero.BetterNotes.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.singlefile.enable.label;"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;" />
                 </row>
@@ -57,7 +57,7 @@
                     <checkbox id="exportYAMLHeader"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.yaml.enable.label;"
                         checked="true"
-                        oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
+                        oncommand="Zotero.BetterNotes.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.yaml.enable.label;"
                         tooltiptext="&zotero.__addonRef__.export.cannotworkwith.label;&zotero.__addonRef__.export.link.enable.label;" />
                 </row>
@@ -65,7 +65,7 @@
                     <checkbox id="exportAutoSync"
                         tooltiptext="&zotero.__addonRef__.export.workwith.label;&zotero.__addonRef__.export.singlefile.enable.label;"
                         checked="false"
-                        oncommand="Zotero.Knowledge4Zotero.NoteExportWindow.doUpdate(event)" />
+                        oncommand="Zotero.BetterNotes.NoteExportWindow.doUpdate(event)" />
                     <label value="&zotero.__addonRef__.export.enableautosync.enable.label;"
                         tooltiptext="Only work with &zotero.__addonRef__.export.singlefile.enable.label;" />
                 </row>

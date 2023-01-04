@@ -2,7 +2,7 @@
  * This file contains image viewer for note editor.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 
 class EditorImageViewer extends AddonBase {
@@ -17,7 +17,7 @@ class EditorImageViewer extends AddonBase {
     top: number;
   };
   icons: any;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.scaling = 1;
     this.title = "Note";

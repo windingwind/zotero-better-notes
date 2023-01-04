@@ -19,12 +19,12 @@ import { h } from "hastscript";
 import seedrandom = require("seedrandom");
 import YAML = require("yamljs");
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import AddonBase from "../module";
 import { NodeMode } from "../utils";
 
 class SyncUtils extends AddonBase {
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 
@@ -129,8 +129,8 @@ class SyncUtils extends AddonBase {
       try {
         ret.meta = YAML.parse(yaml);
       } catch (e) {
-        Zotero.debug(e);
-        console.log(e);
+        this._Addon.toolkit.Tool.log(e);
+        this._Addon.toolkit.Tool.log(e);
       }
     }
     return ret;
@@ -167,8 +167,8 @@ class SyncUtils extends AddonBase {
         ret.lastmodify = stat.lastModificationDate;
       }
     } catch (e) {
-      Zotero.debug(e);
-      console.log(e);
+      this._Addon.toolkit.Tool.log(e);
+      this._Addon.toolkit.Tool.log(e);
     }
     return ret;
   }
@@ -556,7 +556,7 @@ class SyncUtils extends AddonBase {
 
     rehype.children = tempChildren;
 
-    console.log("before n2r", rehype);
+    this._Addon.toolkit.Tool.log("before n2r", rehype);
 
     return unified()
       .use(rehypeStringify, {
@@ -579,11 +579,11 @@ class SyncUtils extends AddonBase {
 
   async md2note(str) {
     const remark = this.md2remark(str);
-    console.log(remark);
+    this._Addon.toolkit.Tool.log(remark);
     let rehype = await this.remark2rehype(remark);
-    console.log(rehype);
+    this._Addon.toolkit.Tool.log(rehype);
     const html = this.rehype2note(rehype);
-    console.log(html);
+    this._Addon.toolkit.Tool.log(html);
     return html;
   }
 
@@ -636,8 +636,8 @@ class SyncUtils extends AddonBase {
         /zotero:\/\/note\/\w+\/\w+\//.test(node.properties?.href),
       (node) => nodes.push(node)
     );
-    Zotero.debug("BN:N2M link");
-    Zotero.debug(JSON.stringify(nodes));
+    this._Addon.toolkit.Tool.log("BN:N2M link");
+    this._Addon.toolkit.Tool.log(JSON.stringify(nodes));
     return new Array(...new Set(nodes));
   }
 
@@ -673,17 +673,17 @@ class SyncUtils extends AddonBase {
       // annotation.uri was used before note-editor v4
       let uri = annotation.attachmentURI || annotation.uri;
       let position = annotation.position;
-      Zotero.debug("----Debug Link----");
-      Zotero.debug(annotation);
-      console.log("convertAnnotations", node);
+      this._Addon.toolkit.Tool.log("----Debug Link----");
+      this._Addon.toolkit.Tool.log(annotation);
+      this._Addon.toolkit.Tool.log("convertAnnotations", node);
 
       if (typeof uri === "string" && typeof position === "object") {
-        Zotero.debug(uri);
+        this._Addon.toolkit.Tool.log(uri);
         let openURI;
         let uriParts = uri.split("/");
         let libraryType = uriParts[3];
         let key = uriParts[uriParts.length - 1];
-        Zotero.debug(key);
+        this._Addon.toolkit.Tool.log(key);
         if (libraryType === "users") {
           openURI = "zotero://open-pdf/library/items/" + key;
         }
@@ -726,9 +726,9 @@ class SyncUtils extends AddonBase {
           newChild.properties.ztype = "zhighlight";
           newNode = h("zhighlight", [newChild]);
         }
-        console.log(newNode, node);
+        this._Addon.toolkit.Tool.log(newNode, node);
         this.replace(node, newNode);
-        console.log("converted", newNode, node);
+        this._Addon.toolkit.Tool.log("converted", newNode, node);
       }
     }
   }
@@ -755,7 +755,7 @@ class SyncUtils extends AddonBase {
           let uriParts = uri.split("/");
           let libraryType = uriParts[3];
           let key = uriParts[uriParts.length - 1];
-          Zotero.debug(key);
+          this._Addon.toolkit.Tool.log(key);
           if (libraryType === "users") {
             uris.push("zotero://select/library/items/" + key);
           }
@@ -791,13 +791,13 @@ class SyncUtils extends AddonBase {
         ...childNodes.map((child, i) => {
           const newNode = h("span");
           this.replace(newNode, child);
-          console.log("cite child", child, newNode);
+          this._Addon.toolkit.Tool.log("cite child", child, newNode);
           newNode.children = [h("a", { href: uris[i] }, child.children)];
           return newNode;
         }),
         { type: "text", value: ")" },
       ]);
-      console.log("cite", newNode);
+      this._Addon.toolkit.Tool.log("cite", newNode);
       const citationKey = this.randomString(
         8,
         Zotero.Utilities.allowedKeyChars,
@@ -832,7 +832,7 @@ class SyncUtils extends AddonBase {
       return;
     }
     for (const node of nodes) {
-      console.log("note link", node);
+      this._Addon.toolkit.Tool.log("note link", node);
       const noteInfo = infoList.find((i) =>
         node.properties.href.includes(i.link)
       );
@@ -867,9 +867,9 @@ class SyncUtils extends AddonBase {
         newChild.properties.class = "internal-link"; // required for obsidian compatibility
         const newNode = h("znotelink", [newChild]);
         this.replace(node, newNode);
-        console.log("direct link", node, newNode, newChild);
+        this._Addon.toolkit.Tool.log("direct link", node, newNode, newChild);
       }
-      console.log("note link parsed", node);
+      this._Addon.toolkit.Tool.log("note link parsed", node);
     }
   }
 
@@ -891,19 +891,19 @@ class SyncUtils extends AddonBase {
         libraryID,
         imgKey
       );
-      Zotero.debug(attachmentItem);
-      console.log("image", libraryID, imgKey, attachmentItem, node);
+      this._Addon.toolkit.Tool.log(attachmentItem);
+      this._Addon.toolkit.Tool.log("image", libraryID, imgKey, attachmentItem, node);
       if (!attachmentItem) {
         continue;
       }
 
       let oldFile = String(await attachmentItem.getFilePathAsync());
-      Zotero.debug(oldFile);
+      this._Addon.toolkit.Tool.log(oldFile);
       let ext = oldFile.split(".").pop();
-      let newAbsPath = Zotero.Knowledge4Zotero.NoteUtils.formatPath(
+      let newAbsPath = Zotero.BetterNotes.NoteUtils.formatPath(
         `${Path}/${imgKey}.${ext}`
       );
-      Zotero.debug(newAbsPath);
+      this._Addon.toolkit.Tool.log(newAbsPath);
       let newFile = oldFile;
       try {
         // Don't overwrite
@@ -917,9 +917,9 @@ class SyncUtils extends AddonBase {
           absolutePath ? newFile : `attachments/${newFile.split(/\//).pop()}`
         );
       } catch (e) {
-        Zotero.debug(e);
+        this._Addon.toolkit.Tool.log(e);
       }
-      Zotero.debug(newFile);
+      this._Addon.toolkit.Tool.log(newFile);
 
       node.properties.src = newFile ? newFile : oldFile;
 
@@ -931,7 +931,7 @@ class SyncUtils extends AddonBase {
         // this.replace(node, newNode);
         node.properties.alt = toHtml(newChild);
       }
-      console.log("zimage", node);
+      this._Addon.toolkit.Tool.log("zimage", node);
     }
   }
 
@@ -953,7 +953,7 @@ class SyncUtils extends AddonBase {
         node.type === "element" && node.properties?.ztype === "zhighlight",
       (node) => nodes.push(node)
     );
-    console.log("N2M:highlight", nodes);
+    this._Addon.toolkit.Tool.log("N2M:highlight", nodes);
     return new Array(...new Set(nodes));
   }
 
@@ -996,7 +996,7 @@ class SyncUtils extends AddonBase {
       return;
     }
 
-    console.log("processing M2N meta images", nodes);
+    this._Addon.toolkit.Tool.log("processing M2N meta images", nodes);
     for (const node of nodes) {
       if (/zimage/.test(node.properties.alt)) {
         const newNode: any = unified()
@@ -1004,7 +1004,7 @@ class SyncUtils extends AddonBase {
           .use(remarkMath)
           .use(rehypeParse, { fragment: true })
           .parse(node.properties.alt);
-        console.log(newNode);
+        this._Addon.toolkit.Tool.log(newNode);
         newNode.properties.src = node.properties.src;
         this.replace(node, newNode);
       }
@@ -1050,8 +1050,8 @@ class SyncUtils extends AddonBase {
           // root -> p -> span(cite, this is what we actually want)
           this.replace(node, (newNode.children[0] as any).children[0]);
         } catch (e) {
-          Zotero.debug(e);
-          console.log(e);
+          this._Addon.toolkit.Tool.log(e);
+          this._Addon.toolkit.Tool.log(e);
           continue;
         }
       } else {
@@ -1089,7 +1089,7 @@ class SyncUtils extends AddonBase {
       return;
     }
 
-    console.log("processing M2N images", nodes);
+    this._Addon.toolkit.Tool.log("processing M2N images", nodes);
     for (const node of nodes) {
       if (isImport) {
         // We encode the src in md2remark and decode it here.
@@ -1105,14 +1105,14 @@ class SyncUtils extends AddonBase {
           if (!(await OS.File.exists(src))) {
             src = OS.Path.join(fileDir, src);
             if (!(await OS.File.exists(src))) {
-              Zotero.debug("BN:parse image, path invalid");
+              this._Addon.toolkit.Tool.log("BN:parse image, path invalid");
               continue;
             }
           }
         }
         const key = await (
-          Zotero.Knowledge4Zotero as Knowledge4Zotero
-        ).NoteUtils._importImage(noteItem, src, srcType);
+          Zotero.BetterNotes as BetterNotes
+        ).NoteUtils.importImageToNote(noteItem, src, srcType);
         node.properties.dataAttachmentKey = key;
       }
       delete node.properties.src;

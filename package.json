@@ -7,10 +7,11 @@
   "description": "Everything about note management. All in Zotero.",
   "main": "src/index.js",
   "scripts": {
-    "build": "node build.js",
+    "build-dev": "cross-env NODE_ENV=development node build.js",
+    "build": "cross-env NODE_ENV=production node build.js",
     "start": "node start.js",
     "stop": "node stop.js",
-    "prerestart": "npm run build",
+    "prerestart": "npm run build-dev",
     "restart": "node restart.js",
     "release": "release-it",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -59,6 +60,7 @@
     "@types/jquery": "^3.5.14",
     "@types/node": "^17.0.31",
     "compressing": "^1.5.1",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.14.34",
     "release-it": "^14.14.0",
     "zotero-types": "^0.1.2"

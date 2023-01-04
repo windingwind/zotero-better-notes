@@ -25,30 +25,30 @@
     </keyset>
 
     <commandset id="mainCommandSet">
-        <command id="cmd_new_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'createWorkspace'});" />
-        <command id="cmd_open_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'selectMainNote'});" />
-        <command id="cmd_open_betternotesWindow" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openWorkspaceInWindow'});" />
-        <command id="cmd_export_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
-        <command id="cmd_sync_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'sync'});" />
-        <command id="cmd_sync_manager_betternotes" oncommand="Zotero.Knowledge4Zotero.SyncListWindow.openSyncList();" />
-        <command id="cmd_editTemplate_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'editTemplate'});" />
-        <!-- <command id="cmd_importlink_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'importLink'});" />
-        <command id="cmd_updatelink_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'updateLink'});" /> -->
-        <command id="cmd_autoannotation_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'updateAutoAnnotation'});" />
-        <command id="cmd_convertmd_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'convertMD'});" />
-        <command id="cmd_convertasciidoc_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'convertAsciiDoc'});" />
-        <command id="cmd_treeview_betternotes" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(1);" />
-        <command id="cmd_mindmap_betternotes" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(2);" />
-        <command id="cmd_bubblemap_betternotes" oncommand="Zotero.Knowledge4Zotero.WorkspaceOutline.switchView(3);" />
-        <command id="cmd_guide_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openUserGuide'});" />
-        <command id="cmd_about_betternotes" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'openAbout'});" />
+        <command id="cmd_new_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'createWorkspace'});" />
+        <command id="cmd_open_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'selectMainNote'});" />
+        <command id="cmd_open_betternotesWindow" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'openWorkspaceInWindow'});" />
+        <command id="cmd_export_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'export', content: {editorInstance: {_item: false}}});" />
+        <command id="cmd_sync_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'sync'});" />
+        <command id="cmd_sync_manager_betternotes" oncommand="Zotero.BetterNotes.SyncListWindow.openSyncList();" />
+        <command id="cmd_editTemplate_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'editTemplate'});" />
+        <!-- <command id="cmd_importlink_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'importLink'});" />
+        <command id="cmd_updatelink_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'updateLink'});" /> -->
+        <command id="cmd_autoannotation_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'updateAutoAnnotation'});" />
+        <command id="cmd_convertmd_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'convertMD'});" />
+        <command id="cmd_convertasciidoc_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'convertAsciiDoc'});" />
+        <command id="cmd_treeview_betternotes" oncommand="Zotero.BetterNotes.WorkspaceOutline.switchView(1);" />
+        <command id="cmd_mindmap_betternotes" oncommand="Zotero.BetterNotes.WorkspaceOutline.switchView(2);" />
+        <command id="cmd_bubblemap_betternotes" oncommand="Zotero.BetterNotes.WorkspaceOutline.switchView(3);" />
+        <command id="cmd_guide_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'openUserGuide'});" />
+        <command id="cmd_about_betternotes" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'openAbout'});" />
     </commandset>
 
     <popup id="zotero-itemmenu">
         <menuseparator />
-        <menuitem id="zotero-itemmenu-__addonRef__-setMainNote" class="menuitem-iconic popup-type-single-note" label="&zotero.__addonRef__.itemmenu.setMainNote.label;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent({type: 'setMainNote', content: {params: {itemID: ZoteroPane.getSelectedItems()[0].id}}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
-        <menuitem id="zotero-itemmenu-__addonRef__-exportNote" class="menuitem-iconic popup-type-single" label="&zotero.__addonRef__.itemmenu.exportNote.label;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent.bind(Zotero.Knowledge4Zotero.ZoteroEvents)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
-        <menuitem id="zotero-itemmenu-__addonRef__-exportNotes" class="menuitem-iconic popup-type-multiple" label="&zotero.__addonRef__.itemmenu.exportNotes.label;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent.bind(Zotero.Knowledge4Zotero.ZoteroEvents)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-setMainNote" class="menuitem-iconic popup-type-single-note" label="&zotero.__addonRef__.itemmenu.setMainNote.label;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent({type: 'setMainNote', content: {params: {itemID: ZoteroPane.getSelectedItems()[0].id}}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-exportNote" class="menuitem-iconic popup-type-single" label="&zotero.__addonRef__.itemmenu.exportNote.label;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent.bind(Zotero.BetterNotes.ZoteroEvents)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
+        <menuitem id="zotero-itemmenu-__addonRef__-exportNotes" class="menuitem-iconic popup-type-multiple" label="&zotero.__addonRef__.itemmenu.exportNotes.label;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent.bind(Zotero.BetterNotes.ZoteroEvents)({type: 'exportNotes', content: {}})" style="list-style-image: url('chrome://__addonRef__/skin/favicon.png');" />
     </popup>
 
     <menupopup id="menu_FilePopup">
@@ -63,14 +63,14 @@
 
     <menupopup id="menu_EditPopup">
         <menu id="menu_insertTextTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
-            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text');" />
+            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Text');" />
         </menu>
         <menu id="menu_insertItemTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
-            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item');" />
+            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Item');" />
         </menu>
         <menuitem id="menu_editTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
         <menu id="menu_citeSetting_betternotes" class="menu-type-betternotes menu-betternotes" label="&zotero.__addonRef__.workspace.menu.citeSetting;">
-            <menupopup id="menu_citeSettingPopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateCitationStyleMenu();" />
+            <menupopup id="menu_citeSettingPopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateCitationStyleMenu();" />
         </menu>
         <!-- <menuitem id="menu_importlink_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.importLink;" command="cmd_importlink_betternotes" />
         <menuitem id="menu_updatelink_betternotes" class="menu-type-betternotes" label="&zotero.__addonRef__.workspace.menu.updateLink;" command="cmd_updatelink_betternotes" /> -->
@@ -95,10 +95,10 @@
     <menupopup id="menu_HelpPopup">
         <menuseparator class="menu-betternotes" />
         <menu id="menu_ocrsetting_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRSetting;">
-            <menupopup id="menu_ocrsettingpopup" onpopupshowing="Zotero.Knowledge4Zotero.ZoteroViews.updateOCRStyleMenu();">
-                <menuitem id="menu_ocr_bing_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRBing;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent.bind(Zotero.Knowledge4Zotero.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'bing'}}})" type="checkbox" />
-                <menuitem id="menu_ocr_mathpix_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRMathpix;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent.bind(Zotero.Knowledge4Zotero.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'mathpix'}}})" type="checkbox" />
-                <menuitem id="menu_ocr_xunfei_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRXunfei;" oncommand="Zotero.Knowledge4Zotero.ZoteroEvents.onEditorEvent.bind(Zotero.Knowledge4Zotero.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'xunfei'}}})" type="checkbox" />
+            <menupopup id="menu_ocrsettingpopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateOCRStyleMenu();">
+                <menuitem id="menu_ocr_bing_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRBing;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent.bind(Zotero.BetterNotes.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'bing'}}})" type="checkbox" />
+                <menuitem id="menu_ocr_mathpix_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRMathpix;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent.bind(Zotero.BetterNotes.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'mathpix'}}})" type="checkbox" />
+                <menuitem id="menu_ocr_xunfei_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.OCRXunfei;" oncommand="Zotero.BetterNotes.ZoteroEvents.onEditorEvent.bind(Zotero.BetterNotes.ZoteroEvents)({type: 'setOCREngine', content: {params: {engine: 'xunfei'}}})" type="checkbox" />
             </menupopup>
         </menu>
         <menuitem id="menu_guide_betternotes menu-betternotes" label="&zotero.__addonRef__.workspace.menu.guide;" command="cmd_guide_betternotes" />

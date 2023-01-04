@@ -2,13 +2,13 @@
  * This file contains template window related code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { NoteTemplate } from "../utils";
 import AddonBase from "../module";
 
 class TemplateWindow extends AddonBase {
   private _window: Window;
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
   }
 
@@ -77,8 +77,8 @@ class TemplateWindow extends AddonBase {
   }
 
   updateEditorView() {
-    Zotero.debug("update editor");
-    console.log("update editor");
+    this._Addon.toolkit.Tool.log("update editor");
+    this._Addon.toolkit.Tool.log("update editor");
     const name = this.getSelectedTemplateName();
     const templateText = this._Addon.TemplateController.getTemplateText(name);
 

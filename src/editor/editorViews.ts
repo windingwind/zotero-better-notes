@@ -2,14 +2,14 @@
  * This file contains note editor UI code.
  */
 
-import Knowledge4Zotero from "../addon";
+import BetterNotes from "../addon";
 import { EditorMessage } from "../utils";
 import AddonBase from "../module";
 
 class EditorViews extends AddonBase {
   icons: object;
 
-  constructor(parent: Knowledge4Zotero) {
+  constructor(parent: BetterNotes) {
     super(parent);
     this.icons = {
       addToNoteEnd: `<svg t="1651124422933" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3269" width="24" height="24"><path d="M896.00324 352c70.7 0 128-57.3 128-128 0-70.6-57.4-128-128-128-70.7 0-128 57.3-128 128 0 18.8 4.1 36.7 11.3 52.8 2.7 6 1.4 13.1-3.3 17.8l-24.2 24.2c-5.7 5.7-14.9 6.3-21.2 1.2-38.1-30.1-86.3-48-138.6-48-18.8 0-37.1 2.3-54.6 6.7-6.9 1.7-14.1-1.4-17.7-7.5l-6.6-11.4c-3.4-5.8-2.7-13.1 1.6-18.3 18.6-22.6 29.7-51.6 29.3-83.2C543.10324 89 486.30324 32.6 417.00324 32c-70.6-0.6-128.1 56.1-129 126.3-0.9 69.5 56.5 128.6 126 129.6 9.4 0.1 18.5-0.7 27.4-2.5 6.8-1.4 13.6 1.7 17.1 7.7l2.2 3.8c4 7 2.2 15.9-4.2 20.7-42.4 32.3-73 79.4-84 133.6-1.5 7.4-8.1 12.7-15.7 12.7h-94.1c-6.6 0-12.6-4-14.9-10.2-18.1-48-64.3-82.2-118.5-82.8C58.70324 370.3 0.50324 427.6 0.00324 498.1-0.49676 569.2 57.00324 627 128.00324 627c56.7 0 104.8-36.9 121.6-87.9 2.2-6.6 8.3-11.1 15.2-11.1h92c7.6 0 14.2 5.4 15.7 12.9 9.5 46.7 33.5 88 67 119.2 5.4 5 6.6 13.2 2.9 19.6l-21.7 37.6c-3.7 6.3-11.1 9.4-18.2 7.4-11.1-3.1-22.7-4.7-34.8-4.7-69.7 0.1-127 56.8-127.8 126.6-0.8 71.7 57.4 130 129.1 129.4 69.5-0.6 126.3-57.3 126.9-126.8 0.3-28-8.5-53.9-23.5-75.1-3.6-5.1-3.9-11.8-0.8-17.2l24.9-43.1c3.9-6.7 12-9.7 19.3-7 23.7 8.6 49.3 13.2 76 13.2 34.9 0 67.9-8 97.3-22.2 7.6-3.7 16.7-0.9 20.9 6.4l37 64c-26.3 23.5-43 57.7-43 95.8 0 70.9 58 128.5 128.9 128 69.7-0.5 126.2-56.7 127.1-126.3 0.9-70.1-57-129.3-127.1-129.7-6.2 0-12.3 0.4-18.3 1.2-6.5 0.9-12.8-2.2-16.1-7.8l-39.2-67.9c-3.4-5.9-2.7-13.3 1.7-18.4 34.2-39.3 54.9-90.7 54.9-147 0-38.9-9.9-75.5-27.4-107.4-3.4-6.2-2.2-13.9 2.8-18.9l28.4-28.4c4.9-4.9 12.4-6 18.7-2.9 17.4 8.6 36.9 13.5 57.6 13.5z m0-192c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zM128.00324 563c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m240 349c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m464-112c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64zM416.00324 224c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z m289.1 385.1C674.90324 639.4 634.70324 656 592.00324 656s-82.9-16.6-113.1-46.9C448.60324 578.9 432.00324 538.7 432.00324 496s16.6-82.9 46.9-113.1C509.10324 352.6 549.30324 336 592.00324 336s82.9 16.6 113.1 46.9C735.40324 413.1 752.00324 453.3 752.00324 496s-16.6 82.9-46.9 113.1z" p-id="3270" fill="currentColor"></path></svg>`,
@@ -200,14 +200,14 @@ class EditorViews extends AddonBase {
             addLinkDropDown.addEventListener("click", leaveAction);
             // Observe the popup remove triggered by button click
             const ob = new MutationObserver((e) => {
-              console.log(e);
+              this._Addon.toolkit.Tool.log(e);
               if (e[0].removedNodes) {
                 leaveAction();
               }
             });
             ob.observe(addLinkDropDown, { childList: true });
             const keyAction = (e: KeyboardEvent) => {
-              console.log(e);
+              this._Addon.toolkit.Tool.log(e);
               if (e.key === "Control") {
                 hintWindow?.close();
                 e.preventDefault();
@@ -629,7 +629,7 @@ class EditorViews extends AddonBase {
       });
     }
     parentDropDown.append(popup);
-    Zotero.debug(popup.offsetWidth);
+    this._Addon.toolkit.Tool.log(popup.offsetWidth);
     let style: string = "";
     if (align === "center") {
       style = `right: -${popup.offsetWidth / 2 - 15}px;`;
@@ -694,7 +694,7 @@ class EditorViews extends AddonBase {
         const newLineString = newLines.join("\n");
         const notifyFlag: _ZoteroPromiseObject = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
-        this._Addon.ZoteroEvents.addNotifyListener(
+        this._Addon.ZoteroNotifies.registerNotifyListener(
           notifierName,
           (
             event: string,
@@ -708,21 +708,21 @@ class EditorViews extends AddonBase {
               ids.includes(targetNote.id)
             ) {
               notifyFlag.resolve();
-              this._Addon.ZoteroEvents.removeNotifyListener(notifierName);
+              this._Addon.ZoteroNotifies.unregisterNotifyListener(notifierName);
             }
           }
         );
         await this._Addon.NoteUtils.modifyLineInNote(
           targetNote,
           (oldLine: string) => {
-            Zotero.debug(oldLine);
+            this._Addon.toolkit.Tool.log(oldLine);
             const params = this._Addon.NoteParse.parseParamsFromLink(link);
             const newLink = !params.ignore
               ? link + (link.includes("?") ? "&ignore=1" : "?ignore=1")
               : link;
             const linkIndex =
               this._Addon.NoteParse.parseLinkIndexInText(oldLine);
-            Zotero.debug(linkIndex);
+            this._Addon.toolkit.Tool.log(linkIndex);
             return `${oldLine.slice(0, linkIndex[0])}${newLink}${oldLine.slice(
               linkIndex[1]
             )}\n${newLineString}`;
@@ -768,10 +768,10 @@ class EditorViews extends AddonBase {
       );
       updateButton.innerHTML = this.icons["updateLinkText"];
       updateButton.addEventListener("click", async (e) => {
-        Zotero.debug("ZBN: Update Link Text");
+        this._Addon.toolkit.Tool.log("ZBN: Update Link Text");
         const noteLines = this._Addon.NoteUtils.getLinesInNote(targetNote);
         let line = noteLines[this._Addon.NoteUtils.currentLine[targetNote.id]];
-        Zotero.debug(line);
+        this._Addon.toolkit.Tool.log(line);
 
         let linkStart = line.search(/<a /g);
         let linkEnd = line.search(/<\/a>/g) + 4;
@@ -810,7 +810,7 @@ class EditorViews extends AddonBase {
         beforeLink = beforeLink + linkPart.slice(0, linkPart.search(/>/) + 1);
         afterLink = "</a>" + afterLink;
         const newLine = `${beforeLink}${currentNote.getNoteTitle()}${afterLink}`;
-        Zotero.debug(newLine);
+        this._Addon.toolkit.Tool.log(newLine);
         noteLines[this._Addon.NoteUtils.currentLine[targetNote.id]] = newLine;
 
         await this._Addon.NoteUtils.setLinesToNote(targetNote, noteLines);
@@ -833,7 +833,7 @@ class EditorViews extends AddonBase {
       openInWindowButton.setAttribute("title", "Open In New Window");
       openInWindowButton.innerHTML = this.icons["openInNewWindow"];
       openInWindowButton.addEventListener("click", async (e) => {
-        Zotero.debug("ZBN: Open link in new window");
+        this._Addon.toolkit.Tool.log("ZBN: Open link in new window");
         ZoteroPane.openNoteWindow(note.id);
       });
 
@@ -930,7 +930,7 @@ class EditorViews extends AddonBase {
   }
 
   public updatePopupMenu() {
-    console.log("updating editor popup");
+    this._Addon.toolkit.Tool.log("updating editor popup");
     const instance = this._Addon.EditorController.activeEditor;
     const noteItem = instance._item;
     const lineIndex = this._Addon.NoteUtils.currentLine[noteItem.id];
@@ -1086,7 +1086,7 @@ class EditorViews extends AddonBase {
               id: `menu_insert${instance._item.id}TextTemplatePopup`,
               ignoreIfExists: true,
               attributes: {
-                onpopupshowing: `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Text', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
+                onpopupshowing: `Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Text', Zotero.BetterNotes.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
               },
             },
           ],
@@ -1103,7 +1103,7 @@ class EditorViews extends AddonBase {
               id: `menu_insert${instance._item.id}ItemTemplatePopup`,
               ignoreIfExists: true,
               attributes: {
-                onpopupshowing: `Zotero.Knowledge4Zotero.ZoteroViews.updateTemplateMenu('Item', Zotero.Knowledge4Zotero.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
+                onpopupshowing: `Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Item', Zotero.BetterNotes.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
               },
             },
           ],
@@ -1185,7 +1185,7 @@ class EditorViews extends AddonBase {
         eleList.push(ele);
       }
     }
-    console.log(eleList, lineIndex);
+    this._Addon.toolkit.Tool.log(eleList, lineIndex);
     if (lineIndex >= eleList.length) {
       lineIndex = eleList.length - 1;
     } else if (lineIndex < 0) {
