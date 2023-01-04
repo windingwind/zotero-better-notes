@@ -537,7 +537,7 @@ class ZoteroEvents extends AddonBase {
       /*
         message.content = {}
       */
-      const currentCollection = ZoteroPane_Local.getSelectedCollection();
+      const currentCollection = ZoteroPane.getSelectedCollection();
       if (!currentCollection) {
         this._Addon.ZoteroViews.showProgressWindow(
           "Better Notes",
@@ -555,7 +555,7 @@ class ZoteroEvents extends AddonBase {
         "Enter new note header:",
         `New Note ${new Date().toLocaleString()}`
       );
-      const noteID = await ZoteroPane_Local.newNote();
+      const noteID = await ZoteroPane.newNote();
       (Zotero.Items.get(noteID) as Zotero.Item).setNote(
         `<div data-schema-version="8"><h1>${header}</h1>\n</div>`
       );

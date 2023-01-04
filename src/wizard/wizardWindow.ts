@@ -271,7 +271,7 @@ class WizardWindow extends AddonBase {
         }
       }
       if (this.enableNote) {
-        const noteID = await ZoteroPane_Local.newNote();
+        const noteID = await ZoteroPane.newNote();
         (Zotero.Items.get(noteID) as Zotero.Item).setNote(
           Zotero.locale === "zh-CN" ? this.templateCN : this.template
         );

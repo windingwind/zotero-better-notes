@@ -59,7 +59,7 @@ class NoteExport extends AddonBase {
 
     let newNote: Zotero.Item;
     if (options.embedLink || options.exportNote) {
-      const noteID = await ZoteroPane_Local.newNote();
+      const noteID = await ZoteroPane.newNote();
       newNote = Zotero.Items.get(noteID) as Zotero.Item;
       const rootNoteIds = [note.id];
 
@@ -219,7 +219,7 @@ class NoteExport extends AddonBase {
       for (const note of notes) {
         let newNote: Zotero.Item;
         if (this._Addon.NoteParse.parseLinkInText(note.getNote())) {
-          const noteID = await ZoteroPane_Local.newNote();
+          const noteID = await ZoteroPane.newNote();
           newNote = Zotero.Items.get(noteID) as Zotero.Item;
           const rootNoteIds = [note.id];
 
