@@ -709,7 +709,10 @@ class NoteUtils extends AddonBase {
     };
   }
 
-  public async onSelectionChange(editor: Zotero.EditorInstance) {
+  public async onSelectionChange(
+    editor: Zotero.EditorInstance,
+    itemID: number
+  ) {
     // Update current line index
     const _window = editor._iframeWindow;
     const selection = _window.document.getSelection();
@@ -772,12 +775,9 @@ class NoteUtils extends AddonBase {
         }
       }
     }
-    this._Addon.toolkit.Tool.log(`line ${currentLineIndex} selected.`);
-    // Zotero.debug(
-    //   `Current Element: ${focusNode.outerHTML}; Real Element: ${realElement.outerHTML}`
-    // );
-    this.currentLine[editor._item.id] = currentLineIndex;
-    // this._Addon.toolkit.Tool.log(realElement);
+    this._Addon.toolkit.Tool.log(`line ${currentLineIndex} of item ${itemID} selected.`);
+    // Don't use the instance._item.id, as it might not be updated.
+    this.currentLine[itemID] = currentLineIndex;
     if (realElement.tagName === "A") {
       let link = (realElement as HTMLLinkElement).href;
       let linkedNote = (await this.getNoteFromLink(link)).item;

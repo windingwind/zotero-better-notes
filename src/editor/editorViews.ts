@@ -99,8 +99,9 @@ class EditorViews extends AddonBase {
           _window.document,
           "div"
         ) as HTMLDivElement;
-        titleNode.innerHTML = "Set Recent Main Notes";
-        titleNode.title = "Click item to set it main note";
+        titleNode.innerHTML = titleNode.title = this._Addon.Locale.getString(
+          "editor.recentMainNotes"
+        );
         titleNode.style.textAlign = "center";
         popup.childNodes[0].before(
           titleNode,
@@ -136,7 +137,7 @@ class EditorViews extends AddonBase {
           "div"
         ) as HTMLDivElement;
         header.setAttribute("title", "This is a Main Note");
-        header.innerHTML = "Main Note";
+        header.innerHTML = this._Addon.Locale.getString("editor.mainNote");
         header.setAttribute("style", "font-size: medium");
         addLinkDropDown.append(header);
       } else {
@@ -359,7 +360,9 @@ class EditorViews extends AddonBase {
               "button"
             ) as HTMLButtonElement;
             refreshButton.classList.add("option");
-            refreshButton.innerText = "Refresh Editor";
+            refreshButton.innerText = this._Addon.Locale.getString(
+              "editor.refreshEditor"
+            );
             refreshButton.addEventListener("click", async (e) => {
               if (
                 !confirm(
@@ -388,7 +391,9 @@ class EditorViews extends AddonBase {
               "button"
             ) as HTMLButtonElement;
             previewButton.classList.add("option");
-            previewButton.innerText = "Preview in Workspace";
+            previewButton.innerText = this._Addon.Locale.getString(
+              "editor.previewInWorkspace"
+            );
             previewButton.addEventListener("click", async (e) => {
               await this._Addon.WorkspaceWindow.openWorkspaceWindow();
               await this._Addon.WorkspaceWindow.setWorkspaceNote(
@@ -401,7 +406,9 @@ class EditorViews extends AddonBase {
               "button"
             ) as HTMLButtonElement;
             copyLinkButton.classList.add("option");
-            copyLinkButton.innerText = "Copy Note Link";
+            copyLinkButton.innerText = this._Addon.Locale.getString(
+              "editor.copyNoteLink"
+            );
             copyLinkButton.addEventListener("click", (e) => {
               const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
               const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
@@ -425,7 +432,9 @@ class EditorViews extends AddonBase {
               "button"
             ) as HTMLButtonElement;
             copyLinkAtLineButton.classList.add("option");
-            copyLinkAtLineButton.innerText = "Copy Note Link of Current Line";
+            copyLinkAtLineButton.innerText = this._Addon.Locale.getString(
+              "editor.copyNoteLinkOfLine"
+            );
             copyLinkAtLineButton.addEventListener("click", (e) => {
               const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
                 withLine: true,
@@ -451,7 +460,8 @@ class EditorViews extends AddonBase {
               "button"
             ) as HTMLButtonElement;
             importButton.classList.add("option");
-            importButton.innerText = "Import from MarkDown";
+            importButton.innerText =
+              this._Addon.Locale.getString("editor.importMD");
             importButton.addEventListener("click", async (e) => {
               await this._Addon.NoteImport.doImport(noteItem, {
                 ignoreVersion: true,
@@ -893,6 +903,25 @@ class EditorViews extends AddonBase {
     }
   }
 
+  public openImagePreview(instance: Zotero.EditorInstance) {
+    const _window = instance._iframeWindow;
+    const imgs = _window.document
+      .querySelector(".primary-editor")
+      ?.querySelectorAll("img");
+    this._Addon.EditorImageViewer.onInit(
+      Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
+      Array.prototype.indexOf.call(
+        imgs,
+        _window.document
+          .querySelector(".primary-editor")
+          .querySelector(".selected")
+          .querySelector("img")
+      ),
+      instance._item.getNoteTitle(),
+      this._Addon.EditorImageViewer.pined
+    );
+  }
+
   public updateEditorImagePopup(instance: Zotero.EditorInstance) {
     const _window = instance._iframeWindow;
 
@@ -904,21 +933,7 @@ class EditorViews extends AddonBase {
     previewButton.innerHTML = `<div class="icon"><svg t="1668689809930" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8872" width="16" height="16"><path d="M978.346667 149.333333c0 11.776-9.557333 21.333333-21.333333 21.333333L167.68 170.666667l0 448c0 35.285333 28.714667 64 64 64l554.666667 0c35.285333 0 64-28.714667 64-42.666667l0-154.496L850.346667 356.309333 850.346667 277.930667c0-11.776 9.557333-21.333333 21.333333-21.333333s21.333333 9.557333 21.333333 21.333333l0 78.378667 0 129.194667L893.013333 640c0 37.504-47.829333 85.333333-106.666667 85.333333l-205.568 0 169.557333 169.514667c8.32 8.32 8.32 21.845333 0 30.165333-8.362667 8.362667-21.845333 8.362667-30.208 0L520.405333 725.333333l-16.810667 0-199.722667 199.68c-8.32 8.362667-21.845333 8.362667-30.165333 0-8.32-8.32-8.32-21.845333 0-30.165333L443.306667 725.333333 231.68 725.333333c-58.837333 0-106.666667-47.829333-106.666667-106.666667L125.013333 170.666667l-64 0c-11.776 0-21.333333-9.557333-21.333333-21.333333S49.194667 128 61.013333 128l405.333333 0L466.346667 85.333333l85.333333 0 0 42.666667 405.333333 0C968.789333 128 978.346667 137.557333 978.346667 149.333333zM618.666667 405.333333l-194.986667-128 0 256L618.666667 405.333333z" p-id="8873"></path></svg>Preview</div>`;
     previewButton.id = "bn-image-preview";
     previewButton.addEventListener("click", (e) => {
-      const imgs = _window.document
-        .querySelector(".primary-editor")
-        ?.querySelectorAll("img");
-      this._Addon.EditorImageViewer.onInit(
-        Array.prototype.map.call(imgs, (e: HTMLImageElement) => e.src),
-        Array.prototype.indexOf.call(
-          imgs,
-          _window.document
-            .querySelector(".primary-editor")
-            .querySelector(".selected")
-            .querySelector("img")
-        ),
-        instance._item.getNoteTitle(),
-        this._Addon.EditorImageViewer.pined
-      );
+      this.openImagePreview(instance);
     });
     _window.document.querySelector(".image-popup").append(previewButton);
   }
@@ -964,193 +979,245 @@ class EditorViews extends AddonBase {
       );
     };
 
-    const elementOptions = {
-      tag: "fragment",
-      subElementOptions: [
-        {
-          tag: "menuseparator",
-          id: "menupopup-betternotessplitter",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-resizeImage",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: "Resize Image" },
-          customCheck: checkImageSelected,
-          listeners: [
-            {
-              type: "command",
-              listener: (e: Event) => {
-                const newWidth = parseFloat(
-                  prompt(
-                    "Enter new width (px):",
-                    (instance._iframeWindow as any).wrappedJSObject
-                      ._currentEditorInstance._editorCore.view.state.selection
-                      .node?.attrs?.width
-                  )
-                );
-                if (newWidth && newWidth > 10) {
-                  instance._iframeWindow.postMessage(
-                    { type: "resizeImage", width: newWidth },
-                    "*"
-                  );
-                }
-              },
-            },
-          ],
-        },
-        {
-          tag: "menuseparator",
-          id: "menupopup-resizeimagesplitter",
-          checkExistanceParent: instance._popup,
-          customCheck: checkImageSelected,
-          ignoreIfExists: true,
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-copylink",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: "Copy Note Link" },
-          listeners: [
-            {
-              type: "command",
-              listener: (e: Event) => {
-                const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
-                const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
-                  noteItem.getNoteTitle().trim()
-                    ? noteItem.getNoteTitle().trim()
-                    : linkText
-                }</a></p>`;
-
-                this._Addon.toolkit.Tool.getCopyHelper()
-                  .addText(linkText, "text/unicode")
-                  .addText(linkHTML, "text/html")
-                  .copy();
-                this._Addon.ZoteroViews.showProgressWindow(
-                  "Better Notes",
-                  "Note Link Copied"
-                );
-              },
-            },
-          ],
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-copylinkline",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: `Copy Note Link of Line ${lineIndex + 1}` },
-          listeners: [
-            {
-              type: "command",
-              listener: ((e: Event) => {
-                const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
-                  withLine: true,
-                });
-                const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
-                  noteItem.getNoteTitle().trim()
-                    ? noteItem.getNoteTitle().trim()
-                    : linkText
-                }</a></p>`;
-                this._Addon.toolkit.Tool.getCopyHelper()
-                  .addText(linkText, "text/unicode")
-                  .addText(linkHTML, "text/html")
-                  .copy();
-                this._Addon.ZoteroViews.showProgressWindow(
-                  "Better Notes",
-                  `Note Link of Line ${lineIndex + 1} Copied`
-                );
-              }) as EventListener,
-            },
-          ],
-        },
-        {
-          tag: "menu",
-          id: "menupopup-insertTextTemplateMenu",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: "Insert Template (Text)" },
-          subElementOptions: [
-            {
-              tag: "menupopup",
-              id: `menu_insert${instance._item.id}TextTemplatePopup`,
-              ignoreIfExists: true,
-              attributes: {
-                onpopupshowing: `Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Text', Zotero.BetterNotes.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
-              },
-            },
-          ],
-        },
-        {
-          tag: "menu",
-          id: "menupopup-insertItemTemplate",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: "Insert Template (Item)" },
-          subElementOptions: [
-            {
-              tag: "menupopup",
-              id: `menu_insert${instance._item.id}ItemTemplatePopup`,
-              ignoreIfExists: true,
-              attributes: {
-                onpopupshowing: `Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Item', Zotero.BetterNotes.EditorController.activeEditor._popup.ownerDocument, '${instance._item.id}', false);`,
-              },
-            },
-          ],
-        },
-        {
-          tag: "menuseparator",
-          id: "menupopup-linepreviewsplitter",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-lineprevious",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: {
-            label: `L${lineIndex + 1}:${shorten(
-              lineElements[lineIndex].innerText,
-              25
-            )}`,
-
-            disabled: true,
-          },
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-insertposition",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: { label: "<--- Insert Anchor", disabled: true },
-        },
-        {
-          tag: "menuitem",
-          id: "menupopup-linenext",
-          checkExistanceParent: instance._popup,
-          ignoreIfExists: true,
-          attributes: {
-            label:
-              lineIndex + 1 >= lineElements.length
-                ? "End of Note"
-                : `L${lineIndex + 2}:${shorten(
-                    lineElements[lineIndex + 1].innerText,
-                    25
-                  )}`,
-            disabled: true,
-          },
-        },
-      ],
-    };
+    const prefix = `editormenu-betternotes-${instance.instanceID}-`;
 
     const fragment = this._Addon.toolkit.UI.creatElementsFromJSON(
       instance._popup.ownerDocument,
-      elementOptions
+      {
+        tag: "fragment",
+        namespace: "xul",
+        subElementOptions: [
+          {
+            tag: "menuseparator",
+            id: prefix + "splitter",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "resizeImage",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: this._Addon.Locale.getString("editor.resizeImage"),
+            },
+            customCheck: checkImageSelected,
+            listeners: [
+              {
+                type: "command",
+                listener: (e: Event) => {
+                  const newWidth = parseFloat(
+                    prompt(
+                      this._Addon.Locale.getString("editor.resizeImage.prompt"),
+                      (instance._iframeWindow as any).wrappedJSObject
+                        ._currentEditorInstance._editorCore.view.state.selection
+                        .node?.attrs?.width
+                    )
+                  );
+                  if (newWidth && newWidth > 10) {
+                    instance._iframeWindow.postMessage(
+                      { type: "resizeImage", width: newWidth },
+                      "*"
+                    );
+                  }
+                },
+              },
+            ],
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "previewImage",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: this._Addon.Locale.getString("editor.previewImage"),
+            },
+            customCheck: checkImageSelected,
+            listeners: [
+              {
+                type: "command",
+                listener: (e: Event) => {
+                  this.openImagePreview(instance);
+                },
+              },
+            ],
+          },
+          {
+            tag: "menuseparator",
+            id: prefix + "resizeimagesplitter",
+            checkExistanceParent: instance._popup,
+            customCheck: checkImageSelected,
+            removeIfExists: true,
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "copylink",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: this._Addon.Locale.getString("editor.copyNoteLink"),
+            },
+            listeners: [
+              {
+                type: "command",
+                listener: (e: Event) => {
+                  const linkText = this._Addon.NoteUtils.getNoteLink(noteItem);
+                  const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                    noteItem.getNoteTitle().trim()
+                      ? noteItem.getNoteTitle().trim()
+                      : linkText
+                  }</a></p>`;
+
+                  this._Addon.toolkit.Tool.getCopyHelper()
+                    .addText(linkText, "text/unicode")
+                    .addText(linkHTML, "text/html")
+                    .copy();
+                  this._Addon.ZoteroViews.showProgressWindow(
+                    "Better Notes",
+                    "Note Link Copied"
+                  );
+                },
+              },
+            ],
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "copylinkline",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: `${this._Addon.Locale.getString(
+                "editor.copyNoteLinkOfLine"
+              )} ${lineIndex + 1}`,
+            },
+            listeners: [
+              {
+                type: "command",
+                listener: ((e: Event) => {
+                  const linkText = this._Addon.NoteUtils.getNoteLink(noteItem, {
+                    withLine: true,
+                  });
+                  const linkHTML = `<p><a href="${linkText}" rel="noopener noreferrer nofollow">${
+                    noteItem.getNoteTitle().trim()
+                      ? noteItem.getNoteTitle().trim()
+                      : linkText
+                  }</a></p>`;
+                  this._Addon.toolkit.Tool.getCopyHelper()
+                    .addText(linkText, "text/unicode")
+                    .addText(linkHTML, "text/html")
+                    .copy();
+                  this._Addon.ZoteroViews.showProgressWindow(
+                    "Better Notes",
+                    `Note Link of Line ${lineIndex + 1} Copied`
+                  );
+                }) as EventListener,
+              },
+            ],
+          },
+          {
+            tag: "menu",
+            id: prefix + "insertTextTemplateMenu",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: this._Addon.Locale.getString("menu.insertTextTemplate"),
+            },
+            subElementOptions: [
+              {
+                tag: "menupopup",
+                ignoreIfExists: true,
+                listeners: [
+                  {
+                    type: "popupshowing",
+                    listener: (e) => {
+                      this._Addon.ZoteroViews.updateTemplateMenu(
+                        e,
+                        "Text",
+                        false
+                      );
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            tag: "menu",
+            id: prefix + "insertItemTemplate",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: this._Addon.Locale.getString("menu.insertItemTemplate"),
+            },
+            subElementOptions: [
+              {
+                tag: "menupopup",
+                ignoreIfExists: true,
+                listeners: [
+                  {
+                    type: "popupshowing",
+                    listener: (e) => {
+                      this._Addon.ZoteroViews.updateTemplateMenu(
+                        e,
+                        "Item",
+                        false
+                      );
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            tag: "menuseparator",
+            id: prefix + "linepreviewsplitter",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "lineprevious",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: `L${lineIndex + 1}:${shorten(
+                lineElements[lineIndex].innerText,
+                25
+              )}`,
+
+              disabled: true,
+            },
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "insertposition",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label: `<--- ${this._Addon.Locale.getString(
+                "editor.insertAnchor"
+              )}`,
+              disabled: true,
+            },
+          },
+          {
+            tag: "menuitem",
+            id: prefix + "linenext",
+            checkExistanceParent: instance._popup,
+            removeIfExists: true,
+            attributes: {
+              label:
+                lineIndex + 1 >= lineElements.length
+                  ? this._Addon.Locale.getString("editor.endOfNote")
+                  : `L${lineIndex + 2}:${shorten(
+                      lineElements[lineIndex + 1].innerText,
+                      25
+                    )}`,
+              disabled: true,
+            },
+          },
+        ],
+      }
     );
     if (fragment) {
       instance._popup.append(fragment);

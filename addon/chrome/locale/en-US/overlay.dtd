@@ -7,9 +7,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.sync "Sync Main Note">
 <!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes Sync Manager">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "Insert Notes...">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Template">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "Insert Notes Using Template">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "Insert Items Using Template">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Note Template [Text]">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "Insert Note Template [Item]">
 <!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "Note Template Editor">
 <!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "Citation Style in Notes">
 <!ENTITY zotero.__addonRef__.workspace.menu.OCRSetting "Annotation Math OCR">

@@ -361,7 +361,7 @@ class NoteExport extends AddonBase {
     const content: string = await this._Addon.NoteParse.parseNoteToMD(note, {
       withMeta: withMeta,
     });
-    console.log(
+    this._Addon.toolkit.Tool.log(
       `Exporting MD file: ${filename}, content length: ${content.length}`
     );
     await Zotero.File.putContentsAsync(filename, content);

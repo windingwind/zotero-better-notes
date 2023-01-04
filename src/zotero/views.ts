@@ -64,54 +64,27 @@ class ZoteroViews extends AddonBase {
   }
 
   public addNewMainNoteButton() {
-    // Top toolbar button
-    let addNoteItem = document
-      .getElementById("zotero-tb-note-add")
-      .getElementsByTagName("menuitem")[1];
-    let buttons = this._Addon.toolkit.UI.creatElementsFromJSON(document, {
-      tag: "fragment",
-      subElementOptions: [
-        {
-          tag: "menuitem",
-          id: "zotero-tb-knowledge-create-mainnote",
-          attributes: {
-            label: "New Main Note",
-            class: "menuitem-iconic",
-            style:
-              "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
-          },
-          listeners: [
-            {
-              type: "click",
-              listener: (e) => {
-                this._Addon.ZoteroEvents.onEditorEvent(
-                  new EditorMessage("createWorkspace", {})
-                );
-              },
-            },
-          ],
-        },
-        {
-          tag: "menuitem",
-          id: "zotero-tb-knowledge-import-md",
-          attributes: {
-            label: "Import MarkDown as Note",
-            class: "menuitem-iconic",
-            style:
-              "list-style-image: url('chrome://Knowledge4Zotero/skin/favicon.png');",
-          },
-          listeners: [
-            {
-              type: "click",
-              listener: async (e) => {
-                await this._Addon.NoteImport.doImport();
-              },
-            },
-          ],
-        },
-      ],
+    const menupopup = document
+      .querySelector("#zotero-tb-note-add")
+      .querySelector("menupopup") as XUL.MenuPopup;
+    this._Addon.toolkit.UI.insertMenuItem(menupopup, {
+      tag: "menuitem",
+      label: this._Addon.Locale.getString("library.newMainNote"),
+      icon: "chrome://Knowledge4Zotero/skin/favicon.png",
+      commandListener: (e) => {
+        this._Addon.ZoteroEvents.onEditorEvent(
+          new EditorMessage("createWorkspace", {})
+        );
+      },
     });
-    addNoteItem.after(buttons);
+    this._Addon.toolkit.UI.insertMenuItem(menupopup, {
+      tag: "menuitem",
+      label: this._Addon.Locale.getString("library.importMD"),
+      icon: "chrome://Knowledge4Zotero/skin/favicon.png",
+      commandListener: async (e) => {
+        await this._Addon.NoteImport.doImport();
+      },
+    });
   }
 
   public addOpenWorkspaceButton() {
@@ -198,9 +171,7 @@ class ZoteroViews extends AddonBase {
             style: "margin-left: 6px;",
           },
           directAttributes: {
-            innerHTML: Zotero.locale.includes("zh")
-              ? "打开工作区"
-              : "Open Workspace",
+            innerHTML: this._Addon.Locale.getString("library.openWorkspace"),
           },
         },
       ],
@@ -211,13 +182,13 @@ class ZoteroViews extends AddonBase {
   }
 
   public updateTemplateMenu(
-    type: "Note" | "Item" | "Text",
-    _document: Document,
-    prefix: string = "",
+    event: Event,
+    type: "Item" | "Text",
     useMainNote: boolean = true
   ) {
-    _document =
-      _document || this._Addon.WorkspaceMenu.getWorkspaceMenuWindow().document;
+    // @ts-ignore
+    const menupopup = event.originalTarget as XUL.MenuPopup;
+    const _document = menupopup.ownerDocument;
 
     // If no note is activated, use copy
     const targetItemId =
@@ -229,17 +200,14 @@ class ZoteroViews extends AddonBase {
         : Zotero_Tabs.selectedID === this._Addon.WorkspaceWindow.workspaceTabId
         ? this._Addon.WorkspaceWindow.getWorkspaceNote().id
         : -1;
-    this._Addon.toolkit.Tool.log(`updateTemplateMenu`);
+    this._Addon.toolkit.Tool.log("updateTemplateMenu");
     let templates = this._Addon.TemplateController.getTemplateKeys()
       .filter((e) => e.name.indexOf(type) !== -1)
       .filter(
         (e) =>
           !this._Addon.TemplateController._systemTemplateNames.includes(e.name)
       );
-    const popup = _document.getElementById(
-      `menu_insert${prefix}${type}TemplatePopup`
-    );
-    popup.innerHTML = "";
+    menupopup.innerHTML = "";
     if (templates.length === 0) {
       templates = [
         {
@@ -250,28 +218,32 @@ class ZoteroViews extends AddonBase {
       ];
     }
     for (const template of templates) {
-      const menuitem = this._Addon.toolkit.UI.createElement(
-        _document,
-        "menuitem",
-        "xul"
-      ) as XUL.MenuItem;
-      // menuitem.setAttribute("id", template.name);
-      menuitem.setAttribute("label", template.name);
-      menuitem.setAttribute(
-        "oncommand",
-        `
-        Zotero.BetterNotes.ZoteroEvents.onEditorEvent({
-          type: "insert${type}UsingTemplate",
-          content: {
-            params: { templateName: "${template.name}", targetItemId: ${targetItemId}, useMainNote: ${useMainNote} },
+      const menuitem = this._Addon.toolkit.UI.creatElementsFromJSON(_document, {
+        tag: "menuitem",
+        namespace: "xul",
+        attributes: {
+          label: template.name,
+          disabled: template.disabled,
+        },
+        listeners: [
+          {
+            type: "command",
+            listener: (e) => {
+              this._Addon.ZoteroEvents.onEditorEvent({
+                type: `insert${type}UsingTemplate`,
+                content: {
+                  params: {
+                    templateName: template.name,
+                    targetItemId,
+                    useMainNote,
+                  },
+                },
+              });
+            },
           },
-        });`
-      );
-
-      if (template.disabled) {
-        menuitem.setAttribute("disabled", true as any);
-      }
-      popup.append(menuitem);
+        ],
+      }) as XUL.MenuItem;
+      menupopup.append(menuitem);
     }
   }
 

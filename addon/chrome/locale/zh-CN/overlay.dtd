@@ -7,9 +7,8 @@
 <!ENTITY zotero.__addonRef__.workspace.menu.sync "同步主笔记">
 <!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes同步管理">
 <!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入模板">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertNoteTemplate "使用模板插入多条笔记">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "使用模板插入多个条目">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入笔记模板[文本/Text]">
+<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "插入笔记模板[条目/Item]">
 <!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "笔记模板编辑器">
 <!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "笔记引用格式">
 <!ENTITY zotero.__addonRef__.workspace.menu.OCRSetting "注释公式识别">

@@ -26,9 +26,11 @@ import EditorImageViewer from "./editor/imageViewerWindow";
 import TemplateWindow from "./template/templateWindow";
 import { SyncUtils } from "./sync/syncUtils";
 import ZoteroToolkit from "zotero-plugin-toolkit";
+import AddonLocale from "./zotero/locale";
 
 class BetterNotes {
   public env: "development" | "production";
+  public Locale: AddonLocale;
   public ZoteroEvents: ZoteroEvents;
   public ZoteroNotifies: ZoteroNotifies;
   // Zotero UI
@@ -65,6 +67,7 @@ class BetterNotes {
   public toolkit: ZoteroToolkit;
 
   constructor() {
+    this.Locale = new AddonLocale(this);
     this.ZoteroEvents = new ZoteroEvents(this);
     this.ZoteroNotifies = new ZoteroNotifies(this);
     this.ZoteroViews = new ZoteroViews(this);

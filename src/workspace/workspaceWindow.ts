@@ -76,7 +76,7 @@ class WorkspaceWindow extends AddonBase {
       Zotero_Tabs.jump(0);
       let { id, container } = Zotero_Tabs.add({
         type: "betternotes",
-        title: Zotero.locale.includes("zh") ? "工作区" : "Workspace",
+        title: this._Addon.Locale.getString("library.workspace"),
         index: 1,
         data: {},
         select: select,

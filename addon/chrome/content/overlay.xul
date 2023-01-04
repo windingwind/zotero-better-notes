@@ -63,10 +63,10 @@
 
     <menupopup id="menu_EditPopup">
         <menu id="menu_insertTextTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertTextTemplate;">
-            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Text');" />
+            <menupopup id="menu_insertTextTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu(arguments[0], 'Text');" />
         </menu>
         <menu id="menu_insertItemTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.insertItemTemplate;">
-            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu('Item');" />
+            <menupopup id="menu_insertItemTemplatePopup" onpopupshowing="Zotero.BetterNotes.ZoteroViews.updateTemplateMenu(arguments[0], 'Item');" />
         </menu>
         <menuitem id="menu_editTemplate_betternotes" class="menu-betternotes" label="&zotero.__addonRef__.workspace.menu.editTemplate;" command="cmd_editTemplate_betternotes" />
         <menu id="menu_citeSetting_betternotes" class="menu-type-betternotes menu-betternotes" label="&zotero.__addonRef__.workspace.menu.citeSetting;">

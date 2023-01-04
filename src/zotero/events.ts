@@ -22,6 +22,7 @@ class ZoteroEvents extends AddonBase {
     this._Addon.toolkit.Tool.logOptionsGlobal.disableConsole =
       this._Addon.env === "production";
     this._Addon.toolkit.Tool.log("init called");
+    this._Addon.Locale.initLocale();
     this.initProxyHandler();
 
     this.addEditorInstanceListener();
@@ -91,6 +92,7 @@ class ZoteroEvents extends AddonBase {
               "Recovering Note Workspace Failed",
               e
             );
+            this._Addon.toolkit.Tool.log(e);
           }
           await Zotero.Promise.delay(1000);
         }
@@ -130,18 +132,27 @@ class ZoteroEvents extends AddonBase {
     await this._Addon.EditorViews.initEditor(instance);
     this._Addon.toolkit.Tool.log("note editor initialized.");
 
+    const currentID = instance._item.id;
+
     if (
       instance._iframeWindow.document.body.getAttribute(
         "betternotes-status"
-      ) !== "initialized"
+      ) !== String(currentID)
     ) {
       // Put event listeners here to access Zotero instance
       instance._iframeWindow.document.addEventListener(
         "selectionchange",
-        async (e) => {
+        async (e: Event) => {
           e.stopPropagation();
           e.preventDefault();
-          await this._Addon.NoteUtils.onSelectionChange(instance);
+          await this._Addon.NoteUtils.onSelectionChange(
+            instance,
+            parseInt(
+              instance._iframeWindow.document.body.getAttribute(
+                "betternotes-status"
+              )
+            )
+          );
         }
       );
       instance._iframeWindow.document.addEventListener("click", async (e) => {
@@ -250,14 +261,16 @@ class ZoteroEvents extends AddonBase {
       });
       instance._iframeWindow.document.body.setAttribute(
         "betternotes-status",
-        "initialized"
+        String(instance._item.id)
       );
     }
 
-    instance._popup.setAttribute(
-      "onpopupshowing",
-      "Zotero.BetterNotes.EditorViews.updatePopupMenu()"
-    );
+    instance._popup.addEventListener("popupshowing", (e) => {
+      if (e.originalTarget !== instance._popup) {
+        return;
+      }
+      this._Addon.EditorViews.updatePopupMenu();
+    });
 
     instance._iframeWindow.addEventListener("mousedown", (e) => {
       this._Addon.EditorController.activeEditor = instance;
@@ -351,7 +364,11 @@ class ZoteroEvents extends AddonBase {
         return;
       }
       const res = confirm(
-        `Will create a new note under collection '${currentCollection.getName()}' and set it the main note. Continue?`
+        `${this._Addon.Locale.getString(
+          "library.newMainNote.confirmHead"
+        )} '${currentCollection.getName()}' ${this._Addon.Locale.getString(
+          "library.newMainNote.confirmTail"
+        )}`
       );
       if (!res) {
         return;
@@ -936,8 +953,12 @@ class ZoteroEvents extends AddonBase {
           new EditorMessage("export", { params: { item: noteItems[0] } })
         );
       } else {
-        const useSingleFile = confirm("Export linked notes to markdown files?");
-        const withMeta = confirm("With YAML header?");
+        const useSingleFile = confirm(
+          this._Addon.Locale.getString("export.withLinkedNotes.confirm")
+        );
+        const withMeta = confirm(
+          this._Addon.Locale.getString("export.withYAML.confirm")
+        );
         await this._Addon.NoteExport.exportNotesToMDFiles(noteItems, {
           useEmbed: !useSingleFile,
           withMeta: withMeta,
