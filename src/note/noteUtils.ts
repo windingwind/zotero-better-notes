@@ -75,7 +75,9 @@ class NoteUtils extends AddonBase {
       const frag = _document.createDocumentFragment();
       const temp = this._Addon.toolkit.UI.createElement(
         _document,
-        "div"
+        "div",
+        "html",
+        false
       ) as HTMLDivElement;
       temp.innerHTML = text;
       while (temp.firstChild) {
@@ -138,7 +140,12 @@ class NoteUtils extends AddonBase {
         u8arr[n] = bstr.charCodeAt(n);
       }
 
-      return new (Zotero.getMainWindow().Blob)([u8arr], { type: mime });
+      return new (this._Addon.toolkit.Compat.getGlobal("Blob") as typeof Blob)(
+        [u8arr],
+        {
+          type: mime,
+        }
+      );
     }
     return null;
   }
@@ -370,7 +377,9 @@ class NoteUtils extends AddonBase {
       const frag = _document.createDocumentFragment();
       const temp = this._Addon.toolkit.UI.createElement(
         _document,
-        "div"
+        "div",
+        "html",
+        false
       ) as HTMLDivElement;
       temp.innerHTML = noteLines[lineIndex];
       while (temp.firstChild) {

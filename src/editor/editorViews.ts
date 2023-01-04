@@ -362,7 +362,7 @@ class EditorViews extends AddonBase {
             ) as HTMLButtonElement;
             refreshButton.classList.add("option");
             refreshButton.innerText = "Refresh Editor";
-            refreshButton.addEventListener("click", (e) => {
+            refreshButton.addEventListener("click", async (e) => {
               if (
                 !confirm(
                   "Refresh before content is saved may cause note data loss. Only do refresh if tables are uneditable.\nAre you sure to continue?"
@@ -370,6 +370,10 @@ class EditorViews extends AddonBase {
               ) {
                 return;
               }
+              instance._item.setNote(
+                this.getEditorElement(instance._iframeWindow.document).outerHTML
+              );
+              await instance._item.saveTx();
               instance.init({
                 item: instance._item,
                 viewMode: instance._viewMode,
