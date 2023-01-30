@@ -53,7 +53,7 @@
     "unist-util-visit": "^4.1.1",
     "unist-util-visit-parents": "^5.1.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^0.1.1"
+    "zotero-plugin-toolkit": "^1.1.2"
   },
   "devDependencies": {
     "@types/diff": "^5.0.2",
