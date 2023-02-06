@@ -63,6 +63,6 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.34",
     "release-it": "^14.14.0",
-    "zotero-types": "^0.1.2"
+    "zotero-types": "^1.0.8"
   }
 }
