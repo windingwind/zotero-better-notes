@@ -41,7 +41,7 @@ class NoteImport extends AddonBase {
     } catch (e) {
       this._Addon.toolkit.Tool.log(`Import: ${String(e)}`);
     }
-    if (!options.ignoreVersion && mdStatus.meta?.version < noteItem?._version) {
+    if (!options.ignoreVersion && mdStatus.meta?.version < noteItem?.version) {
       if (
         !confirm(
           `The target note seems to be newer than the file ${file}. Are you sure you want to import it anyway?`

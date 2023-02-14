@@ -306,7 +306,7 @@ class NoteUtils extends AddonBase {
     } = { ignore: false, withLine: false }
   ) {
     let libraryID = note.libraryID;
-    let library = Zotero.Libraries.get(libraryID);
+    let library = Zotero.Libraries.get(libraryID) as Zotero.Library;
     let groupID: string;
     if (library.libraryType === "user") {
       groupID = "u";
@@ -346,7 +346,7 @@ class NoteUtils extends AddonBase {
 
     const attachment = annotation.parentItem;
     let libraryID = attachment.libraryID;
-    let library = Zotero.Libraries.get(libraryID);
+    let library = Zotero.Libraries.get(libraryID) as Zotero.Library;
     if (library.libraryType === "user") {
       openURI = `zotero://open-pdf/library/items/${attachment.key}`;
     } else if (library.libraryType === "group") {
@@ -691,10 +691,10 @@ class NoteUtils extends AddonBase {
       };
     }
     this._Addon.toolkit.Tool.log(params);
-    let item: Zotero.Item = await Zotero.Items.getByLibraryAndKeyAsync(
+    let item: Zotero.Item = (await Zotero.Items.getByLibraryAndKeyAsync(
       params.libraryID,
       params.noteKey
-    );
+    )) as Zotero.Item;
     if (!item || !item.isNote()) {
       return {
         item: undefined,
@@ -775,7 +775,9 @@ class NoteUtils extends AddonBase {
         }
       }
     }
-    this._Addon.toolkit.Tool.log(`line ${currentLineIndex} of item ${itemID} selected.`);
+    this._Addon.toolkit.Tool.log(
+      `line ${currentLineIndex} of item ${itemID} selected.`
+    );
     // Don't use the instance._item.id, as it might not be updated.
     this.currentLine[itemID] = currentLineIndex;
     if (realElement.tagName === "A") {

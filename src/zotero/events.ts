@@ -119,7 +119,7 @@ class ZoteroEvents extends AddonBase {
     });
   }
 
-  private async onEditorInstanceCreated(instance: _ZoteroEditorInstance) {
+  private async onEditorInstanceCreated(instance: Zotero.EditorInstance) {
     await instance._initPromise;
     instance._knowledgeUIInitialized = false;
 

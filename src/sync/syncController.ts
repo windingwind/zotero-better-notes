@@ -16,7 +16,9 @@ class SyncController extends AddonBase {
 
   getSyncNoteIds(): number[] {
     const ids = Zotero.Prefs.get("Knowledge4Zotero.syncNoteIds") as string;
-    return ids.split(",").map((id: string) => Number(id));
+    return Zotero.Items.get(ids.split(",").map((id: string) => Number(id)))
+      .filter((item) => item.isNote())
+      .map((item) => item.id);
   }
 
   isSyncNote(note: Zotero.Item): boolean {
@@ -95,7 +97,7 @@ class SyncController extends AddonBase {
     }
     // Note version doesn't match (note side change)
     // This might be unreliable when Zotero account is not login
-    if (Number(MDStatus.meta.version) !== noteItem._version) {
+    if (Number(MDStatus.meta.version) !== noteItem.version) {
       noteAhead = true;
     }
     if (noteAhead && MDAhead) {
@@ -139,7 +141,7 @@ class SyncController extends AddonBase {
     let progress;
     // Wrap the code in try...catch so that the lock can be released anyway
     try {
-      this._Addon.toolkit.Tool.log("sync start")
+      this._Addon.toolkit.Tool.log("sync start");
       this.sycnLock = true;
       if (!items || !items.length) {
         items = Zotero.Items.get(this.getSyncNoteIds());

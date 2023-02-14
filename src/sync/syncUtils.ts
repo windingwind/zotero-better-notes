@@ -46,7 +46,7 @@ class SyncUtils extends AddonBase {
   }
 
   async _getDataURL(item: Zotero.Item) {
-    let path = await item.getFilePathAsync();
+    let path = (await item.getFilePathAsync()) as string;
     let buf = new Uint8Array((await OS.File.read(path, {})) as Uint8Array)
       .buffer;
     return (
@@ -890,7 +890,13 @@ class SyncUtils extends AddonBase {
         imgKey
       );
       this._Addon.toolkit.Tool.log(attachmentItem);
-      this._Addon.toolkit.Tool.log("image", libraryID, imgKey, attachmentItem, node);
+      this._Addon.toolkit.Tool.log(
+        "image",
+        libraryID,
+        imgKey,
+        attachmentItem,
+        node
+      );
       if (!attachmentItem) {
         continue;
       }

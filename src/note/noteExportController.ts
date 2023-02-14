@@ -13,8 +13,8 @@ class NoteExport extends AddonBase {
     note: Zotero.Item;
     filename: string;
   }>;
-  _pdfPrintPromise: _ZoteroPromiseObject;
-  _docxPromise: _ZoteroPromiseObject;
+  _pdfPrintPromise: _ZoteroTypes.PromiseObject;
+  _docxPromise: _ZoteroTypes.PromiseObject;
   _docxBlob: Blob;
 
   constructor(parent: BetterNotes) {

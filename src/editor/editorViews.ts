@@ -262,7 +262,7 @@ class EditorViews extends AddonBase {
               {
                 id: `knowledge-addcitation-popup-${topItem.id}`,
                 rank: 0,
-                text: topItem.getField("title"),
+                text: topItem.getField("title") as string,
                 eventType: "insertCitation",
               },
             ],
@@ -699,7 +699,7 @@ class EditorViews extends AddonBase {
           );
         newLines.push(templateText);
         const newLineString = newLines.join("\n");
-        const notifyFlag: _ZoteroPromiseObject = Zotero.Promise.defer();
+        const notifyFlag: _ZoteroTypes.PromiseObject = Zotero.Promise.defer();
         const notifierName = "insertLinkWait";
         this._Addon.ZoteroNotifies.registerNotifyListener(
           notifierName,
