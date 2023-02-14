@@ -62,7 +62,7 @@
     "compressing": "^1.5.1",
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.34",
-    "release-it": "^14.14.0",
+    "release-it": "^15.6.0",
     "zotero-types": "^1.0.9"
   }
 }
