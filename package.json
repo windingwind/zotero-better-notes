@@ -31,7 +31,7 @@
     "crypto-js": "^4.1.1",
     "diff": "^5.1.0",
     "hast-util-to-html": "^8.0.3",
-    "hast-util-to-mdast": "^8.4.1",
+    "hast-util-to-mdast": "^9.0.0",
     "hast-util-to-text": "^3.1.1",
     "hastscript": "^7.1.0",
     "html-docx-js-typescript": "^0.1.5",
