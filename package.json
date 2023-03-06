@@ -61,7 +61,7 @@
     "@types/node": "^17.0.31",
     "compressing": "^1.5.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.14.34",
+    "esbuild": "^0.17.11",
     "release-it": "^14.14.0",
     "zotero-types": "^1.0.9"
   }
