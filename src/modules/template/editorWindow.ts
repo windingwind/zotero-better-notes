@@ -184,10 +184,14 @@ async function updatePreview() {
   const win = addon.data.templateEditor.window;
   const container = win?.document.getElementById("preview-container");
   if (container) {
-    container.innerHTML = "";
-    container.appendChild(
-      ztoolkit.getDOMParser().parseFromString(html, "text/html").body
-    );
+    if (ztoolkit.isZotero7()) {
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = "";
+      container.appendChild(
+        ztoolkit.getDOMParser().parseFromString(html, "text/html").body
+      );
+    }
   }
 }
 

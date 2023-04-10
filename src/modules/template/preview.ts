@@ -8,7 +8,7 @@ async function renderTemplatePreview(
   inputItems?: Zotero.Item[]
 ): Promise<string> {
   let html: string = "<p>Preview rendering failed</p>";
-  if (inputItems) {
+  if (!inputItems) {
     inputItems = ZoteroPane.getSelectedItems();
   }
   if (templateName.startsWith("[Text]")) {
