@@ -1,102 +1,179 @@
-/*
- * This file defines the plugin's structure.
- */
+import ZoteroToolkit from "zotero-plugin-toolkit/dist/index";
+import {
+  ColumnOptions,
+  VirtualizedTableHelper,
+} from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
+import hooks from "./hooks";
+import api from "./api";
 
-import ZoteroEvents from "./zotero/events";
-import ZoteroNotifies from "./zotero/notifies";
-import ZoteroViews from "./zotero/views";
-import ReaderViews from "./reader/readerViews";
-import WizardWindow from "./wizard/wizardWindow";
-import { TemplateController, TemplateAPI } from "./template/templateController";
-import SyncInfoWindow from "./sync/syncInfoWindow";
-import SyncListWindow from "./sync/syncListWindow";
-import SyncController from "./sync/syncController";
-import WorkspaceWindow from "./workspace/workspaceWindow";
-import WorkspaceOutline from "./workspace/workspaceOutline";
-import WorkspaceMenu from "./workspace/workspaceMenu";
-import NoteUtils from "./note/noteUtils";
-import NoteParse from "./note/noteParse";
-import NoteExportWindow from "./note/noteExportWindow";
-import NoteExport from "./note/noteExportController";
-import NoteImport from "./note/noteImportController";
-import SyncDiffWindow from "./sync/syncDiffWindow";
-import EditorViews from "./editor/editorViews";
-import EditorController from "./editor/editorController";
-import EditorImageViewer from "./editor/imageViewerWindow";
-import TemplateWindow from "./template/templateWindow";
-import { SyncUtils } from "./sync/syncUtils";
-import ZoteroToolkit from "zotero-plugin-toolkit";
-import AddonLocale from "./zotero/locale";
-
-class BetterNotes {
-  public env: "development" | "production";
-  public Locale: AddonLocale;
-  public ZoteroEvents: ZoteroEvents;
-  public ZoteroNotifies: ZoteroNotifies;
-  // Zotero UI
-  public ZoteroViews: ZoteroViews;
-  // Reader UI
-  public ReaderViews: ReaderViews;
-  // Workspace UI
-  public WorkspaceOutline: WorkspaceOutline;
-  public WorkspaceWindow: WorkspaceWindow;
-  public WorkspaceMenu: WorkspaceMenu;
-  // First-run wizard
-  public WizardWindow: WizardWindow;
-  // Sync tools
-  public SyncUtils: SyncUtils;
-  public SyncInfoWindow: SyncInfoWindow;
-  public SyncListWindow: SyncListWindow;
-  public SyncController: SyncController;
-  // Template
-  public TemplateWindow: TemplateWindow;
-  public TemplateController: TemplateController;
-  // Just for template API consistency
-  public knowledge: TemplateAPI;
-  // Note tools
-  public NoteUtils: NoteUtils;
-  public NoteExport: NoteExport;
-  public NoteImport: NoteImport;
-  public SyncDiffWindow: SyncDiffWindow;
-  public NoteExportWindow: NoteExportWindow;
-  public NoteParse: NoteParse;
-  public EditorViews: EditorViews;
-  public EditorController: EditorController;
-  public EditorImageViewer: EditorImageViewer;
-
-  public toolkit: ZoteroToolkit;
+class Addon {
+  public data: {
+    alive: boolean;
+    // Env type, see build.js
+    env: "development" | "production";
+    // ztoolkit: MyToolkit;
+    ztoolkit: ZoteroToolkit;
+    locale?: {
+      stringBundle: any;
+    };
+    prefs?: {
+      window: Window;
+      columns: Array<ColumnOptions>;
+      rows: Array<{ [dataKey: string]: string }>;
+    };
+    export: {
+      pdf: { promise?: _ZoteroTypes.PromiseObject };
+      docx: { worker?: HTMLIFrameElement };
+    };
+    sync: {
+      lock: boolean;
+      manager: {
+        window?: Window;
+        tableHelper?: VirtualizedTableHelper;
+        data: {
+          noteId: number;
+          noteName: string;
+          lastSync: string;
+          filePath: string;
+        }[];
+      };
+      diff: {
+        window?: Window;
+      };
+    };
+    notify: Array<Parameters<_ZoteroTypes.Notifier.Notify>>;
+    workspace: {
+      mainId: number;
+      previewId: number;
+      tab: {
+        active: boolean;
+        id?: string;
+        container?: XUL.Box;
+      };
+      window: {
+        active: boolean;
+        window?: Window;
+        container?: XUL.Box;
+      };
+      outline: OutlineType;
+    };
+    imageViewer: {
+      window?: Window;
+      srcList: string[];
+      idx: number;
+      scaling: number;
+      title: string;
+      pined: boolean;
+      anchorPosition?: {
+        left: number;
+        top: number;
+      };
+    };
+    templateEditor: {
+      window?: Window;
+      tableHelper?: VirtualizedTableHelper;
+      templates: { name: string }[];
+    };
+    templatePicker: {
+      noteId?: number;
+      lineIndex?: number;
+    };
+    prompt?: Prompt;
+  } = {
+    alive: true,
+    env: __env__,
+    // ztoolkit: new MyToolkit(),
+    ztoolkit: new ZoteroToolkit(),
+    export: {
+      pdf: { promise: undefined },
+      docx: { worker: undefined },
+    },
+    sync: {
+      lock: false,
+      manager: {
+        data: [],
+      },
+      diff: {},
+    },
+    notify: [],
+    workspace: {
+      get mainId(): number {
+        return parseInt(getPref("mainKnowledgeID") as string);
+      },
+      set mainId(id: number) {
+        setPref("mainKnowledgeID", id);
+      },
+      previewId: -1,
+      tab: {
+        active: false,
+      },
+      window: {
+        active: false,
+      },
+      outline: OutlineType.treeView,
+    },
+    imageViewer: {
+      window: undefined,
+      srcList: [],
+      idx: -1,
+      scaling: 1,
+      title: "Note",
+      pined: false,
+      anchorPosition: undefined,
+    },
+    templateEditor: {
+      window: undefined,
+      tableHelper: undefined,
+      templates: [],
+    },
+    templatePicker: {},
+  };
+  // Lifecycle hooks
+  public hooks: typeof hooks;
+  // APIs
+  public api: typeof api;
 
   constructor() {
-    this.Locale = new AddonLocale(this);
-    this.ZoteroEvents = new ZoteroEvents(this);
-    this.ZoteroNotifies = new ZoteroNotifies(this);
-    this.ZoteroViews = new ZoteroViews(this);
-    this.ReaderViews = new ReaderViews(this);
-    this.WorkspaceOutline = new WorkspaceOutline(this);
-    this.WorkspaceWindow = new WorkspaceWindow(this);
-    this.WorkspaceMenu = new WorkspaceMenu(this);
-    this.EditorViews = new EditorViews(this);
-    this.EditorController = new EditorController(this);
-    this.EditorImageViewer = new EditorImageViewer(this);
-    this.WizardWindow = new WizardWindow(this);
-    this.SyncUtils = new SyncUtils(this);
-    this.SyncInfoWindow = new SyncInfoWindow(this);
-    this.SyncListWindow = new SyncListWindow(this);
-    this.SyncController = new SyncController(this);
-    this.SyncDiffWindow = new SyncDiffWindow(this);
-    this.TemplateWindow = new TemplateWindow(this);
-    this.TemplateController = new TemplateController(this);
-    this.NoteUtils = new NoteUtils(this);
-    this.NoteExport = new NoteExport(this);
-    this.NoteImport = new NoteImport(this);
-    this.NoteExportWindow = new NoteExportWindow(this);
-    this.NoteParse = new NoteParse(this);
-    this.knowledge = new TemplateAPI(this);
-
-    this.toolkit = new ZoteroToolkit();
-    // Disable since we are still using overlay
-    this.toolkit.UI.enableElementRecordGlobal = false;
+    this.hooks = hooks;
+    this.api = api;
   }
 }
 
-export default BetterNotes;
+/**
+ * Alternatively, import toolkit modules you use to minify the plugin size.
+ *
+ * Steps to replace the default `ztoolkit: ZoteroToolkit` with your `ztoolkit: MyToolkit`:
+ *
+ * 1. Uncomment this file's line 30:            `ztoolkit: new MyToolkit(),`
+ *    and comment line 31:                      `ztoolkit: new ZoteroToolkit(),`.
+ * 2. Uncomment this file's line 10:            `ztoolkit: MyToolkit;` in this file
+ *    and comment line 11:                      `ztoolkit: ZoteroToolkit;`.
+ * 3. Uncomment `./typing/global.d.ts` line 12: `declare const ztoolkit: import("../src/addon").MyToolkit;`
+ *    and comment line 13:                      `declare const ztoolkit: import("zotero-plugin-toolkit").ZoteroToolkit;`.
+ *
+ * You can now add the modules under the `MyToolkit` class.
+ */
+
+import { BasicTool, unregister } from "zotero-plugin-toolkit/dist/basic";
+import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
+import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
+import { getPref, setPref } from "./utils/prefs";
+import { OutlineType } from "./utils/workspace";
+import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
+
+export class MyToolkit extends BasicTool {
+  UI: UITool;
+  PreferencePane: PreferencePaneManager;
+
+  constructor() {
+    super();
+    this.UI = new UITool(this);
+    this.PreferencePane = new PreferencePaneManager(this);
+  }
+
+  unregisterAll() {
+    unregister(this);
+  }
+}
+
+export default Addon;

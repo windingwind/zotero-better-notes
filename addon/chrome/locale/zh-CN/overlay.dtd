@@ -1,112 +1,12 @@
-<!ENTITY zotero.__addonRef__.workspace.title "工作区">
+<!ENTITY zotero.__addonRef__.pref.workspace.title "工作区">
+<!ENTITY zotero.__addonRef__.pref.workspace.expandLevel.label "大纲展开至标题层级">
+<!ENTITY zotero.__addonRef__.pref.sync.title "同步">
+<!ENTITY zotero.__addonRef__.pref.sync.period.label "自动同步周期 (秒)">
+<!ENTITY zotero.__addonRef__.pref.sync.manager.label "打开同步管理器">
+<!ENTITY zotero.__addonRef__.pref.template.title "模板">
+<!ENTITY zotero.__addonRef__.pref.template.editor.label "打开模板编辑器">
+<!ENTITY zotero.__addonRef__.pref.annotation.title "PDF批注">
+<!ENTITY zotero.__addonRef__.pref.annotation.autoAnnotation.label "自动添加新批注到工作区笔记">
 
-<!ENTITY zotero.__addonRef__.workspace.menu.new "创建新主笔记">
-<!ENTITY zotero.__addonRef__.workspace.menu.open "打开主笔记...">
-<!ENTITY zotero.__addonRef__.workspace.menu.openWindow "在独立窗口中打开工作区">
-<!ENTITY zotero.__addonRef__.workspace.menu.export "导出主笔记...">
-<!ENTITY zotero.__addonRef__.workspace.menu.sync "同步主笔记">
-<!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes同步管理">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "插入多条笔记...">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "插入笔记模板[文本/Text]">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "插入笔记模板[条目/Item]">
-<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "笔记模板编辑器">
-<!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "笔记引用格式">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRSetting "注释公式识别">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRBing "Bing">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRMathpix "Mathpix">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRXunfei "讯飞">
-<!ENTITY zotero.__addonRef__.workspace.menu.addheading "插入标题...">
-<!ENTITY zotero.__addonRef__.workspace.menu.indent "降低标题层级">
-<!ENTITY zotero.__addonRef__.workspace.menu.unindent "提升标题层级">
-<!ENTITY zotero.__addonRef__.workspace.menu.importLink "导入选中的笔记链接内容">
-<!ENTITY zotero.__addonRef__.workspace.menu.updateLink "更新选中的笔记链接文本">
-<!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "自动插入新注释到笔记">
-<!ENTITY zotero.__addonRef__.workspace.menu.convertmd "转换剪贴板中的MarkDown内容">
-<!ENTITY zotero.__addonRef__.workspace.menu.convertasciidoc "转换剪贴板中的AsciiDoc内容">
-<!ENTITY zotero.__addonRef__.workspace.menu.treeview "大纲: 树视图">
-<!ENTITY zotero.__addonRef__.workspace.menu.mindmap "大纲: 思维导图">
-<!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "大纲: 气泡导图">
-<!ENTITY zotero.__addonRef__.workspace.menu.guide "Better Notes用户指引">
-<!ENTITY zotero.__addonRef__.workspace.menu.about "关于Better Notes">
-
-<!ENTITY zotero.__addonRef__.itemmenu.setMainNote.label "设置为主笔记">
-<!ENTITY zotero.__addonRef__.itemmenu.exportNote.label "导出笔记及条目子笔记">
-<!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "导出笔记及条目子笔记为Markdown">
-
-<!ENTITY zotero.__addonRef__.export.title "导出笔记">
-<!ENTITY zotero.__addonRef__.export.cannotworkwith.label "无法一起使用：">
-<!ENTITY zotero.__addonRef__.export.workwith.label "只在此时有效：">
-<!ENTITY zotero.__addonRef__.export.option.label "通用">
-<!ENTITY zotero.__addonRef__.export.link.enable.label "嵌入链接的子笔记">
-<!ENTITY zotero.__addonRef__.export.note.enable.label "导出到新笔记">
-<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown">
-<!ENTITY zotero.__addonRef__.export.file.enable.label "导出为MarkDown文件">
-<!ENTITY zotero.__addonRef__.export.singlefile.enable.label "导出链接的子笔记为MarkDown文件">
-<!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "修改时自动同步到导出路径">
-<!ENTITY zotero.__addonRef__.export.yaml.enable.label "YAML Front Matter">
-<!ENTITY zotero.__addonRef__.export.document.label "文档">
-<!ENTITY zotero.__addonRef__.export.docx.enable.label "导出到Word文档">
-<!ENTITY zotero.__addonRef__.export.pdf.enable.label "导出到PDF文档">
-<!ENTITY zotero.__addonRef__.export.mindmap.label "思维导图">
-<!ENTITY zotero.__addonRef__.export.freemind.enable.label "FreeMind">
-
-<!ENTITY zotero.__addonRef__.sync.title "同步状态">
-<!ENTITY zotero.__addonRef__.sync.export.label "导出为...">
-<!ENTITY zotero.__addonRef__.sync.path.label "同步到：">
-<!ENTITY zotero.__addonRef__.sync.changesync.label "修改路径">
-<!ENTITY zotero.__addonRef__.sync.lastsync.label "最近同步：">
-<!ENTITY zotero.__addonRef__.sync.enable.label "保持同步">
-<!ENTITY zotero.__addonRef__.sync.dosync.label "立刻同步">
-<!ENTITY zotero.__addonRef__.sync.synclist.label "同步管理">
-
-<!ENTITY zotero.__addonRef__.syncList.title "同步管理">
-<!ENTITY zotero.__addonRef__.syncList.notename.label "名称">
-<!ENTITY zotero.__addonRef__.syncList.syncpath.label "同步到">
-<!ENTITY zotero.__addonRef__.syncList.lastsync.label "最近同步">
-<!ENTITY zotero.__addonRef__.syncList.doupdate.label "刷新">
-<!ENTITY zotero.__addonRef__.syncList.changesyncperiod.label "同步周期:">
-<!ENTITY zotero.__addonRef__.syncList.dosync.label "同步">
-<!ENTITY zotero.__addonRef__.syncList.changesync.label "修改路径">
-<!ENTITY zotero.__addonRef__.syncList.removesync.label "取消同步">
-<!ENTITY zotero.__addonRef__.syncList.related.label "应用于关联笔记">
-
-<!ENTITY zotero.__addonRef__.wizard.title "欢迎使用 Zotero Better Notes">
-<!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes 用户指引">
-<!ENTITY zotero.__addonRef__.wizard.page1.description "单击下一步以继续。">
-<!ENTITY zotero.__addonRef__.wizard.open "Knowledge工作区">
-<!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge工作区">
-<!ENTITY zotero.__addonRef__.wizard.page3.description "单击“我的文库”上方链接或笔记编辑器中的“主页”按钮，来打开或聚焦工作区。">
-<!ENTITY zotero.__addonRef__.wizard.layout "Knowledge工作区布局">
-<!ENTITY zotero.__addonRef__.wizard.page4.header "大纲/主笔记/链接笔记预览">
-<!ENTITY zotero.__addonRef__.wizard.page4.description1 "用大纲修改/跳转主笔记的标题；">
-<!ENTITY zotero.__addonRef__.wizard.page4.description2 "在阅读时可以从其他笔记添加链接到主笔记。支持导出包含链接全文的MarkDown/HTML。">
-<!ENTITY zotero.__addonRef__.wizard.page4.description3 "在预览中打开并编辑链接的笔记。">
-<!ENTITY zotero.__addonRef__.wizard.link "添加笔记链接">
-<!ENTITY zotero.__addonRef__.wizard.page5.header "随写随记，并在任何地方打开笔记链接。">
-<!ENTITY zotero.__addonRef__.wizard.page5.description1 "单击按钮，在主笔记中当前行插入当前笔记的链接。">
-<!ENTITY zotero.__addonRef__.wizard.page5.description2 "通过笔记链接，甚至可以从其他应用程序跳转到笔记！">
-<!ENTITY zotero.__addonRef__.wizard.setup "配置工作区">
-<!ENTITY zotero.__addonRef__.wizard.page6.header "即将完成。在开始之前，建议按照指引快速配置并上手。">
-<!ENTITY zotero.__addonRef__.wizard.page6.description1 "您可以稍后从工作区左侧'💡'返回这里。">
-<!ENTITY zotero.__addonRef__.wizard.page6.description2 "提示：如果未设置主笔记，此插件将无法正常工作。">
-
-<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "启用快速配置">
-<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "创建新的分类用来存放主笔记：">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "创建 'Zotero Better Notes 用户指引：工作流' 笔记">
-
-<!ENTITY zotero.__addonRef__.template.title "模板编辑器">
-<!ENTITY zotero.__addonRef__.template.header.label "模板名称">
-<!ENTITY zotero.__addonRef__.template.list.label "模板列表">
-<!ENTITY zotero.__addonRef__.template.create.label "新建">
-<!ENTITY zotero.__addonRef__.template.import.label "从笔记新建...">
-<!ENTITY zotero.__addonRef__.template.save.label "保存">
-<!ENTITY zotero.__addonRef__.template.delete.label "删除">
-<!ENTITY zotero.__addonRef__.template.reset.label "重置">
-<!ENTITY zotero.__addonRef__.template.more.label "获取更多模板">
-
-<!ENTITY zotero.__addonRef__.help.feedback.caption.label "用户指引和反馈">
-<!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
-<!ENTITY zotero.__addonRef__.help.doc.caption.label "使用文档">
-<!ENTITY zotero.__addonRef__.help.doc.label "Better Notes手册(中文)">
-<!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
+<!ENTITY zotero.__addonRef__.help.version.label "__addonName__ 版本 __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">

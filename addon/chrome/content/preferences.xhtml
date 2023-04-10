@@ -1,0 +1,69 @@
+<vbox
+  id="zotero-prefpane-__addonRef__"
+  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', {window})"
+>
+  <groupbox>
+    <label><html:h2>&zotero.__addonRef__.pref.workspace.title;</html:h2></label>
+    <hbox>
+      <html:label for="__addonRef__-workspace-expandLevel"
+        >&zotero.__addonRef__.pref.workspace.expandLevel.label;</html:label
+      >
+      <html:input
+        type="number"
+        min="1"
+        max="6"
+        step="1"
+        id="__addonRef__-workspace-expandLevel"
+        preference="__prefsPrefix__.workspace.outline.expandLevel"
+      ></html:input>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>&zotero.__addonRef__.pref.sync.title;</html:h2></label>
+    <hbox>
+      <html:label for="__addonRef__-sync-period"
+        >&zotero.__addonRef__.pref.sync.period.label;</html:label
+      >
+      <html:input
+        type="number"
+        min="-1"
+        max="3600"
+        step="1"
+        placeholder="-1 for disable"
+        id="__addonRef__-sync-period"
+        preference="__prefsPrefix__.syncPeriodSeconds"
+      ></html:input>
+    </hbox>
+    <hbox>
+      <button
+        onclick="Zotero.__addonInstance__.api.window.showSyncManager()"
+        label="&zotero.__addonRef__.pref.sync.manager.label;"
+      ></button>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>&zotero.__addonRef__.pref.template.title;</html:h2></label>
+    <hbox>
+      <button
+        onclick="Zotero.__addonInstance__.api.window.showTemplateEditor()"
+        label="&zotero.__addonRef__.pref.template.editor.label;"
+      ></button>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label
+      ><html:h2>&zotero.__addonRef__.pref.annotation.title;</html:h2></label
+    >
+    <checkbox
+      id="__addonRef__-enableAddToNote"
+      label="&zotero.__addonRef__.pref.annotation.autoAnnotation.label;"
+      native="true"
+      preference="__prefsPrefix__.autoAnnotation"
+    />
+  </groupbox>
+</vbox>
+<vbox>
+  <label
+    value="&zotero.__addonRef__.help.version.label;  &zotero.__addonRef__.help.releasetime.label;"
+  ></label>
+</vbox>

@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  windowtype="__addonRef__-syncManager"
+  sizemode="normal"
+  scrolling="false"
+  persist="screenX screenY width height sizemode"
+>
+  <head>
+    <title locale-target="innerHTML">syncManager.title</title>
+    <meta charset="utf-8" />
+    <script>
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        const { Services } = ChromeUtils.import(
+          "resource://gre/modules/Services.jsm"
+        );
+
+        Services.scriptloader.loadSubScript(
+          "chrome://zotero/content/include.js",
+          this
+        );
+
+        Services.scriptloader.loadSubScript(
+          "resource://zotero/require.js",
+          this
+        );
+        window.arguments[0]._initPromise.resolve();
+      });
+    </script>
+    <style>
+      html,
+      body,
+      .viewport {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-wrap: break-word;
+        background-color: #f0f0f0;
+        font-family: initial;
+      }
+      .viewport {
+        margin: 0 5px 0 5px;
+      }
+      .viewport-container {
+        padding: 0;
+        margin: 0;
+        height: calc(100% - 50px);
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+      .footer-container {
+        padding: 5px;
+        margin: 0;
+        height: 30px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+      .list-viewport {
+        width: 100%;
+        background-color: #ffffff;
+      }
+      .tool-button {
+        width: 75px;
+        max-width: 75px;
+        min-width: 75px;
+        padding: 5px;
+        text-align: center;
+        margin: 0 10px 0 10px;
+      }
+      .virtualized-table-body {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="viewport-container">
+      <div id="list-container" class="viewport list-viewport">
+        <div id="table-container"></div>
+      </div>
+    </div>
+    <div
+      class="footer-container"
+      style="justify-content: flex-start; padding: 10px"
+    >
+      <button class="tool-button" id="refresh" locale-target="innerHTML">
+        syncManager.refresh
+      </button>
+      <button
+        class="tool-button"
+        id="sync"
+        locale-target="innerHTML,title"
+        title="syncManager.syncDetail"
+      >
+        syncManager.sync
+      </button>
+      <button
+        class="tool-button"
+        id="unSync"
+        locale-target="innerHTML,title"
+        title="syncManager.unSyncDetail"
+      >
+        syncManager.unSync
+      </button>
+    </div>
+  </body>
+</html>
