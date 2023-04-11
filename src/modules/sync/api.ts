@@ -298,6 +298,11 @@ async function doSync(
     let skippedCount = 0;
     if (!items || !items.length) {
       items = Zotero.Items.get(getSyncNoteIds());
+    } else {
+      items = items.filter((item) => isSyncNote(item.id));
+    }
+    if (items.length === 0) {
+      return;
     }
     if (skipActive) {
       // Skip active note editors' targets
