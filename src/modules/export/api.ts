@@ -84,7 +84,7 @@ async function exportNotes(
           await toSync(noteItem, syncDir, false);
         }
 
-        await addon.api.sync.doSync(allNoteItems, {
+        await addon.hooks.onSyncing(allNoteItems, {
           quiet: true,
           skipActive: false,
           reason: "export",
@@ -120,7 +120,7 @@ async function exportNotes(
     }
   } else if (options.exportPDF) {
     for (const noteItem of allNoteItems) {
-      await addon.api._export.savePDF(noteItem.id);
+      await addon.api.$export.savePDF(noteItem.id);
     }
   } else if (options.exportNote) {
     for (const noteItem of allNoteItems) {
@@ -148,7 +148,7 @@ async function toMD(
     if (!raw) return;
     filename = formatPath(raw, ".md");
   }
-  await addon.api._export.saveMD(filename, noteItem.id, options);
+  await addon.api.$export.saveMD(filename, noteItem.id, options);
 }
 
 async function toSync(
@@ -178,7 +178,7 @@ async function toDocx(noteItem: Zotero.Item) {
   ).open();
   if (!raw) return;
   const filename = formatPath(raw, ".docx");
-  await addon.api._export.saveDocx(filename, noteItem.id);
+  await addon.api.$export.saveDocx(filename, noteItem.id);
 }
 
 async function toFreeMind(noteItem: Zotero.Item) {
@@ -190,7 +190,7 @@ async function toFreeMind(noteItem: Zotero.Item) {
   ).open();
   if (!raw) return;
   const filename = formatPath(raw, ".mm");
-  await addon.api._export.saveFreeMind(filename, noteItem.id);
+  await addon.api.$export.saveFreeMind(filename, noteItem.id);
 }
 
 async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {

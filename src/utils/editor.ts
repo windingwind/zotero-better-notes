@@ -4,17 +4,21 @@ import { TextSelection } from "prosemirror-state";
 export {
   insert,
   del,
+  move,
+  replace,
   scroll,
   getEditorInstance,
   moveHeading,
   updateHeadingTextAtLine,
   getEditorCore,
+  getRangeAtCursor,
   getLineAtCursor,
   getPositionAtLine,
   getURLAtCursor,
   updateImageDimensionsAtCursor,
   updateURLAtCursor,
-  getContentInLines,
+  getTextBetween,
+  getTextBetweenLines,
 };
 
 function insert(
@@ -38,6 +42,70 @@ function del(editor: Zotero.EditorInstance, from: number, to: number) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
   EditorAPI.deleteRange(from, to)(core.view.state, core.view.dispatch);
+}
+
+function move(
+  editor: Zotero.EditorInstance,
+  from: number,
+  to: number,
+  delta: number
+) {
+  const core = getEditorCore(editor);
+  const EditorAPI = getEditorAPI(editor);
+  EditorAPI.moveRange(from, to, delta)(core.view.state, core.view.dispatch);
+}
+
+function replace(
+  editor: Zotero.EditorInstance,
+  from: number,
+  to: number,
+  text: string | undefined,
+  nodeTypeName:
+    | "doc"
+    | "paragraph"
+    | "heading"
+    | "math_display"
+    | "codeBlock"
+    | "blockquote"
+    | "horizontalRule"
+    | "orderedList"
+    | "bulletList"
+    | "listItem"
+    | "table"
+    | "table_row"
+    | "table_cell"
+    | "table_header"
+    | "text"
+    | "hardBreak"
+    | "image"
+    | "citation"
+    | "highlight"
+    | "math_inline",
+  nodeAttrs: Record<string, any>,
+  markTypeName:
+    | "strong"
+    | "em"
+    | "underline"
+    | "strike"
+    | "subsup"
+    | "textColor"
+    | "backgroundColor"
+    | "link"
+    | "code",
+  markAttrs: Record<string, any>
+) {
+  const core = getEditorCore(editor);
+  const EditorAPI = getEditorAPI(editor);
+  const schema = core.view.state.schema;
+  EditorAPI.replaceRangeNode(
+    from,
+    to,
+    text,
+    schema.nodes[nodeTypeName],
+    JSON.stringify(nodeAttrs),
+    schema.marks[markTypeName],
+    JSON.stringify(markAttrs)
+  )(core.view.state, core.view.dispatch);
 }
 
 function scroll(editor: Zotero.EditorInstance, lineIndex: number) {
@@ -68,6 +136,14 @@ function getEditorAPI(editor: Zotero.EditorInstance) {
 function getPositionAtCursor(editor: Zotero.EditorInstance) {
   const selection = getEditorCore(editor).view.state.selection;
   return selection.$anchor.after(selection.$anchor.depth);
+}
+
+function getRangeAtCursor(editor: Zotero.EditorInstance) {
+  const selection = getEditorCore(editor).view.state.selection;
+  return {
+    from: selection.from,
+    to: selection.to,
+  };
 }
 
 function getLineAtCursor(editor: Zotero.EditorInstance) {
@@ -273,7 +349,16 @@ function moveHeading(
   moveLines(editor, fromIndex, toIndex, targetIndex);
 }
 
-function getContentInLines(
+function getTextBetween(
+  editor: Zotero.EditorInstance,
+  from: number,
+  to: number
+) {
+  const core = getEditorCore(editor);
+  return core.view.state.doc.textBetween(from, to);
+}
+
+function getTextBetweenLines(
   editor: Zotero.EditorInstance,
   fromIndex: number,
   toIndex: number

@@ -37,7 +37,7 @@ export async function showSyncInfo(noteId: number) {
     .addButton(getString("syncInfo.sync"), "sync", {
       noClose: true,
       callback: (ev) => {
-        addon.api.sync.doSync(undefined, {
+        addon.hooks.onSyncing(undefined, {
           quiet: false,
           skipActive: false,
           reason: "manual-info",
@@ -64,12 +64,12 @@ export async function showSyncInfo(noteId: number) {
     .addButton(getString("syncInfo.manager"), "manager", {
       noClose: true,
       callback: (ev) => {
-        addon.api.window.showSyncManager();
+        addon.hooks.onShowSyncManager();
       },
     })
     .addButton(getString("syncInfo.export"), "export", {
       callback: (ev) => {
-        addon.api.window.showExportNoteOptions([noteId]);
+        addon.hooks.onShowExportNoteOptions([noteId]);
       },
     })
     .addButton(getString("export.cancel"), "cancel")

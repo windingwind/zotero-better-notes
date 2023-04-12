@@ -306,37 +306,28 @@ function getContainerType(
     | "unknown";
 }
 
-export function toggleOutlinePane(
-  container: XUL.Box | undefined,
-  state?: "open" | "collapsed"
-) {
+export function toggleOutlinePane(visibility?: boolean, container?: XUL.Box) {
   const splitter = container?.querySelector(`#${makeId("outline-splitter")}`);
-  if (!state) {
-    state =
-      splitter?.getAttribute("state") === "collapsed" ? "open" : "collapsed";
+  if (typeof visibility === "undefined") {
+    visibility = splitter?.getAttribute("state") === "collapsed";
   }
-  splitter?.setAttribute("state", state);
+  splitter?.setAttribute("state", visibility ? "open" : "collapsed");
 }
 
-export function togglePreviewPane(
-  container: XUL.Box | undefined,
-  state?: "open" | "collapsed"
-) {
+export function togglePreviewPane(visibility?: boolean, container?: XUL.Box) {
   const splitter = container?.querySelector(`#${makeId("preview-splitter")}`);
-  if (!state) {
-    state =
-      splitter?.getAttribute("state") === "collapsed" ? "open" : "collapsed";
+  if (typeof visibility === "undefined") {
+    visibility = splitter?.getAttribute("state") === "collapsed";
   }
-  splitter?.setAttribute("state", state);
+  splitter?.setAttribute("state", visibility ? "open" : "collapsed");
 }
 
-export function toggleNotesPane(state?: "open" | "collapsed") {
+export function toggleNotesPane(visibility?: boolean) {
   const splitter = document?.querySelector("#zotero-context-splitter");
-  if (!state) {
-    state =
-      splitter?.getAttribute("state") === "collapsed" ? "open" : "collapsed";
+  if (typeof visibility === "undefined") {
+    visibility = splitter?.getAttribute("state") === "collapsed";
   }
-  splitter?.setAttribute("state", state);
+  splitter?.setAttribute("state", visibility ? "open" : "collapsed");
 }
 
 export function getWorkspaceEditor(

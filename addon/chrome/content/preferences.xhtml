@@ -36,7 +36,7 @@
     </hbox>
     <hbox>
       <button
-        onclick="Zotero.__addonInstance__.api.window.showSyncManager()"
+        onclick="Zotero.__addonInstance__.hooks.onShowSyncManager()"
         label="&zotero.__addonRef__.pref.sync.manager.label;"
       ></button>
     </hbox>
@@ -45,7 +45,7 @@
     <label><html:h2>&zotero.__addonRef__.pref.template.title;</html:h2></label>
     <hbox>
       <button
-        onclick="Zotero.__addonInstance__.api.window.showTemplateEditor()"
+        onclick="Zotero.__addonInstance__.hooks.onShowTemplateEditor()"
         label="&zotero.__addonRef__.pref.template.editor.label;"
       ></button>
     </hbox>

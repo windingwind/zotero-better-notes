@@ -104,7 +104,7 @@ export async function showSyncManager() {
       refresh();
     });
     syncButton.addEventListener("click", async (ev) => {
-      await addon.api.sync.doSync(Zotero.Items.get(getSelectedNoteIds()), {
+      await addon.hooks.onSyncing(Zotero.Items.get(getSelectedNoteIds()), {
         quiet: false,
         skipActive: false,
         reason: "manual-manager",

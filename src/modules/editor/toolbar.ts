@@ -48,7 +48,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         id: makeId("settings-insertTemplate"),
         text: getString("editor.toolbar.settings.insertTemplate"),
         callback: (e) => {
-          addon.api.window.showTemplatePicker(
+          addon.hooks.onShowTemplatePicker(
             e.editor._item.id,
             getLineAtCursor(e.editor)
           );
@@ -203,9 +203,9 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     "end",
     (e) => {
       if (addon.api.sync.isSyncNote(noteItem.id)) {
-        addon.api.window.showSyncInfo(noteItem.id);
+        addon.hooks.onShowSyncInfo(noteItem.id);
       } else {
-        addon.api.window.showExportNoteOptions([noteItem.id]);
+        addon.hooks.onShowExportNoteOptions([noteItem.id]);
       }
     }
   );

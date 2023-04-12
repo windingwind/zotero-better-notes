@@ -9,7 +9,7 @@ export function initEditorImagePreviewer(editor: Zotero.EditorInstance) {
       return;
     }
     const imageList = Array.from(imgs);
-    addon.api.window.showImageViewer(
+    addon.hooks.onShowImageViewer(
       imageList.map((elem) => elem.src),
       imageList.indexOf(e.target as HTMLImageElement),
       editor._item.getNoteTitle()

@@ -9,7 +9,7 @@ export function registerMenus() {
     label: getString("menuItem.exportNote"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
-      addon.api.window.showExportNoteOptions(
+      addon.hooks.onShowExportNoteOptions(
         ZoteroPane.getSelectedItems().map((item) => item.id)
       );
     },
@@ -42,7 +42,7 @@ export function registerMenus() {
       label: getString("menuEdit.templatePicker"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: (ev) => {
-        addon.api.window.showTemplatePicker();
+        addon.hooks.onShowTemplatePicker();
       },
     },
     "before",
@@ -55,7 +55,7 @@ export function registerMenus() {
       label: getString("menuEdit.templateEditor"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: (ev) => {
-        addon.api.window.showTemplateEditor();
+        addon.hooks.onShowTemplateEditor();
       },
     },
     "before",
@@ -75,7 +75,7 @@ export function registerMenus() {
     label: getString("menuTools.syncManager"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
-      addon.api.window.showSyncManager();
+      addon.hooks.onShowSyncManager();
     },
   });
 }

@@ -12,7 +12,10 @@ import {
   TAB_TYPE,
 } from "./modules/workspace/tab";
 import {
+  initWorkspace,
   initWorkspaceEditor,
+  toggleNotesPane,
+  toggleOutlinePane,
   togglePreviewPane,
   updateOutline,
 } from "./modules/workspace/content";
@@ -23,6 +26,17 @@ import {
   registerReaderInitializer,
   unregisterReaderInitializer,
 } from "./modules/reader";
+import { setSyncing, callSyncing } from "./modules/sync/hooks";
+import {
+  showTemplatePicker,
+  updateTemplatePicker,
+} from "./modules/template/picker";
+import { showImageViewer } from "./modules/imageViewer";
+import { showExportNoteOptions } from "./modules/export/exportWindow";
+import { showSyncDiff } from "./modules/sync/diffWindow";
+import { showSyncInfo } from "./modules/sync/infoWindow";
+import { showSyncManager } from "./modules/sync/managerWindow";
+import { showTemplateEditor } from "./modules/template/editorWindow";
 
 async function onStartup() {
   await Promise.all([
@@ -52,7 +66,7 @@ async function onStartup() {
 
   registerPrefsWindow();
 
-  addon.api.sync.setSync();
+  setSyncing();
 }
 
 function onShutdown(): void {
@@ -93,7 +107,7 @@ function onNotify(
   if (event === "modify" && type === "item") {
     const modifiedNotes = Zotero.Items.get(ids).filter((item) => item.isNote());
     if (modifiedNotes.length) {
-      addon.api.sync.doSync(modifiedNotes, {
+      addon.hooks.onSyncing(modifiedNotes, {
         quiet: true,
         skipActive: true,
         reason: "item-modify",
@@ -189,7 +203,11 @@ function onSetWorkspaceNote(
       options
     );
     type === "preview" &&
-      togglePreviewPane(addon.data.workspace.window.container, "open");
+      addon.hooks.onToggleWorkspacePane(
+        "preview",
+        true,
+        addon.data.workspace.window.container
+      );
     addon.data.workspace.window.window?.focus();
   }
   if (addon.data.workspace.tab.active) {
@@ -200,7 +218,11 @@ function onSetWorkspaceNote(
       options
     );
     type === "preview" &&
-      togglePreviewPane(addon.data.workspace.tab.container, "open");
+      addon.hooks.onToggleWorkspacePane(
+        "preview",
+        true,
+        addon.data.workspace.tab.container
+      );
     Zotero_Tabs.select(addon.data.workspace.tab.id!);
   }
 }
@@ -221,9 +243,70 @@ function onOpenWorkspace(type: "tab" | "window" = "tab") {
   }
 }
 
+function onInitWorkspace(container: XUL.Box | undefined) {
+  initWorkspace(container);
+}
+
+function onToggleWorkspacePane(
+  type: "outline" | "preview" | "notes",
+  visibility?: boolean,
+  container?: XUL.Box
+) {
+  switch (type) {
+    case "outline":
+      toggleOutlinePane(visibility, container);
+      break;
+    case "preview":
+      togglePreviewPane(visibility, container);
+      break;
+    case "notes":
+      toggleNotesPane(visibility);
+    default:
+      break;
+  }
+}
+
+async function onSyncing(...args: Parameters<typeof callSyncing>) {
+  return await callSyncing(...args);
+}
+
+function onShowTemplatePicker(...args: Parameters<typeof showTemplatePicker>) {
+  return showTemplatePicker(...args);
+}
+
+function onUpdateTemplatePicker() {
+  return updateTemplatePicker();
+}
+
+function onShowImageViewer(...args: Parameters<typeof showImageViewer>) {
+  return showImageViewer(...args);
+}
+
+function onShowExportNoteOptions(
+  ...args: Parameters<typeof showExportNoteOptions>
+) {
+  return showExportNoteOptions(...args);
+}
+
+function onShowSyncInfo(...args: Parameters<typeof showSyncInfo>) {
+  return showSyncInfo(...args);
+}
+
+function onShowSyncManager(...args: Parameters<typeof showSyncManager>) {
+  return showSyncManager(...args);
+}
+
+function onShowSyncDiff(...args: Parameters<typeof showSyncDiff>) {
+  return showSyncDiff(...args);
+}
+
+function onShowTemplateEditor(...args: Parameters<typeof showTemplateEditor>) {
+  return showTemplateEditor(...args);
+}
+
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
-// Otherwise the code would be hard to read and maintian.
+// Otherwise the code would be hard to read and maintain.
 
 export default {
   onStartup,
@@ -231,6 +314,17 @@ export default {
   onNotify,
   onPrefsEvent,
   onOpenNote,
+  onInitWorkspace,
   onSetWorkspaceNote,
   onOpenWorkspace,
+  onToggleWorkspacePane,
+  onSyncing,
+  onShowTemplatePicker,
+  onUpdateTemplatePicker,
+  onShowImageViewer,
+  onShowExportNoteOptions,
+  onShowSyncDiff,
+  onShowSyncInfo,
+  onShowSyncManager,
+  onShowTemplateEditor,
 };

@@ -209,7 +209,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
                   return;
                 }
                 const imageList = Array.from(imgs);
-                addon.api.window.showImageViewer(
+                addon.hooks.onShowImageViewer(
                   imageList.map((elem) => elem.src),
                   imageList.indexOf(
                     editor._iframeWindow.document

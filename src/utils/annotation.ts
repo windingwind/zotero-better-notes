@@ -114,9 +114,6 @@ function serializeAnnotations(
 
     // Image
     if (annotation.imageAttachmentKey) {
-      // // let imageAttachmentKey = await this._importImage(annotation.image);
-      // delete annotation.image;
-
       // Normalize image dimensions to 1.25 of the print size
       let rect = annotation.position.rects[0];
       let rectWidth = rect[2] - rect[0];

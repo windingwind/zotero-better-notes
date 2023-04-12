@@ -109,7 +109,7 @@ export async function showExportNoteOptions(noteIds: number[]) {
 
   await data.unloadLock?.promise;
   if (data._lastButtonId === "confirm") {
-    addon.api._export.exportNotes(noteItems, data as Record<string, boolean>);
+    addon.api.$export.exportNotes(noteItems, data as Record<string, boolean>);
     dataKeys.forEach((key) => {
       setPref(`export.${key}`, Boolean(data[key]));
     });

@@ -1,32 +1,34 @@
-// workspace
 import {
-  getWorkspaceEditor,
-  initWorkspace,
-  toggleNotesPane,
-  toggleOutlinePane,
-  togglePreviewPane,
-} from "./modules/workspace/content";
-
-const workspace = {
-  getWorkspaceEditor,
-  initWorkspace,
-  toggleNotesPane,
-  toggleOutlinePane,
-  togglePreviewPane,
-};
-
-// sync
-import sync = require("./modules/sync/api");
-
-// convert
-import convert = require("./modules/convert/api");
-
-// template
+  md2note,
+  note2md,
+  note2noteDiff,
+  note2link,
+  link2note,
+  link2html,
+  md2html,
+  html2md,
+  annotations2html,
+} from "./modules/convert/api";
+import { exportNotes } from "./modules/export/api";
+import { saveDocx } from "./modules/export/docx";
+import { saveFreeMind } from "./modules/export/freemind";
+import { saveMD, syncMDBatch } from "./modules/export/markdown";
+import { savePDF } from "./modules/export/pdf";
+import { fromMD } from "./modules/import/markdown";
+import {
+  isSyncNote,
+  getSyncNoteIds,
+  addSyncNote,
+  updateSyncStatus,
+  removeSyncNote,
+  getSyncStatus,
+  getNoteStatus,
+  getMDStatus,
+  getMDStatusFromContent,
+  getMDFileName,
+  getRelatedNoteIds,
+} from "./modules/sync/api";
 import { runTemplate, runItemTemplate } from "./modules/template/api";
-import {
-  SYSTEM_TEMPLATE_NAMES,
-  DEFAULT_TEMPLATES,
-} from "./modules/template/data";
 import {
   getTemplateKeys,
   getTemplateText,
@@ -34,11 +36,55 @@ import {
   initTemplates,
   removeTemplate,
 } from "./modules/template/controller";
-import { renderTemplatePreview } from "./modules/template/preview";
 import {
-  showTemplatePicker,
-  updateTemplatePicker,
-} from "./modules/template/picker";
+  SYSTEM_TEMPLATE_NAMES,
+  DEFAULT_TEMPLATES,
+} from "./modules/template/data";
+import { renderTemplatePreview } from "./modules/template/preview";
+import { getWorkspaceEditor } from "./modules/workspace/content";
+import {
+  getEditorInstance,
+  insert,
+  del,
+  scroll,
+  getTextBetweenLines,
+  getLineAtCursor,
+  getPositionAtLine,
+  getTextBetween,
+  getRangeAtCursor,
+  move,
+  replace,
+} from "./utils/editor";
+
+const workspace = {
+  getWorkspaceEditor,
+};
+
+const sync = {
+  isSyncNote,
+  getSyncNoteIds,
+  addSyncNote,
+  updateSyncStatus,
+  removeSyncNote,
+  getSyncStatus,
+  getNoteStatus,
+  getMDStatus,
+  getMDStatusFromContent,
+  getMDFileName,
+  getRelatedNoteIds,
+};
+
+const convert = {
+  md2note,
+  note2md,
+  note2noteDiff,
+  note2link,
+  link2note,
+  link2html,
+  md2html,
+  html2md,
+  annotations2html,
+};
 
 const template = {
   SYSTEM_TEMPLATE_NAMES,
@@ -51,16 +97,9 @@ const template = {
   initTemplates,
   removeTemplate,
   renderTemplatePreview,
-  updateTemplatePicker,
 };
 
-// export
-import { exportNotes } from "./modules/export/api";
-import { saveMD, syncMDBatch } from "./modules/export/markdown";
-import { saveDocx } from "./modules/export/docx";
-import { saveFreeMind } from "./modules/export/freemind";
-
-const _export = {
+const $export = {
   exportNotes,
   saveMD,
   syncMDBatch,
@@ -69,38 +108,30 @@ const _export = {
   savePDF,
 };
 
-// import
-import { fromMD } from "./modules/import/markdown";
-
-const _import = {
+const $import = {
   fromMD,
 };
 
-// window
-import { showImageViewer } from "./modules/imageViewer";
-import { showSyncInfo } from "./modules/sync/infoWindow";
-import { showExportNoteOptions } from "./modules/export/exportWindow";
-import { showTemplateEditor } from "./modules/template/editorWindow";
-import { showSyncManager } from "./modules/sync/managerWindow";
-import { showSyncDiff } from "./modules/sync/diffWindow";
-import { savePDF } from "./modules/export/pdf";
-
-const window = {
-  showImageViewer,
-  showExportNoteOptions,
-  showSyncInfo,
-  showSyncManager,
-  showSyncDiff,
-  showTemplateEditor,
-  showTemplatePicker,
+const editor = {
+  getEditorInstance,
+  insert,
+  del,
+  move,
+  replace,
+  scroll,
+  getRangeAtCursor,
+  getLineAtCursor,
+  getPositionAtLine,
+  getTextBetween,
+  getTextBetweenLines,
 };
 
 export default {
   workspace,
-  _export,
-  _import,
-  window,
   sync,
   convert,
   template,
+  $export,
+  $import,
+  editor,
 };

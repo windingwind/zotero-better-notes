@@ -213,7 +213,9 @@ export async function activateWorkspaceTab() {
             {
               type: "click",
               listener: (ev) => {
-                addon.api.workspace.toggleOutlinePane(
+                addon.hooks.onToggleWorkspacePane(
+                  "outline",
+                  undefined,
                   addon.data.workspace.tab.container
                 );
               },
@@ -234,7 +236,9 @@ export async function activateWorkspaceTab() {
             {
               type: "click",
               listener: (ev) => {
-                addon.api.workspace.togglePreviewPane(
+                addon.hooks.onToggleWorkspacePane(
+                  "preview",
+                  undefined,
                   addon.data.workspace.tab.container
                 );
               },
@@ -261,7 +265,7 @@ export async function activateWorkspaceTab() {
               type: "click",
               listener: (ev) => {
                 if (isContextPaneInitialized()) {
-                  addon.api.workspace.toggleNotesPane();
+                  addon.hooks.onToggleWorkspacePane("notes");
                   return;
                 }
                 showHint(getString("workspace.notesPane.hint"));
@@ -283,7 +287,7 @@ export async function activateWorkspaceTab() {
   tabElem.addEventListener("mousedown", () => hoverWorkspaceTab(true));
   tabElem.addEventListener("mouseleave", () => hoverWorkspaceTab(false));
   // load workspace content
-  addon.api.workspace.initWorkspace(addon.data.workspace.tab.container);
+  addon.hooks.onInitWorkspace(addon.data.workspace.tab.container);
   registerWorkspaceTabPaneObserver();
 }
 

@@ -55,7 +55,7 @@ function setTemplate(
   addTemplateKey({ name: template.name });
   setPref(`template.${template.name}`, template.text);
   if (updatePrompt) {
-    addon.api.template.updateTemplatePicker();
+    addon.hooks.onUpdateTemplatePicker();
   }
 }
 
@@ -69,7 +69,7 @@ function removeTemplate(
   removeTemplateKey(keyName);
   clearPref(`template.${keyName}`);
   if (updatePrompt) {
-    addon.api.template.updateTemplatePicker();
+    addon.hooks.onUpdateTemplatePicker();
   }
 }
 
@@ -81,5 +81,5 @@ function initTemplates() {
       setTemplate(defaultTemplate, false);
     }
   }
-  addon.api.template.updateTemplatePicker();
+  addon.hooks.onUpdateTemplatePicker();
 }
