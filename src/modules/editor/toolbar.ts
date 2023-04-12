@@ -28,7 +28,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     (e) => {}
   );
 
-  settingsButton.addEventListener("mouseenter", (ev) => {
+  settingsButton.addEventListener("mouseenter", async (ev) => {
     const settingsMenu: PopupData[] = [
       {
         id: makeId("settings-openWorkspace"),
@@ -75,6 +75,18 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         },
       },
     ];
+
+    const parentAttachment = await noteItem.parentItem?.getBestAttachment();
+    if (parentAttachment) {
+      settingsMenu.push({
+        id: makeId("settings-openParent"),
+        text: getString("editor.toolbar.settings.openParent"),
+        callback: (e) => {
+          ZoteroPane.viewAttachment([parentAttachment.id]);
+          Zotero.Notifier.trigger("open", "file", parentAttachment.id);
+        },
+      });
+    }
 
     const settingsPopup = registerEditorToolbarPopup(
       editor,
