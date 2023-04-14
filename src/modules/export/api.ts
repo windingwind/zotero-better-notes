@@ -109,6 +109,11 @@ async function exportNotes(
       await toFreeMind(noteItem);
     }
   }
+  if (options.exportPDF) {
+    for (const noteItem of allNoteItems) {
+      await addon.api.$export.savePDF(noteItem.id);
+    }
+  }
   if (options.embedLink && !options.exportNote) {
     // If not exportNote, delete temp notes
     for (const noteItem of allNoteItems) {
@@ -117,10 +122,6 @@ async function exportNotes(
         _w.close();
       }
       await Zotero.Items.erase(noteItem.id);
-    }
-  } else if (options.exportPDF) {
-    for (const noteItem of allNoteItems) {
-      await addon.api.$export.savePDF(noteItem.id);
     }
   } else if (options.exportNote) {
     for (const noteItem of allNoteItems) {
