@@ -45,6 +45,17 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         },
       },
       {
+        id: makeId("settings-export"),
+        text: getString("editor.toolbar.settings.export"),
+        callback: (e) => {
+          if (addon.api.sync.isSyncNote(noteItem.id)) {
+            addon.hooks.onShowSyncInfo(noteItem.id);
+          } else {
+            addon.hooks.onShowExportNoteOptions([noteItem.id]);
+          }
+        },
+      },
+      {
         id: makeId("settings-insertTemplate"),
         text: getString("editor.toolbar.settings.insertTemplate"),
         callback: (e) => {
@@ -206,21 +217,21 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   }
 
   // Export
-  const exportButton = await registerEditorToolbarDropdown(
-    editor,
-    toolbar,
-    makeId("export"),
-    ICONS.export,
-    getString("editor.toolbar.export.title"),
-    "end",
-    (e) => {
-      if (addon.api.sync.isSyncNote(noteItem.id)) {
-        addon.hooks.onShowSyncInfo(noteItem.id);
-      } else {
-        addon.hooks.onShowExportNoteOptions([noteItem.id]);
-      }
-    }
-  );
+  // const exportButton = await registerEditorToolbarDropdown(
+  //   editor,
+  //   toolbar,
+  //   makeId("export"),
+  //   ICONS.export,
+  //   getString("editor.toolbar.export.title"),
+  //   "end",
+  //   (e) => {
+  //     if (addon.api.sync.isSyncNote(noteItem.id)) {
+  //       addon.hooks.onShowSyncInfo(noteItem.id);
+  //     } else {
+  //       addon.hooks.onShowExportNoteOptions([noteItem.id]);
+  //     }
+  //   }
+  // );
 }
 
 function getLinkMenuData(editor: Zotero.EditorInstance): PopupData[] {
