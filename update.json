@@ -3,7 +3,7 @@
     "Knowledge4Zotero@windingwind.com": {
       "updates": [
         {
-          "version": "1.0.0-4",
+          "version": "1.0.0-5",
           "update_link": "__releasepage__",
           "applications": {
             "gecko": {
@@ -12,7 +12,7 @@
           }
         },
         {
-          "version": "1.0.0-4",
+          "version": "1.0.0-5",
           "update_link": "__releasepage__",
           "applications": {
             "zotero": {
