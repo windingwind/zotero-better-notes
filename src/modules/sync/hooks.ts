@@ -52,6 +52,7 @@ async function callSyncing(
       items = items.filter((item) => addon.api.sync.isSyncNote(item.id));
     }
     if (items.length === 0) {
+      addon.data.sync.lock = false;
       return;
     }
     if (skipActive) {
