@@ -1,12 +1,52 @@
 // The prosemirror imports are only for type hint
-import { Node, NodeType } from "prosemirror-model";
-import { Mark, MarkType, ResolvedPos, Attrs } from "prosemirror-model";
+import {
+  Node,
+  NodeType,
+  Mark,
+  MarkType,
+  ResolvedPos,
+  Attrs,
+  DOMParser,
+  Schema,
+} from "prosemirror-model";
 import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
 };
+
+function fromHTML(schema: Schema, html: string, slice?: boolean) {
+  let domNode = document.createElement("div");
+  domNode.innerHTML = html;
+  let fragment = document.createDocumentFragment();
+  while (domNode.firstChild) {
+    fragment.appendChild(domNode.firstChild);
+  }
+  if (slice) {
+    return DOMParser.fromSchema(schema).parseSlice(fragment);
+  } else {
+    return DOMParser.fromSchema(schema).parse(fragment);
+  }
+}
+
+function getSliceFromHTML(state: EditorState, html: string) {
+  return fromHTML(state.schema, html, true);
+}
+
+function getNodeFromHTML(state: EditorState, html: string) {
+  return fromHTML(state.schema, html);
+}
+
+function setSelection(anchor: number, head?: number | undefined) {
+  return (state: EditorState, dispatch?: EditorView["dispatch"]) => {
+    const { tr, selection } = state;
+    const _TextSelection =
+      selection.constructor as unknown as typeof TextSelection;
+    tr.setSelection(_TextSelection.create(tr.doc, anchor, head));
+    dispatch && dispatch(tr);
+  };
+}
 
 // Code from https://github.com/ueberdosis/tiptap/tree/main/packages/core/src/helpers
 
@@ -148,7 +188,8 @@ function replaceRangeNode(
   nodeType: NodeType,
   nodeAttrs: Attrs | string,
   markType?: MarkType,
-  markAttrs?: Attrs | string
+  markAttrs?: Attrs | string,
+  select?: boolean
 ) {
   return (state: EditorState, dispatch: EditorView["dispatch"]) => {
     const { tr } = state;
@@ -166,6 +207,9 @@ function replaceRangeNode(
     );
     console.log("Replace Node", from, to, node);
     tr.replaceWith(from, to, node);
+    if (select) {
+      setSelection(from + node.nodeSize, from)(state);
+    }
     dispatch(tr);
   };
 }
@@ -333,6 +377,9 @@ export const BetterNotesEditorAPI = {
   updateImageDimensions,
   getHeadingLevelInRange,
   updateHeadingsInRange,
+  getSliceFromHTML,
+  getNodeFromHTML,
+  setSelection,
 };
 
 // @ts-ignore

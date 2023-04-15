@@ -14,6 +14,7 @@ export {
   getRangeAtCursor,
   getLineAtCursor,
   getPositionAtLine,
+  getPositionAtCursor,
   getURLAtCursor,
   updateImageDimensionsAtCursor,
   updateURLAtCursor,
@@ -24,9 +25,11 @@ export {
 function insert(
   editor: Zotero.EditorInstance,
   content: string = "",
-  position: number | "end" | "start" | "cursor" = "cursor"
+  position: number | "end" | "start" | "cursor" = "cursor",
+  select?: boolean
 ) {
   const core = getEditorCore(editor);
+  const EditorAPI = getEditorAPI(editor);
   if (position === "cursor") {
     position = getPositionAtCursor(editor);
   } else if (position === "end") {
@@ -36,6 +39,13 @@ function insert(
   }
   position = Math.max(0, Math.min(position, core.view.state.doc.content.size));
   (core as any).insertHTML(position, content);
+  if (select) {
+    const slice = EditorAPI.getSliceFromHTML(core.view.state, content);
+    EditorAPI.setSelection(position + slice.content.size, position)(
+      core.view.state,
+      core.view.dispatch
+    );
+  }
 }
 
 function del(editor: Zotero.EditorInstance, from: number, to: number) {
@@ -92,7 +102,8 @@ function replace(
     | "backgroundColor"
     | "link"
     | "code",
-  markAttrs: Record<string, any>
+  markAttrs: Record<string, any>,
+  select?: boolean
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -104,7 +115,8 @@ function replace(
     schema.nodes[nodeTypeName],
     JSON.stringify(nodeAttrs),
     schema.marks[markTypeName],
-    JSON.stringify(markAttrs)
+    JSON.stringify(markAttrs),
+    select
   )(core.view.state, core.view.dispatch);
 }
 
