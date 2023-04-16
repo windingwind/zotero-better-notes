@@ -24,12 +24,32 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     makeId("settings"),
     ICONS.settings,
     getString("editor.toolbar.settings.title"),
-    "start",
+    "end",
     (e) => {}
   );
 
-  settingsButton.addEventListener("mouseenter", async (ev) => {
-    const settingsMenu: PopupData[] = [
+  settingsButton.addEventListener("click", async (ev) => {
+    ev.stopPropagation();
+    function removePopup() {
+      const popup = editor._iframeWindow.document.querySelector(
+        `#${makeId("settings-popup")}`
+      );
+      if (popup) {
+        popup.remove();
+        settingsButton
+          .querySelector(".toolbar-button")
+          ?.classList.remove("active");
+        editor._iframeWindow.document.removeEventListener("click", removePopup);
+        return true;
+      }
+      return false;
+    }
+
+    if (removePopup()) {
+      return;
+    }
+
+    const settingsMenuData: PopupData[] = [
       {
         id: makeId("settings-openWorkspace"),
         text: getString("editor.toolbar.settings.openWorkspace"),
@@ -89,7 +109,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 
     const parentAttachment = await noteItem.parentItem?.getBestAttachment();
     if (parentAttachment) {
-      settingsMenu.push({
+      settingsMenuData.push({
         id: makeId("settings-openParent"),
         text: getString("editor.toolbar.settings.openParent"),
         callback: (e) => {
@@ -99,23 +119,16 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       });
     }
 
-    const settingsPopup = registerEditorToolbarPopup(
+    registerEditorToolbarPopup(
       editor,
       settingsButton,
       `${config.addonRef}-settings-popup`,
-      "left",
-      settingsMenu
-    );
-  });
-  settingsButton.addEventListener("mouseleave", (ev) => {
-    editor._iframeWindow.document
-      .querySelector(`#${makeId("settings-popup")}`)
-      ?.remove();
-  });
-  settingsButton.addEventListener("click", (ev) => {
-    editor._iframeWindow.document
-      .querySelector(`#${makeId("settings-popup")}`)
-      ?.remove();
+      "right",
+      settingsMenuData
+    ).then((popup) => {
+      settingsButton.querySelector(".toolbar-button")?.classList.add("active");
+      editor._iframeWindow.document.addEventListener("click", removePopup);
+    });
   });
 
   // Center button
