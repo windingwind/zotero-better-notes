@@ -41,10 +41,12 @@ function insert(
   (core as any).insertHTML(position, content);
   if (select) {
     const slice = EditorAPI.getSliceFromHTML(core.view.state, content);
-    EditorAPI.setSelection(position + slice.content.size, position)(
-      core.view.state,
-      core.view.dispatch
-    );
+    EditorAPI.refocusEditor(() => {
+      EditorAPI.setSelection(
+        (position as number) + slice.content.size,
+        position as number
+      )(core.view.state, core.view.dispatch);
+    });
   }
 }
 
