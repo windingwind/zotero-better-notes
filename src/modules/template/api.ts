@@ -20,7 +20,10 @@ async function runTemplate(
   }
 ): Promise<string> {
   ztoolkit.log(`runTemplate: ${key}`);
-  argString += ", _env";
+  if (argList.length > 0) {
+    argString += ", ";
+  }
+  argString += "_env";
   argList.push({
     dryRun: options.dryRun,
   });
