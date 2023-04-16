@@ -65,6 +65,14 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         },
       },
       {
+        id: makeId("settings-previewInWorkspace"),
+        text: getString("editor.toolbar.settings.previewInWorkspace"),
+        callback: (e) => {
+          addon.hooks.onOpenWorkspace("tab");
+          addon.hooks.onSetWorkspaceNote(e.editor._item.id, "preview");
+        },
+      },
+      {
         id: makeId("settings-export"),
         text: getString("editor.toolbar.settings.export"),
         callback: (e) => {
