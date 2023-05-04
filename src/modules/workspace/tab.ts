@@ -286,6 +286,19 @@ export async function activateWorkspaceTab() {
   });
   tabElem.addEventListener("mousedown", () => hoverWorkspaceTab(true));
   tabElem.addEventListener("mouseleave", () => hoverWorkspaceTab(false));
+  tabElem.addEventListener("mousedown", async (ev) => {
+    if (ev.button !== 2) {
+      return;
+    }
+    await Zotero.Promise.delay(300);
+    const menu = document
+      .querySelector("#zotero-itemmenu")
+      ?.parentElement?.lastElementChild?.querySelector("menu")
+      ?.querySelector("menupopup")?.lastElementChild;
+    menu?.addEventListener("click", () => {
+      addon.hooks.onOpenWorkspace("window");
+    });
+  });
   // load workspace content
   addon.hooks.onInitWorkspace(addon.data.workspace.tab.container);
   registerWorkspaceTabPaneObserver();

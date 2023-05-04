@@ -55,7 +55,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
     {
       tag: "hbox",
       id: makeId("top-container"),
-      styles: { width: "100%" },
+      styles: { width: "100%", height: "100%" },
       properties: {},
       attributes: {
         flex: "1",
