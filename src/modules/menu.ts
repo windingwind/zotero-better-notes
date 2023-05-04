@@ -78,4 +78,51 @@ export function registerMenus() {
       addon.hooks.onShowSyncManager();
     },
   });
+
+  ztoolkit.Menu.register(
+    document
+      .querySelector("#zotero-tb-note-add")
+      ?.querySelector("menupopup") as XUL.MenuPopup,
+    {
+      tag: "menuitem",
+      label: getString("menuAddNote.newMainNote"),
+      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+      commandListener: createWorkspaceNote,
+    }
+  );
+}
+
+async function createWorkspaceNote() {
+  const currentCollection = ZoteroPane.getSelectedCollection();
+  if (!currentCollection) {
+    window.alert(getString("menuAddNote.newMainNote.noEmptyCollectionError"));
+    return;
+  }
+  const confirmOperation = window.confirm(
+    `${getString(
+      "menuAddNote.newMainNote.confirmHead"
+      // @ts-ignore
+    )} '${currentCollection.getName()}' ${getString(
+      "menuAddNote.newMainNote.confirmTail"
+    )}`
+  );
+  if (!confirmOperation) {
+    return;
+  }
+  const header = window.prompt(
+    getString("menuAddNote.newMainNote.enterNoteTitle"),
+    `New Note ${new Date().toLocaleString()}`
+  );
+  const noteID = await ZoteroPane.newNote();
+  const noteItem = Zotero.Items.get(noteID);
+  noteItem.setNote(`<div data-schema-version="8"><h1>${header}</h1>\n</div>`);
+  await noteItem.saveTx();
+  addon.hooks.onSetWorkspaceNote(noteID, "main");
+  if (
+    !addon.data.workspace.tab.active &&
+    !addon.data.workspace.window.active &&
+    window.confirm(getString("menuAddNote.newMainNote.openWorkspaceTab"))
+  ) {
+    addon.hooks.onOpenWorkspace("tab");
+  }
 }
