@@ -37,6 +37,9 @@ async function runTemplate(
     }
   }
 
+  if (!options.stage) {
+    options.stage = "default";
+  }
   let templateLines = templateText.split("\n");
   let startIndex = templateLines.indexOf(`// @${options.stage}-begin`),
     endIndex = templateLines.indexOf(`// @${options.stage}-end`);
@@ -100,6 +103,8 @@ async function runItemTemplate(
     itemIds = await itemPicker();
   }
 
+  const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
+
   const items = itemIds?.map((id) => Zotero.Items.get(id)) || [];
 
   const copyImageRefNotes: Zotero.Item[] = [];
@@ -114,8 +119,8 @@ async function runItemTemplate(
   results.push(
     await runTemplate(
       key,
-      "items, copyNoteImage, sharedObj",
-      [items, copyNoteImage, sharedObj],
+      "items, targetNoteItem, copyNoteImage, sharedObj",
+      [items, targetNoteItem, copyNoteImage, sharedObj],
       {
         stage: "beforeloop",
         useDefault: false,
@@ -125,14 +130,11 @@ async function runItemTemplate(
   );
 
   for (const topItem of items) {
-    const itemNotes = topItem.isRegularItem()
-      ? Zotero.Items.get(topItem.getNotes())
-      : [];
     results.push(
       await runTemplate(
         key,
-        "topItem, itemNotes, copyNoteImage, sharedObj",
-        [topItem, itemNotes, copyNoteImage, sharedObj],
+        "topItem, targetNoteItem, copyNoteImage, sharedObj",
+        [topItem, targetNoteItem, copyNoteImage, sharedObj],
         {
           dryRun,
         }
@@ -143,8 +145,8 @@ async function runItemTemplate(
   results.push(
     await runTemplate(
       key,
-      "items, copyNoteImage, sharedObj",
-      [items, copyNoteImage, sharedObj],
+      "items, targetNoteItem, copyNoteImage, sharedObj",
+      [items, targetNoteItem, copyNoteImage, sharedObj],
       {
         stage: "afterloop",
         useDefault: false,
@@ -154,7 +156,6 @@ async function runItemTemplate(
   );
 
   let html = results.join("\n");
-  const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
   if (targetNoteItem && targetNoteItem.isNote()) {
     html = await copyEmbeddedImagesInHTML(
       html,
