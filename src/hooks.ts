@@ -119,7 +119,7 @@ function onNotify(
     const annotationItems = Zotero.Items.get(ids as number[]).filter((item) =>
       item.isAnnotation()
     );
-    if (annotationItems.length === 0) {
+    if (annotationItems.length !== 0) {
       checkReaderAnnotationButton(annotationItems);
     }
   } else {
