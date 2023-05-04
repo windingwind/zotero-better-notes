@@ -181,7 +181,10 @@ function getDOMAtLine(
   lineIndex: number
 ): HTMLElement {
   const core = getEditorCore(editor);
-  const lineNodeDesc = core.view.docView.children[lineIndex];
+  const lineNodeDesc =
+    core.view.docView.children[
+      Math.max(0, Math.min(core.view.docView.children.length - 1, lineIndex))
+    ];
   return lineNodeDesc?.dom;
 }
 
@@ -191,7 +194,10 @@ function getPositionAtLine(
   type: "start" | "end" = "end"
 ): number {
   const core = getEditorCore(editor);
-  const lineNodeDesc = core.view.docView.children[lineIndex];
+  const lineNodeDesc =
+    core.view.docView.children[
+      Math.max(0, Math.min(core.view.docView.children.length - 1, lineIndex))
+    ];
   const linePos = lineNodeDesc ? core.view.posAtDOM(lineNodeDesc.dom, 0) : 0;
   return Math.max(
     0,
