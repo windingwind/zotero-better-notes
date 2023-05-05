@@ -2,6 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/virtualizedTable.css" type="text/css"?>
 <!DOCTYPE html>
 <html
   lang="en"
@@ -72,6 +73,12 @@
       .list-viewport {
         width: 100%;
         background-color: #ffffff;
+        overflow: hidden;
+      }
+      #table-container {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
       }
       .tool-button {
         width: 75px;
@@ -80,9 +87,6 @@
         padding: 5px;
         text-align: center;
         margin: 0 10px 0 10px;
-      }
-      .virtualized-table-body {
-        overflow: hidden;
       }
     </style>
   </head>
