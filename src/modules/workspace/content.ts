@@ -270,8 +270,11 @@ export async function initWorkspaceEditor(
   } = {}
 ) {
   const noteItem = Zotero.Items.get(noteId);
-  if (!noteItem.isNote()) {
-    throw new Error("initNoteEditor: not a note item");
+  if (!noteItem || !noteItem.isNote()) {
+    if (window.confirm(getString("alert.notValidWorkspaceNote"))) {
+      await addon.hooks.onCreateWorkspaceNote();
+    }
+    return;
   }
   const editorElem = container?.querySelector(
     `#${makeId("editor-" + type)}`
