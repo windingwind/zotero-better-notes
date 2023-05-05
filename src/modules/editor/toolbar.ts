@@ -73,6 +73,9 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         },
       },
       {
+        type: "splitter",
+      },
+      {
         id: makeId("settings-export"),
         text: getString("editor.toolbar.settings.export"),
         callback: (e) => {
@@ -84,6 +87,9 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         },
       },
       {
+        type: "splitter",
+      },
+      {
         id: makeId("settings-insertTemplate"),
         text: getString("editor.toolbar.settings.insertTemplate"),
         callback: (e) => {
@@ -92,6 +98,9 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
             lineIndex: getLineAtCursor(e.editor),
           });
         },
+      },
+      {
+        type: "splitter",
       },
       {
         id: makeId("settings-copyLink"),
@@ -118,11 +127,28 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     const parentAttachment = await noteItem.parentItem?.getBestAttachment();
     if (parentAttachment) {
       settingsMenuData.push({
+        type: "splitter",
+      });
+      settingsMenuData.push({
         id: makeId("settings-openParent"),
         text: getString("editor.toolbar.settings.openParent"),
         callback: (e) => {
           ZoteroPane.viewAttachment([parentAttachment.id]);
           Zotero.Notifier.trigger("open", "file", parentAttachment.id);
+        },
+      });
+    }
+
+    if (addon.api.sync.isSyncNote(noteItem.id)) {
+      settingsMenuData.splice(5, 0, {
+        id: makeId("settings-refreshSyncing"),
+        text: getString("editor.toolbar.settings.refreshSyncing"),
+        callback: (e) => {
+          addon.hooks.onSyncing(undefined, {
+            quiet: false,
+            skipActive: false,
+            reason: "manual-editor",
+          });
         },
       });
     }
@@ -375,8 +401,9 @@ async function registerEditorToolbarDropdown(
 }
 
 declare interface PopupData {
-  id: string;
-  text: string;
+  type?: "item" | "splitter";
+  id?: string;
+  text?: string;
   prefix?: string;
   suffix?: string;
   callback?: (e: MouseEvent & { editor: Zotero.EditorInstance }) => any;
@@ -395,28 +422,40 @@ async function registerEditorToolbarPopup(
       tag: "div",
       classList: ["popup"],
       id,
-      children: popupLines.map((props) => ({
-        tag: "button",
-        classList: ["option"],
-        properties: {
-          id: props.id,
-          innerHTML:
-            slice((props.prefix || "") + props.text, 30) + (props.suffix || ""),
-          title: "",
-        },
-        listeners: [
-          {
-            type: "click",
-            listener: (e) => {
-              Object.assign(e, { editor });
-              props.callback &&
-                props.callback(
-                  e as any as MouseEvent & { editor: Zotero.EditorInstance }
-                );
-            },
-          },
-        ],
-      })),
+      children: popupLines.map((props) => {
+        return props.type === "splitter"
+          ? {
+              tag: "hr",
+              properties: {
+                id: props.id,
+              },
+            }
+          : {
+              tag: "button",
+              classList: ["option"],
+              properties: {
+                id: props.id,
+                innerHTML:
+                  slice((props.prefix || "") + props.text, 30) +
+                  (props.suffix || ""),
+                title: "",
+              },
+              listeners: [
+                {
+                  type: "click",
+                  listener: (e) => {
+                    Object.assign(e, { editor });
+                    props.callback &&
+                      props.callback(
+                        e as any as MouseEvent & {
+                          editor: Zotero.EditorInstance;
+                        }
+                      );
+                  },
+                },
+              ],
+            };
+      }),
       removeIfExists: true,
     },
     dropdown
