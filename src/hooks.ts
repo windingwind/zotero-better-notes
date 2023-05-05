@@ -41,6 +41,7 @@ import {
   createNoteFromTemplate,
   createWorkspaceNote,
 } from "./modules/createNote";
+import { annotationTagAction } from "./modules/annotationTagAction";
 
 async function onStartup() {
   await Promise.all([
@@ -56,7 +57,7 @@ async function onStartup() {
 
   registerNoteLinkProxyHandler();
 
-  registerNotify(["tab", "item"]);
+  registerNotify(["tab", "item", "item-tag"]);
 
   registerEditorInstanceHook();
 
@@ -126,6 +127,10 @@ function onNotify(
     if (annotationItems.length !== 0) {
       checkReaderAnnotationButton(annotationItems);
     }
+  }
+  // Insert annotation when assigning tag starts with @
+  if (event === "add" && type === "item-tag") {
+    annotationTagAction(ids as number[], extraData);
   } else {
     return;
   }
