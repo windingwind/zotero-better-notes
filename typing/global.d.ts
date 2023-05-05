@@ -20,8 +20,8 @@ declare interface Window {
   ): Window;
 }
 
-// declare const ztoolkit: import("../src/addon").MyToolkit;
-declare const ztoolkit: import("zotero-plugin-toolkit").ZoteroToolkit;
+declare const ztoolkit: import("../src/addon").MyToolkit;
+// declare const ztoolkit: import("zotero-plugin-toolkit").ZoteroToolkit;
 
 declare const rootURI: string;
 
