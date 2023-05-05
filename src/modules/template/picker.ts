@@ -1,12 +1,26 @@
 import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
 import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 import { addLineToNote } from "../../utils/note";
+import { getString } from "../../utils/locale";
 
 export { updateTemplatePicker, showTemplatePicker };
 
-function showTemplatePicker(noteId?: number, lineIndex?: number) {
+function showTemplatePicker(
+  mode: "insert",
+  data?: { noteId?: number; lineIndex?: number }
+): void;
+function showTemplatePicker(
+  mode: "create",
+  data?: { noteType?: "standalone" | "item"; parentItemId?: number }
+): void;
+function showTemplatePicker(): void;
+function showTemplatePicker(
+  mode: typeof addon.data.templatePicker.mode = "insert",
+  data: Record<string, any> = {}
+) {
   if (addon.data.prompt) {
-    addon.data.templatePicker = { noteId, lineIndex };
+    addon.data.templatePicker.mode = mode;
+    addon.data.templatePicker.data = data;
     addon.data.prompt.promptNode.style.display = "flex";
     addon.data.prompt.showCommands(
       addon.data.prompt.commands.filter(
@@ -43,22 +57,64 @@ function getTemplatePromptHandler(name: string) {
     ztoolkit.log(prompt, name);
     prompt.promptNode.style.display = "none";
     // TODO: add preview when command is selected
-    const targetNoteItem = Zotero.Items.get(
-      addon.data.templatePicker.noteId || addon.data.workspace.mainId
-    );
-    let html = "";
-    if (name.startsWith("[Item]")) {
-      html = await addon.api.template.runItemTemplate(name, {
-        targetNoteId: targetNoteItem.id,
-      });
-    } else {
-      html = await addon.api.template.runTemplate(name, "", []);
+    switch (addon.data.templatePicker.mode) {
+      case "create":
+        await createTemplateNoteCallback(name);
+        break;
+      case "insert":
+      default:
+        await insertTemplateCallback(name);
+        break;
     }
-    await addLineToNote(
-      targetNoteItem,
-      html,
-      addon.data.templatePicker.lineIndex
-    );
-    addon.data.templatePicker = {};
+    addon.data.templatePicker.mode = "insert";
   };
+}
+
+async function insertTemplateCallback(name: string) {
+  const targetNoteItem = Zotero.Items.get(
+    addon.data.templatePicker.data.noteId || addon.data.workspace.mainId
+  );
+  let html = "";
+  if (name.startsWith("[Item]")) {
+    html = await addon.api.template.runItemTemplate(name, {
+      targetNoteId: targetNoteItem.id,
+    });
+  } else {
+    html = await addon.api.template.runTemplate(name, "", []);
+  }
+  await addLineToNote(
+    targetNoteItem,
+    html,
+    addon.data.templatePicker.data.lineIndex
+  );
+  addon.data.templatePicker.data = {};
+}
+
+async function createTemplateNoteCallback(name: string) {
+  switch (addon.data.templatePicker.data.noteType) {
+    case "standalone": {
+      const currentCollection = ZoteroPane.getSelectedCollection();
+      if (!currentCollection) {
+        window.alert(getString("alert.notValidCollectionError"));
+        return;
+      }
+      const noteID = await ZoteroPane.newNote();
+      const noteItem = Zotero.Items.get(noteID);
+      await noteItem.saveTx();
+      addon.data.templatePicker.data.noteId = noteID;
+      break;
+    }
+    case "item": {
+      const parentID = addon.data.templatePicker.data.parentItemId;
+      const noteItem = new Zotero.Item("note");
+      noteItem.libraryID = Zotero.Items.get(parentID).libraryID;
+      noteItem.parentID = parentID;
+      await noteItem.saveTx();
+      addon.data.templatePicker.data.noteId = noteItem.id;
+      break;
+    }
+    default:
+      return;
+  }
+  await insertTemplateCallback(name);
 }

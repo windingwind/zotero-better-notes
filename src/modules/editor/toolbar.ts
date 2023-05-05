@@ -87,10 +87,10 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         id: makeId("settings-insertTemplate"),
         text: getString("editor.toolbar.settings.insertTemplate"),
         callback: (e) => {
-          addon.hooks.onShowTemplatePicker(
-            e.editor._item.id,
-            getLineAtCursor(e.editor)
-          );
+          addon.hooks.onShowTemplatePicker("insert", {
+            noteId: e.editor._item.id,
+            lineIndex: getLineAtCursor(e.editor),
+          });
         },
       },
       {

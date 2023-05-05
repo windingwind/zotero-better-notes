@@ -75,8 +75,8 @@ class Addon {
       templates: { name: string }[];
     };
     templatePicker: {
-      noteId?: number;
-      lineIndex?: number;
+      mode: "insert" | "create";
+      data: Record<string, any>;
     };
     prompt?: Prompt;
   } = {
@@ -126,7 +126,10 @@ class Addon {
       tableHelper: undefined,
       templates: [],
     },
-    templatePicker: {},
+    templatePicker: {
+      mode: "insert",
+      data: {},
+    },
   };
   // Lifecycle hooks
   public hooks: typeof hooks;

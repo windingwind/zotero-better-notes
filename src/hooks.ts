@@ -37,6 +37,10 @@ import { showSyncDiff } from "./modules/sync/diffWindow";
 import { showSyncInfo } from "./modules/sync/infoWindow";
 import { showSyncManager } from "./modules/sync/managerWindow";
 import { showTemplateEditor } from "./modules/template/editorWindow";
+import {
+  createNoteFromTemplate,
+  createWorkspaceNote,
+} from "./modules/createNote";
 
 async function onStartup() {
   await Promise.all([
@@ -243,9 +247,7 @@ function onOpenWorkspace(type: "tab" | "window" = "tab") {
   }
 }
 
-function onInitWorkspace(container: XUL.Box | undefined) {
-  initWorkspace(container);
-}
+const onInitWorkspace = initWorkspace;
 
 function onToggleWorkspacePane(
   type: "outline" | "preview" | "notes",
@@ -266,43 +268,27 @@ function onToggleWorkspacePane(
   }
 }
 
-async function onSyncing(...args: Parameters<typeof callSyncing>) {
-  return await callSyncing(...args);
-}
+const onSyncing = callSyncing;
 
-function onShowTemplatePicker(...args: Parameters<typeof showTemplatePicker>) {
-  return showTemplatePicker(...args);
-}
+const onShowTemplatePicker = showTemplatePicker;
 
-function onUpdateTemplatePicker() {
-  return updateTemplatePicker();
-}
+const onUpdateTemplatePicker = updateTemplatePicker;
 
-function onShowImageViewer(...args: Parameters<typeof showImageViewer>) {
-  return showImageViewer(...args);
-}
+const onShowImageViewer = showImageViewer;
 
-function onShowExportNoteOptions(
-  ...args: Parameters<typeof showExportNoteOptions>
-) {
-  return showExportNoteOptions(...args);
-}
+const onShowExportNoteOptions = showExportNoteOptions;
 
-function onShowSyncInfo(...args: Parameters<typeof showSyncInfo>) {
-  return showSyncInfo(...args);
-}
+const onShowSyncInfo = showSyncInfo;
 
-function onShowSyncManager(...args: Parameters<typeof showSyncManager>) {
-  return showSyncManager(...args);
-}
+const onShowSyncManager = showSyncManager;
 
-function onShowSyncDiff(...args: Parameters<typeof showSyncDiff>) {
-  return showSyncDiff(...args);
-}
+const onShowSyncDiff = showSyncDiff;
 
-function onShowTemplateEditor(...args: Parameters<typeof showTemplateEditor>) {
-  return showTemplateEditor(...args);
-}
+const onShowTemplateEditor = showTemplateEditor;
+
+const onCreateWorkspaceNote = createWorkspaceNote;
+
+const onCreateNoteFromTemplate = createNoteFromTemplate;
 
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
@@ -327,4 +313,6 @@ export default {
   onShowSyncInfo,
   onShowSyncManager,
   onShowTemplateEditor,
+  onCreateWorkspaceNote,
+  onCreateNoteFromTemplate,
 };
