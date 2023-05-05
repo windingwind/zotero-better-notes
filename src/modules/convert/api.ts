@@ -275,6 +275,8 @@ async function rehype2remark(rehype: HRoot) {
             return h(node, "delete", all(h, node));
           } else if (node.properties?.style?.includes("background-color")) {
             return h(node, "html", toHtml(node));
+          } else if (node.properties?.style?.includes("color")) {
+            return h(node, "html", toHtml(node));
           } else if (node.properties?.className?.includes("math")) {
             return h(node, "inlineMath", toText(node).slice(1, -1));
           } else {
