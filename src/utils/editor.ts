@@ -20,6 +20,7 @@ export {
   updateURLAtCursor,
   getTextBetween,
   getTextBetweenLines,
+  isImageAtCursor,
 };
 
 function insert(
