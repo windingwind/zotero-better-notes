@@ -300,7 +300,9 @@ export async function activateWorkspaceTab() {
     });
   });
   // load workspace content
-  addon.hooks.onInitWorkspace(addon.data.workspace.tab.container);
+  const container = addon.data.workspace.tab.container;
+  initWorkspaceTabDragDrop(container, tabElem);
+  addon.hooks.onInitWorkspace(container);
   registerWorkspaceTabPaneObserver();
 }
 
@@ -328,4 +330,80 @@ function restoreWorkspaceTab() {
 function setWorkspaceTabStatus(status: boolean) {
   addon.data.workspace.tab.active = status;
   setPref("workspace.tab.active", status);
+}
+
+function initWorkspaceTabDragDrop(
+  container?: XUL.Box,
+  tabElem?: HTMLDivElement
+) {
+  if (!container) {
+    return;
+  }
+  const rect = tabElem?.getBoundingClientRect();
+  ztoolkit.UI.appendElement(
+    {
+      tag: "div",
+      id: "bn-workspace-tab-drop",
+      styles: {
+        background: "#252526",
+        opacity: "0.6",
+        width: "100%",
+        height: "100px",
+        position: "fixed",
+        left: "0px",
+        top: `${rect?.bottom}px`,
+        textAlign: "center",
+        display: "flex",
+        visibility: "hidden",
+        zIndex: "65535",
+      },
+      properties: {
+        hidden: true,
+        ondrop: (ev: DragEvent) => {
+          addon.hooks.onOpenWorkspace("window");
+        },
+        ondragenter: (ev: DragEvent) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          dropElem.style.opacity = "0.9";
+          if (ev.dataTransfer) {
+            ev.dataTransfer.dropEffect = "move";
+          }
+        },
+        ondragover: (ev: DragEvent) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+        },
+        ondragleave: (ev: DragEvent) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          dropElem.style.opacity = "0.6";
+        },
+      },
+      children: [
+        {
+          tag: "div",
+          styles: {
+            margin: "auto",
+            textAlign: "center",
+            color: "#fff",
+          },
+          properties: {
+            innerHTML: getString("tab.openInWindow"),
+          },
+        },
+      ],
+      enableElementRecord: false,
+    },
+    container
+  );
+  const dropElem = container.querySelector(
+    "#bn-workspace-tab-drop"
+  ) as HTMLDivElement;
+  tabElem?.addEventListener("dragstart", (ev) => {
+    dropElem.style.visibility = "visible";
+  });
+  tabElem?.addEventListener("dragend", (ev) => {
+    dropElem.style.visibility = "hidden";
+  });
 }
