@@ -15,7 +15,10 @@ enum OPTIONS {
   "exportNote",
 }
 
-export async function showExportNoteOptions(noteIds: number[]) {
+export async function showExportNoteOptions(
+  noteIds: number[],
+  overwriteOptions: Record<string, any> = {}
+) {
   const items = Zotero.Items.get(noteIds);
   const noteItems: Zotero.Item[] = [];
   items.forEach((item) => {
@@ -109,7 +112,10 @@ export async function showExportNoteOptions(noteIds: number[]) {
 
   await data.unloadLock?.promise;
   if (data._lastButtonId === "confirm") {
-    addon.api.$export.exportNotes(noteItems, data as Record<string, boolean>);
+    await addon.api.$export.exportNotes(
+      noteItems,
+      Object.assign(data as Record<string, boolean>, overwriteOptions)
+    );
     dataKeys.forEach((key) => {
       setPref(`export.${key}`, Boolean(data[key]));
     });

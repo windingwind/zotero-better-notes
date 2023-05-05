@@ -39,10 +39,23 @@ export function registerMenus() {
     "menuEdit",
     {
       tag: "menuitem",
-      label: getString("menuEdit.templatePicker"),
+      label: getString("menuEdit.insertTemplate"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: (ev) => {
         addon.hooks.onShowTemplatePicker();
+      },
+    },
+    "before",
+    menuEditAnchor
+  );
+  ztoolkit.Menu.register(
+    "menuEdit",
+    {
+      tag: "menuitem",
+      label: getString("menuEdit.exportTemplate"),
+      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+      commandListener: (ev) => {
+        addon.hooks.onShowTemplatePicker("export");
       },
     },
     "before",
@@ -79,6 +92,7 @@ export function registerMenus() {
     },
   });
 
+  // create note menu in library
   const newNoteMenu = document
     .querySelector("#zotero-tb-note-add")
     ?.querySelector("menupopup") as XUL.MenuPopup;
@@ -102,6 +116,7 @@ export function registerMenus() {
       addon.hooks.onCreateNoteFromTemplate("item", "library"),
   });
 
+  // create note menu in reader side panel
   ztoolkit.Menu.register(
     document.querySelector(
       "#context-pane-add-child-note-button-popup"

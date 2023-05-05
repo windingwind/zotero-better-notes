@@ -13,6 +13,7 @@ function showTemplatePicker(
   mode: "create",
   data?: { noteType?: "standalone" | "item"; parentItemId?: number }
 ): void;
+function showTemplatePicker(mode: "export", data?: {}): void;
 function showTemplatePicker(): void;
 function showTemplatePicker(
   mode: typeof addon.data.templatePicker.mode = "insert",
@@ -61,12 +62,16 @@ function getTemplatePromptHandler(name: string) {
       case "create":
         await createTemplateNoteCallback(name);
         break;
+      case "export":
+        await exportTemplateCallback(name);
+        break;
       case "insert":
       default:
         await insertTemplateCallback(name);
         break;
     }
     addon.data.templatePicker.mode = "insert";
+    addon.data.templatePicker.data = {};
   };
 }
 
@@ -87,7 +92,6 @@ async function insertTemplateCallback(name: string) {
     html,
     addon.data.templatePicker.data.lineIndex
   );
-  addon.data.templatePicker.data = {};
 }
 
 async function createTemplateNoteCallback(name: string) {
@@ -117,4 +121,19 @@ async function createTemplateNoteCallback(name: string) {
       return;
   }
   await insertTemplateCallback(name);
+}
+
+async function exportTemplateCallback(name: string) {
+  // Create temp note
+  const noteItem = new Zotero.Item("note");
+  noteItem.libraryID = Zotero.Libraries.userLibraryID;
+  await noteItem.saveTx();
+  addon.data.templatePicker.data.noteId = noteItem.id;
+  await insertTemplateCallback(name);
+  // Export note
+  await addon.hooks.onShowExportNoteOptions([noteItem.id], {
+    setAutoSync: false,
+  });
+  // Delete temp note
+  await Zotero.Items.erase(noteItem.id);
 }

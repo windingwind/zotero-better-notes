@@ -75,7 +75,7 @@ class Addon {
       templates: { name: string }[];
     };
     templatePicker: {
-      mode: "insert" | "create";
+      mode: "insert" | "create" | "export";
       data: Record<string, any>;
     };
     prompt?: Prompt;
