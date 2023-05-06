@@ -58,6 +58,8 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
       },
       classList: ["link-popup-extra"],
       removeIfExists: true,
+      // The popup is removed when link is not in selection. Do not need to record it.
+      enableElementRecord: false,
       listeners: [
         {
           type: "click",
@@ -107,6 +109,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
       },
       classList: ["link-popup-extra"],
       removeIfExists: true,
+      enableElementRecord: false,
       listeners: [
         {
           type: "click",
@@ -129,6 +132,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
       },
       classList: ["link-popup-extra"],
       removeIfExists: true,
+      enableElementRecord: false,
       listeners: [
         {
           type: "click",
@@ -198,6 +202,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
             title: getString("editor.previewImage.title"),
           },
           removeIfExists: true,
+          enableElementRecord: false,
           listeners: [
             {
               type: "click",
