@@ -223,7 +223,9 @@ export function initWorkspace(container: XUL.Box | undefined) {
   );
   // Manually add custom editor items in Zotero 7
   if (ztoolkit.isZotero7()) {
-    const customElements = ztoolkit.getGlobal("customElements");
+    // @ts-ignore
+    const customElements = container.ownerGlobal
+      .customElements as CustomElementRegistry;
     const mainEditorContainer = container.querySelector(
       `#${makeId("editor-main-container")}`
     );
