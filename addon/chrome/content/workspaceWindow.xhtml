@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  windowtype="__addonRef__-syncManager"
+  sizemode="normal"
+  scrolling="false"
+  persist="screenX screenY width height sizemode"
+>
+  <head>
+    <title locale-target="innerHTML">workspaceWindow.name</title>
+    <meta charset="utf-8" />
+    <script>
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        const { Services } = ChromeUtils.import(
+          "resource://gre/modules/Services.jsm"
+        );
+
+        Services.scriptloader.loadSubScript(
+          "chrome://zotero/content/include.js",
+          this
+        );
+
+        Services.scriptloader.loadSubScript(
+          "resource://zotero/require.js",
+          this
+        );
+        window.arguments[0]._initPromise.resolve();
+      });
+    </script>
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-wrap: break-word;
+        background-color: #f0f0f0;
+        font-family: initial;
+      }
+      #workspace-container {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="workspace-container">
+    </div>
+  </body>
+</html>

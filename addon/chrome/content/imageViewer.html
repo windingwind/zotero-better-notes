@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title>Image Preview</title>
+    <meta charset="utf-8">
   </head>
   <body>
     <style>
@@ -11,6 +12,7 @@
         width: 100%;
         padding: 0;
         margin: 0;
+        font-family: initial;
       }
       #image {
         position: relative;
@@ -35,7 +37,7 @@
         align-items: center;
       }
     </style>
-    <link rel="stylesheet" href="chrome://__addonRef__/skin/workspace.css" />
+    <link rel="stylesheet" href="./tooltip.css" />
     <script>
       window.addEventListener("DOMContentLoaded", (e) => {
         document.querySelector(".container").style["line-height"] = `${

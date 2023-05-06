@@ -120,7 +120,12 @@
             ),
             $(
               go.TextBlock,
-              { textAlign: "center", maxSize: new go.Size(100, NaN) },
+              {
+                textAlign: "center",
+                maxSize: new go.Size(100, NaN),
+                editable: true,
+                textEdited: editNode,
+              },
               new go.Binding("text", "text").makeTwoWay(),
               new go.Binding("stroke", "stroke")
             )
@@ -191,12 +196,13 @@
               node.parent.model.id === -1 ? 999 : node.parent.model.id;
             nodeDataArray.push({
               key: node.model.id,
-              text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
+              text: `${node.model.level === 7 ? "🔗" : ""}${wrapText(
                 node.model.name
               )}`,
               stroke: "-moz-DialogText",
               lineIndex: node.model.lineIndex,
-              noteLink: node.model.rank === 7 ? node.model.link : "",
+              level: node.model.level,
+              noteLink: node.model.level === 7 ? node.model.link : "",
             });
             linkDataArray.push({
               from: parent,
@@ -214,7 +220,7 @@
           var olddata = oldnode.data;
           if (olddata.noteLink) {
             window.parent.postMessage(
-              { type: "jumpNote", link: olddata.noteLink, id: olddata.key },
+              { type: "openNote", link: olddata.noteLink, id: olddata.key },
               "*"
             );
           } else {
@@ -223,10 +229,29 @@
                 type: "jumpNode",
                 lineIndex: olddata.lineIndex,
                 id: olddata.key,
+                workspaceType: window.workspaceType || "tab",
               },
               "*"
             );
           }
+        }
+
+        function editNode(textBlock, previousText, currentText) {
+          const adorn = textBlock.part;
+          const data = adorn.data;
+          if (data.level === 7) {
+            alert("Link cannot be edited in mind map");
+            return false;
+          }
+          window.parent.postMessage(
+            {
+              type: "editNode",
+              lineIndex: data.lineIndex,
+              text: data.text,
+              workspaceType: window.workspaceType || "tab",
+            },
+            "*"
+          );
         }
 
         function handler(e) {
@@ -234,6 +259,7 @@
           switch (e.data.type) {
             case "setMindMapData":
               setData(e.data.nodes);
+              window.workspaceType = e.data.workspaceType;
               break;
             case "saveImage":
               const imgString = Diagram.makeImageData({

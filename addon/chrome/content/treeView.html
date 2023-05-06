@@ -84,7 +84,7 @@
             items,
             expandNodesRecursive: false,
             dataStructure: "plain",
-            height: $("window").height() - 100,
+            height: $("window").height(),
             displayExpr: "name",
             noDataText: "Outline is Empty",
             onItemClick: jumpNode,
@@ -127,7 +127,7 @@
                 e.dropInsideItem &&
                 toNode !== null &&
                 // !toNode.itemData.isDirectory &&
-                toNode.itemData.rank === 7
+                toNode.itemData.level === 7
               ) {
                 return;
               }
@@ -160,7 +160,11 @@
         }
 
         function getTreeView() {
-          return $("#treeview").dxTreeView("instance");
+          try {
+            return $("#treeview").dxTreeView("instance");
+          } catch {
+            return undefined;
+          }
         }
 
         function calculateToIndex(e) {
@@ -267,22 +271,44 @@
           window.parent.postMessage({ type: "getMindMapData" }, "*");
         }
 
-        function setData(nodes) {
+        function walkNode(node, callback) {
+          if (!node) {
+            return;
+          }
+          callback(node);
+          node.children.forEach((child) => walkNode(child, callback));
+        }
+
+        function setData(nodes, expandLevel) {
           console.log(nodes);
+          const tree = getTreeView();
+          const expandedStatus = {};
+          if (tree) {
+            const rootNodes = tree.getNodes();
+            console.log(tree, rootNodes);
+            rootNodes.forEach((root) => {
+              walkNode(root, (node) => {
+                expandedStatus[node.itemData.name] = node.itemData.expanded;
+              });
+            });
+          }
+          console.log(expandedStatus);
           const treeData = [];
           nodes.map((node) => {
             treeData.push({
               id: String(node.model.id),
               name: node.model.name,
-              rank: node.model.rank,
-              icon: node.model.rank === 7 ? noteIcon : undefined,
+              level: node.model.level,
+              icon: node.model.level === 7 ? noteIcon : undefined,
               lineIndex: node.model.lineIndex,
               endIndex: node.model.endIndex,
               isDirectory: node.children.length > 0,
               expanded:
-                node.children.filter((n) => n.model.rank < 7).length !== 0,
+                node.model.name in expandedStatus
+                  ? expandedStatus[node.model.name]
+                  : node.model.level < expandLevel,
               parentId:
-                node.model.rank > 1 ? String(node.parent.model.id) : undefined,
+                node.model.level > 1 ? String(node.parent.model.id) : undefined,
             });
           });
           $(() => {
@@ -296,7 +322,7 @@
           if (itemData.noteLink) {
             window.parent.postMessage(
               {
-                type: "jumpNote",
+                type: "openNote",
                 link: itemData.noteLink,
                 id: parseInt(itemData.id),
               },
@@ -308,6 +334,7 @@
                 type: "jumpNode",
                 lineIndex: itemData.lineIndex,
                 id: parseInt(itemData.id),
+                workspaceType: window.workspaceType || "tab",
               },
               "*"
             );
@@ -317,7 +344,8 @@
         function handler(e) {
           console.log(e);
           if (e.data.type === "setMindMapData") {
-            setData(e.data.nodes);
+            setData(e.data.nodes, e.data.expandLevel);
+            window.workspaceType = e.data.workspaceType;
           }
         }
 

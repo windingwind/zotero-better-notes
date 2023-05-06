@@ -1,112 +1,12 @@
-<!ENTITY zotero.__addonRef__.workspace.title "Workspace">
+<!ENTITY zotero.__addonRef__.pref.workspace.title "Workspace">
+<!ENTITY zotero.__addonRef__.pref.workspace.expandLevel.label "Outline expand to heading level">
+<!ENTITY zotero.__addonRef__.pref.sync.title "Sync">
+<!ENTITY zotero.__addonRef__.pref.sync.period.label "Auto-sync period (seconds)">
+<!ENTITY zotero.__addonRef__.pref.sync.manager.label "Open Sync Manager">
+<!ENTITY zotero.__addonRef__.pref.template.title "Template">
+<!ENTITY zotero.__addonRef__.pref.template.editor.label "Open Template Editor">
+<!ENTITY zotero.__addonRef__.pref.annotation.title "PDF Annotation">
+<!ENTITY zotero.__addonRef__.pref.annotation.autoAnnotation.label "Automatically add new annotations to workspace note">
 
-<!ENTITY zotero.__addonRef__.workspace.menu.new "Create New Main Note">
-<!ENTITY zotero.__addonRef__.workspace.menu.open "Open Main Note...">
-<!ENTITY zotero.__addonRef__.workspace.menu.openWindow "Open Workspace in Standalone Window">
-<!ENTITY zotero.__addonRef__.workspace.menu.export "Export Main Note...">
-<!ENTITY zotero.__addonRef__.workspace.menu.sync "Sync Main Note">
-<!ENTITY zotero.__addonRef__.workspace.menu.syncmanager "Better Notes Sync Manager">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertNotes "Insert Notes...">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertTextTemplate "Insert Note Template [Text]">
-<!ENTITY zotero.__addonRef__.workspace.menu.insertItemTemplate "Insert Note Template [Item]">
-<!ENTITY zotero.__addonRef__.workspace.menu.editTemplate "Note Template Editor">
-<!ENTITY zotero.__addonRef__.workspace.menu.citeSetting "Citation Style in Notes">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRSetting "Annotation Math OCR">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRBing "Bing">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRMathpix "Mathpix">
-<!ENTITY zotero.__addonRef__.workspace.menu.OCRXunfei "Xunfei">
-<!ENTITY zotero.__addonRef__.workspace.menu.addheading "Insert Heading...">
-<!ENTITY zotero.__addonRef__.workspace.menu.indent "Decrease Heading Level">
-<!ENTITY zotero.__addonRef__.workspace.menu.unindent "Increase Heading Level">
-<!ENTITY zotero.__addonRef__.workspace.menu.importLink "Import Selected Note Link Content">
-<!ENTITY zotero.__addonRef__.workspace.menu.updateLink "Update Selected Note Link Text">
-<!ENTITY zotero.__addonRef__.workspace.menu.autoannotation "Auto Insert New Annotations to Note">
-<!ENTITY zotero.__addonRef__.workspace.menu.convertmd "Convert MarkDown in Clipboard">
-<!ENTITY zotero.__addonRef__.workspace.menu.convertasciidoc "Convert AsciiDoc in Clipboard">
-<!ENTITY zotero.__addonRef__.workspace.menu.treeview "Outline: Tree View">
-<!ENTITY zotero.__addonRef__.workspace.menu.mindmap "Outline: Mind Map">
-<!ENTITY zotero.__addonRef__.workspace.menu.bubblemap "Outline: Bubble Map">
-<!ENTITY zotero.__addonRef__.workspace.menu.guide "Better Notes User Guide">
-<!ENTITY zotero.__addonRef__.workspace.menu.about "About Better Notes">
-
-<!ENTITY zotero.__addonRef__.itemmenu.setMainNote.label "Set Main Note">
-<!ENTITY zotero.__addonRef__.itemmenu.exportNote.label "Export Note and SubNotes">
-<!ENTITY zotero.__addonRef__.itemmenu.exportNotes.label "Export Notes and SubNotes to Markdown">
-
-<!ENTITY zotero.__addonRef__.export.title "Export">
-<!ENTITY zotero.__addonRef__.export.cannotworkwith.label "Cannot work with ">
-<!ENTITY zotero.__addonRef__.export.workwith.label "Only work with ">
-<!ENTITY zotero.__addonRef__.export.option.label "General">
-<!ENTITY zotero.__addonRef__.export.link.enable.label "Embed Linked Notes">
-<!ENTITY zotero.__addonRef__.export.note.enable.label "Export to new note">
-<!ENTITY zotero.__addonRef__.export.markdown.label "MarkDown">
-<!ENTITY zotero.__addonRef__.export.file.enable.label "Export to MarkDown File">
-<!ENTITY zotero.__addonRef__.export.singlefile.enable.label "Export Linked Notes to MarkDown File">
-<!ENTITY zotero.__addonRef__.export.enableautosync.enable.label "Auto Sync to Export Path">
-<!ENTITY zotero.__addonRef__.export.yaml.enable.label "YAML Front Matter">
-<!ENTITY zotero.__addonRef__.export.document.label "Document">
-<!ENTITY zotero.__addonRef__.export.docx.enable.label "Export to MS Word Document">
-<!ENTITY zotero.__addonRef__.export.pdf.enable.label "Export to PDF Document">
-<!ENTITY zotero.__addonRef__.export.mindmap.label "Mind Map">
-<!ENTITY zotero.__addonRef__.export.freemind.enable.label "FreeMind">
-
-<!ENTITY zotero.__addonRef__.sync.title "Sync Status">
-<!ENTITY zotero.__addonRef__.sync.export.label "Export to...">
-<!ENTITY zotero.__addonRef__.sync.path.label "Sync to:">
-<!ENTITY zotero.__addonRef__.sync.changesync.label "Change Folder">
-<!ENTITY zotero.__addonRef__.sync.lastsync.label "Last sync:">
-<!ENTITY zotero.__addonRef__.sync.enable.label "Keep in sync">
-<!ENTITY zotero.__addonRef__.sync.dosync.label "Sync Now">
-<!ENTITY zotero.__addonRef__.sync.synclist.label "Sync Manager">
-
-<!ENTITY zotero.__addonRef__.syncList.title "Sync Manager">
-<!ENTITY zotero.__addonRef__.syncList.notename.label "Name">
-<!ENTITY zotero.__addonRef__.syncList.syncpath.label "Sync To">
-<!ENTITY zotero.__addonRef__.syncList.lastsync.label "Last Sync">
-<!ENTITY zotero.__addonRef__.syncList.doupdate.label "Refresh">
-<!ENTITY zotero.__addonRef__.syncList.changesyncperiod.label "Sync Period:">
-<!ENTITY zotero.__addonRef__.syncList.dosync.label "Sync">
-<!ENTITY zotero.__addonRef__.syncList.changesync.label "Change Folder">
-<!ENTITY zotero.__addonRef__.syncList.removesync.label "Unsync">
-<!ENTITY zotero.__addonRef__.syncList.related.label "Apply to Related Notes">
-
-<!ENTITY zotero.__addonRef__.wizard.title "Welcomed to Zotero Better Notes">
-<!ENTITY zotero.__addonRef__.wizard.page1.header "Zotero Better Notes User Guide">
-<!ENTITY zotero.__addonRef__.wizard.page1.description "Click Next to Continue.">
-<!ENTITY zotero.__addonRef__.wizard.open "Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page3.header "Knowledge Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page3.description "Click the link above 'My Library' or the home button in the note editor to open or focus the workspace.">
-<!ENTITY zotero.__addonRef__.wizard.layout "Knowledge Workspace Layout">
-<!ENTITY zotero.__addonRef__.wizard.page4.header "Outline/Main Note/Linked Note Preview">
-<!ENTITY zotero.__addonRef__.wizard.page4.description1 "Modify/jump to headings inside main Note with the Outline;">
-<!ENTITY zotero.__addonRef__.wizard.page4.description2 "Add links to the main note while reading. Export to MarkDown/HTML with full text supported;">
-<!ENTITY zotero.__addonRef__.wizard.page4.description3 "Open and edit linked notes in the preview.">
-<!ENTITY zotero.__addonRef__.wizard.link "Add Note Link">
-<!ENTITY zotero.__addonRef__.wizard.page5.header "Note as you go, and open the links as your will.">
-<!ENTITY zotero.__addonRef__.wizard.page5.description1 "Click to insert the current note link after the current line in main note.">
-<!ENTITY zotero.__addonRef__.wizard.page5.description2 "Jump to notes even from other Apps via a note link!">
-<!ENTITY zotero.__addonRef__.wizard.setup "Setup Workspace">
-<!ENTITY zotero.__addonRef__.wizard.page6.header "Almost there. Please follow the user guide before starting.">
-<!ENTITY zotero.__addonRef__.wizard.page6.description1 "You can come back later from the knowledge workspace.">
-<!ENTITY zotero.__addonRef__.wizard.page6.description2 "WARNING If main Note is not set, this addon will not work properly.">
-
-<!ENTITY zotero.__addonRef__.wizard.setup.enable.label "Enable Auto Setup">
-<!ENTITY zotero.__addonRef__.wizard.setup.collectionenable.label "Create a new collection for main notes:">
-<!ENTITY zotero.__addonRef__.wizard.setup.noteenable.label "Create a 'Zotero Better Notes User Guide: Workflow' note">
-
-<!ENTITY zotero.__addonRef__.template.title "Template Editor">
-<!ENTITY zotero.__addonRef__.template.header.label "Template Name">
-<!ENTITY zotero.__addonRef__.template.list.label "Template List">
-<!ENTITY zotero.__addonRef__.template.create.label "Create">
-<!ENTITY zotero.__addonRef__.template.import.label "Create from Note">
-<!ENTITY zotero.__addonRef__.template.save.label "Save">
-<!ENTITY zotero.__addonRef__.template.delete.label "Delete">
-<!ENTITY zotero.__addonRef__.template.reset.label "Reset">
-<!ENTITY zotero.__addonRef__.template.more.label "Get More">
-
-<!ENTITY zotero.__addonRef__.help.feedback.caption.label "User Guide and Feedback">
-<!ENTITY zotero.__addonRef__.help.feedback.label "GitHub">
-<!ENTITY zotero.__addonRef__.help.doc.caption.label "Documentations">
-<!ENTITY zotero.__addonRef__.help.doc.label "Better Notes Handbook(Chinese, provide translation)">
-<!ENTITY zotero.__addonRef__.help.version.label "VERSION __buildVersion__">
+<!ENTITY zotero.__addonRef__.help.version.label "__addonName__ VERSION __buildVersion__">
 <!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">

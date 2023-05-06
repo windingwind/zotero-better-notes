@@ -50,9 +50,7 @@
                 name: "TEXT",
                 minSize: new go.Size(30, 15),
                 editable: true,
-                textEdited: function (textBlock, previousText, currentText) {
-                  console.log("editing heading", textBlock, currentText);
-                },
+                textEdited: editNode,
               },
               // remember not only the text string but the scale and the font in the node data
               new go.Binding("text", "text").makeTwoWay(),
@@ -264,13 +262,14 @@
               node.parent.model.id === -1 ? 999 : node.parent.model.id;
             data.nodeDataArray.push({
               key: node.model.id,
-              text: `${node.model.rank === 7 ? "🔗" : ""}${wrapText(
+              text: `${node.model.level === 7 ? "🔗" : ""}${wrapText(
                 node.model.name
               )}`,
               stroke: "-moz-DialogText",
               parent: parent,
               lineIndex: node.model.lineIndex,
-              noteLink: node.model.rank === 7 ? node.model.link : "",
+              level: node.model.level,
+              noteLink: node.model.level === 7 ? node.model.link : "",
               brush: go.Brush.randomColor(),
             });
           }
@@ -283,7 +282,7 @@
           var olddata = oldnode.data;
           if (olddata.noteLink) {
             window.parent.postMessage(
-              { type: "jumpNote", link: olddata.noteLink, id: olddata.key },
+              { type: "openNote", link: olddata.noteLink, id: olddata.key },
               "*"
             );
           } else {
@@ -292,10 +291,29 @@
                 type: "jumpNode",
                 lineIndex: olddata.lineIndex,
                 id: olddata.key,
+                workspaceType: window.workspaceType || "tab",
               },
               "*"
             );
           }
+        }
+
+        function editNode(textBlock, previousText, currentText) {
+          const adorn = textBlock.part;
+          const data = adorn.data;
+          if (data.level === 7) {
+            alert("Link cannot be edited in mind map");
+            return false;
+          }
+          window.parent.postMessage(
+            {
+              type: "editNode",
+              lineIndex: data.lineIndex,
+              text: data.text,
+              workspaceType: window.workspaceType || "tab",
+            },
+            "*"
+          );
         }
 
         function handler(e) {
@@ -303,6 +321,7 @@
           switch (e.data.type) {
             case "setMindMapData":
               setData(e.data.nodes);
+              window.workspaceType = e.data.workspaceType;
               break;
             case "saveImage":
               const imgString = Diagram.makeImageData({

@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/virtualizedTable.css" type="text/css"?>
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  windowtype="__addonRef__-templateEditor"
+  sizemode="normal"
+  scrolling="false"
+  persist="screenX screenY width height sizemode"
+>
+  <head>
+    <title locale-target="innerHTML">templateEditor.title</title>
+    <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
+    <script>
+      document.addEventListener("DOMContentLoaded", (ev) => {
+        const { Services } = ChromeUtils.import(
+          "resource://gre/modules/Services.jsm"
+        );
+
+        Services.scriptloader.loadSubScript(
+          "chrome://zotero/content/include.js",
+          this
+        );
+
+        Services.scriptloader.loadSubScript(
+          "resource://zotero/require.js",
+          this
+        );
+        window.arguments[0]._initPromise.resolve();
+      });
+    </script>
+    <style>
+      html,
+      body,
+      .viewport {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        word-wrap: break-word;
+        background-color: #f0f0f0;
+        font-family: initial;
+      }
+      .viewport {
+        margin: 0 5px 0 5px;
+      }
+      .viewport-container {
+        padding: 0;
+        margin: 0;
+        height: calc(100% - 50px);
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+      .footer-container {
+        padding: 5px;
+        margin: 0;
+        height: 30px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        background-color: #f0f0f0;
+      }
+      .list-viewport {
+        width: calc(20% - 10px);
+        height: 100%;
+        background-color: #ffffff;
+        overflow: hidden;
+      }
+      #table-container {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+      .editor-viewport {
+        display: flex;
+        flex-direction: column;
+        width: calc(40% - 10px);
+        padding: 5px;
+      }
+      .preview-viewport {
+        display: flex;
+        flex-direction: column;
+        width: calc(40% - 10px);
+        padding: 5px;
+      }
+      .tool-button {
+        width: 100px;
+        max-width: 100px;
+        min-width: 100px;
+        padding: 5px;
+        text-align: center;
+        margin: 0 10px 0 10px;
+      }
+      .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 0px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://__addonRef__/content/lib/css/github-markdown-light.min.css"
+    />
+  </head>
+  <body>
+    <div class="viewport-container">
+      <div id="list-container" class="viewport list-viewport">
+        <div id="table-container"></div>
+      </div>
+      <div class="viewport editor-viewport">
+        <div style="display: flex">
+          <div style="flex-shrink: 0" locale-target="innerHTML">
+            templateEditor.templateName
+          </div>
+          <input id="editor-name" type="text" style="width: 100%" />
+        </div>
+        <div style="display: flex; flex-direction: column; height: 100%">
+          <textarea
+            id="editor-textbox"
+            style="height: 100%; resize: none"
+          ></textarea>
+        </div>
+      </div>
+      <div class="viewport preview-viewport">
+        <div style="display: flex">
+          <div style="flex-shrink: 0" locale-target="innerHTML">
+            templateEditor.previewContainer
+          </div>
+        </div>
+        <article id="preview-container" class="markdown-body"></article>
+      </div>
+    </div>
+    <div
+      class="footer-container"
+      style="justify-content: flex-start; padding: 10px"
+    >
+      <button
+        class="tool-button"
+        id="create"
+        locale-target="innerHTML,title"
+        title="templateEditor.createDetail"
+      >
+        templateEditor.create
+      </button>
+      <button
+        class="tool-button"
+        id="import"
+        locale-target="innerHTML,title"
+        title="templateEditor.importDetail"
+      >
+        templateEditor.import
+      </button>
+      <button
+        class="tool-button"
+        id="more"
+        locale-target="innerHTML,title"
+        title="templateEditor.moreDetail"
+      >
+        templateEditor.more
+      </button>
+      <button
+        class="tool-button"
+        id="save"
+        locale-target="innerHTML,title"
+        title="templateEditor.saveDetail"
+      >
+        templateEditor.save
+      </button>
+      <button
+        class="tool-button"
+        id="delete"
+        locale-target="innerHTML,title"
+        title="templateEditor.deleteDetail"
+      >
+        templateEditor.delete
+      </button>
+      <button
+        class="tool-button"
+        id="reset"
+        locale-target="innerHTML,title"
+        title="templateEditor.resetDetail"
+      >
+        templateEditor.reset
+      </button>
+      <button
+        class="tool-button"
+        id="help"
+        locale-target="innerHTML,title"
+        title="templateEditor.helpDetail"
+      >
+        templateEditor.help
+      </button>
+    </div>
+  </body>
+</html>

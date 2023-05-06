@@ -1,49 +1,32 @@
-declare interface SyncStatus {
-  path: string;
-  filename: string;
-  md5: string;
-  noteMd5: string;
-  lastsync: number;
-  itemID: number;
+declare const _globalThis: {
+  [key: string]: any;
+  Zotero: _ZoteroTypes.Zotero;
+  ZoteroPane: _ZoteroTypes.ZoteroPane;
+  Zotero_Tabs: typeof Zotero_Tabs;
+  window: Window;
+  document: Document;
+  OS: typeof OS;
+  Blob: typeof Blob;
+  ztoolkit: typeof ztoolkit;
+  addon: typeof addon;
+};
+
+declare interface Window {
+  openDialog(
+    url?: string | URL,
+    target?: string,
+    features?: string,
+    ...args: any
+  ): Window;
 }
 
-declare interface MDStatus {
-  meta: {
-    version: number;
-  } | null;
-  content: string;
-  filedir: string;
-  filename: string;
-  lastmodify: Date;
-}
+declare const ztoolkit: import("../src/addon").MyToolkit;
+// declare const ztoolkit: import("zotero-plugin-toolkit").ZoteroToolkit;
 
-declare interface NoteStatus {
-  meta: string;
-  content: string;
-  tail: string;
-  lastmodify: Date;
-}
+declare const rootURI: string;
 
-declare interface AnnotationJson {
-  authorName: string;
-  color: string;
-  comment: string;
-  dateModified: string;
-  image: string;
-  imageAttachmentKey: string;
-  isAuthorNameAuthoritative: boolean;
-  isExternal: boolean;
-  id: string;
-  key: string;
-  lastModifiedByUser: string;
-  pageLabel: string;
-  position: {
-    rects: number[];
-  };
-  readOnly: boolean;
-  sortIndex: any;
-  tags: { name: string }[];
-  text: string;
-  type: string;
-  attachmentItemID: number;
-}
+declare const addon: import("../src/addon").default;
+
+declare const __env__: "production" | "development";
+
+declare const ChromeUtils: any;

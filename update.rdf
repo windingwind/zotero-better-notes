@@ -1,25 +1,25 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <rdf:Description rdf:about="urn:mozilla:extension:Knowledge4Zotero@windingwind.com">
     <em:updates>
       <rdf:Seq>
         <rdf:li>
           <rdf:Description>
-            <em:version>0.8.9</em:version>
+            <em:version>1.0.0-beta.1</em:version>
             <em:targetApplication>
               <rdf:Description>
                 <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>6.0.14-beta</em:minVersion>
+                <em:minVersion>5.999</em:minVersion>
                 <em:maxVersion>*</em:maxVersion>
-                <em:updateLink>https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi</em:updateLink>
+                <em:updateLink>__releasepage__</em:updateLink>
               </rdf:Description>
             </em:targetApplication>
             <em:targetApplication>
               <rdf:Description>
                 <em:id>juris-m@juris-m.github.io</em:id>
-                <em:minVersion>6.0.14-beta</em:minVersion>
+                <em:minVersion>5.999</em:minVersion>
                 <em:maxVersion>*</em:maxVersion>
-                <em:updateLink>https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi</em:updateLink>
+                <em:updateLink>__releasepage__</em:updateLink>
               </rdf:Description>
             </em:targetApplication>
           </rdf:Description>
