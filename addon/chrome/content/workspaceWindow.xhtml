@@ -31,6 +31,13 @@
           "resource://zotero/require.js",
           this
         );
+
+        if (Zotero.platformMajorVersion >= 102) {
+          Services.scriptloader.loadSubScript(
+            "chrome://global/content/customElements.js",
+            this
+          );
+        }
         window.arguments[0]._initPromise.resolve();
       });
     </script>
@@ -57,7 +64,6 @@
     </style>
   </head>
   <body>
-    <div id="workspace-container">
-    </div>
+    <div id="workspace-container"></div>
   </body>
 </html>
