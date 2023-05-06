@@ -2,7 +2,7 @@
 
 [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
 
-![teaser](./docs/res/teaser.png)
+<div align=center><img src="./docs/res/teaser.png" width="800px"></img></div>
 
 Everything about note management. All in Zotero.
 
@@ -103,7 +103,7 @@ The _workspace_ serves as the **central hub** where input flows (papers and anno
 
 To open the _workspace_, click the ![icon](addon/chrome/content/icons/favicon.png) button in the tabs bar.
 
-![workspace](insert image link here)
+<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622132-5ed9bd23-3c0e-4775-b273-745824cc4b51.gif" width="800px"></img></div>
 
 The _workspace_ contains a default note called the _workspace note_. You can create a new note as the _workspace note_ if prompted on opening _workspace_.
 
@@ -139,13 +139,13 @@ The _workspace_ includes the note editor for the _workspace note_. You can use i
 > 💡 How to create a new note?  
 > Click the note icon in the library tools bar (the row under the tabs bar).
 
-![note editor example](insert image link here)
+<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622355-2b8b2c00-a640-41fa-bb82-372fa10ecc64.png" width="400px"></img></div>
 
 ### Note Link
 
 To create a _note link_ between current note and the _workspace note_, simply click the ![icon](addon/chrome/content/icons/favicon.png) button in the title bar of current note editor.
 
-![note link example](insert image link here)
+<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622693-f7c7c82f-7434-4dbf-baf3-d03a72eb51c5.png" width="800px"></img></div>
 
 ### Note Template
 
@@ -161,7 +161,7 @@ _Note Template_ is designed for tasks like:
 >
 > 💡 Need help or looking for community templates?[Learn more →](#note-link)
 
-![note template example](insert image link here)
+<div align=center><img src="https://user-images.githubusercontent.com/33902321/236623159-8f67064b-1fab-4cf1-abf4-0c8243370a14.gif" width="800px"></img></div>
 
 ### Syncing: Note 🔄️ Markdown
 
@@ -169,7 +169,7 @@ With BN, you can integrate your note-taking into your existing workflow seamless
 
 To set up auto-sync, click `Set Auto-Sync` the first time you export your note. There is no need for any third-party tools or complicated setups!
 
-![note syncing example](insert image link here)
+<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622955-9ca54590-d6f8-433a-8622-33b35fc7b79d.png" width="800px"></img></div>
 
 Any changes made to your note or its corresponding Markdown file will be automatically synced. This feature makes it easy to keep all of your notes up to date and in one place.
 
