@@ -22,6 +22,9 @@ export function registerEditorInstanceHook() {
 
 async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
   await editor._initPromise;
+  if (!addon.data.alive) {
+    return;
+  }
 
   // item.getNote may not be initialized yet
   if (Zotero.ItemTypes.getID("note") !== editor._item.itemTypeID) {

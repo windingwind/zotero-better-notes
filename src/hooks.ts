@@ -10,6 +10,7 @@ import {
   deActivateWorkspaceTab,
   registerWorkspaceTab,
   TAB_TYPE,
+  unregisterWorkspaceTab,
 } from "./modules/workspace/tab";
 import {
   initWorkspace,
@@ -79,6 +80,7 @@ function onShutdown(): void {
   unregisterReaderInitializer();
   // Remove addon object
   addon.data.alive = false;
+  unregisterWorkspaceTab();
   delete Zotero[config.addonInstance];
 }
 

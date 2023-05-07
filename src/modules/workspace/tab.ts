@@ -33,6 +33,10 @@ export function registerWorkspaceTab() {
   window.addEventListener("message", (e) => messageHandler(e), false);
 }
 
+export function unregisterWorkspaceTab() {
+  addon.data.workspace.tab.id && Zotero_Tabs.close(addon.data.workspace.tab.id);
+}
+
 async function addWorkspaceTab() {
   let { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
@@ -44,7 +48,9 @@ async function addWorkspaceTab() {
     select: false,
     onClose: () => {
       setWorkspaceTabStatus(false);
-      addWorkspaceTab();
+      if (addon.data.alive) {
+        addWorkspaceTab();
+      }
     },
   });
   await waitUtilAsync(() =>
