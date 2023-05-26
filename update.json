@@ -4,7 +4,7 @@
       "updates": [
         {
           "version": "1.0.1",
-          "update_link": "__releasepage__",
+          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi",
           "applications": {
             "gecko": {
               "strict_min_version": "60.0"
@@ -13,7 +13,7 @@
         },
         {
           "version": "1.0.1",
-          "update_link": "__releasepage__",
+          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "6.999"
