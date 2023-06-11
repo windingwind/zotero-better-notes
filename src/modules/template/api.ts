@@ -55,21 +55,22 @@ async function runTemplate(
     return "";
   }
   if (startIndex < 0) {
-    // We skip the flag line later
+    // We skip the pragma line later
     startIndex = -1;
   }
   if (endIndex < 0) {
     endIndex = templateLines.length;
   }
-  // Skip the markdown flag lines
+  // Check the markdown pragma
   templateLines = templateLines.slice(startIndex + 1, endIndex);
   let useMarkdown = false;
-  let mdIndex = templateLines.indexOf("// @use-markdown");
+  let mdIndex = templateLines.findIndex((line) =>
+    line.startsWith("// @use-markdown")
+  );
   if (mdIndex >= 0) {
     useMarkdown = true;
-    templateLines.splice(mdIndex, 1);
   }
-  // Skip other flag lines
+  // Skip other pragmas
   templateLines = templateLines.filter((line) => !line.startsWith("// @"));
   templateText = templateLines.join("\n");
 
