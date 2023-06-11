@@ -1,0 +1,12 @@
+<!ENTITY zotero.__addonRef__.pref.workspace.title "Рабочее пространство">
+<!ENTITY zotero.__addonRef__.pref.workspace.expandLevel.label "Outline расширить до уровня заголовка">
+<!ENTITY zotero.__addonRef__.pref.sync.title "Синк">
+<!ENTITY zotero.__addonRef__.pref.sync.period.label "Авто-синк период (сек)">
+<!ENTITY zotero.__addonRef__.pref.sync.manager.label "Открыть Синк менеджер">
+<!ENTITY zotero.__addonRef__.pref.template.title "Шаблон">
+<!ENTITY zotero.__addonRef__.pref.template.editor.label "Открыть  редактор шаблонов">
+<!ENTITY zotero.__addonRef__.pref.annotation.title "PDF Аннотация">
+<!ENTITY zotero.__addonRef__.pref.annotation.autoAnnotation.label "Автодобавлять новые аннотации к заметкам раб.пространства">
+
+<!ENTITY zotero.__addonRef__.help.version.label "__addonName__ VERSION __buildVersion__">
+<!ENTITY zotero.__addonRef__.help.releasetime.label "Build __buildTime__">
