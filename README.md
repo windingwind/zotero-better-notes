@@ -6,7 +6,7 @@
 
 Everything about note management. All in Zotero.
 
-Better Notes Handbook: [EN](https://github.com/windingwind/zotero-better-notes/wiki) | [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
+Better Notes Handbook (out dated, for version<=0.8.9): [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
 
 ## 🧩 Outline
 
@@ -157,9 +157,13 @@ _Note Template_ is designed for tasks like:
 - Compare papers across sections
 - Generate content programmatically
 
-> 💡 Want to write your own templates? [Learn more →](#note-link)
+> 💡 Need help or looking for community templates?[See here →](https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates)
 >
-> 💡 Need help or looking for community templates?[Learn more →](#note-link)
+> 💡 Want to write/share your own templates?
+>
+> [How to write →](docs/about-note-template.md#write-note-template)
+>
+> [How to share →](docs/about-note-template.md#share-your-template)
 
 <div align=center><img src="https://user-images.githubusercontent.com/33902321/236623159-8f67064b-1fab-4cf1-abf4-0c8243370a14.gif" width="800px"></img></div>
 

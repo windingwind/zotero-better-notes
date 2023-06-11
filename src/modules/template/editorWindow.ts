@@ -88,7 +88,7 @@ export async function showTemplateEditor() {
       });
     _window.document.querySelector("#help")?.addEventListener("click", (ev) => {
       Zotero.launchURL(
-        "https://github.com/windingwind/zotero-better-notes/blob/master/Template.md"
+        "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md"
       );
     });
     _window.document.querySelector("#more")?.addEventListener("click", (ev) => {
