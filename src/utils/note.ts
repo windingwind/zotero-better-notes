@@ -1,6 +1,7 @@
 import TreeModel = require("tree-model");
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { getItemDataURL } from "./str";
+import { showHint } from "./hint";
 
 export {
   renderNoteHTML,
@@ -472,6 +473,11 @@ async function importImageToNote(
     }
     blob = new Blob([array], { type: "image/png" });
   } else {
+    return;
+  }
+
+  if (!blob) {
+    showHint("Failed to import image.");
     return;
   }
 
