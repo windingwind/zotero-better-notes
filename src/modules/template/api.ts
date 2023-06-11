@@ -130,11 +130,14 @@ async function runItemTemplate(
   );
 
   for (const topItem of items) {
+    const itemNotes = topItem.isNote()
+      ? []
+      : Zotero.Items.get(topItem.getNotes());
     results.push(
       await runTemplate(
         key,
-        "topItem, targetNoteItem, copyNoteImage, sharedObj",
-        [topItem, targetNoteItem, copyNoteImage, sharedObj],
+        "topItem, targetNoteItem, itemNotes, copyNoteImage, sharedObj",
+        [topItem, targetNoteItem, itemNotes, copyNoteImage, sharedObj],
         {
           dryRun,
         }
