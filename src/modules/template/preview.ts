@@ -11,11 +11,11 @@ async function renderTemplatePreview(
   if (!inputItems) {
     inputItems = ZoteroPane.getSelectedItems();
   }
-  if (templateName.startsWith("[Text]")) {
+  if (templateName.toLowerCase().startsWith("[text]")) {
     html = await addon.api.template.runTextTemplate(templateName, {
       dryRun: true,
     });
-  } else if (templateName.startsWith("[Item]")) {
+  } else if (templateName.toLowerCase().startsWith("[item]")) {
     const data = inputItems?.map((item) => item.id);
     html = await addon.api.template.runItemTemplate(templateName, {
       itemIds: data,

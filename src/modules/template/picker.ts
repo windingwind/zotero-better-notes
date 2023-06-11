@@ -80,7 +80,7 @@ async function insertTemplateCallback(name: string) {
     addon.data.templatePicker.data.noteId || addon.data.workspace.mainId
   );
   let html = "";
-  if (name.startsWith("[Item]")) {
+  if (name.toLowerCase().startsWith("[item]")) {
     html = await addon.api.template.runItemTemplate(name, {
       targetNoteId: targetNoteItem.id,
     });
