@@ -77,9 +77,9 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
     win.document.title = `[Better Notes Sycing] Diff Merge of ${noteItem.getNoteTitle()}`;
     win.syncInfo = {
       noteName: noteItem.getNoteTitle(),
-      noteModify: noteStatus.lastmodify.toISOString(),
+      noteModify: noteStatus.lastmodify && noteStatus.lastmodify.toISOString(),
       mdName: mdPath,
-      mdModify: mdStatus.lastmodify.toISOString(),
+      mdModify: mdStatus.lastmodify && mdStatus.lastmodify.toISOString(),
       syncTime: syncDate.toISOString(),
     };
     win.diffData = changes.map((change, id) =>
