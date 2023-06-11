@@ -92,23 +92,23 @@ function importTemplateFromClipboard() {
   if (!templateText) {
     return;
   }
-  let templateData: NoteTemplate;
+  let template: NoteTemplate;
   try {
-    templateData = YAML.parse(templateText);
+    template = YAML.parse(templateText);
   } catch (e) {
     try {
-      templateData = JSON.parse(templateText);
+      template = JSON.parse(templateText);
     } catch (e) {
-      showHint("Invalid template data");
-      return;
+      template = { name: "", text: "" };
     }
   }
-  if (!templateData.name || !templateData.text) {
-    showHint("Invalid template data");
+  if (!template.name || !template.text) {
+    showHint("The copied template is invalid");
     return;
   }
-  if (!window.confirm(`Import template "${templateData.name}"?`)) {
+  if (!window.confirm(`Import template "${template.name}"?`)) {
     return;
   }
-  setTemplate(templateData);
+  setTemplate(template);
+  showHint(`Template ${template.name} saved.`);
 }
