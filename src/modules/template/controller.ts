@@ -92,7 +92,7 @@ function importTemplateFromClipboard() {
   if (!templateText) {
     return;
   }
-  let template: NoteTemplate;
+  let template: Record<string, string>;
   try {
     template = YAML.parse(templateText);
   } catch (e) {
@@ -102,13 +102,13 @@ function importTemplateFromClipboard() {
       template = { name: "", text: "" };
     }
   }
-  if (!template.name || !template.text) {
+  if (!template.name) {
     showHint("The copied template is invalid");
     return;
   }
   if (!window.confirm(`Import template "${template.name}"?`)) {
     return;
   }
-  setTemplate(template);
+  setTemplate({ name: template.name, text: template.content });
   showHint(`Template ${template.name} saved.`);
 }
