@@ -80,6 +80,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
       ["content", "__addonRef__", rootURI + "chrome/content/"],
       ["locale", "__addonRef__", "en-US", rootURI + "chrome/locale/en-US/"],
       ["locale", "__addonRef__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
+      ["locale", "__addonRef__", "ru-RU", rootURI + "chrome/locale/ru-RU/"],
     ]);
   } else {
     setDefaultPrefs(rootURI);
