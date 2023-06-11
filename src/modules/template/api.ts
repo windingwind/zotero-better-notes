@@ -3,7 +3,7 @@ import { getString } from "../../utils/locale";
 import { copyEmbeddedImagesInHTML, renderNoteHTML } from "../../utils/note";
 import { fill, slice } from "../../utils/str";
 
-export { runTemplate, runItemTemplate };
+export { runTemplate, runTextTemplate, runItemTemplate };
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
@@ -87,6 +87,26 @@ async function runTemplate(
     window.alert(`Template ${key} Error: ${e}`);
     return "";
   }
+}
+
+async function runTextTemplate(
+  key: string,
+  options: {
+    targetNoteId?: number;
+    dryRun?: boolean;
+  }
+) {
+  let { targetNoteId, dryRun } = options;
+  const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
+  const sharedObj = {};
+  return await runTemplate(
+    key,
+    "targetNoteItem, sharedObj",
+    [targetNoteItem, sharedObj],
+    {
+      dryRun,
+    }
+  );
 }
 
 async function runItemTemplate(

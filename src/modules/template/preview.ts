@@ -12,7 +12,9 @@ async function renderTemplatePreview(
     inputItems = ZoteroPane.getSelectedItems();
   }
   if (templateName.startsWith("[Text]")) {
-    html = await addon.api.template.runTemplate(templateName, "", []);
+    html = await addon.api.template.runTextTemplate(templateName, {
+      dryRun: true,
+    });
   } else if (templateName.startsWith("[Item]")) {
     const data = inputItems?.map((item) => item.id);
     html = await addon.api.template.runItemTemplate(templateName, {

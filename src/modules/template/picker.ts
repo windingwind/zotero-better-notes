@@ -85,7 +85,9 @@ async function insertTemplateCallback(name: string) {
       targetNoteId: targetNoteItem.id,
     });
   } else {
-    html = await addon.api.template.runTemplate(name, "", []);
+    html = await addon.api.template.runTextTemplate(name, {
+      targetNoteId: targetNoteItem.id,
+    });
   }
   await addLineToNote(
     targetNoteItem,

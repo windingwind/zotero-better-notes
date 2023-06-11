@@ -28,7 +28,11 @@ import {
   getMDFileName,
   getRelatedNoteIds,
 } from "./modules/sync/api";
-import { runTemplate, runItemTemplate } from "./modules/template/api";
+import {
+  runTemplate,
+  runTextTemplate,
+  runItemTemplate,
+} from "./modules/template/api";
 import {
   getTemplateKeys,
   getTemplateText,
@@ -90,6 +94,7 @@ const template = {
   SYSTEM_TEMPLATE_NAMES,
   DEFAULT_TEMPLATES,
   runTemplate,
+  runTextTemplate,
   runItemTemplate,
   getTemplateKeys,
   getTemplateText,
