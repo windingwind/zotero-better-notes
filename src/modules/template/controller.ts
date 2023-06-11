@@ -1,11 +1,14 @@
+import YAML = require("yamljs");
 import { clearPref, getPref, setPref } from "../../utils/prefs";
+import { showHint } from "../../utils/hint";
 
 export {
   getTemplateKeys,
   getTemplateText,
   setTemplate,
-  initTemplates,
   removeTemplate,
+  initTemplates,
+  importTemplateFromClipboard,
 };
 
 // Controller
@@ -82,4 +85,30 @@ function initTemplates() {
     }
   }
   addon.hooks.onUpdateTemplatePicker();
+}
+
+function importTemplateFromClipboard() {
+  const templateText = Zotero.Utilities.Internal.getClipboard("text/unicode");
+  if (!templateText) {
+    return;
+  }
+  let templateData: NoteTemplate;
+  try {
+    templateData = YAML.parse(templateText);
+  } catch (e) {
+    try {
+      templateData = JSON.parse(templateText);
+    } catch (e) {
+      showHint("Invalid template data");
+      return;
+    }
+  }
+  if (!templateData.name || !templateData.text) {
+    showHint("Invalid template data");
+    return;
+  }
+  if (!window.confirm(`Import template "${templateData.name}"?`)) {
+    return;
+  }
+  setTemplate(templateData);
 }

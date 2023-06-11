@@ -76,6 +76,19 @@ export function registerMenus() {
   );
   ztoolkit.Menu.register(
     "menuEdit",
+    {
+      tag: "menuitem",
+      label: getString("menuEdit.importTemplate"),
+      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+      commandListener: (ev) => {
+        addon.hooks.onImportTemplateFromClipboard();
+      },
+    },
+    "before",
+    menuEditAnchor
+  );
+  ztoolkit.Menu.register(
+    "menuEdit",
     { tag: "menuseparator" },
     "before",
     menuEditAnchor

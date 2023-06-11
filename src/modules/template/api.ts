@@ -1,5 +1,7 @@
 import { itemPicker } from "../../utils/itemPicker";
+import { getString } from "../../utils/locale";
 import { copyEmbeddedImagesInHTML, renderNoteHTML } from "../../utils/note";
+import { fill, slice } from "../../utils/str";
 
 export { runTemplate, runItemTemplate };
 
@@ -59,7 +61,7 @@ async function runTemplate(
   if (endIndex < 0) {
     endIndex = templateLines.length;
   }
-  // Skip the flag lines
+  // Skip the markdown flag lines
   templateLines = templateLines.slice(startIndex + 1, endIndex);
   let useMarkdown = false;
   let mdIndex = templateLines.indexOf("// @use-markdown");
@@ -67,6 +69,8 @@ async function runTemplate(
     useMarkdown = true;
     templateLines.splice(mdIndex, 1);
   }
+  // Skip other flag lines
+  templateLines = templateLines.filter((line) => !line.startsWith("// @"));
   templateText = templateLines.join("\n");
 
   try {
@@ -100,7 +104,10 @@ async function runItemTemplate(
    */
   let { itemIds, targetNoteId, dryRun } = options;
   if (!itemIds) {
-    itemIds = await itemPicker();
+    itemIds = await getItemTemplateData();
+  }
+  if (itemIds?.length === 0) {
+    return "";
   }
 
   const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
@@ -169,4 +176,44 @@ async function runItemTemplate(
     html = await renderNoteHTML(html, copyImageRefNotes);
   }
   return html;
+}
+
+async function getItemTemplateData() {
+  const librarySelectedIds = addon.data.templatePicker.data.librarySelectedIds;
+  if (librarySelectedIds && librarySelectedIds.length !== 0) {
+    const firstSelectedItem = Zotero.Items.get(librarySelectedIds[0]);
+    const data = {} as Record<string, any>;
+    data;
+    new ztoolkit.Dialog(1, 1)
+      .setDialogData(data)
+      .addCell(0, 0, {
+        tag: "div",
+        properties: {
+          innerHTML: `${fill(
+            slice(
+              (firstSelectedItem.getField("title") as string) ||
+                firstSelectedItem.key,
+              40
+            ),
+            40
+          )} ${
+            librarySelectedIds.length > 1
+              ? `and ${librarySelectedIds.length - 1} more`
+              : ""
+          } ${getString("templatePicker.itemData.info")}`,
+        },
+      })
+      .addButton(getString("templatePicker.itemData.useLibrary"), "useLibrary")
+      .addButton(getString("templatePicker.itemData.useCustom"), "useCustom")
+      .open(getString("templatePicker.itemData.title"));
+    await data.unloadLock.promise;
+    if (data._lastButtonId === "useLibrary") {
+      return librarySelectedIds;
+    } else if (data._lastButtonId == "useCustom") {
+      return await itemPicker();
+    } else {
+      return [];
+    }
+  }
+  return await itemPicker();
 }

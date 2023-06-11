@@ -3,7 +3,10 @@ import { initLocale } from "./utils/locale";
 import { registerPrefsWindow } from "./modules/preferenceWindow";
 import { registerNoteLinkProxyHandler } from "./modules/noteLink";
 import { registerEditorInstanceHook } from "./modules/editor/initalize";
-import { initTemplates } from "./modules/template/controller";
+import {
+  importTemplateFromClipboard,
+  initTemplates,
+} from "./modules/template/controller";
 import { registerMenus } from "./modules/menu";
 import {
   activateWorkspaceTab,
@@ -281,6 +284,8 @@ const onShowTemplatePicker = showTemplatePicker;
 
 const onUpdateTemplatePicker = updateTemplatePicker;
 
+const onImportTemplateFromClipboard = importTemplateFromClipboard;
+
 const onShowImageViewer = showImageViewer;
 
 const onShowExportNoteOptions = showExportNoteOptions;
@@ -314,6 +319,7 @@ export default {
   onSyncing,
   onShowTemplatePicker,
   onUpdateTemplatePicker,
+  onImportTemplateFromClipboard,
   onShowImageViewer,
   onShowExportNoteOptions,
   onShowSyncDiff,
