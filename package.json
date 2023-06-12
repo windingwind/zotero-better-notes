@@ -78,7 +78,7 @@
     "@types/yamljs": "^0.2.31",
     "chokidar-cli": "^3.0.0",
     "compressing": "^1.9.0",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.2.0",
     "cross-env": "^7.0.3",
     "esbuild": "^0.17.19",
     "minimist": "^1.2.8",
