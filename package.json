@@ -76,7 +76,7 @@
     "compressing": "^1.9.0",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.17.19",
+    "esbuild": "^0.18.1",
     "minimist": "^1.2.8",
     "prosemirror-model": "^1.19.2",
     "prosemirror-state": "^1.4.3",
