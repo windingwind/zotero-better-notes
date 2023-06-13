@@ -1,4 +1,5 @@
 import TreeModel = require("tree-model");
+import katex from "katex";
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { getItemDataURL } from "./str";
 import { showHint } from "./hint";
@@ -227,6 +228,16 @@ async function renderNoteHTML(
           .join(",") + ")";
     }
   }
+
+  const mathDelimiterRegex = /^\$+|\$+$/g;
+  doc.querySelectorAll(".math").forEach((node) => {
+    node.innerHTML = katex.renderToString(
+      node.innerHTML.replace(mathDelimiterRegex, ""),
+      {
+        throwOnError: false,
+      }
+    );
+  });
   return doc.body.innerHTML;
 }
 

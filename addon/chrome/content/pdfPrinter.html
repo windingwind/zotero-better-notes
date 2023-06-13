@@ -8,6 +8,21 @@
       type="text/css"
       href="chrome://__addonRef__/content/lib/css/github-markdown-light.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="chrome://__addonRef__/content/lib/css/katex.min.css"
+      crossorigin="anonymous"
+    />
+    <script>
+      // Add message to print window
+      window.onmessage = function (e) {
+        if (e.data.type === "print") {
+          document.querySelector(".markdown-body").innerHTML = e.data.html;
+          window.print();
+          window.close();
+        }
+      };
+    </script>
     <style>
       @page {
         margin: 25mm 20mm 25mm 20mm;
@@ -47,7 +62,6 @@
         }
       }
     </style>
-    <script></script>
   </head>
   <body>
     <article class="markdown-body">

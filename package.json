@@ -52,6 +52,7 @@
     "hast-util-to-text": "^3.1.2",
     "hastscript": "^7.2.0",
     "html-docx-js-typescript": "^0.1.5",
+    "katex": "^0.16.7",
     "rehype-format": "^4.0.1",
     "rehype-parse": "^8.0.4",
     "rehype-remark": "^9.1.2",

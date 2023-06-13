@@ -5,21 +5,15 @@ import { waitUtilAsync } from "../../utils/wait";
 
 export async function savePDF(noteId: number) {
   const html = await renderNoteHTML(Zotero.Items.get(noteId));
+  disablePrintFooterHeader();
   const win = window.openDialog(
     `chrome://${config.addonRef}/content/pdfPrinter.html`,
     `${config.addonRef}-imageViewer`,
     `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`
   )!;
   await waitUtilAsync(() => win.document.readyState === "complete");
-  win.document.querySelector(".markdown-body")!.innerHTML = html;
-  const printPromise = Zotero.Promise.defer();
-  disablePrintFooterHeader();
-  win.addEventListener("mouseover", (ev) => {
-    win.close();
-    printPromise.resolve();
-  });
-  win.print();
-  await printPromise.promise;
+  await Zotero.Promise.delay(3000);
+  win.postMessage({ type: "print", html }, "*");
   showHint("Note Saved as PDF");
 }
 
