@@ -18,6 +18,7 @@ const startZotero = `${zoteroPath} --debugger --purgecaches ${
 
 const script = `
 (async () => {
+  Services.obs.notifyObservers(null, "startupcache-invalidate", null);
   const { AddonManager } = ChromeUtils.import("resource://gre/modules/AddonManager.jsm");
   const addon = await AddonManager.getAddonByID("${addonID}");
   await addon.reload();
