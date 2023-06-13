@@ -20,9 +20,7 @@ const script = `
 (async () => {
   const { AddonManager } = ChromeUtils.import("resource://gre/modules/AddonManager.jsm");
   const addon = await AddonManager.getAddonByID("${addonID}");
-  addon.disable();
-  await Zotero.Promise.delay(1000);
-  addon.enable();
+  await addon.reload();
   const progressWindow = new Zotero.ProgressWindow({ closeOnClick: true });
   progressWindow.changeHeadline("${addonName} Hot Reload");
   progressWindow.progress = new progressWindow.ItemProgress(
