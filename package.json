@@ -8,6 +8,7 @@
     "addonRef": "BetterNotes",
     "prefsPrefix": "extensions.zotero.Knowledge4Zotero",
     "addonInstance": "BetterNotes",
+    "dataSchemaVersion": "8",
     "releasepage": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi",
     "updaterdf": "https://raw.githubusercontent.com/windingwind/zotero-better-notes/master/update.json"
   },

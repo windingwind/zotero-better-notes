@@ -3,6 +3,7 @@ import katex from "katex";
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { getItemDataURL } from "./str";
 import { showHint } from "./hint";
+import { config } from "../../package.json";
 
 export {
   renderNoteHTML,
@@ -19,12 +20,10 @@ export {
 };
 
 function parseHTMLLines(html: string): string[] {
-  let containerIndex = html.search(/data-schema-version="[0-9]*">/g);
-  if (containerIndex != -1) {
-    html = html.substring(
-      containerIndex + 'data-schema-version="8">'.length,
-      html.length - "</div>".length
-    );
+  // Remove container with one of the attrs named data-schema-version if exists
+  if (html.includes("data-schema-version")) {
+    html = html.replace(/<div[^>]*data-schema-version[^>]*>/, "");
+    html = html.replace(/<\/div>/, "");
   }
   let noteLines = html.split("\n").filter((e) => e);
 
@@ -125,11 +124,17 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   let noteText: string = note.getNote();
   let containerIndex = noteText.search(/data-schema-version="[0-9]*/g);
   if (containerIndex === -1) {
-    note.setNote(`<div data-schema-version="8">${lines.join("\n")}</div>`);
+    note.setNote(
+      `<div data-schema-version="${config.dataSchemaVersion}">${lines.join(
+        "\n"
+      )}</div>`
+    );
   } else {
     let noteHead = noteText.substring(0, containerIndex);
     note.setNote(
-      `${noteHead}data-schema-version="8">${lines.join("\n")}</div>`
+      `${noteHead}data-schema-version="${
+        config.dataSchemaVersion
+      }">${lines.join("\n")}</div>`
     );
   }
 

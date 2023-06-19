@@ -1,4 +1,5 @@
 import { addLineToNote } from "../../utils/note";
+import { config } from "../../../package.json";
 
 export async function fromMD(
   filepath: string,
@@ -34,7 +35,7 @@ export async function fromMD(
   const noteStatus = noteItem
     ? addon.api.sync.getNoteStatus(noteItem.id)
     : {
-        meta: '<div data-schema-version="9">',
+        meta: `<div data-schema-version="${config.dataSchemaVersion}">`,
         content: "",
         tail: "</div>",
       };

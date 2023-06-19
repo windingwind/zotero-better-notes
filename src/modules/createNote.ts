@@ -1,4 +1,5 @@
 import { getString } from "../utils/locale";
+import { config } from "../../package.json";
 
 export { createWorkspaceNote, createNoteFromTemplate };
 
@@ -25,7 +26,9 @@ async function createWorkspaceNote() {
   );
   const noteID = await ZoteroPane.newNote();
   const noteItem = Zotero.Items.get(noteID);
-  noteItem.setNote(`<div data-schema-version="8"><h1>${header}</h1>\n</div>`);
+  noteItem.setNote(
+    `<div data-schema-version="${config.dataSchemaVersion}"><h1>${header}</h1>\n</div>`
+  );
   await noteItem.saveTx();
   addon.hooks.onSetWorkspaceNote(noteID, "main");
   if (

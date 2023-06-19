@@ -1,6 +1,7 @@
 import YAML = require("yamljs");
 import { clearPref, getPref, setPref } from "../../utils/prefs";
 import { getNoteLinkParams } from "../../utils/link";
+import { config } from "../../../package.json";
 
 export {
   getRelatedNoteIds,
@@ -91,7 +92,7 @@ function getNoteStatus(noteId: number) {
   const metaRegex = /"?data-schema-version"?="[0-9]*">/;
   const match = fullContent?.match(metaRegex);
   if (!match || match.length == 0) {
-    ret.meta = '<div "data-schema-version"="9">';
+    ret.meta = `<div "data-schema-version"="${config.dataSchemaVersion}">`;
     ret.content = fullContent || "";
     return ret;
   }
