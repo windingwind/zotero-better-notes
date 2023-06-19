@@ -74,6 +74,22 @@ async function runTemplate(
   templateLines = templateLines.filter((line) => !line.startsWith("// @"));
   templateText = templateLines.join("\n");
 
+  function constructFunction(content: string) {
+    return `$\{await new Promise(async (_resolve) => {
+      const _call = async () => {
+        ${content}
+      };
+      _resolve(await _call());})}`;
+  }
+
+  // Replace string inside ${{}}$ to async function
+  templateText = templateText.replace(
+    /\$\{\{([\s\S]*?)\}\}\$/g,
+    (match, content) => {
+      return constructFunction(content);
+    }
+  );
+
   try {
     const func = new AsyncFunction(argString, "return `" + templateText + "`");
     const res = await func(...argList);

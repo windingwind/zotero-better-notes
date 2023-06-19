@@ -87,25 +87,29 @@ Code wrapped by `// @${stage}-begin` and `// @${stage}-end` will be processed du
 
 ## Script in Note Template
 
-Note template supports JavaScript. Wrap them with `${code here}`. The example in [Import Note Template](#import-note-template) uses `${new Date().toLocaleString()}` to render the current time.
+Note template supports JavaScript.
+
+### One-Line Code
+
+Wrap one-line code with `${code here}`. The example in [Import Note Template](#import-note-template) uses `${new Date().toLocaleString()}` to render the current time.
+
+### Multi-Line Code (Function)
+
+Wrap lines with `${{code here}}$`. The example below will be rendered as `3` (the return value of the function).
+
+```js
+${{
+  const a = 1;
+  const b = 2;
+  return a + b;
+}}$
+```
+
+### Global Variables
 
 Each template has its own global variables. See [Template Type](#template-type) for more information.
 
 All templates share a global variable `_env = {dryRun: boolean}`. In preview mode (in template editor), the `_env.dryRun` is `true` and in that case you must not modify the library.
-
-> 💡How to run async code?
-> Wrap them in an async function call:
->
-> ```js
-> ${
->   await new Promise(async (resolve) => {
->       // execute async code here
->       const returnString = await something();
->       // return a string as the rendering result:
->       resolve(returnString);
->   });
-> }
-> ```
 
 ## Template Type
 
@@ -260,7 +264,7 @@ ${topItem.getCreators().map((au) => au.firstName + " " + au.lastName).join("; ")
 <summary>Click to show</summary>
 
 ```js
-${await new Promise(async (resolve) => {
+${{
   async function getPDFLink(item) {
     const att = await item.getBestAttachment();
     if (!att || !att.isPDFAttachment()) {
@@ -274,8 +278,9 @@ ${await new Promise(async (resolve) => {
       return `zotero://open-pdf/groups/${groupID}/items/${key}`;
     }
   }
-  resolve(await getPDFLink(topItem));
-})}
+  sharedObj.getPDFLink = getPDFLink;
+  return await getPDFLink(topItem);
+}}$
 ```
 
 </details>
@@ -291,7 +296,7 @@ ${await new Promise(async (resolve) => {
 <summary>Click to show</summary>
 
 ```js
-${await new Promise(async (resolve) => {
+${{
   const creators = topItem.getCreators();
   let content = "";
   const year = topItem.getField("year");
@@ -303,10 +308,10 @@ ${await new Promise(async (resolve) => {
     content = `${creators[0].lastName} etal., ${year}`;
   }
   // The getPDFLink is from above
-  const link = await getPDFLink(topItem);
+  const link = await sharedObj.getPDFLink(topItem);
   let str = `<a href="${link}">${content}</a>`;
-  resolve(str);
-})}
+  return str;
+}}$
 ```
 
 </details>
