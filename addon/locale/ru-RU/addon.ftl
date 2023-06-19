@@ -3,6 +3,11 @@ pref-title=BNotes
 menuItem-setMainNote=Как заметка раб. пространства
 menuItem-exportNote=Экспорт заметки
 
+menuFile-openMainNote = Choose and Open Workspace Note
+menuFile-openMainNote-error = Choosen item is not a valid note item
+menuFile-openRecent = Open Recent Workspace Note
+menuFile-openRecent-empty = No Recent Workspace Note
+
 menuEdit-insertTemplate=Вставить шаблон в заметку раб. пространства
 menuEdit-exportTemplate=Экспорт шаблона в файл...
 menuEdit-templateEditor=Редактор шаблонов

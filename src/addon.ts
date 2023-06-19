@@ -119,6 +119,22 @@ class Addon {
       },
       set mainId(id: number) {
         setPref("mainKnowledgeID", id);
+        const recentMainNoteIds = getPref("recentMainNoteIds") as string;
+        const recentMainNoteIdsArr = recentMainNoteIds
+          ? recentMainNoteIds.split(",").map((id) => parseInt(id))
+          : [];
+        const idx = recentMainNoteIdsArr.indexOf(id);
+        if (idx !== -1) {
+          recentMainNoteIdsArr.splice(idx, 1);
+        }
+        recentMainNoteIdsArr.unshift(id);
+        setPref(
+          "recentMainNoteIds",
+          recentMainNoteIdsArr
+            .slice(0, 10)
+            .filter((id) => Zotero.Items.get(id).isNote())
+            .join(",")
+        );
       },
       previewId: -1,
       tab: {

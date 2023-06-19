@@ -3,6 +3,11 @@ pref-title = BNotes
 menuItem-setMainNote = As Workspace Note
 menuItem-exportNote = Export Note
 
+menuFile-openMainNote = Choose and Open Workspace Note
+menuFile-openMainNote-error = Choosen item is not a valid note item
+menuFile-openRecent = Open Recent Workspace Note
+menuFile-openRecent-empty = No Recent Workspace Note
+
 menuEdit-insertTemplate = Insert Template to Workspace Note
 menuEdit-exportTemplate = Export Template to File...
 menuEdit-templateEditor = Template Editor

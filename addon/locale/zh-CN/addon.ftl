@@ -3,6 +3,11 @@ pref-title=BNotes
 menuItem-setMainNote=设为工作区主笔记
 menuItem-exportNote=导出笔记
 
+menuFile-openMainNote = 设置并打开工作区笔记
+menuFile-openMainNote-error = 选择的条目不是有效的笔记条目
+menuFile-openRecent = 打开最近使用的工作区笔记
+menuFile-openRecent-empty = 无最近使用的工作区笔记
+
 menuEdit-insertTemplate=插入模板到工作区笔记
 menuEdit-exportTemplate=导出模板到文件...
 menuEdit-templateEditor=模板编辑器
