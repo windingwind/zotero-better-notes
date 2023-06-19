@@ -118,5 +118,7 @@ async function renderTemplatePreview(
   } else {
     html = `<p>Preview not available for template ${templateName}</p>`;
   }
+  // complete <br> and <hr> tags
+  html = html.replace(/<br>/g, "<br/>").replace(/<hr>/g, "<hr/>");
   return html;
 }
