@@ -1,0 +1,14 @@
+workspace-title = Workspace
+workspace-expandLevel-label = Outline expand to heading level
+sync-title = Sync
+sync-period-label = Auto-sync period (seconds)
+sync-manager =
+    .label = Open Sync Manager
+template-title = Template
+template-editor =
+    .label = Open Template Editor
+annotation-title = PDF Annotation
+annotation-autoAnnotation =
+    .label = Automatically add new annotations to workspace note
+help =
+    .value = { $name } VERSION { $version } Build { $time }

@@ -9,6 +9,7 @@ import {
   mkdirSync,
   readdirSync,
   rmSync,
+  renameSync,
 } from "fs";
 import { env, exit } from "process";
 import replaceInFile from "replace-in-file";
@@ -146,15 +147,10 @@ async function main() {
 
   const optionsAddon = {
     files: [
-      join(buildDir, "**/*.rdf"),
-      join(buildDir, "**/*.dtd"),
-      join(buildDir, "**/*.xul"),
       join(buildDir, "**/*.html"),
       join(buildDir, "**/*.xhtml"),
       join(buildDir, "**/*.json"),
-      join(buildDir, "addon/prejs"),
-      join(buildDir, "addon/chrome.manifest"),
-      join(buildDir, "addon/manifest.json"),
+      join(buildDir, "addon/prefs.js"),
       join(buildDir, "addon/bootstrap.js"),
       "update.json",
       "update.rdf",
@@ -173,6 +169,30 @@ async function main() {
   );
 
   console.log("[Build] Replace OK");
+
+  // Walk the builds/addon/locale folder's sub folders and rename *.ftl to addonRef-*.ftl
+  const localeDir = join(buildDir, "addon/locale");
+  const localeFolders = readdirSync(localeDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
+
+  for (const localeSubFolder of localeFolders) {
+    const localeSubDir = join(localeDir, localeSubFolder);
+    const localeSubFiles = readdirSync(localeSubDir, {
+      withFileTypes: true,
+    })
+      .filter((dirent) => dirent.isFile())
+      .map((dirent) => dirent.name);
+
+    for (const localeSubFile of localeSubFiles) {
+      if (localeSubFile.endsWith(".ftl")) {
+        renameSync(
+          join(localeSubDir, localeSubFile),
+          join(localeSubDir, `${config.addonRef}-${localeSubFile}`)
+        );
+      }
+    }
+  }
 
   console.log("[Build] Addon prepare OK");
 

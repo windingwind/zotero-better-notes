@@ -1,0 +1,14 @@
+workspace-title = Рабочее пространство
+workspace-expandLevel-label = Outline расширить до уровня заголовка
+sync-title = Синк
+sync-period-label = Авто-синк период (сек)
+sync-manager =
+    .label = Открыть Синк менеджер
+template-title = Шаблон
+template-editor =
+    .label = Открыть  редактор шаблонов
+annotation-title = PDF Аннотация
+annotation-autoAnnotation =
+    .label = Автодобавлять новые аннотации к заметкам раб.пространства
+help =
+    .value = { $name } VERSION { $version } Build { $time }

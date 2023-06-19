@@ -1,13 +1,17 @@
+<linkset>
+  <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+</linkset>
 <vbox
   id="zotero-prefpane-__addonRef__"
   onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', {window})"
 >
   <groupbox>
-    <label><html:h2>&zotero.__addonRef__.pref.workspace.title;</html:h2></label>
+    <label><html:h2 data-l10n-id="workspace-title"></html:h2></label>
     <hbox>
-      <html:label for="__addonRef__-workspace-expandLevel"
-        >&zotero.__addonRef__.pref.workspace.expandLevel.label;</html:label
-      >
+      <html:label
+        for="__addonRef__-workspace-expandLevel"
+        data-l10n-id="workspace-expandLevel-label"
+      ></html:label>
       <html:input
         type="number"
         min="1"
@@ -19,11 +23,12 @@
     </hbox>
   </groupbox>
   <groupbox>
-    <label><html:h2>&zotero.__addonRef__.pref.sync.title;</html:h2></label>
+    <label><html:h2 data-l10n-id="sync-title"></html:h2></label>
     <hbox>
-      <html:label for="__addonRef__-sync-period"
-        >&zotero.__addonRef__.pref.sync.period.label;</html:label
-      >
+      <html:label
+        for="__addonRef__-sync-period"
+        data-l10n-id="sync-period-label"
+      ></html:label>
       <html:input
         type="number"
         min="-1"
@@ -37,26 +42,24 @@
     <hbox>
       <button
         onclick="Zotero.__addonInstance__.hooks.onShowSyncManager()"
-        label="&zotero.__addonRef__.pref.sync.manager.label;"
+        data-l10n-id="sync-manager"
       ></button>
     </hbox>
   </groupbox>
   <groupbox>
-    <label><html:h2>&zotero.__addonRef__.pref.template.title;</html:h2></label>
+    <label><html:h2 data-l10n-id="template-title"></html:h2></label>
     <hbox>
       <button
         onclick="Zotero.__addonInstance__.hooks.onShowTemplateEditor()"
-        label="&zotero.__addonRef__.pref.template.editor.label;"
+        data-l10n-id="template-editor"
       ></button>
     </hbox>
   </groupbox>
   <groupbox>
-    <label
-      ><html:h2>&zotero.__addonRef__.pref.annotation.title;</html:h2></label
-    >
+    <label><html:h2 data-l10n-id="annotation-title"></html:h2></label>
     <!-- <checkbox
       id="__addonRef__-enableAddToNote"
-      label="&zotero.__addonRef__.pref.annotation.autoAnnotation.label;"
+      data-l10n-id="annotation-autoAnnotation"
       native="true"
       preference="__prefsPrefix__.autoAnnotation"
     /> -->
@@ -64,6 +67,7 @@
 </vbox>
 <vbox>
   <label
-    value="&zotero.__addonRef__.help.version.label;  &zotero.__addonRef__.help.releasetime.label;"
+    data-l10n-id="help"
+    data-l10n-args='{"time": "__buildTime__","name": "__addonName__","version":"__buildVersion__"}'
   ></label>
 </vbox>

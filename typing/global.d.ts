@@ -30,3 +30,5 @@ declare const addon: import("../src/addon").default;
 declare const __env__: "production" | "development";
 
 declare const ChromeUtils: any;
+
+declare class Localization {}
