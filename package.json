@@ -22,7 +22,7 @@
     "start-z7": "node scripts/start.mjs --z 7",
     "start": "node scripts/start.mjs",
     "stop": "node scripts/stop.mjs",
-    "start-watch": "concurrently -c auto npm:start npm:watch",
+    "start-watch": "npm run build-dev && concurrently -c auto npm:start npm:watch",
     "restart-dev-z6": "npm run build-dev && npm run stop && npm run start-z6",
     "restart-dev-z7": "npm run build-dev && npm run stop && npm run start-z7",
     "restart-dev": "npm run build-dev && npm run stop && npm run start",
