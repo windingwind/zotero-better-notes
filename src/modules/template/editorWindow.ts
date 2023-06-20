@@ -185,7 +185,7 @@ async function updatePreview() {
   const container = win?.document.getElementById("preview-container");
   if (container) {
     if (ztoolkit.isZotero7()) {
-      container.innerHTML = html;
+      container.innerHTML = html.replace(/&nbsp;/g, "#160;");
     } else {
       container.innerHTML = "";
       container.appendChild(
