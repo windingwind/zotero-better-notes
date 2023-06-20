@@ -180,12 +180,16 @@ function updateEditor() {
 
 async function updatePreview() {
   const name = getSelectedTemplateName();
-  const html = await addon.api.template.renderTemplatePreview(name);
+  let html = (await addon.api.template.renderTemplatePreview(name))
+    .replace(/&nbsp;/g, "#160;")
+    .replace(/<br>/g, "<br/>")
+    .replace(/<hr>/g, "<hr/>")
+    .replace(/<img([^>]+)\>/g, "<img$1/>");
   const win = addon.data.templateEditor.window;
   const container = win?.document.getElementById("preview-container");
   if (container) {
     if (ztoolkit.isZotero7()) {
-      container.innerHTML = html.replace(/&nbsp;/g, "#160;");
+      container.innerHTML = html;
     } else {
       container.innerHTML = "";
       container.appendChild(

@@ -51,7 +51,8 @@ function serializeAnnotations(
     if (
       (!annotation.text &&
         !annotation.comment &&
-        !annotation.imageAttachmentKey) ||
+        !annotation.imageAttachmentKey &&
+        !annotation.image) ||
       annotation.type === "ink"
     ) {
       continue;
@@ -130,6 +131,11 @@ function serializeAnnotations(
       )}"/>`;
     }
 
+    // Image in b64
+    if (annotation.image) {
+      imageHTML = `<img src="${annotation.image}"/>`;
+    }
+
     // Text
     if (annotation.text) {
       let text = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
@@ -202,15 +208,15 @@ function serializeAnnotations(
 }
 
 export async function importAnnotationImagesToNote(
-  note: Zotero.Item,
+  note: Zotero.Item | undefined,
   annotations: CustomAnnotationJSON[]
 ) {
   for (let annotation of annotations) {
-    if (annotation.image) {
+    if (annotation.image && note) {
       annotation.imageAttachmentKey =
         (await importImageToNote(note, annotation.image)) || "";
+      delete annotation.image;
     }
-    delete annotation.image;
   }
 }
 
@@ -230,8 +236,8 @@ export async function parseAnnotationHTML(
     }
     annotationJSONList.push(annotJson!);
   }
-  options.noteItem &&
-    (await importAnnotationImagesToNote(options.noteItem, annotationJSONList));
+
+  await importAnnotationImagesToNote(options.noteItem, annotationJSONList);
   const html = serializeAnnotations(
     annotationJSONList as Required<CustomAnnotationJSON>[],
     false,
