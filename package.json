@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/windingwind/zotero-better-notes#readme",
   "dependencies": {
-    "asciidoctor": "^2.2.6",
+    "asciidoctor": "^3.0.2",
     "crypto-js": "^4.1.1",
     "diff": "^5.1.0",
     "hast-util-to-html": "^8.0.4",
