@@ -1,12 +1,13 @@
 # Zotero Better Notes
 
+[![zotero target version](https://img.shields.io/badge/Zotero-7-green?style=flat-square&logo=zotero&logoColor=CC2936)](https://www.zotero.org)
 [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
 
 <div align=center><img src="./docs/res/teaser.png" width="800px"></img></div>
 
 Everything about note management. All in Zotero.
 
-Better Notes Handbook (out dated, for version<=0.8.9): [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
+Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
 
 ## 🧩 Outline
 
@@ -72,19 +73,31 @@ and:
 
 ## 🤔 What can it do?
 
-🖇️ Connect knowledge fragments with _note link_. By one click. [Learn more →](#note-link)
+🖇️ Connect knowledge fragments with _note link_. With one click. [Learn more →](#note-link)
 
-🗂️ Simplify and automate knowledge analysis with extensive _note template_. By one click. [Learn more →](#note-template)
+🗂️ Simplify and automate knowledge analysis with extensive _note templates_. With one click. [Learn more →](#note-template)
 
 🔄️ Keep in sync with your Markdown files. Two-way, automatically. [Learn more →](#syncing-note-🔄️-markdown)
 
-🖨️ Export note to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
+🖨️ Export notes to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
 
 📝 Enhancements for Zotero's note editor.
 
 ## 👋 Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)_Note_ If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)
+  
+  <details style="text-indent: 2em">
+  <summary>More Versions</summary>
+  
+  - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
+  - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
+  - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
+  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including Beta)
+
+  </details>
+
+  _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
@@ -93,7 +106,7 @@ and:
 
 ## 😎 Quick start
 
-BN offers a range of features that can be combined like lego blocks to build your own note-taking workflow.
+BN offers a range of features that can be combined like Lego blocks to build your own note-taking workflow.
 
 Start taking notes in Zotero with BN in **5 minutes**!
 
@@ -110,7 +123,7 @@ The _workspace_ contains a default note called the _workspace note_. You can cre
 > 💡 How to set an existing note as the _workspace note_?
 >
 > 1. In the library: select a note item and right-click
-> 2. In the note editor: click on the tools button
+> 2. In the note editor: click on the Tools button
 >
 > You can change the _workspace note_ at any time.
 
