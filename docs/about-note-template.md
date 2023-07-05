@@ -11,6 +11,10 @@ One-click to import.
 <summary>Click to show the example template</summary>
 
 ```yaml
+# This template is for importing.
+# Do not copy-paste this to the editor directly.
+# To import the template, copy the content and
+# goto Zotero menubar, click Edit->New Template from Clipboard.
 name: "[Text] Current Time"
 content: |-
   // @use-markdown
@@ -125,6 +129,10 @@ If no stage pragma is given, the whole template will be processed on the default
 <summary>Click to show the example template</summary>
 
 ```yaml
+# This template is for importing.
+# Do not copy-paste this to the editor directly.
+# To import the template, copy the content and
+# goto Zotero menubar, click Edit->New Template from Clipboard.
 name: "[Item] Example Item Template"
 content: |-
   // @beforeloop-begin
