@@ -11,10 +11,10 @@ One-click to import.
 <summary>Click to show the example template</summary>
 
 ```yaml
-# This template is for importing.
-# Do not copy-paste this to the editor directly.
-# To import the template, copy the content and
-# goto Zotero menubar, click Edit->New Template from Clipboard.
+# This template is specifically for importing/sharing, using better 
+# notes 'import from clipboard': copy the content and
+# goto Zotero menu bar, click Edit->New Template from Clipboard.  
+# Do not copy-paste this to better notes template editor directly.
 name: "[Text] Current Time"
 content: |-
   // @use-markdown
@@ -129,10 +129,10 @@ If no stage pragma is given, the whole template will be processed on the default
 <summary>Click to show the example template</summary>
 
 ```yaml
-# This template is for importing.
-# Do not copy-paste this to the editor directly.
-# To import the template, copy the content and
-# goto Zotero menubar, click Edit->New Template from Clipboard.
+# This template is specifically for importing/sharing, using better 
+# notes 'import from clipboard': copy the content and
+# goto Zotero menu bar, click Edit->New Template from Clipboard.  
+# Do not copy-paste this to better notes template editor directly.
 name: "[Item] Example Item Template"
 content: |-
   // @beforeloop-begin
@@ -382,6 +382,10 @@ Users can use [Import Note Template](#import-note-template) to copy and import t
 A template snippet should be in YAML format (YAML has better support for multi-line content):
 
 ```yaml
+# This template is specifically for importing/sharing, using better 
+# notes 'import from clipboard': copy the content and
+# goto Zotero menu bar, click Edit->New Template from Clipboard.  
+# Do not copy-paste this to better notes template editor directly.
 name: "[TYPE] TEMPLATE NAME"
 content: |-
   // @author YOUR NAME
