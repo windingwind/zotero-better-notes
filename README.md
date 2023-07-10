@@ -11,13 +11,13 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 
 ## 🧩 Outline
 
-[🧐 What is this?](#🧐-what-is-this)
+[🧐 What is this?](#-what-is-this)
 
-[🤔 What can it do?](#🤔-what-can-it-do)
+[🤔 What can it do?](#-what-can-it-do)
 
-[👋 Install](#👋-install)
+[👋 Install](#-install)
 
-[😎 Quick start](#😎-quick-start)
+[😎 Quick start](#-quick-start)
 
 <details style="text-indent: 2em">
 <summary>More</summary>
@@ -30,7 +30,7 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 
 [Note Template](#note-template)
 
-[Syncing: Note 🔄️ Markdown](#syncing-note-🔄️-markdown)
+[Syncing: Note 🔄️ Markdown](#syncing-note-%EF%B8%8F-markdown)
 
 [Note Export](#note-export)
 
@@ -40,17 +40,17 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 
 </details>
 
-[🧲 API](#🧲-api)
+[🧲 API](#-api)
 
-[🔧 Development](#🔧-development)
+[🔧 Development](#-development)
 
-[🔔 Disclaimer](#🔔-disclaimer)
+[🔔 Disclaimer](#-disclaimer)
 
-[🔎 My Zotero Plugins](#🔎-my-zotero-plugins)
+[🔎 My Zotero Plugins](#-my-zotero-plugins)
 
-[💰 Sponsor Me](#💰-sponsor-me)
+[💰 Sponsor Me](#-sponsor-me)
 
-[🫶 Sponsors](#🫶-sponsors)
+[🫶 Sponsors](#-sponsors)
 
 ## 🧐 What is this?
 
