@@ -91,17 +91,17 @@ async function createNoteFromMD() {
 
   const syncNotes = window.confirm(getString("alert-syncImportedNotes"));
 
-  const filePaths = (await new ztoolkit.FilePicker(
+  const filepaths = await new ztoolkit.FilePicker(
     "Import MarkDown",
     "multiple",
     [[`MarkDown(*.md)`, `*.md`]]
-  ).open()) as string[];
+  ).open();
 
-  if (!filePaths.length) {
+  if (!filepaths) {
     return;
   }
 
-  for (const filepath of filePaths) {
+  for (const filepath of filepaths) {
     const noteItem = await addon.api.$import.fromMD(filepath, {
       ignoreVersion: true,
     });
