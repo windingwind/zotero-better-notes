@@ -22,6 +22,7 @@ menuAddNote-newMainNote-enterNoteTitle=请输入新笔记的标题：
 menuAddNote-newMainNote-openWorkspaceTab=现在打开笔记工作区吗？
 menuAddNote-newTemplateStandaloneNote=从模板新建独立笔记
 menuAddNote-newTemplateItemNote=从模板新建条目子笔记
+menuAddNote-importMD = 导入MarkDown为笔记
 
 menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
 
@@ -80,7 +81,7 @@ syncInfo-sync=同步
 syncInfo-unSync=取消同步
 syncInfo-reveal=在文件夹中显示
 syncInfo-manager=同步管理
-syncInfo-export=导出为---
+syncInfo-export=导出为...
 syncInfo-cancel=关闭
 
 sync-start-hint=自动同步已启用, 间隔
@@ -122,3 +123,4 @@ templatePicker-itemData-title=选择条目模板数据源
 alert-notValidCollectionError=请选择一个有效的分类。
 alert-notValidParentItemError=无效的父条目。
 alert-notValidWorkspaceNote=工作区笔记未设置。创建一个吗？
+alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？

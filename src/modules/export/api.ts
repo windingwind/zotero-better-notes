@@ -68,10 +68,10 @@ async function exportNotes(
   );
   if (options.exportMD) {
     if (options.setAutoSync) {
-      const raw = await new ztoolkit.FilePicker(
+      const raw = (await new ztoolkit.FilePicker(
         `${getString("fileInterface.sync")} MarkDown File`,
         "folder"
-      ).open();
+      ).open()) as string;
       if (raw) {
         const syncDir = formatPath(raw);
         // Hard reset sync status for input notes
@@ -140,12 +140,12 @@ async function toMD(
 ) {
   let filename = options.filename;
   if (!filename) {
-    const raw = await new ztoolkit.FilePicker(
+    const raw = (await new ztoolkit.FilePicker(
       `${Zotero.getString("fileInterface.export")} MarkDown File`,
       "save",
       [["MarkDown File(*.md)", "*.md"]],
       `${noteItem.getNoteTitle()}.md`
-    ).open();
+    ).open()) as string;
     if (!raw) return;
     filename = formatPath(raw, ".md");
   }
@@ -171,24 +171,24 @@ async function toSync(
 }
 
 async function toDocx(noteItem: Zotero.Item) {
-  const raw = await new ztoolkit.FilePicker(
+  const raw = (await new ztoolkit.FilePicker(
     `${Zotero.getString("fileInterface.export")} MS Word Docx`,
     "save",
     [["MS Word Docx File(*.docx)", "*.docx"]],
     `${noteItem.getNoteTitle()}.docx`
-  ).open();
+  ).open()) as string;
   if (!raw) return;
   const filename = formatPath(raw, ".docx");
   await addon.api.$export.saveDocx(filename, noteItem.id);
 }
 
 async function toFreeMind(noteItem: Zotero.Item) {
-  const raw = await new ztoolkit.FilePicker(
+  const raw = (await new ztoolkit.FilePicker(
     `${Zotero.getString("fileInterface.export")} FreeMind XML`,
     "save",
     [["FreeMind XML File(*.mm)", "*.mm"]],
     `${noteItem.getNoteTitle()}.mm`
-  ).open();
+  ).open()) as string;
   if (!raw) return;
   const filename = formatPath(raw, ".mm");
   await addon.api.$export.saveFreeMind(filename, noteItem.id);

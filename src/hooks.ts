@@ -44,6 +44,7 @@ import { showTemplateEditor } from "./modules/template/editorWindow";
 import {
   createNoteFromTemplate,
   createWorkspaceNote,
+  createNoteFromMD,
 } from "./modules/createNote";
 import { annotationTagAction } from "./modules/annotationTagAction";
 
@@ -302,6 +303,8 @@ const onCreateWorkspaceNote = createWorkspaceNote;
 
 const onCreateNoteFromTemplate = createNoteFromTemplate;
 
+const onCreateNoteFromMD = createNoteFromMD;
+
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
 // Otherwise the code would be hard to read and maintain.
@@ -328,4 +331,5 @@ export default {
   onShowTemplateEditor,
   onCreateWorkspaceNote,
   onCreateNoteFromTemplate,
+  onCreateNoteFromMD,
 };

@@ -22,6 +22,7 @@ menuAddNote-newMainNote-enterNoteTitle = Enter new note title:
 menuAddNote-newMainNote-openWorkspaceTab = Open note workspace now?
 menuAddNote-newTemplateStandaloneNote = New Standalone Note from Template
 menuAddNote-newTemplateItemNote = New Item Note from Template
+menuAddNote-importMD = Import MarkDown File as Note
 
 menuAddReaderNote-newTemplateNote = New Item Note from Template
 
@@ -122,3 +123,4 @@ templatePicker-itemData-title = Choose Item Template Data Source
 alert-notValidCollectionError = Please select a valid collection.
 alert-notValidParentItemError = No valid parent item.
 alert-notValidWorkspaceNote = Workspace note is not set. Create one?
+alert-syncImportedNotes = Keep imported notes in sync with MarkDown files?

@@ -108,8 +108,7 @@ export function registerMenus() {
     },
   });
 
-  // menuTools
-  // menuEdit
+  // menuFile
   const menuFileAnchor = document.querySelector(
     "#menu_newCollection"
   ) as XUL.MenuItem;
@@ -227,9 +226,21 @@ export function registerMenus() {
     "menuFile",
     {
       tag: "menuitem",
-      label: getString("menuAddNote.newMainNote"),
+      label: getString("menuAddNote-importMD"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: addon.hooks.onCreateWorkspaceNote,
+      commandListener: () => addon.hooks.onCreateNoteFromMD(),
+    },
+    "after",
+    menuFileAnchor
+  );
+  ztoolkit.Menu.register(
+    "menuFile",
+    {
+      tag: "menuitem",
+      label: getString("menuAddNote.newTemplateItemNote"),
+      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+      commandListener: () =>
+        addon.hooks.onCreateNoteFromTemplate("item", "library"),
     },
     "after",
     menuFileAnchor
@@ -249,10 +260,9 @@ export function registerMenus() {
     "menuFile",
     {
       tag: "menuitem",
-      label: getString("menuAddNote.newTemplateItemNote"),
+      label: getString("menuAddNote.newMainNote"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: () =>
-        addon.hooks.onCreateNoteFromTemplate("item", "library"),
+      commandListener: addon.hooks.onCreateWorkspaceNote,
     },
     "after",
     menuFileAnchor
@@ -280,6 +290,12 @@ export function registerMenus() {
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: () =>
       addon.hooks.onCreateNoteFromTemplate("item", "library"),
+  });
+  ztoolkit.Menu.register(newNoteMenu, {
+    tag: "menuitem",
+    label: getString("menuAddNote-importMD"),
+    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+    commandListener: () => addon.hooks.onCreateNoteFromMD(),
   });
 
   // create note menu in reader side panel

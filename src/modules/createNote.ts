@@ -1,7 +1,7 @@
 import { getString } from "../utils/locale";
 import { config } from "../../package.json";
 
-export { createWorkspaceNote, createNoteFromTemplate };
+export { createWorkspaceNote, createNoteFromTemplate, createNoteFromMD };
 
 async function createWorkspaceNote() {
   const currentCollection = ZoteroPane.getSelectedCollection();
@@ -79,5 +79,43 @@ async function createNoteFromTemplate(
     addon.hooks.onShowTemplatePicker("create", {
       noteType,
     });
+  }
+}
+
+async function createNoteFromMD() {
+  const currentCollection = ZoteroPane.getSelectedCollection();
+  if (!currentCollection) {
+    window.alert(getString("alert.notValidCollectionError"));
+    return;
+  }
+
+  const syncNotes = window.confirm(getString("alert-syncImportedNotes"));
+
+  const filePaths = (await new ztoolkit.FilePicker(
+    "Import MarkDown",
+    "multiple",
+    [[`MarkDown(*.md)`, `*.md`]]
+  ).open()) as string[];
+
+  if (!filePaths.length) {
+    return;
+  }
+
+  for (const filepath of filePaths) {
+    const noteItem = await addon.api.$import.fromMD(filepath, {
+      ignoreVersion: true,
+    });
+    if (noteItem && syncNotes) {
+      const pathSplit = Zotero.File.normalizeToUnix(filepath).split("/");
+      const stat = await OS.File.stat(filepath);
+      addon.api.sync.updateSyncStatus(noteItem.id, {
+        itemID: noteItem.id,
+        path: Zotero.File.normalizeToUnix(pathSplit.slice(0, -1).join("/")),
+        filename: pathSplit.pop() || "",
+        lastsync: new Date().getTime(),
+        md5: "",
+        noteMd5: Zotero.Utilities.Internal.md5(noteItem.getNote(), false),
+      });
+    }
   }
 }

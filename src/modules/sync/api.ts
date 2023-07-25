@@ -77,6 +77,7 @@ function updateSyncStatus(noteId: number, status: SyncStatus) {
   addSyncNote(noteId);
   setPref(`syncDetail-${noteId}`, JSON.stringify(status));
 }
+
 function getNoteStatus(noteId: number) {
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem?.isNote()) {
@@ -183,6 +184,16 @@ async function getMDStatus(
 }
 
 async function getMDFileName(noteId: number, searchDir?: string) {
+  const syncStatus = getSyncStatus(noteId);
+  // If the note is already synced, use the filename in sync status
+  if (
+    (!searchDir || searchDir === syncStatus.path) &&
+    syncStatus.filename &&
+    OS.File.exists(`${syncStatus.path}/${syncStatus.filename}`)
+  ) {
+    return syncStatus.filename;
+  }
+  // If the note is not synced or the synced file does not exists, search for the latest file with the same key
   const noteItem = Zotero.Items.get(noteId);
   if (searchDir !== undefined && (await OS.File.exists(searchDir))) {
     const mdRegex = /\.(md|MD|Md|mD)$/;
@@ -209,6 +220,7 @@ async function getMDFileName(noteId: number, searchDir?: string) {
       return matchedFileName;
     }
   }
+  // If no file found, use the template to generate a new filename
   return await addon.api.template.runTemplate(
     "[ExportMDFileNameV2]",
     "noteItem",

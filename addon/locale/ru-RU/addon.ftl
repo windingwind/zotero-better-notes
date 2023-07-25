@@ -22,6 +22,7 @@ menuAddNote-newMainNote-enterNoteTitle=Ввести имя новой замет
 menuAddNote-newMainNote-openWorkspaceTab=Открыть пространство заметок?
 menuAddNote-newTemplateStandaloneNote=Новая отдельная заметка из шаблона
 menuAddNote-newTemplateItemNote=Новая элементная заметка из шаблона
+menuAddNote-importMD = Импорт файла MarkDown в качестве примечания
 
 menuAddReaderNote-newTemplateNote=Новая элементная заметка из шаблона
 
@@ -122,3 +123,4 @@ templatePicker-itemData-title=Choose Item Template Data Source
 alert-notValidCollectionError=Выберите валидную коллекцию.
 alert-notValidParentItemError=Нет валидного родительского элемента.
 alert-notValidWorkspaceNote=Заметка рабочего пространства не установлена. Создать?
+alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами MarkDown?
