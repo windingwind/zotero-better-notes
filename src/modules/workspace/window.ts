@@ -14,14 +14,14 @@ export async function showWorkspaceWindow() {
     `chrome://${config.addonRef}/content/workspaceWindow.xhtml`,
     `${config.addonRef}-workspaceWindow`,
     `chrome,centerscreen,resizable,status,width=800,height=400,dialog=no`,
-    windowArgs
+    windowArgs,
   )!;
   await windowArgs._initPromise.promise;
   localeWindow(win);
   addon.data.workspace.window.active = true;
   addon.data.workspace.window.window = win;
   addon.data.workspace.window.container = win.document.querySelector(
-    "#workspace-container"
+    "#workspace-container",
   ) as XUL.Box;
   addon.hooks.onInitWorkspace(addon.data.workspace.window.container);
   win.addEventListener("message", messageHandler, false);

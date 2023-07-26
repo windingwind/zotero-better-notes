@@ -17,7 +17,7 @@ enum OPTIONS {
 
 export async function showExportNoteOptions(
   noteIds: number[],
-  overwriteOptions: Record<string, any> = {}
+  overwriteOptions: Record<string, any> = {},
 ) {
   const items = Zotero.Items.get(noteIds);
   const noteItems: Zotero.Item[] = [];
@@ -33,17 +33,20 @@ export async function showExportNoteOptions(
     return;
   }
   const dataKeys = Object.keys(OPTIONS).filter(
-    (value) => typeof value === "string"
+    (value) => typeof value === "string",
   );
-  const data = dataKeys.reduce((acc, key) => {
-    acc[key] = getPref(`export.${key}`) as boolean;
-    return acc;
-  }, {} as Record<string, any>);
+  const data = dataKeys.reduce(
+    (acc, key) => {
+      acc[key] = getPref(`export.${key}`) as boolean;
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 
   data.loadCallback = () => {
     const doc = dialog.window.document;
     const standaloneLinkRadio = doc.querySelector(
-      "#standaloneLink"
+      "#standaloneLink",
     ) as HTMLInputElement;
     const autoSyncRadio = doc.querySelector("#setAutoSync") as HTMLInputElement;
     function updateSyncCheckbox() {
@@ -56,7 +59,7 @@ export async function showExportNoteOptions(
       }
     }
     Array.from(doc.querySelectorAll('input[name="linkMode"]')).forEach((elem) =>
-      elem.addEventListener("change", updateSyncCheckbox)
+      elem.addEventListener("change", updateSyncCheckbox),
     );
     updateSyncCheckbox();
   };
@@ -77,7 +80,7 @@ export async function showExportNoteOptions(
           properties: {
             innerHTML: `${getString("export.target")}: ${fill(
               slice(noteItems[0].getNoteTitle(), 40),
-              40
+              40,
             )}${
               noteItems.length > 1 ? ` and ${noteItems.length - 1} more` : ""
             }`,
@@ -114,7 +117,7 @@ export async function showExportNoteOptions(
   if (data._lastButtonId === "confirm") {
     await addon.api.$export.exportNotes(
       noteItems,
-      Object.assign(data as Record<string, boolean>, overwriteOptions)
+      Object.assign(data as Record<string, boolean>, overwriteOptions),
     );
     dataKeys.forEach((key) => {
       setPref(`export.${key}`, Boolean(data[key]));
@@ -187,7 +190,7 @@ function makeCheckboxLine(dataKey: string, callback?: (ev: Event) => void) {
 function makeRadioLine(
   dataKey: string,
   radioName: string,
-  callback?: (ev: Event) => void
+  callback?: (ev: Event) => void,
 ) {
   return {
     tag: "div",

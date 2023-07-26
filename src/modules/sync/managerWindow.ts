@@ -15,7 +15,7 @@ export async function showSyncManager() {
       `chrome://${config.addonRef}/content/syncManager.xhtml`,
       `${config.addonRef}-syncManager`,
       `chrome,centerscreen,resizable,status,width=800,height=400,dialog=no`,
-      windowArgs
+      windowArgs,
     )!;
     await windowArgs._initPromise.promise;
     addon.data.sync.manager.window = win;
@@ -46,7 +46,7 @@ export async function showSyncManager() {
         ].map((column) =>
           Object.assign(column, {
             label: getString(column.label),
-          })
+          }),
         ),
         showHeader: true,
         multiSelect: true,
@@ -65,7 +65,7 @@ export async function showSyncManager() {
             noteName: "no data",
             lastSync: "no data",
             filePath: "no data",
-          }
+          },
       )
       .setProp("onSelectionChange", (selection) => {
         updateButtons();
@@ -84,21 +84,21 @@ export async function showSyncManager() {
       .setProp("onActivate", (ev) => {
         const noteIds = getSelectedNoteIds();
         noteIds.forEach((noteId) =>
-          addon.hooks.onOpenNote(noteId, "standalone")
+          addon.hooks.onOpenNote(noteId, "standalone"),
         );
         return true;
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || ""
+        (index) => addon.data.prefs?.rows[index].title || "",
       )
       .render();
     const refreshButton = win.document.querySelector(
-      "#refresh"
+      "#refresh",
     ) as HTMLButtonElement;
     const syncButton = win.document.querySelector("#sync") as HTMLButtonElement;
     const unSyncButton = win.document.querySelector(
-      "#unSync"
+      "#unSync",
     ) as HTMLButtonElement;
     refreshButton.addEventListener("click", (ev) => {
       refresh();
@@ -148,7 +148,7 @@ function updateButtons() {
     return;
   }
   const unSyncButton = win.document.querySelector(
-    "#unSync"
+    "#unSync",
   ) as HTMLButtonElement;
   if (
     addon.data.sync.manager.tableHelper?.treeInstance.selection.selected.size
@@ -179,13 +179,13 @@ async function unSyncNotes(itemIds: number[]) {
     return;
   }
   const unSyncLinkedNotes = addon.data.sync.manager.window?.confirm(
-    `Un-sync their linked notes?`
+    `Un-sync their linked notes?`,
   );
   if (unSyncLinkedNotes) {
     for (const item of Zotero.Items.get(itemIds)) {
-      let linkedIds: number[] = getLinkedNotesRecursively(
+      const linkedIds: number[] = getLinkedNotesRecursively(
         getNoteLink(item) || "",
-        itemIds
+        itemIds,
       );
       itemIds.push(...linkedIds);
     }

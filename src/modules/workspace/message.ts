@@ -14,7 +14,7 @@ export async function messageHandler(ev: MessageEvent) {
     case "jumpNode": {
       const editor = addon.api.workspace.getWorkspaceEditor(
         ev.data.workspaceType,
-        "main"
+        "main",
       );
       if (!editor) {
         return;
@@ -34,21 +34,21 @@ export async function messageHandler(ev: MessageEvent) {
     }
     case "moveNode": {
       const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
-      let tree = getNoteTree(noteItem);
-      let fromNode = getNoteTreeNodeById(noteItem, ev.data.fromID, tree);
-      let toNode = getNoteTreeNodeById(noteItem, ev.data.toID, tree);
+      const tree = getNoteTree(noteItem);
+      const fromNode = getNoteTreeNodeById(noteItem, ev.data.fromID, tree);
+      const toNode = getNoteTreeNodeById(noteItem, ev.data.toID, tree);
       moveHeading(
         getEditorInstance(noteItem.id),
         fromNode!,
         toNode!,
-        ev.data.moveType
+        ev.data.moveType,
       );
       return;
     }
     case "editNode": {
       const editor = addon.api.workspace.getWorkspaceEditor(
         ev.data.workspaceType,
-        "main"
+        "main",
       );
       if (!editor) {
         return;
@@ -56,7 +56,7 @@ export async function messageHandler(ev: MessageEvent) {
       updateHeadingTextAtLine(
         editor,
         ev.data.lineIndex,
-        ev.data.text.replace(/[\r\n]/g, "")
+        ev.data.text.replace(/[\r\n]/g, ""),
       );
       return;
     }
@@ -65,7 +65,7 @@ export async function messageHandler(ev: MessageEvent) {
         `${Zotero.getString("fileInterface.export")} SVG Image`,
         "save",
         [["SVG File(*.svg)", "*.svg"]],
-        `${Zotero.Items.get(addon.data.workspace.mainId).getNoteTitle()}.svg`
+        `${Zotero.Items.get(addon.data.workspace.mainId).getNoteTitle()}.svg`,
       ).open();
       if (filename) {
         await Zotero.File.putContentsAsync(formatPath(filename), ev.data.image);
@@ -74,7 +74,7 @@ export async function messageHandler(ev: MessageEvent) {
           "Show in Folder",
           (ev) => {
             Zotero.File.reveal(filename);
-          }
+          },
         );
       }
       return;

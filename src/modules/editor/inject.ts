@@ -7,12 +7,12 @@ export async function injectEditorScripts(win: Window) {
       id: "betternotes-script",
       properties: {
         innerHTML: await getFileContent(
-          rootURI + "chrome/content/scripts/editorScript.js"
+          rootURI + "chrome/content/scripts/editorScript.js",
         ),
       },
       ignoreIfExists: true,
     },
-    win.document.head
+    win.document.head,
   );
 }
 
@@ -60,6 +60,6 @@ export function injectEditorCSS(win: Window) {
       },
       ignoreIfExists: true,
     },
-    win.document.head
+    win.document.head,
   );
 }

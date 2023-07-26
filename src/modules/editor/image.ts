@@ -12,7 +12,7 @@ export function initEditorImagePreviewer(editor: Zotero.EditorInstance) {
     addon.hooks.onShowImageViewer(
       imageList.map((elem) => elem.src),
       imageList.indexOf(e.target as HTMLImageElement),
-      editor._item.getNoteTitle()
+      editor._item.getNoteTitle(),
     );
   };
   editor._iframeWindow.document.addEventListener("dblclick", (e) => {

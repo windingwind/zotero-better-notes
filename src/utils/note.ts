@@ -25,7 +25,7 @@ function parseHTMLLines(html: string): string[] {
     html = html.replace(/<div[^>]*data-schema-version[^>]*>/, "");
     html = html.replace(/<\/div>/, "");
   }
-  let noteLines = html.split("\n").filter((e) => e);
+  const noteLines = html.split("\n").filter((e) => e);
 
   // A cache for temporarily stored lines
   let previousLineCache = [];
@@ -33,12 +33,12 @@ function parseHTMLLines(html: string): string[] {
 
   const forceInline = ["table", "blockquote", "pre", "ol", "ul"];
   const selfInline: string[] = [];
-  let forceInlineStack = [];
+  const forceInlineStack = [];
   let forceInlineFlag = false;
   let selfInlineFlag = false;
 
   const parsedLines = [];
-  for (let line of noteLines) {
+  for (const line of noteLines) {
     // restore self inline flag
     selfInlineFlag = false;
 
@@ -88,7 +88,7 @@ function parseHTMLLines(html: string): string[] {
         // Append cache to previous line
         if (previousLineCache.length) {
           parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
-            "\n"
+            "\n",
           )}`;
           previousLineCache = [];
         }
@@ -113,7 +113,7 @@ function getLinesInNote(note: Zotero.Item): string[] {
   if (!note) {
     return [];
   }
-  let noteText: string = note.getNote();
+  const noteText: string = note.getNote();
   return parseHTMLLines(noteText);
 }
 
@@ -121,20 +121,20 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   if (!note) {
     return [];
   }
-  let noteText: string = note.getNote();
-  let containerIndex = noteText.search(/data-schema-version="[0-9]*/g);
+  const noteText: string = note.getNote();
+  const containerIndex = noteText.search(/data-schema-version="[0-9]*/g);
   if (containerIndex === -1) {
     note.setNote(
       `<div data-schema-version="${config.dataSchemaVersion}">${lines.join(
-        "\n"
-      )}</div>`
+        "\n",
+      )}</div>`,
     );
   } else {
-    let noteHead = noteText.substring(0, containerIndex);
+    const noteHead = noteText.substring(0, containerIndex);
     note.setNote(
       `${noteHead}data-schema-version="${
         config.dataSchemaVersion
-      }">${lines.join("\n")}</div>`
+      }">${lines.join("\n")}</div>`,
     );
   }
 
@@ -145,12 +145,12 @@ async function addLineToNote(
   note: Zotero.Item,
   html: string,
   lineIndex: number = -1,
-  forceMetadata: boolean = false
+  forceMetadata: boolean = false,
 ) {
   if (!note || !html) {
     return;
   }
-  let noteLines = getLinesInNote(note);
+  const noteLines = getLinesInNote(note);
   if (lineIndex < 0 || lineIndex >= noteLines.length) {
     lineIndex = noteLines.length;
   }
@@ -174,12 +174,12 @@ async function addLineToNote(
 
 async function renderNoteHTML(
   html: string,
-  refNotes: Zotero.Item[]
+  refNotes: Zotero.Item[],
 ): Promise<string>;
 async function renderNoteHTML(noteItem: Zotero.Item): Promise<string>;
 async function renderNoteHTML(
   htmlOrNote: string | Zotero.Item,
-  refNotes?: Zotero.Item[]
+  refNotes?: Zotero.Item[],
 ): Promise<string> {
   let html: string;
   if (typeof htmlOrNote === "string") {
@@ -195,30 +195,32 @@ async function renderNoteHTML(
   }
 
   const parser = ztoolkit.getDOMParser();
-  let doc = parser.parseFromString(html, "text/html");
+  const doc = parser.parseFromString(html, "text/html");
   const imageAttachments = refNotes.reduce((acc, note) => {
     acc.push(...Zotero.Items.get(note.getAttachments()));
     return acc;
   }, [] as Zotero.Item[]);
 
-  for (let attachment of imageAttachments) {
+  for (const attachment of imageAttachments) {
     if (await attachment.fileExists()) {
-      let imageNodes = Array.from(
-        doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`)
+      const imageNodes = Array.from(
+        doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
       );
       if (imageNodes.length) {
         try {
           const b64 = await getItemDataURL(attachment);
           imageNodes.forEach((node) => node.setAttribute("src", b64));
-        } catch (e) {}
+        } catch (e) {
+          ztoolkit.log(e);
+        }
       }
     }
   }
 
   const bgNodes = doc.querySelectorAll(
-    "span[style]"
+    "span[style]",
   ) as NodeListOf<HTMLElement>;
-  for (let node of bgNodes) {
+  for (const node of bgNodes) {
     // Browser converts #RRGGBBAA hex color to rgba function, and we convert it to rgb function,
     // because word processors don't understand colors with alpha channel
     if (
@@ -240,7 +242,7 @@ async function renderNoteHTML(
       node.innerHTML.replace(mathDelimiterRegex, ""),
       {
         throwOnError: false,
-      }
+      },
     );
   });
   return doc.body.innerHTML;
@@ -258,12 +260,12 @@ function getNoteType(id: number) {
 
 function getNoteTree(
   note: Zotero.Item,
-  parseLink: boolean = true
+  parseLink: boolean = true,
 ): TreeModel.Node<NoteNodeData> {
   const noteLines = getLinesInNote(note);
   const parser = ztoolkit.getDOMParser();
-  let tree = new TreeModel();
-  let root = tree.parse({
+  const tree = new TreeModel();
+  const root = tree.parse({
     id: -1,
     level: 0,
     lineIndex: -1,
@@ -273,9 +275,9 @@ function getNoteTree(
   let lastNode = root;
   const headingRegex = new RegExp("^<h([1-6])(.*?)</h[1-6]>");
   const linkRegex = new RegExp('href="(zotero://note/[^"]*)"');
-  for (let i in noteLines) {
+  for (const i in noteLines) {
     let currentLevel = 7;
-    let lineElement = noteLines[i];
+    const lineElement = noteLines[i];
     const matchHeadingResult = lineElement.match(headingRegex);
     const matchLinkResult = parseLink ? lineElement.match(linkRegex) : null;
     const isHeading = Boolean(matchHeadingResult);
@@ -333,7 +335,7 @@ function getNoteTreeFlattened(
     keepRoot?: boolean;
     keepLink?: boolean;
     customFilter?: (node: TreeModel.Node<NoteNodeData>) => boolean;
-  } = { keepRoot: false, keepLink: false }
+  } = { keepRoot: false, keepLink: false },
 ): TreeModel.Node<NoteNodeData>[] {
   if (!note) {
     return [];
@@ -342,14 +344,14 @@ function getNoteTreeFlattened(
     (node) =>
       (options.keepRoot || node.model.lineIndex >= 0) &&
       (options.keepLink || node.model.level <= 6) &&
-      (options.customFilter ? options.customFilter(node) : true)
+      (options.customFilter ? options.customFilter(node) : true),
   );
 }
 
 function getNoteTreeNodeById(
   note: Zotero.Item,
   id: number,
-  root: TreeModel.Node<NoteNodeData> | undefined = undefined
+  root: TreeModel.Node<NoteNodeData> | undefined = undefined,
 ) {
   root = root || getNoteTree(note);
   return root.first(function (node) {
@@ -360,7 +362,7 @@ function getNoteTreeNodeById(
 function getNoteTreeNodesByLevel(
   note: Zotero.Item,
   level: number,
-  root: TreeModel.Node<NoteNodeData> | undefined = undefined
+  root: TreeModel.Node<NoteNodeData> | undefined = undefined,
 ) {
   root = root || getNoteTree(note);
   return root.all(function (node) {
@@ -370,7 +372,7 @@ function getNoteTreeNodesByLevel(
 
 async function copyEmbeddedImagesFromNote(
   targetNote: Zotero.Item,
-  sourceNotes: Zotero.Item[]
+  sourceNotes: Zotero.Item[],
 ) {
   await Zotero.DB.executeTransaction(async () => {
     for (const fromNote of sourceNotes) {
@@ -382,9 +384,9 @@ async function copyEmbeddedImagesFromNote(
 async function copyEmbeddedImagesInHTML(
   html: string,
   targetNote?: Zotero.Item,
-  refNotes: Zotero.Item[] = []
+  refNotes: Zotero.Item[] = [],
 ) {
-  ztoolkit.log("parseEmbeddedImagesInHTML", arguments);
+  ztoolkit.log("parseEmbeddedImagesInHTML", html, targetNote, refNotes);
   if (!targetNote) {
     return html;
   }
@@ -399,13 +401,13 @@ async function copyEmbeddedImagesInHTML(
 
   ztoolkit.log(attachments);
 
-  let doc = ztoolkit.getDOMParser().parseFromString(html, "text/html");
+  const doc = ztoolkit.getDOMParser().parseFromString(html, "text/html");
 
   // Copy note image attachments and replace keys in the new note
-  for (let attachment of attachments) {
+  for (const attachment of attachments) {
     if (await attachment.fileExists()) {
-      let nodes = Array.from(
-        doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`)
+      const nodes = Array.from(
+        doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
       );
       if (nodes.length) {
         let copiedAttachment: Zotero.Item;
@@ -417,7 +419,7 @@ async function copyEmbeddedImagesInHTML(
           });
         });
         nodes.forEach((node) =>
-          node.setAttribute("data-attachment-key", copiedAttachment.key)
+          node.setAttribute("data-attachment-key", copiedAttachment.key),
         );
       }
     }
@@ -427,16 +429,16 @@ async function copyEmbeddedImagesInHTML(
 }
 
 function dataURLtoBlob(dataurl: string) {
-  let parts = dataurl.split(",");
-  let matches = parts[0]?.match(/:(.*?);/);
+  const parts = dataurl.split(",");
+  const matches = parts[0]?.match(/:(.*?);/);
   if (!matches || !matches[1]) {
     return;
   }
-  let mime = matches[1];
+  const mime = matches[1];
   if (parts[0].indexOf("base64") !== -1) {
-    let bstr = ztoolkit.getGlobal("atob")(parts[1]);
+    const bstr = ztoolkit.getGlobal("atob")(parts[1]);
     let n = bstr.length;
-    let u8arr = new Uint8Array(n);
+    const u8arr = new Uint8Array(n);
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
@@ -451,7 +453,7 @@ function dataURLtoBlob(dataurl: string) {
 async function importImageToNote(
   note: Zotero.Item,
   src: string,
-  type: "b64" | "url" | "file" = "b64"
+  type: "b64" | "url" | "file" = "b64",
 ): Promise<string | void> {
   if (!note || !note.isNote()) {
     return "";
@@ -474,7 +476,7 @@ async function importImageToNote(
   } else if (type === "file") {
     src = Zotero.File.normalizeToUnix(src);
     const noteAttachmentKeys = Zotero.Items.get(note.getAttachments()).map(
-      (_i) => _i.key
+      (_i) => _i.key,
     );
     const filename = src.split("/").pop()?.split(".").shift();
     // The exported image is KEY.png by default.
@@ -497,7 +499,7 @@ async function importImageToNote(
     return;
   }
 
-  let attachment = await Zotero.Attachments.importEmbeddedImage({
+  const attachment = await Zotero.Attachments.importEmbeddedImage({
     blob,
     parentItemID: note.id,
     saveOptions: {},

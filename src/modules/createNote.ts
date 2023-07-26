@@ -11,23 +11,23 @@ async function createWorkspaceNote() {
   }
   const confirmOperation = window.confirm(
     `${getString(
-      "menuAddNote.newMainNote.confirmHead"
+      "menuAddNote.newMainNote.confirmHead",
       // @ts-ignore
     )} '${currentCollection.getName()}' ${getString(
-      "menuAddNote.newMainNote.confirmTail"
-    )}`
+      "menuAddNote.newMainNote.confirmTail",
+    )}`,
   );
   if (!confirmOperation) {
     return;
   }
   const header = window.prompt(
     getString("menuAddNote.newMainNote.enterNoteTitle"),
-    `New Note ${new Date().toLocaleString()}`
+    `New Note ${new Date().toLocaleString()}`,
   );
   const noteID = await ZoteroPane.newNote();
   const noteItem = Zotero.Items.get(noteID);
   noteItem.setNote(
-    `<div data-schema-version="${config.dataSchemaVersion}"><h1>${header}</h1>\n</div>`
+    `<div data-schema-version="${config.dataSchemaVersion}"><h1>${header}</h1>\n</div>`,
   );
   await noteItem.saveTx();
   addon.hooks.onSetWorkspaceNote(noteID, "main");
@@ -47,10 +47,8 @@ function getLibraryParentId() {
 
 function getReaderParentId() {
   const currentReader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
-  if (currentReader) {
-  }
   const parentItemId = Zotero.Items.get(
-    currentReader?.itemID || -1
+    currentReader?.itemID || -1,
   ).parentItemID;
   return parentItemId;
 }
@@ -58,11 +56,11 @@ function getReaderParentId() {
 async function createNoteFromTemplate(noteType: "standalone"): Promise<void>;
 async function createNoteFromTemplate(
   noteType: "item",
-  parentType: "reader" | "library"
+  parentType: "reader" | "library",
 ): Promise<void>;
 async function createNoteFromTemplate(
   noteType: "standalone" | "item",
-  parentType?: "reader" | "library"
+  parentType?: "reader" | "library",
 ) {
   if (noteType === "item") {
     const parentItemId =
@@ -94,7 +92,7 @@ async function createNoteFromMD() {
   const filepaths = await new ztoolkit.FilePicker(
     "Import MarkDown",
     "multiple",
-    [[`MarkDown(*.md)`, `*.md`]]
+    [[`MarkDown(*.md)`, `*.md`]],
   ).open();
 
   if (!filepaths) {

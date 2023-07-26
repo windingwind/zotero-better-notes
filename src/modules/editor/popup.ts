@@ -38,7 +38,7 @@ export function initEditorPopup(editor: Zotero.EditorInstance) {
       childList: true,
       attributes: true,
       attributeFilter: ["href"],
-    }
+    },
   );
 }
 
@@ -68,7 +68,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
               const templateText = await addon.api.template.runTemplate(
                 "[QuickImportV2]",
                 "link, noteItem",
-                [link, editorNote]
+                [link, editorNote],
               );
               // auto insert to anchor position
               updateURLAtCursor(
@@ -76,8 +76,8 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
                 undefined,
                 getNoteLink(
                   linkNote,
-                  Object.assign({}, linkParams, { ignore: true })
-                )!
+                  Object.assign({}, linkParams, { ignore: true }),
+                )!,
               );
               insert(editor, templateText);
             } else {
@@ -86,14 +86,14 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
                 undefined,
                 getNoteLink(
                   linkNote,
-                  Object.assign({}, linkParams, { ignore: null })
-                )!
+                  Object.assign({}, linkParams, { ignore: null }),
+                )!,
               );
               const lineIndex = getLineAtCursor(editor);
               del(
                 editor,
                 getPositionAtLine(editor, lineIndex),
-                getPositionAtLine(editor, lineIndex + 1)
+                getPositionAtLine(editor, lineIndex + 1),
               );
             }
           },
@@ -117,7 +117,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
             updateURLAtCursor(
               editor,
               linkNote.getNoteTitle(),
-              getURLAtCursor(editor)
+              getURLAtCursor(editor),
             );
           },
         },
@@ -184,7 +184,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
     // }
   } else {
     Array.from(_window.document.querySelectorAll(".link-popup-extra")).forEach(
-      (elem) => elem.remove()
+      (elem) => elem.remove(),
     );
   }
 }
@@ -220,9 +220,9 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
                     editor._iframeWindow.document
                       .querySelector(".primary-editor")
                       ?.querySelector(".selected")
-                      ?.querySelector("img") as HTMLImageElement
+                      ?.querySelector("img") as HTMLImageElement,
                   ),
-                  editor._item.getNoteTitle()
+                  editor._item.getNoteTitle(),
                 );
               },
             },
@@ -245,8 +245,8 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
                     getString("editor.resizeImage.prompt"),
                     // @ts-ignore
                     getEditorCore(editor).view.state.selection.node?.attrs
-                      ?.width
-                  ) || ""
+                      ?.width,
+                  ) || "",
                 );
                 if (newWidth && newWidth > 10) {
                   updateImageDimensionsAtCursor(editor, newWidth);
@@ -257,6 +257,6 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
         },
       ],
     },
-    editor._iframeWindow.document.querySelector(".image-popup")!
+    editor._iframeWindow.document.querySelector(".image-popup")!,
   );
 }

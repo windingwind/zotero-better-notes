@@ -54,22 +54,22 @@ async function note2md(
     keepNoteLink?: boolean;
     withYAMLHeader?: boolean;
     skipSavingImages?: boolean;
-  } = {}
+  } = {},
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = note2rehype(noteStatus.content);
   processN2MRehypeHighlightNodes(
     getN2MRehypeHighlightNodes(rehype),
-    NodeMode.direct
+    NodeMode.direct,
   );
   processN2MRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype),
-    NodeMode.direct
+    NodeMode.direct,
   );
   await processN2MRehypeNoteLinkNodes(
     getN2MRehypeNoteLinkNodes(rehype),
     dir,
-    options.keepNoteLink ? NodeMode.default : NodeMode.direct
+    options.keepNoteLink ? NodeMode.default : NodeMode.direct,
   );
   await processN2MRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
@@ -77,7 +77,7 @@ async function note2md(
     formatPath(OS.Path.join(dir, "attachments")),
     options.skipSavingImages,
     false,
-    NodeMode.direct
+    NodeMode.direct,
   );
   const remark = await rehype2remark(rehype);
   let md = remark2md(remark);
@@ -89,16 +89,18 @@ async function note2md(
         await addon.api.template.runTemplate(
           "[ExportMDFileHeaderV2]",
           "noteItem",
-          [noteItem]
-        )
+          [noteItem],
+        ),
       );
-    } catch (e) {}
+    } catch (e) {
+      ztoolkit.log(e);
+    }
     Object.assign(header, {
       version: noteItem.version,
       libraryID: noteItem.libraryID,
       itemKey: noteItem.key,
     });
-    let yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
+    const yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
     md = `${yamlFrontMatter}\n${md}`;
   }
   return md;
@@ -107,7 +109,7 @@ async function note2md(
 async function md2note(
   mdStatus: MDStatus,
   noteItem: Zotero.Item,
-  options: { isImport?: boolean } = {}
+  options: { isImport?: boolean } = {},
 ) {
   const remark = md2remark(mdStatus.content);
   const _rehype = await remark2rehype(remark);
@@ -120,14 +122,14 @@ async function md2note(
   processM2NRehypeHighlightNodes(getM2NRehypeHighlightNodes(rehype));
   await processM2NRehypeCitationNodes(
     getM2NRehypeCitationNodes(rehype),
-    options.isImport
+    options.isImport,
   );
   processM2NRehypeNoteLinkNodes(getM2NRehypeNoteLinkNodes(rehype));
   await processM2NRehypeImageNodes(
     getM2NRehypeImageNodes(rehype),
     noteItem,
     mdStatus.filedir,
-    options.isImport
+    options.isImport,
   );
   const noteContent = rehype2note(rehype);
   return noteContent;
@@ -143,7 +145,7 @@ async function note2noteDiff(noteItem: Zotero.Item) {
 
 function note2link(
   noteItem: Zotero.Item,
-  options: Parameters<typeof getNoteLink>[1]
+  options: Parameters<typeof getNoteLink>[1],
 ) {
   return getNoteLink(noteItem, options);
 }
@@ -154,9 +156,9 @@ function link2note(link: string) {
 
 async function link2html(
   link: string,
-  options: { noteItem?: Zotero.Item; dryRun?: boolean } = {}
+  options: { noteItem?: Zotero.Item; dryRun?: boolean } = {},
 ) {
-  ztoolkit.log("link2html", arguments);
+  ztoolkit.log("link2html", link, options);
   const linkParams = getNoteLinkParams(link);
   if (!linkParams.noteItem) {
     return "";
@@ -173,7 +175,7 @@ async function link2html(
       // Only embed the note content
       html,
       options.noteItem,
-      refNotes
+      refNotes,
     );
   }
 }
@@ -194,7 +196,7 @@ async function html2md(html: string) {
 
 function annotations2html(
   annotations: Zotero.Item[],
-  options: Parameters<typeof parseAnnotationHTML>[1] = {}
+  options: Parameters<typeof parseAnnotationHTML>[1] = {},
 ) {
   return parseAnnotationHTML(annotations, options);
 }
@@ -227,7 +229,7 @@ function note2rehype(str: string) {
         removeBlank(_n, parentNode, -1);
         removeBlank(_n, parentNode, 1);
       }
-    }
+    },
   );
 
   // Make sure <span> and <img> wrapped by <p>
@@ -245,7 +247,7 @@ function note2rehype(str: string) {
           replace(_n, p);
         }
       }
-    }
+    },
   );
 
   // Make sure empty <p> under root node is removed
@@ -259,7 +261,7 @@ function note2rehype(str: string) {
           parentNode.children.splice(parentNode.children.indexOf(_n), 1);
         }
       }
-    }
+    },
   );
   return rehype;
 }
@@ -310,13 +312,13 @@ async function rehype2remark(rehype: HRoot) {
               if (node.properties.style) {
                 hasStyle = true;
               }
-            }
+            },
           );
-          if (0 && hasStyle) {
-            return h(node, "styleTable", toHtml(node));
-          } else {
-            return defaultHandlers.table(h, node);
-          }
+          // if (0 && hasStyle) {
+          //   return h(node, "styleTable", toHtml(node));
+          // } else {
+          return defaultHandlers.table(h, node);
+          // }
         },
         wrapper: (h, node) => {
           return h(node, "wrapper", toText(node));
@@ -389,7 +391,7 @@ function remark2md(remark: MRoot) {
           },
         },
       } as any)
-      .stringify(remark)
+      .stringify(remark),
   );
 }
 
@@ -401,7 +403,7 @@ function md2remark(str: string) {
     .replace(
       /!\[.*\]\((.*)\)/g,
       (s: string) =>
-        `![](${encodeURIComponent(s.match(/\(.*\)/g)![0].slice(1, -1))})`
+        `![](${encodeURIComponent(s.match(/\(.*\)/g)![0].slice(1, -1))})`,
     );
   const remark = unified()
     .use(remarkGfm)
@@ -439,7 +441,7 @@ function rehype2note(rehype: HRoot) {
     (node: any) => {
       node.tagName = "span";
       node.properties.style = "text-decoration: line-through";
-    }
+    },
   );
 
   // Code node
@@ -454,7 +456,7 @@ function rehype2note(rehype: HRoot) {
         node.value = toText(node);
         node.type = "text";
       }
-    }
+    },
   );
 
   // Table node with style
@@ -472,14 +474,14 @@ function rehype2note(rehype: HRoot) {
           if (node.properties.style) {
             hasStyle = true;
           }
-        }
+        },
       );
       if (hasStyle) {
         node.value = toHtml(node).replace(/[\r\n]/g, "");
         node.children = [];
         node.type = "raw";
       }
-    }
+    },
   );
 
   // Convert thead to tbody
@@ -490,7 +492,7 @@ function rehype2note(rehype: HRoot) {
       node.value = toHtml(node).slice(7, -8);
       node.children = [];
       node.type = "raw";
-    }
+    },
   );
 
   // Wrap lines in list with <p> (for diff)
@@ -522,9 +524,9 @@ function rehype2note(rehype: HRoot) {
       node.children = node.children.filter(
         (_n: { type: string; value: string }) =>
           _n.type === "element" ||
-          (_n.type === "text" && _n.value.replace(/[\r\n]/g, ""))
+          (_n.type === "text" && _n.value.replace(/[\r\n]/g, "")),
       );
-    }
+    },
   );
 
   // Math node
@@ -550,7 +552,7 @@ function rehype2note(rehype: HRoot) {
         node.tagName = "pre";
       }
       node.properties.className = "math";
-    }
+    },
   );
 
   // Ignore link rel attribute, which exists in note
@@ -559,7 +561,7 @@ function rehype2note(rehype: HRoot) {
     (node: any) => node.type === "element" && (node as any).tagName === "a",
     (node: any) => {
       node.properties.rel = undefined;
-    }
+    },
   );
 
   // Ignore empty lines, as they are not parsed to md
@@ -610,7 +612,7 @@ function getN2MRehypeHighlightNodes(rehype: HRoot) {
     (node: any) =>
       node.type === "element" &&
       node.properties?.className?.includes("highlight"),
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -622,7 +624,7 @@ function getN2MRehypeCitationNodes(rehype: HRoot) {
     (node: any) =>
       node.type === "element" &&
       node.properties?.className?.includes("citation"),
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -636,7 +638,7 @@ function getN2MRehypeNoteLinkNodes(rehype: any) {
       node.tagName === "a" &&
       node.properties?.href &&
       /zotero:\/\/note\/\w+\/\w+\//.test(node.properties?.href),
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -649,14 +651,14 @@ function getN2MRehypeImageNodes(rehype: any) {
       node.type === "element" &&
       node.tagName === "img" &&
       node.properties?.dataAttachmentKey,
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
 
 function processN2MRehypeHighlightNodes(
   nodes: string | any[],
-  mode: NodeMode = NodeMode.default
+  mode: NodeMode = NodeMode.default,
 ) {
   if (!nodes.length) {
     return;
@@ -665,7 +667,7 @@ function processN2MRehypeHighlightNodes(
     let annotation;
     try {
       annotation = JSON.parse(
-        decodeURIComponent(node.properties.dataAnnotation)
+        decodeURIComponent(node.properties.dataAnnotation),
       );
     } catch (e) {
       continue;
@@ -674,20 +676,20 @@ function processN2MRehypeHighlightNodes(
       continue;
     }
     // annotation.uri was used before note-editor v4
-    let uri = annotation.attachmentURI || annotation.uri;
-    let position = annotation.position;
+    const uri = annotation.attachmentURI || annotation.uri;
+    const position = annotation.position;
 
     if (typeof uri === "string" && typeof position === "object") {
       let openURI;
-      let uriParts = uri.split("/");
-      let libraryType = uriParts[3];
-      let key = uriParts[uriParts.length - 1];
+      const uriParts = uri.split("/");
+      const libraryType = uriParts[3];
+      const key = uriParts[uriParts.length - 1];
       if (libraryType === "users") {
         openURI = "zotero://open-pdf/library/items/" + key;
       }
       // groups
       else {
-        let groupID = uriParts[4];
+        const groupID = uriParts[4];
         openURI = "zotero://open-pdf/groups/" + groupID + "/items/" + key;
       }
 
@@ -709,7 +711,7 @@ function processN2MRehypeHighlightNodes(
         randomString(
           8,
           Zotero.Utilities.Internal.md5(node.properties.dataAnnotation),
-          Zotero.Utilities.allowedKeyChars
+          Zotero.Utilities.allowedKeyChars,
         );
 
       if (mode === NodeMode.wrap) {
@@ -731,7 +733,7 @@ function processN2MRehypeHighlightNodes(
 
 function processN2MRehypeCitationNodes(
   nodes: string | any[],
-  mode: NodeMode = NodeMode.default
+  mode: NodeMode = NodeMode.default,
 ) {
   if (!nodes.length) {
     return;
@@ -747,19 +749,19 @@ function processN2MRehypeCitationNodes(
       continue;
     }
 
-    let uris: any[] = [];
-    for (let citationItem of citation.citationItems) {
-      let uri = citationItem.uris[0];
+    const uris: any[] = [];
+    for (const citationItem of citation.citationItems) {
+      const uri = citationItem.uris[0];
       if (typeof uri === "string") {
-        let uriParts = uri.split("/");
-        let libraryType = uriParts[3];
-        let key = uriParts[uriParts.length - 1];
+        const uriParts = uri.split("/");
+        const libraryType = uriParts[3];
+        const key = uriParts[uriParts.length - 1];
         if (libraryType === "users") {
           uris.push("zotero://select/library/items/" + key);
         }
         // groups
         else {
-          let groupID = uriParts[4];
+          const groupID = uriParts[4];
           uris.push("zotero://select/groups/" + groupID + "/items/" + key);
         }
       }
@@ -772,7 +774,7 @@ function processN2MRehypeCitationNodes(
       (_n: any) => _n.properties?.className.includes("citation-item"),
       (_n: any) => {
         return childNodes?.push(_n);
-      }
+      },
     );
 
     // For unknown reasons, the element will be duplicated. Remove them.
@@ -797,7 +799,7 @@ function processN2MRehypeCitationNodes(
     const citationKey = randomString(
       8,
       Zotero.Utilities.Internal.md5(node.properties.dataCitation),
-      Zotero.Utilities.allowedKeyChars
+      Zotero.Utilities.allowedKeyChars,
     );
     if (mode === NodeMode.wrap) {
       newNode.children.splice(0, 0, h("wrapperleft", `cite:${citationKey}`));
@@ -817,7 +819,7 @@ function processN2MRehypeCitationNodes(
 async function processN2MRehypeNoteLinkNodes(
   nodes: string | any[],
   dir: string,
-  mode: NodeMode = NodeMode.default
+  mode: NodeMode = NodeMode.default,
 ) {
   if (!nodes.length) {
     return;
@@ -835,7 +837,7 @@ async function processN2MRehypeNoteLinkNodes(
     const linkKey = randomString(
       8,
       Zotero.Utilities.Internal.md5(node.properties.href),
-      Zotero.Utilities.allowedKeyChars
+      Zotero.Utilities.allowedKeyChars,
     );
     if (mode === NodeMode.wrap) {
       const newNode = h("span", [
@@ -843,7 +845,7 @@ async function processN2MRehypeNoteLinkNodes(
         h(
           node.tagName,
           Object.assign(node.properties, { href: link }),
-          node.children
+          node.children,
         ),
         h("wrapperright", `note:${linkKey}`),
       ]);
@@ -869,25 +871,25 @@ async function processN2MRehypeImageNodes(
   dir: string,
   skipSavingImages: boolean = false,
   absolutePath: boolean = false,
-  mode: NodeMode = NodeMode.default
+  mode: NodeMode = NodeMode.default,
 ) {
   if (!nodes.length) {
     return;
   }
   for (const node of nodes) {
-    let imgKey = node.properties.dataAttachmentKey;
+    const imgKey = node.properties.dataAttachmentKey;
 
     const attachmentItem = (await Zotero.Items.getByLibraryAndKeyAsync(
       libraryID,
-      imgKey
+      imgKey,
     )) as Zotero.Item;
     if (!attachmentItem) {
       continue;
     }
 
-    let oldFile = String(await attachmentItem.getFilePathAsync());
-    let ext = oldFile.split(".").pop();
-    let newAbsPath = formatPath(`${dir}/${imgKey}.${ext}`);
+    const oldFile = String(await attachmentItem.getFilePathAsync());
+    const ext = oldFile.split(".").pop();
+    const newAbsPath = formatPath(`${dir}/${imgKey}.${ext}`);
     let newFile = oldFile;
     try {
       // Don't overwrite
@@ -898,7 +900,7 @@ async function processN2MRehypeImageNodes(
         newFile = newFile.replace(/\\/g, "/");
       }
       newFile = Zotero.File.normalizeToUnix(
-        absolutePath ? newFile : `attachments/${newFile.split(/\//).pop()}`
+        absolutePath ? newFile : `attachments/${newFile.split(/\//).pop()}`,
       );
     } catch (e) {
       ztoolkit.log(e);
@@ -922,7 +924,7 @@ function getM2NRehypeAnnotationNodes(rehype: any) {
   visit(
     rehype,
     (node: any) => node.type === "element" && node.properties?.dataAnnotation,
-    (node: any) => nodes.push(node)
+    (node: any) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -933,7 +935,7 @@ function getM2NRehypeHighlightNodes(rehype: any) {
     rehype,
     (node: any) =>
       node.type === "element" && node.properties?.ztype === "zhighlight",
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -945,7 +947,7 @@ function getM2NRehypeCitationNodes(rehype: any) {
     (node: any) =>
       node.type === "element" &&
       (node.properties?.ztype === "zcitation" || node.properties?.dataCitation),
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -956,7 +958,7 @@ function getM2NRehypeNoteLinkNodes(rehype: any) {
     rehype,
     (node: any) =>
       node.type === "element" && node.properties?.ztype === "znotelink",
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -966,7 +968,7 @@ function getM2NRehypeImageNodes(rehype: any) {
   visit(
     rehype,
     (node: any) => node.type === "element" && node.tagName === "img",
-    (node) => nodes.push(node)
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -1002,7 +1004,7 @@ function processM2NRehypeHighlightNodes(nodes: string | any[]) {
 
 async function processM2NRehypeCitationNodes(
   nodes: string | any[],
-  isImport: boolean = false
+  isImport: boolean = false,
 ) {
   if (!nodes.length) {
     return;
@@ -1021,10 +1023,10 @@ async function processM2NRehypeCitationNodes(
         //   "properties": {}
         // }
         const dataCitation = JSON.parse(
-          decodeURIComponent(node.properties.dataCitation)
+          decodeURIComponent(node.properties.dataCitation),
         );
         const ids = dataCitation.citationItems.map((c: { uris: string[] }) =>
-          Zotero.URI.getURIItemID(c.uris[0])
+          Zotero.URI.getURIItemID(c.uris[0]),
         );
         const html = (await parseCitationHTML(ids)) || "";
         const newNode = note2rehype(html);
@@ -1040,7 +1042,7 @@ async function processM2NRehypeCitationNodes(
         (_n: any) => _n.properties?.className.includes("citation-item"),
         (_n) => {
           _n.children = [{ type: "text", value: toText(_n) }];
-        }
+        },
       );
       delete node.properties?.ztype;
     }
@@ -1064,7 +1066,7 @@ async function processM2NRehypeImageNodes(
   nodes: any[],
   noteItem: Zotero.Item,
   fileDir: string,
-  isImport: boolean = false
+  isImport: boolean = false,
 ) {
   if (!nodes.length || (isImport && !noteItem)) {
     return;
@@ -1074,7 +1076,7 @@ async function processM2NRehypeImageNodes(
     if (isImport) {
       // We encode the src in md2remark and decode it here.
       let src = Zotero.File.normalizeToUnix(
-        decodeURIComponent(node.properties.src)
+        decodeURIComponent(node.properties.src),
       );
       const srcType = (src as string).startsWith("data:")
         ? "b64"

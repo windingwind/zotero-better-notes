@@ -25,14 +25,14 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     ICONS.settings,
     getString("editor.toolbar.settings.title"),
     "end",
-    (e) => {}
+    (e) => {},
   );
 
   settingsButton.addEventListener("click", async (ev) => {
     ev.stopPropagation();
     function removePopup() {
       const popup = editor._iframeWindow.document.querySelector(
-        `#${makeId("settings-popup")}`
+        `#${makeId("settings-popup")}`,
       );
       if (popup) {
         popup.remove();
@@ -116,7 +116,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
               `<a href="${link}">${
                 e.editor._item.getNoteTitle().trim() || link
               }</a>`,
-              "text/html"
+              "text/html",
             )
             .copy();
           showHint(`Link ${link} copied`);
@@ -158,7 +158,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       settingsButton,
       `${config.addonRef}-settings-popup`,
       "right",
-      settingsMenuData
+      settingsMenuData,
     ).then((popup) => {
       settingsButton.querySelector(".toolbar-button")?.classList.add("active");
       editor._iframeWindow.document.addEventListener("click", removePopup);
@@ -173,7 +173,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       "middle",
       ztoolkit.UI.createElement(editor._iframeWindow.document, "div", {
         properties: { innerHTML: getString("editor.toolbar.main") },
-      })
+      }),
     );
   } else {
     const onTriggerMenu = (ev: MouseEvent) => {
@@ -188,7 +188,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         linkButton,
         `${config.addonRef}-link-popup`,
         "middle",
-        linkMenu
+        linkMenu,
       );
     };
 
@@ -207,7 +207,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         return;
       }
       const lineIndex = parseInt(
-        (ev.target as HTMLDivElement).id.split("-").pop() || "-1"
+        (ev.target as HTMLDivElement).id.split("-").pop() || "-1",
       );
       const forwardLink = getNoteLink(noteItem);
       const backLink = getNoteLink(mainNote, { ignore: true, lineIndex });
@@ -221,9 +221,9 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
             noteItem.getNoteTitle().trim() || forwardLink,
             noteItem,
             mainNote,
-          ]
+          ],
         ),
-        lineIndex
+        lineIndex,
       );
       addLineToNote(
         noteItem,
@@ -236,8 +236,8 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
             noteItem,
             mainNote,
             "",
-          ]
-        )
+          ],
+        ),
       );
       onExitMenu(ev);
       ev.stopPropagation();
@@ -250,7 +250,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       ICONS.addon,
       getString("editor.toolbar.link.title"),
       "middle",
-      onClickMenu
+      onClickMenu,
     );
 
     linkButton.addEventListener("mouseenter", onTriggerMenu);
@@ -312,7 +312,7 @@ function getLinkMenuData(editor: Zotero.EditorInstance): PopupData[] {
           getPref("editor.link.insertPosition")
             ? node.model.lineIndex - 1
             : node.model.endIndex
-        }`
+        }`,
       ),
       text: node.model.name,
       prefix: "·".repeat(node.model.level - 1),
@@ -323,7 +323,7 @@ function getLinkMenuData(editor: Zotero.EditorInstance): PopupData[] {
 
 async function registerEditorToolbar(
   editor: Zotero.EditorInstance,
-  id: string
+  id: string,
 ) {
   await editor._initPromise;
   const _document = editor._iframeWindow.document;
@@ -359,7 +359,7 @@ async function registerEditorToolbarDropdown(
   icon: string,
   title: string,
   position: "start" | "middle" | "end",
-  callback: (e: MouseEvent & { editor: Zotero.EditorInstance }) => any
+  callback: (e: MouseEvent & { editor: Zotero.EditorInstance }) => any,
 ) {
   await editor._initPromise;
   const _document = editor._iframeWindow.document;
@@ -386,7 +386,7 @@ async function registerEditorToolbarDropdown(
               Object.assign(e, { editor });
               if (callback) {
                 callback(
-                  e as any as MouseEvent & { editor: Zotero.EditorInstance }
+                  e as any as MouseEvent & { editor: Zotero.EditorInstance },
                 );
               }
             },
@@ -414,7 +414,7 @@ async function registerEditorToolbarPopup(
   dropdown: HTMLDivElement,
   id: string,
   align: "middle" | "left" | "right",
-  popupLines: PopupData[]
+  popupLines: PopupData[],
 ) {
   await editor._initPromise;
   const popup = ztoolkit.UI.appendElement(
@@ -449,7 +449,7 @@ async function registerEditorToolbarPopup(
                       props.callback(
                         e as any as MouseEvent & {
                           editor: Zotero.EditorInstance;
-                        }
+                        },
                       );
                   },
                 },
@@ -458,7 +458,7 @@ async function registerEditorToolbarPopup(
       }),
       removeIfExists: true,
     },
-    dropdown
+    dropdown,
   ) as HTMLDivElement;
   let style: string = "";
   if (align === "middle") {
@@ -476,7 +476,7 @@ async function registerEditorToolbarElement(
   editor: Zotero.EditorInstance,
   toolbar: HTMLDivElement,
   position: "start" | "middle" | "end",
-  elem: HTMLElement
+  elem: HTMLElement,
 ) {
   await editor._initPromise;
   toolbar.querySelector(`.${position}`)?.append(elem);

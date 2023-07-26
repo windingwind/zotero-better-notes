@@ -7,11 +7,11 @@ export async function saveMD(
   options: {
     keepNoteLink?: boolean;
     withYAMLHeader?: boolean;
-  }
+  },
 ) {
   const noteItem = Zotero.Items.get(noteId);
   const dir = OS.Path.join(
-    ...OS.Path.split(formatPath(filename)).components.slice(0, -1)
+    ...OS.Path.split(formatPath(filename)).components.slice(0, -1),
   );
   const hasImage = noteItem.getNote().includes("<img");
   if (hasImage) {
@@ -19,7 +19,7 @@ export async function saveMD(
   }
   await Zotero.File.putContentsAsync(
     filename,
-    await addon.api.convert.note2md(noteItem, dir, options)
+    await addon.api.convert.note2md(noteItem, dir, options),
   );
 
   showHintWithLink(`Note Saved to ${filename}`, "Show in Folder", (ev) => {
@@ -32,7 +32,7 @@ export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   await Zotero.File.createDirectoryIfMissingAsync(saveDir);
   const attachmentsDir = formatPath(OS.Path.join(saveDir, "attachments"));
   const hasImage = noteItems.some((noteItem) =>
-    noteItem.getNote().includes("<img")
+    noteItem.getNote().includes("<img"),
   );
   if (hasImage) {
     await Zotero.File.createDirectoryIfMissingAsync(attachmentsDir);
@@ -51,7 +51,7 @@ export async function syncMDBatch(saveDir: string, noteIds: number[]) {
       itemID: noteItem.id,
       md5: Zotero.Utilities.Internal.md5(
         addon.api.sync.getMDStatusFromContent(content).content,
-        false
+        false,
       ),
       noteMd5: Zotero.Utilities.Internal.md5(noteItem.getNote(), false),
       lastsync: new Date().getTime(),

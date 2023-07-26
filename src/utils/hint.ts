@@ -10,7 +10,7 @@ function showHint(text: string) {
 async function showHintWithLink(
   text: string,
   linkText: string,
-  linkCallback: (ev: MouseEvent) => any
+  linkCallback: (ev: MouseEvent) => any,
 ) {
   const progress = new ztoolkit.ProgressWindow(PROGRESS_TITLE)
     .createLine({ text, progress: 100, type: "default" })
@@ -20,7 +20,7 @@ async function showHintWithLink(
 
   await waitUtilAsync(() =>
     // @ts-ignore
-    Boolean(progress.lines && progress.lines[0]._itemText)
+    Boolean(progress.lines && progress.lines[0]._itemText),
   );
   // @ts-ignore
   progress.lines[0]._hbox.ownerDocument

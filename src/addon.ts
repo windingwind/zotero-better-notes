@@ -133,7 +133,7 @@ class Addon {
           recentMainNoteIdsArr
             .slice(0, 10)
             .filter((id) => Zotero.Items.get(id).isNote())
-            .join(",")
+            .join(","),
         );
       },
       previewId: -1,

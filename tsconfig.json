@@ -7,13 +7,6 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "src",
-    "typing",
-    "node_modules/zotero-types"
-  ],
-  "exclude": [
-    "builds",
-    "addon"
-  ]
+  "include": ["src", "typings", "node_modules/zotero-types"],
+  "exclude": ["build", "addon"]
 }

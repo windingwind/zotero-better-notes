@@ -50,7 +50,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
   } else {
     // Otherwise, merge manually
     const imageAttachemnts = Zotero.Items.get(noteItem.getAttachments()).filter(
-      (attch) => attch.isEmbeddedImageAttachment()
+      (attch) => attch.isEmbeddedImageAttachment(),
     );
     const imageData = {} as Record<string, string>;
     for (const image of imageAttachemnts) {
@@ -66,10 +66,10 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
       addon.data.sync.diff.window = window.open(
         `chrome://${config.addonRef}/content/syncDiff.html`,
         `${config.addonRef}-syncDiff`,
-        `chrome,centerscreen,resizable,status,width=900,height=550`
+        `chrome,centerscreen,resizable,status,width=900,height=550`,
       )!;
       await waitUtilAsync(
-        () => addon.data.sync.diff.window?.document.readyState === "complete"
+        () => addon.data.sync.diff.window?.document.readyState === "complete",
       );
     }
     const win = addon.data.sync.diff.window as any;
@@ -86,7 +86,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
       Object.assign(change, {
         id: id,
         text: change.value,
-      })
+      }),
     );
     win.imageData = imageData;
 
@@ -115,7 +115,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
   switch (io.type) {
     case "skip":
       alert(
-        `Syncing of "${noteItem.getNoteTitle()}" is skipped.\nTo sync manually, go to File->Better Notes Sync Manager.`
+        `Syncing of "${noteItem.getNoteTitle()}" is skipped.\nTo sync manually, go to File->Better Notes Sync Manager.`,
       );
       addon.data.sync.diff.window?.closed ||
         addon.data.sync.diff.window?.close();

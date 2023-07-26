@@ -35,7 +35,7 @@ async function note2docx(noteItem: Zotero.Item) {
       jobId,
       message: htmlDoc,
     },
-    "*"
+    "*",
   );
   await lock.promise;
   worker.contentWindow?.removeEventListener("message", listener);
@@ -47,7 +47,7 @@ async function getWorker() {
     return addon.data.export.docx.worker;
   }
   const worker = Zotero.Browser.createHiddenBrowser(
-    window
+    window,
   ) as HTMLIFrameElement;
   await waitUtilAsync(() => worker.contentDocument?.readyState === "complete");
 
@@ -57,11 +57,11 @@ async function getWorker() {
       tag: "script",
       properties: {
         innerHTML: await getFileContent(
-          rootURI + "chrome/content/scripts/docxWorker.js"
+          rootURI + "chrome/content/scripts/docxWorker.js",
         ),
       },
     },
-    doc?.head!
+    doc!.head,
   );
   addon.data.export.docx.worker = worker;
   return worker;

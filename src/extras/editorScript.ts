@@ -17,9 +17,9 @@ declare const _currentEditorInstance: {
 };
 
 function fromHTML(schema: Schema, html: string, slice?: boolean) {
-  let domNode = document.createElement("div");
+  const domNode = document.createElement("div");
   domNode.innerHTML = html;
-  let fragment = document.createDocumentFragment();
+  const fragment = document.createDocumentFragment();
   while (domNode.firstChild) {
     fragment.appendChild(domNode.firstChild);
   }
@@ -63,7 +63,7 @@ function objectIncludes(object1: any, object2: any) {
 function findMarkInSet(
   marks: readonly Mark[],
   type: MarkType,
-  attributes = {}
+  attributes = {},
 ) {
   return marks.find((item) => {
     return item.type === type && objectIncludes(item.attrs, attributes);
@@ -128,7 +128,7 @@ function getMarkRangeAtCursor(state: EditorState, type: MarkType) {
     const start = $from.parent.childAfter($from.parentOffset);
     if (start.node) {
       const mark = start.node.marks.find(
-        (mark) => mark.type.name === type.name
+        (mark) => mark.type.name === type.name,
       );
       if (mark) {
         return getMarkRange($from, type, mark.attrs);
@@ -164,7 +164,7 @@ function replaceRange(
   to: number,
   text: string | undefined,
   type: MarkType,
-  attrs: Attrs | string
+  attrs: Attrs | string,
 ) {
   return (state: EditorState, dispatch: EditorView["dispatch"]) => {
     const { tr } = state;
@@ -189,7 +189,7 @@ function replaceRangeNode(
   nodeAttrs: Attrs | string,
   markType?: MarkType,
   markAttrs?: Attrs | string,
-  select?: boolean
+  select?: boolean,
 ) {
   return (state: EditorState, dispatch: EditorView["dispatch"]) => {
     const { tr } = state;
@@ -203,7 +203,7 @@ function replaceRangeNode(
     const node = nodeType.create(
       nodeAttrs,
       state.schema.text(text || state.doc.textBetween(from, to)),
-      markType ? [markType.create(markAttrs)] : []
+      markType ? [markType.create(markAttrs)] : [],
     );
     console.log("Replace Node", from, to, node);
     tr.replaceWith(from, to, node);
@@ -218,7 +218,7 @@ function replaceRangeAtCursor(
   text: string | undefined,
   type: MarkType,
   attrs: Attrs | string,
-  searchType: MarkType
+  searchType: MarkType,
 ) {
   return (state: EditorState, dispatch: EditorView["dispatch"]) => {
     const range = getMarkRangeAtCursor(state, searchType);
@@ -323,9 +323,9 @@ function updateHeadingsInRange(from: number, to: number, levelOffset: number) {
   };
 }
 
-function refocusEditor(callback: Function) {
-  let scrollTop = document.querySelector(".editor-core")!.scrollTop;
-  let input = document.createElement("input");
+function refocusEditor(callback: (args: void) => void) {
+  const scrollTop = document.querySelector(".editor-core")!.scrollTop;
+  const input = document.createElement("input");
   input.style.position = "absolute";
   input.style.opacity = "0";
   document.body.append(input);
@@ -344,9 +344,9 @@ function updateImageDimensions(
   width: number,
   height: number | undefined,
   state: EditorState,
-  dispatch: EditorView["dispatch"]
+  dispatch: EditorView["dispatch"],
 ) {
-  let { tr } = state;
+  const { tr } = state;
   state.doc.descendants((node: Node, pos: number) => {
     if (node.type.name === "image" && node.attrs.nodeID === nodeID) {
       // tr.step(new SetAttrsStep(pos, { ...node.attrs, width, height }));
@@ -356,7 +356,7 @@ function updateImageDimensions(
         pos,
         node.type,
         { ...node.attrs, width, height },
-        node.marks
+        node.marks,
       );
       dispatch(tr);
       return false;

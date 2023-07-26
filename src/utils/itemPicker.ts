@@ -12,7 +12,7 @@ export async function itemPicker() {
       : "chrome://zotero/content/selectItemsDialog.xul",
     "",
     "chrome,dialog=no,centerscreen,resizable=yes",
-    io
+    io,
   );
   await io.deferred.promise;
 

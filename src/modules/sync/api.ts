@@ -38,7 +38,7 @@ async function getRelatedNoteIds(noteId: number): Promise<number[]> {
   }
   const subNoteIds = (
     await Promise.all(
-      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem)
+      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
     )
   )
     .filter((item) => item && item.isNote())
@@ -49,7 +49,7 @@ async function getRelatedNoteIds(noteId: number): Promise<number[]> {
 }
 
 async function getRelatedNoteIdsFromNotes(
-  noteIds: number[]
+  noteIds: number[],
 ): Promise<number[]> {
   let allNoteIds: number[] = [];
   for (const noteId of noteIds) {
@@ -101,7 +101,7 @@ function getNoteStatus(noteId: number) {
   if (idx != -1) {
     ret.content = fullContent.substring(
       idx + match[0].length,
-      fullContent.length - ret.tail.length
+      fullContent.length - ret.tail.length,
     );
   }
   return ret;
@@ -117,7 +117,7 @@ function getSyncStatus(noteId?: number): SyncStatus {
     itemID: -1,
   });
   return JSON.parse(
-    (getPref(`syncDetail-${noteId}`) as string) || defaultStatus
+    (getPref(`syncDetail-${noteId}`) as string) || defaultStatus,
   );
 }
 
@@ -143,7 +143,7 @@ function getMDStatusFromContent(contentRaw: string): MDStatus {
 }
 
 async function getMDStatus(
-  source: Zotero.Item | number | string
+  source: Zotero.Item | number | string,
 ): Promise<MDStatus> {
   let ret: MDStatus = {
     meta: null,
@@ -165,13 +165,13 @@ async function getMDStatus(
     }
     filepath = Zotero.File.normalizeToUnix(filepath);
     if (await OS.File.exists(filepath)) {
-      let contentRaw = (await OS.File.read(filepath, {
+      const contentRaw = (await OS.File.read(filepath, {
         encoding: "utf-8",
       })) as string;
       ret = getMDStatusFromContent(contentRaw);
       const pathSplit = filepath.split("/");
       ret.filedir = Zotero.File.normalizeToUnix(
-        pathSplit.slice(0, -1).join("/")
+        pathSplit.slice(0, -1).join("/"),
       );
       ret.filename = filepath.split("/").pop() || "";
       const stat = await OS.File.stat(filepath);
@@ -214,7 +214,7 @@ async function getMDFileName(noteId: number, searchDir?: string) {
             }
           }
         }
-      }
+      },
     );
     if (matchedFileName) {
       return matchedFileName;
@@ -224,6 +224,6 @@ async function getMDFileName(noteId: number, searchDir?: string) {
   return await addon.api.template.runTemplate(
     "[ExportMDFileNameV2]",
     "noteItem",
-    [noteItem]
+    [noteItem],
   );
 }

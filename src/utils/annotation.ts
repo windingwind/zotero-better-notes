@@ -17,7 +17,7 @@ async function parseAnnotationJSON(annotationItem: Zotero.Item) {
     const annotationJSON = await Zotero.Annotations.toJSON(annotationItem);
     const annotationObj = Object.assign(
       {},
-      annotationJSON
+      annotationJSON,
     ) as CustomAnnotationJSON;
     annotationObj.id = annotationItem.key;
     annotationObj.attachmentItemID = annotationItem.parentItem?.id;
@@ -38,12 +38,12 @@ async function parseAnnotationJSON(annotationItem: Zotero.Item) {
 function serializeAnnotations(
   annotations: Required<CustomAnnotationJSON>[],
   skipEmbeddingItemData: boolean = false,
-  skipCitation: boolean = false
+  skipCitation: boolean = false,
 ) {
-  let storedCitationItems = [];
+  const storedCitationItems = [];
   let html = "";
-  for (let annotation of annotations) {
-    let attachmentItem = Zotero.Items.get(annotation.attachmentItemID);
+  for (const annotation of annotations) {
+    const attachmentItem = Zotero.Items.get(annotation.attachmentItemID);
     if (!attachmentItem) {
       continue;
     }
@@ -64,7 +64,7 @@ function serializeAnnotations(
     let quotedHighlightHTML = "";
     let commentHTML = "";
 
-    let storedAnnotation: any = {
+    const storedAnnotation: any = {
       attachmentURI: Zotero.URI.getItemURI(attachmentItem),
       annotationKey: annotation.id,
       color: annotation.color,
@@ -73,12 +73,12 @@ function serializeAnnotations(
     };
 
     // Citation
-    let parentItem = skipCitation
+    const parentItem = skipCitation
       ? undefined
       : attachmentItem.parentID && Zotero.Items.get(attachmentItem.parentID);
     if (parentItem) {
-      let uris = [Zotero.URI.getItemURI(parentItem)];
-      let citationItem: any = {
+      const uris = [Zotero.URI.getItemURI(parentItem)];
+      const citationItem: any = {
         uris,
         locator: annotation.pageLabel,
       };
@@ -86,48 +86,48 @@ function serializeAnnotations(
       // Note: integration.js` uses `Zotero.Cite.System.prototype.retrieveItem`,
       // which produces a little bit different CSL JSON
       // @ts-ignore
-      let itemData = Zotero.Utilities.Item.itemToCSLJSON(parentItem);
+      const itemData = Zotero.Utilities.Item.itemToCSLJSON(parentItem);
       if (!skipEmbeddingItemData) {
         citationItem.itemData = itemData;
       }
 
-      let item = storedCitationItems.find((item) =>
-        item.uris.some((uri) => uris.includes(uri))
+      const item = storedCitationItems.find((item) =>
+        item.uris.some((uri) => uris.includes(uri)),
       );
       if (!item) {
         storedCitationItems.push({ uris, itemData });
       }
 
       storedAnnotation.citationItem = citationItem;
-      let citation = {
+      const citation = {
         citationItems: [citationItem],
         properties: {},
       };
 
-      let citationWithData = JSON.parse(JSON.stringify(citation));
+      const citationWithData = JSON.parse(JSON.stringify(citation));
       citationWithData.citationItems[0].itemData = itemData;
-      let formatted =
+      const formatted =
         Zotero.EditorInstanceUtilities.formatCitation(citationWithData);
       citationHTML = `<span class="citation" data-citation="${encodeURIComponent(
-        JSON.stringify(citation)
+        JSON.stringify(citation),
       )}">${formatted}</span>`;
     }
 
     // Image
     if (annotation.imageAttachmentKey) {
       // Normalize image dimensions to 1.25 of the print size
-      let rect = annotation.position.rects[0];
-      let rectWidth = rect[2] - rect[0];
-      let rectHeight = rect[3] - rect[1];
+      const rect = annotation.position.rects[0];
+      const rectWidth = rect[2] - rect[0];
+      const rectHeight = rect[3] - rect[1];
       // Constants from pdf.js
       const CSS_UNITS = 96.0 / 72.0;
       const PDFJS_DEFAULT_SCALE = 1.25;
-      let width = Math.round(rectWidth * CSS_UNITS * PDFJS_DEFAULT_SCALE);
-      let height = Math.round((rectHeight * width) / rectWidth);
+      const width = Math.round(rectWidth * CSS_UNITS * PDFJS_DEFAULT_SCALE);
+      const height = Math.round((rectHeight * width) / rectWidth);
       imageHTML = `<img data-attachment-key="${
         annotation.imageAttachmentKey
       }" width="${width}" height="${height}" data-annotation="${encodeURIComponent(
-        JSON.stringify(storedAnnotation)
+        JSON.stringify(storedAnnotation),
       )}"/>`;
     }
 
@@ -138,17 +138,17 @@ function serializeAnnotations(
 
     // Text
     if (annotation.text) {
-      let text = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
+      const text = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
         Zotero.EditorInstanceUtilities,
-        annotation.text.trim()
+        annotation.text.trim(),
       );
       highlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
-        JSON.stringify(storedAnnotation)
+        JSON.stringify(storedAnnotation),
       )}">${text}</span>`;
       quotedHighlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
-        JSON.stringify(storedAnnotation)
+        JSON.stringify(storedAnnotation),
       )}">${Zotero.getString(
-        "punctuation.openingQMark"
+        "punctuation.openingQMark",
       )}${text}${Zotero.getString("punctuation.closingQMark")}</span>`;
     }
 
@@ -156,14 +156,14 @@ function serializeAnnotations(
     if (annotation.comment) {
       commentHTML = Zotero.EditorInstanceUtilities._transformTextToHTML.call(
         Zotero.EditorInstanceUtilities,
-        annotation.comment.trim()
+        annotation.comment.trim(),
       );
     }
 
     let template: string = "";
     if (annotation.type === "highlight") {
       template = Zotero.Prefs.get(
-        "annotations.noteTemplates.highlight"
+        "annotations.noteTemplates.highlight",
       ) as string;
     } else if (annotation.type === "note") {
       template = Zotero.Prefs.get("annotations.noteTemplates.note") as string;
@@ -176,10 +176,10 @@ function serializeAnnotations(
 
     template = template.replace(
       /(<blockquote>[^<>]*?)({{highlight}})([\s\S]*?<\/blockquote>)/g,
-      (match, p1, p2, p3) => p1 + "{{highlight quotes='false'}}" + p3
+      (match, p1, p2, p3) => p1 + "{{highlight quotes='false'}}" + p3,
     );
 
-    let vars = {
+    const vars = {
       color: annotation.color || "",
       // Include quotation marks by default, but allow to disable with `quotes='false'`
       highlight: (attrs: any) =>
@@ -196,7 +196,7 @@ function serializeAnnotations(
 
     let templateHTML = Zotero.Utilities.Internal.generateHTMLFromTemplate(
       template,
-      vars
+      vars,
     );
     // Remove some spaces at the end of paragraph
     templateHTML = templateHTML.replace(/([\s]*)(<\/p)/g, "$2");
@@ -209,9 +209,9 @@ function serializeAnnotations(
 
 export async function importAnnotationImagesToNote(
   note: Zotero.Item | undefined,
-  annotations: CustomAnnotationJSON[]
+  annotations: CustomAnnotationJSON[],
 ) {
-  for (let annotation of annotations) {
+  for (const annotation of annotations) {
     if (annotation.image && note) {
       annotation.imageAttachmentKey =
         (await importImageToNote(note, annotation.image)) || "";
@@ -226,9 +226,9 @@ export async function parseAnnotationHTML(
     noteItem?: Zotero.Item; // If you are sure there are no image annotations, note is not required.
     ignoreComment?: boolean;
     skipCitation?: boolean;
-  } = {}
+  } = {},
 ) {
-  let annotationJSONList: CustomAnnotationJSON[] = [];
+  const annotationJSONList: CustomAnnotationJSON[] = [];
   for (const annot of annotations) {
     const annotJson = await parseAnnotationJSON(annot);
     if (options.ignoreComment && annotJson?.comment) {
@@ -241,7 +241,7 @@ export async function parseAnnotationHTML(
   const html = serializeAnnotations(
     annotationJSONList as Required<CustomAnnotationJSON>[],
     false,
-    options.skipCitation
+    options.skipCitation,
   ).html;
   return html;
 }

@@ -26,7 +26,7 @@ export function getNoteLinkParams(link: string) {
       link,
       libraryID: -1,
       noteKey: undefined,
-      noteItem: false as false,
+      noteItem: false as const,
       ignore: null,
       lineIndex: null,
     };
@@ -38,7 +38,7 @@ export function getNoteLink(
   options: {
     ignore?: boolean | null;
     lineIndex?: number | null;
-  } = {}
+  } = {},
 ) {
   const libraryID = noteItem.libraryID;
   const library = Zotero.Libraries.get(libraryID);
@@ -77,7 +77,7 @@ export function getNoteLink(
 
 export function getLinkedNotesRecursively(
   link: string,
-  ignoreIds: number[] = []
+  ignoreIds: number[] = [],
 ) {
   const linkParams = getNoteLinkParams(link);
   if (!linkParams.noteItem) return [];
@@ -98,6 +98,6 @@ export function getLinkedNotesRecursively(
       }
       return acc;
     },
-    [linkParams.noteItem.id] as number[]
+    [linkParams.noteItem.id] as number[],
   );
 }

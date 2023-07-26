@@ -19,7 +19,7 @@ async function runTemplate(
     useDefault: true,
     dryRun: false,
     stage: "default",
-  }
+  },
 ): Promise<string> {
   ztoolkit.log(`runTemplate: ${key}`);
   if (argList.length > 0) {
@@ -64,8 +64,8 @@ async function runTemplate(
   // Check the markdown pragma
   templateLines = templateLines.slice(startIndex + 1, endIndex);
   let useMarkdown = false;
-  let mdIndex = templateLines.findIndex((line) =>
-    line.startsWith("// @use-markdown")
+  const mdIndex = templateLines.findIndex((line) =>
+    line.startsWith("// @use-markdown"),
   );
   if (mdIndex >= 0) {
     useMarkdown = true;
@@ -87,7 +87,7 @@ async function runTemplate(
     /\$\{\{([\s\S]*?)\}\}\$/g,
     (match, content) => {
       return constructFunction(content);
-    }
+    },
   );
 
   try {
@@ -110,9 +110,9 @@ async function runTextTemplate(
   options: {
     targetNoteId?: number;
     dryRun?: boolean;
-  }
+  },
 ) {
-  let { targetNoteId, dryRun } = options;
+  const { targetNoteId, dryRun } = options;
   const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
   const sharedObj = {};
   return await runTemplate(
@@ -121,7 +121,7 @@ async function runTextTemplate(
     [targetNoteItem, sharedObj],
     {
       dryRun,
-    }
+    },
   );
 }
 
@@ -131,7 +131,7 @@ async function runItemTemplate(
     itemIds?: number[];
     targetNoteId?: number;
     dryRun?: boolean;
-  }
+  },
 ): Promise<string> {
   /**
    * args:
@@ -139,7 +139,8 @@ async function runItemTemplate(
    * default stage: topItem, itemNotes, copyNoteImage, sharedObj
    * afterloop stage: items, copyNoteImage, sharedObj
    */
-  let { itemIds, targetNoteId, dryRun } = options;
+  let { itemIds } = options;
+  const { targetNoteId, dryRun } = options;
   if (!itemIds) {
     itemIds = await getItemTemplateData();
   }
@@ -169,8 +170,8 @@ async function runItemTemplate(
         stage: "beforeloop",
         useDefault: false,
         dryRun,
-      }
-    )
+      },
+    ),
   );
 
   for (const topItem of items) {
@@ -184,8 +185,8 @@ async function runItemTemplate(
         [topItem, targetNoteItem, itemNotes, copyNoteImage, sharedObj],
         {
           dryRun,
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -198,8 +199,8 @@ async function runItemTemplate(
         stage: "afterloop",
         useDefault: false,
         dryRun,
-      }
-    )
+      },
+    ),
   );
 
   let html = results.join("\n");
@@ -207,7 +208,7 @@ async function runItemTemplate(
     html = await copyEmbeddedImagesInHTML(
       html,
       targetNoteItem,
-      copyImageRefNotes
+      copyImageRefNotes,
     );
   } else {
     html = await renderNoteHTML(html, copyImageRefNotes);
@@ -230,9 +231,9 @@ async function getItemTemplateData() {
             slice(
               (firstSelectedItem.getField("title") as string) ||
                 firstSelectedItem.key,
-              40
+              40,
             ),
-            40
+            40,
           )} ${
             librarySelectedIds.length > 1
               ? `and ${librarySelectedIds.length - 1} more`

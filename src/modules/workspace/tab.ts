@@ -24,11 +24,9 @@ export function registerWorkspaceTab() {
     attributeFilter: ["hidden"],
   });
   waitUtilAsync(() =>
-    Boolean(ztoolkit.getGlobal("ZoteroContextPane")._notifierID)
+    Boolean(ztoolkit.getGlobal("ZoteroContextPane")._notifierID),
   ).then(() => {
-    addWorkspaceTab().then(() => {
-      restoreWorkspaceTab();
-    });
+    addWorkspaceTab();
   });
   window.addEventListener("message", (e) => messageHandler(e), false);
 }
@@ -38,7 +36,7 @@ export function unregisterWorkspaceTab() {
 }
 
 async function addWorkspaceTab() {
-  let { id, container } = Zotero_Tabs.add({
+  const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: getString("tab.name"),
     index: 1,
@@ -54,10 +52,10 @@ async function addWorkspaceTab() {
     },
   });
   await waitUtilAsync(() =>
-    Boolean(document.querySelector(`.tabs-wrapper .tab[data-id=${id}]`))
+    Boolean(document.querySelector(`.tabs-wrapper .tab[data-id=${id}]`)),
   );
   const tabElem = document.querySelector(
-    `.tabs-wrapper .tab[data-id=${id}]`
+    `.tabs-wrapper .tab[data-id=${id}]`,
   ) as HTMLDivElement;
   tabElem.style.width = "30px";
   tabElem.style.minWidth = "30px";
@@ -78,7 +76,7 @@ async function addWorkspaceTab() {
         backgroundImage: `url("chrome://${config.addonRef}/content/icons/favicon.png")`,
       },
     },
-    content
+    content,
   );
   close.style.visibility = "hidden";
   addon.data.workspace.tab.id = id;
@@ -91,7 +89,7 @@ function hoverWorkspaceTab(hovered: boolean) {
     (elem as HTMLDivElement).style.visibility = hovered ? "visible" : "hidden";
   });
   const tabElem = document.querySelector(
-    `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`
+    `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`,
   ) as HTMLDivElement;
   const content = tabElem.querySelector(".tab-name") as HTMLDivElement;
   content.removeAttribute("style");
@@ -107,10 +105,10 @@ function hoverWorkspaceTab(hovered: boolean) {
 
 function updateWorkspaceTabToggleButton(
   type: "outline" | "preview" | "notes",
-  state: "open" | "collapsed"
+  state: "open" | "collapsed",
 ) {
   const elem = document.querySelector(
-    `#betternotes-tab-toggle-${type}`
+    `#betternotes-tab-toggle-${type}`,
   ) as HTMLDivElement;
   if (!elem) {
     return;
@@ -123,12 +121,12 @@ function updateWorkspaceTabToggleButton(
 
 function registerWorkspaceTabPaneObserver() {
   const outlineSplitter = document.querySelector(
-    "#betternotes-workspace-outline-splitter"
+    "#betternotes-workspace-outline-splitter",
   );
   const outlineMut = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
     updateWorkspaceTabToggleButton(
       "outline",
-      outlineSplitter!.getAttribute("state")! as "open" | "collapsed"
+      outlineSplitter!.getAttribute("state")! as "open" | "collapsed",
     );
   });
   outlineMut.observe(outlineSplitter!, {
@@ -136,12 +134,12 @@ function registerWorkspaceTabPaneObserver() {
     attributeFilter: ["state"],
   });
   const previewSplitter = document.querySelector(
-    "#betternotes-workspace-preview-splitter"
+    "#betternotes-workspace-preview-splitter",
   );
   const previeweMut = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
     updateWorkspaceTabToggleButton(
       "preview",
-      previewSplitter!.getAttribute("state")! as "open" | "collapsed"
+      previewSplitter!.getAttribute("state")! as "open" | "collapsed",
     );
   });
   previeweMut.observe(previewSplitter!, {
@@ -152,7 +150,7 @@ function registerWorkspaceTabPaneObserver() {
   const notesMut = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
     updateWorkspaceTabToggleButton(
       "notes",
-      notesSplitter!.getAttribute("state")! as "open" | "collapsed"
+      notesSplitter!.getAttribute("state")! as "open" | "collapsed",
     );
   });
   notesMut.observe(notesSplitter!, {
@@ -173,7 +171,7 @@ export async function activateWorkspaceTab() {
       document.querySelector("#zotero-tab-toolbar") as XUL.Box
     ).style.visibility = "collapse";
     const toolbar = document.querySelector(
-      "#zotero-context-toolbar-extension"
+      "#zotero-context-toolbar-extension",
     ) as XUL.Box;
     toolbar.style.visibility = "collapse";
     toolbar.nextElementSibling?.setAttribute("selectedIndex", "1");
@@ -188,12 +186,12 @@ export async function activateWorkspaceTab() {
   await waitUtilAsync(() =>
     Boolean(
       document.querySelector(
-        `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`
-      )
-    )
+        `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`,
+      ),
+    ),
   );
   const tabElem = document.querySelector(
-    `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`
+    `.tabs-wrapper .tab[data-id=${addon.data.workspace.tab.id}]`,
   ) as HTMLDivElement;
   tabElem.removeAttribute("style");
   const content = tabElem.querySelector(".tab-name") as HTMLDivElement;
@@ -222,7 +220,7 @@ export async function activateWorkspaceTab() {
                 addon.hooks.onToggleWorkspacePane(
                   "outline",
                   undefined,
-                  addon.data.workspace.tab.container
+                  addon.data.workspace.tab.container,
                 );
               },
             },
@@ -245,7 +243,7 @@ export async function activateWorkspaceTab() {
                 addon.hooks.onToggleWorkspacePane(
                   "preview",
                   undefined,
-                  addon.data.workspace.tab.container
+                  addon.data.workspace.tab.container,
                 );
               },
             },
@@ -281,7 +279,7 @@ export async function activateWorkspaceTab() {
         },
       ],
     },
-    close
+    close,
   );
   hoverWorkspaceTab(false);
   tabElem.addEventListener("mouseenter", () => {
@@ -320,17 +318,9 @@ export function deActivateWorkspaceTab() {
     document.querySelector("#zotero-tab-toolbar") as XUL.Box
   ).style.removeProperty("visibility");
   const toolbar = document.querySelector(
-    "#zotero-context-toolbar-extension"
+    "#zotero-context-toolbar-extension",
   ) as XUL.Box;
   toolbar.style.removeProperty("visibility");
-}
-
-function restoreWorkspaceTab() {
-  return;
-  if (1 || getPref("workspace.tab.active")) {
-    ztoolkit.log("restore workspace tab");
-    activateWorkspaceTab();
-  }
 }
 
 function setWorkspaceTabStatus(status: boolean) {
@@ -340,7 +330,7 @@ function setWorkspaceTabStatus(status: boolean) {
 
 function initWorkspaceTabDragDrop(
   container?: XUL.Box,
-  tabElem?: HTMLDivElement
+  tabElem?: HTMLDivElement,
 ) {
   if (!container) {
     return;
@@ -401,10 +391,10 @@ function initWorkspaceTabDragDrop(
       ],
       enableElementRecord: false,
     },
-    container
+    container,
   );
   const dropElem = container.querySelector(
-    "#bn-workspace-tab-drop"
+    "#bn-workspace-tab-drop",
   ) as HTMLDivElement;
   tabElem?.addEventListener("dragstart", (ev) => {
     dropElem.style.visibility = "visible";

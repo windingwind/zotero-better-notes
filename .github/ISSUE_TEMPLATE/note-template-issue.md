@@ -3,8 +3,7 @@ name: Note Template Issue
 about: Need help with your custom note template
 title: "[Note Template]"
 labels: help wanted
-assignees: ''
-
+assignees: ""
 ---
 
 ## Template Type

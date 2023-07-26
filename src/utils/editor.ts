@@ -27,7 +27,7 @@ function insert(
   editor: Zotero.EditorInstance,
   content: string = "",
   position: number | "end" | "start" | "cursor" = "cursor",
-  select?: boolean
+  select?: boolean,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -45,7 +45,7 @@ function insert(
     EditorAPI.refocusEditor(() => {
       EditorAPI.setSelection(
         (position as number) + slice.content.size,
-        position as number
+        position as number,
       )(core.view.state, core.view.dispatch);
     });
   }
@@ -61,7 +61,7 @@ function move(
   editor: Zotero.EditorInstance,
   from: number,
   to: number,
-  delta: number
+  delta: number,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -106,7 +106,7 @@ function replace(
     | "link"
     | "code",
   markAttrs: Record<string, any>,
-  select?: boolean
+  select?: boolean,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -119,7 +119,7 @@ function replace(
     JSON.stringify(nodeAttrs),
     schema.marks[markTypeName],
     JSON.stringify(markAttrs),
-    select
+    select,
   )(core.view.state, core.view.dispatch);
 }
 
@@ -133,7 +133,7 @@ function scroll(editor: Zotero.EditorInstance, lineIndex: number) {
 function getEditorInstance(noteId: number) {
   const editor = Zotero.Notes._editorInstances.find(
     (e) =>
-      e._item.id === noteId && !Components.utils.isDeadWrapper(e._iframeWindow)
+      e._item.id === noteId && !Components.utils.isDeadWrapper(e._iframeWindow),
   );
   return editor;
 }
@@ -179,7 +179,7 @@ function getLineAtCursor(editor: Zotero.EditorInstance) {
 
 function getDOMAtLine(
   editor: Zotero.EditorInstance,
-  lineIndex: number
+  lineIndex: number,
 ): HTMLElement {
   const core = getEditorCore(editor);
   const lineNodeDesc =
@@ -192,7 +192,7 @@ function getDOMAtLine(
 function getPositionAtLine(
   editor: Zotero.EditorInstance,
   lineIndex: number,
-  type: "start" | "end" = "end"
+  type: "start" | "end" = "end",
 ): number {
   const core = getEditorCore(editor);
   const lineNodeDesc =
@@ -204,8 +204,8 @@ function getPositionAtLine(
     0,
     Math.min(
       type === "end" ? linePos + lineNodeDesc.size - 1 : linePos - 1,
-      core.view.state.tr.doc.content.size
-    )
+      core.view.state.tr.doc.content.size,
+    ),
   );
 }
 
@@ -217,12 +217,12 @@ function getURLAtCursor(editor: Zotero.EditorInstance) {
 function updateURLAtCursor(
   editor: Zotero.EditorInstance,
   text: string | undefined,
-  url: string
+  url: string,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
-  let from = core.view.state.selection.from;
-  let to = core.view.state.selection.to;
+  const from = core.view.state.selection.from;
+  const to = core.view.state.selection.to;
   const schema = core.view.state.schema;
   if (!url) {
     return;
@@ -232,13 +232,13 @@ function updateURLAtCursor(
     text,
     schema.marks.link,
     JSON.stringify({ href: url }),
-    schema.marks.link
+    schema.marks.link,
   )(core.view.state, core.view.dispatch);
   EditorAPI.refocusEditor(() => {
     core.view.dispatch(
       core.view.state.tr.setSelection(
-        TextSelection.create(core.view.state.tr.doc, from, to)
-      )
+        TextSelection.create(core.view.state.tr.doc, from, to),
+      ),
     );
   });
 }
@@ -246,7 +246,7 @@ function updateURLAtCursor(
 function updateHeadingTextAtLine(
   editor: Zotero.EditorInstance,
   lineIndex: number,
-  text: string
+  text: string,
 ) {
   const core = getEditorCore(editor);
   const schema = core.view.state.schema;
@@ -260,13 +260,13 @@ function updateHeadingTextAtLine(
     to,
     text,
     schema.nodes.heading,
-    JSON.stringify({ level })
+    JSON.stringify({ level }),
   )(core.view.state, core.view.dispatch);
   EditorAPI.refocusEditor(() => {
     core.view.dispatch(
       core.view.state.tr.setSelection(
-        TextSelection.create(core.view.state.tr.doc, from, from + text.length)
-      )
+        TextSelection.create(core.view.state.tr.doc, from, from + text.length),
+      ),
     );
   });
 }
@@ -280,7 +280,7 @@ function isImageAtCursor(editor: Zotero.EditorInstance) {
 
 function updateImageDimensionsAtCursor(
   editor: Zotero.EditorInstance,
-  width: number
+  width: number,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -290,7 +290,7 @@ function updateImageDimensionsAtCursor(
     width,
     undefined,
     core.view.state,
-    core.view.dispatch
+    core.view.dispatch,
   );
 }
 
@@ -298,7 +298,7 @@ function moveLines(
   editor: Zotero.EditorInstance,
   fromIndex: number,
   toIndex: number,
-  targetIndex: number
+  targetIndex: number,
 ) {
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
@@ -317,8 +317,12 @@ function moveLines(
   EditorAPI.refocusEditor(() => {
     core.view.dispatch(
       core.view.state.tr.setSelection(
-        TextSelection.create(core.view.state.tr.doc, target, target + to - from)
-      )
+        TextSelection.create(
+          core.view.state.tr.doc,
+          target,
+          target + to - from,
+        ),
+      ),
     );
   });
 }
@@ -327,7 +331,7 @@ function moveHeading(
   editor: Zotero.EditorInstance | undefined,
   currentNode: TreeModel.Node<NoteNodeData>,
   targetNode: TreeModel.Node<NoteNodeData>,
-  as: "child" | "before" | "after"
+  as: "child" | "before" | "after",
 ) {
   if (!editor || targetNode.getPath().indexOf(currentNode) >= 0) {
     return;
@@ -359,13 +363,13 @@ function moveHeading(
 
   const fromIndex = currentNode.model.lineIndex;
   const toIndex = currentNode.model.endIndex;
-  let levelChange = targetLevel - currentNode.model.level;
+  const levelChange = targetLevel - currentNode.model.level;
   const core = getEditorCore(editor);
   const EditorAPI = getEditorAPI(editor);
   EditorAPI.updateHeadingsInRange(
     getPositionAtLine(editor, fromIndex, "start"),
     getPositionAtLine(editor, toIndex, "end"),
-    levelChange
+    levelChange,
   )(core.view.state, core.view.dispatch);
   moveLines(editor, fromIndex, toIndex, targetIndex);
 }
@@ -373,7 +377,7 @@ function moveHeading(
 function getTextBetween(
   editor: Zotero.EditorInstance,
   from: number,
-  to: number
+  to: number,
 ) {
   const core = getEditorCore(editor);
   return core.view.state.doc.textBetween(from, to);
@@ -382,7 +386,7 @@ function getTextBetween(
 function getTextBetweenLines(
   editor: Zotero.EditorInstance,
   fromIndex: number,
-  toIndex: number
+  toIndex: number,
 ) {
   const core = getEditorCore(editor);
   const from = getPositionAtLine(editor, fromIndex, "start");

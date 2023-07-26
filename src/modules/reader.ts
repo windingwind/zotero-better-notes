@@ -8,7 +8,7 @@ export function registerReaderInitializer() {
   ztoolkit.ReaderInstance.register(
     "initialized",
     `${config.addonRef}-annotationButtons`,
-    initializeReaderAnnotationButton
+    initializeReaderAnnotationButton,
   );
   // Force re-initialize
   Zotero.Reader._readers.forEach((r) => {
@@ -38,7 +38,7 @@ export async function checkReaderAnnotationButton(items: Zotero.Item[]) {
 }
 
 async function initializeReaderAnnotationButton(
-  instance: _ZoteroTypes.ReaderInstance
+  instance: _ZoteroTypes.ReaderInstance,
 ): Promise<Zotero.Item[]> {
   if (!instance) {
     return [];
@@ -68,7 +68,7 @@ async function initializeReaderAnnotationButton(
     const libraryID = Zotero.Items.get(instance.itemID).libraryID;
     const annotationItem = (await Zotero.Items.getByLibraryAndKeyAsync(
       libraryID,
-      itemKey
+      itemKey,
     )) as Zotero.Item;
 
     if (!annotationItem) {
@@ -90,7 +90,7 @@ async function initializeReaderAnnotationButton(
             listener: (e) => {
               createNoteFromAnnotation(
                 annotationItem,
-                (e as MouseEvent).shiftKey ? "standalone" : "auto"
+                (e as MouseEvent).shiftKey ? "standalone" : "auto",
               );
               e.preventDefault();
             },
@@ -105,7 +105,7 @@ async function initializeReaderAnnotationButton(
             type: "mouseout",
             listener: (e) => {
               (e.target as HTMLElement).style.removeProperty(
-                "background-color"
+                "background-color",
               );
             },
           },
@@ -139,7 +139,7 @@ async function initializeReaderAnnotationButton(
             type: "mouseout",
             listener: (e) => {
               (e.target as HTMLElement).style.removeProperty(
-                "background-color"
+                "background-color",
               );
             },
           },
@@ -153,14 +153,14 @@ async function initializeReaderAnnotationButton(
         tag: "fragment",
         children: annotationButtons,
       },
-      moreButton
+      moreButton,
     );
   }
   return hitItems;
 }
 
 async function unInitializeReaderAnnotationButton(
-  instance: _ZoteroTypes.ReaderInstance
+  instance: _ZoteroTypes.ReaderInstance,
 ): Promise<void> {
   if (!instance) {
     return;
@@ -180,7 +180,7 @@ async function unInitializeReaderAnnotationButton(
 
 async function createNoteFromAnnotation(
   annotationItem: Zotero.Item,
-  openMode: "standalone" | "auto" = "auto"
+  openMode: "standalone" | "auto" = "auto",
 ) {
   const annotationTags = annotationItem.getTags().map((_) => _.tag);
   const linkRegex = new RegExp("^zotero://note/(.*)$");
@@ -209,7 +209,7 @@ async function createNoteFromAnnotation(
   const renderredTemplate = await addon.api.template.runTemplate(
     "[QuickNoteV5]",
     "annotationItem, topItem, noteItem",
-    [annotationItem, annotationItem.parentItem!.parentItem, note]
+    [annotationItem, annotationItem.parentItem!.parentItem, note],
   );
   await addLineToNote(note, renderredTemplate);
 

@@ -4,7 +4,7 @@ export { annotationTagAction };
 
 async function annotationTagAction(
   ids: Array<number | string>,
-  extraData: Record<string, any>
+  extraData: Record<string, any>,
 ) {
   const workspaceNote = Zotero.Items.get(addon.data.workspace.mainId);
   if (!workspaceNote || !workspaceNote.isNote()) {
@@ -14,7 +14,7 @@ async function annotationTagAction(
   const headings: string[] = nodes.map((node) => node.model.name);
 
   for (const tagId of ids.filter((t) =>
-    (extraData[t].tag as string).startsWith("@")
+    (extraData[t].tag as string).startsWith("@"),
   )) {
     const tagName = (extraData[tagId].tag as string).slice(1).trim();
     if (headings.includes(tagName) || tagName === "@") {
@@ -35,7 +35,7 @@ async function annotationTagAction(
         await addon.api.convert.annotations2html([annotationItem], {
           noteItem: workspaceNote,
         }),
-        lineIndex
+        lineIndex,
       );
     }
   }

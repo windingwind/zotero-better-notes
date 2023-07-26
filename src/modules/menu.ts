@@ -13,7 +13,7 @@ export function registerMenus() {
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
       addon.hooks.onShowExportNoteOptions(
-        ZoteroPane.getSelectedItems().map((item) => item.id)
+        ZoteroPane.getSelectedItems().map((item) => item.id),
       );
     },
   });
@@ -36,7 +36,7 @@ export function registerMenus() {
 
   // menuEdit
   const menuEditAnchor = document.querySelector(
-    "#menu_EditPreferencesItem"
+    "#menu_EditPreferencesItem",
   ) as XUL.MenuItem;
   ztoolkit.Menu.register(
     "menuEdit",
@@ -49,7 +49,7 @@ export function registerMenus() {
       },
     },
     "before",
-    menuEditAnchor
+    menuEditAnchor,
   );
   ztoolkit.Menu.register(
     "menuEdit",
@@ -62,7 +62,7 @@ export function registerMenus() {
       },
     },
     "before",
-    menuEditAnchor
+    menuEditAnchor,
   );
   ztoolkit.Menu.register(
     "menuEdit",
@@ -75,7 +75,7 @@ export function registerMenus() {
       },
     },
     "before",
-    menuEditAnchor
+    menuEditAnchor,
   );
   ztoolkit.Menu.register(
     "menuEdit",
@@ -88,13 +88,13 @@ export function registerMenus() {
       },
     },
     "before",
-    menuEditAnchor
+    menuEditAnchor,
   );
   ztoolkit.Menu.register(
     "menuEdit",
     { tag: "menuseparator" },
     "before",
-    menuEditAnchor
+    menuEditAnchor,
   );
 
   // menuTools
@@ -110,7 +110,7 @@ export function registerMenus() {
 
   // menuFile
   const menuFileAnchor = document.querySelector(
-    "#menu_newCollection"
+    "#menu_newCollection",
   ) as XUL.MenuItem;
   const recentMainNotesMenuId = "zotero-recent-main-notes-menu";
   const recentMainNotesMenuPopupId = "zotero-recent-main-notes-popup";
@@ -130,7 +130,7 @@ export function registerMenus() {
       popupId: recentMainNotesMenuPopupId,
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
 
   document
@@ -142,7 +142,7 @@ export function registerMenus() {
         ((getPref("recentMainNoteIds") as string) || "")
           .split(",")
           .map((id) => parseInt(id))
-          .filter((id) => id !== addon.data.workspace.mainId)
+          .filter((id) => id !== addon.data.workspace.mainId),
       )
         .filter((item) => item.isNote())
         .map((item) => ({
@@ -155,11 +155,11 @@ export function registerMenus() {
                   : "📁" +
                     Zotero.Collections.get(item.getCollections())
                       .map(
-                        (collection) => (collection as Zotero.Collection).name
+                        (collection) => (collection as Zotero.Collection).name,
                       )
                       .join(", ")
               }`,
-              200
+              200,
             ),
           },
           listeners: [
@@ -188,7 +188,7 @@ export function registerMenus() {
           children: children.length === 0 ? defaultChildren : children,
           enableElementRecord: false,
         },
-        popup
+        popup,
       );
       return true;
     });
@@ -213,13 +213,13 @@ export function registerMenus() {
       },
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
   ztoolkit.Menu.register(
     "menuFile",
     { tag: "menuseparator" },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
   // a copy of create note menu in library
   ztoolkit.Menu.register(
@@ -231,7 +231,7 @@ export function registerMenus() {
       commandListener: () => addon.hooks.onCreateNoteFromMD(),
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
   ztoolkit.Menu.register(
     "menuFile",
@@ -243,7 +243,7 @@ export function registerMenus() {
         addon.hooks.onCreateNoteFromTemplate("item", "library"),
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
   ztoolkit.Menu.register(
     "menuFile",
@@ -254,7 +254,7 @@ export function registerMenus() {
       commandListener: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
   ztoolkit.Menu.register(
     "menuFile",
@@ -265,7 +265,7 @@ export function registerMenus() {
       commandListener: addon.hooks.onCreateWorkspaceNote,
     },
     "after",
-    menuFileAnchor
+    menuFileAnchor,
   );
 
   // create note menu in library
@@ -301,7 +301,7 @@ export function registerMenus() {
   // create note menu in reader side panel
   ztoolkit.Menu.register(
     document.querySelector(
-      "#context-pane-add-child-note-button-popup"
+      "#context-pane-add-child-note-button-popup",
     ) as XUL.MenuPopup,
     {
       tag: "menuitem",
@@ -309,6 +309,6 @@ export function registerMenus() {
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: () =>
         addon.hooks.onCreateNoteFromTemplate("item", "reader"),
-    }
+    },
   );
 }

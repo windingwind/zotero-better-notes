@@ -11,12 +11,12 @@ export function registerEditorInstanceHook() {
       apply: (
         target,
         thisArg,
-        argumentsList: [instance: Zotero.EditorInstance]
+        argumentsList: [instance: Zotero.EditorInstance],
       ) => {
         target.apply(thisArg, argumentsList);
         argumentsList.forEach(onEditorInstanceCreated);
       },
-    }
+    },
   );
 }
 

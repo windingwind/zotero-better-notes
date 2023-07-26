@@ -7,7 +7,7 @@ import { waitUtilAsync } from "../utils/wait";
 export async function showImageViewer(
   srcList: string[],
   idx: number,
-  title: string
+  title: string,
 ) {
   if (
     !addon.data.imageViewer.window ||
@@ -19,16 +19,16 @@ export async function showImageViewer(
       `${config.addonRef}-imageViewer`,
       `chrome,centerscreen,resizable,status,width=500,height=550,dialog=no${
         addon.data.imageViewer.pined ? ",alwaysRaised=yes" : ""
-      }`
+      }`,
     )!;
     await waitUtilAsync(
-      () => addon.data.imageViewer.window?.document.readyState === "complete"
+      () => addon.data.imageViewer.window?.document.readyState === "complete",
     );
     const container = addon.data.imageViewer.window.document.querySelector(
-      ".container"
+      ".container",
     ) as HTMLDivElement;
     const img = addon.data.imageViewer.window.document.querySelector(
-      "#image"
+      "#image",
     ) as HTMLImageElement;
 
     addon.data.imageViewer.window.document
@@ -75,26 +75,26 @@ export async function showImageViewer(
     addon.data.imageViewer.window.document
       .querySelector("#save")
       ?.addEventListener("click", async (e) => {
-        let parts =
+        const parts =
           addon.data.imageViewer.srcList[addon.data.imageViewer.idx].split(",");
         if (!parts[0].includes("base64")) {
           return;
         }
-        let mime = parts[0].match(/:(.*?);/)![1];
-        let bstr = addon.data.imageViewer.window?.atob(parts[1])!;
+        const mime = parts[0].match(/:(.*?);/)![1];
+        const bstr = ztoolkit.getGlobal("atob")(parts[1]);
         let n = bstr.length;
-        let u8arr = new Uint8Array(n);
+        const u8arr = new Uint8Array(n);
         while (n--) {
           u8arr[n] = bstr.charCodeAt(n);
         }
-        let ext = Zotero.MIME.getPrimaryExtension(mime, "");
+        const ext = Zotero.MIME.getPrimaryExtension(mime, "");
         const filename = await new ztoolkit.FilePicker(
           Zotero.getString("noteEditor.saveImageAs"),
           "save",
           [[`Image(*.${ext})`, `*.${ext}`]],
           `${Zotero.getString("fileTypes.image").toLowerCase()}.${ext}`,
           addon.data.imageViewer.window,
-          "images"
+          "images",
         ).open();
         if (filename) {
           await OS.File.writeAtomic(formatPath(filename), u8arr);
@@ -103,7 +103,7 @@ export async function showImageViewer(
             "Show in Folder",
             (ev) => {
               Zotero.File.reveal(filename);
-            }
+            },
           );
         }
       });
@@ -112,7 +112,7 @@ export async function showImageViewer(
         ? ICONS.imageViewerPined
         : ICONS.imageViewerPin;
     addon.data.imageViewer.window.document.querySelector(
-      "#pin-tooltip"
+      "#pin-tooltip",
     )!.innerHTML = addon.data.imageViewer.pined ? "Unpin" : "Pin";
     addon.data.imageViewer.window.document
       .querySelector("#pin")
@@ -160,7 +160,7 @@ export async function showImageViewer(
       if (e.ctrlKey) {
         setScale(
           addon.data.imageViewer.scaling *
-            Math.pow(delta > 0 ? 1.1 : 1 / 1.1, Math.round(Math.abs(delta)))
+            Math.pow(delta > 0 ? 1.1 : 1 / 1.1, Math.round(Math.abs(delta))),
         );
       } else if (e.shiftKey) {
         container.scrollLeft -= delta * 10;
@@ -201,18 +201,18 @@ export async function showImageViewer(
 function setImage() {
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#image"
+      "#image",
     ) as HTMLImageElement
   ).src = addon.data.imageViewer.srcList[addon.data.imageViewer.idx];
   setTitle();
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#left-container"
+      "#left-container",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.idx === 0 ? "0.5" : "1";
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#right-container"
+      "#right-container",
     ) as HTMLButtonElement
   ).style.opacity =
     addon.data.imageViewer.idx === addon.data.imageViewer.srcList.length - 1
@@ -244,29 +244,29 @@ function setScale(scaling: number) {
     addon.data.imageViewer.scaling = 0.1;
   }
   const container = addon.data.imageViewer.window?.document.querySelector(
-    ".container"
+    ".container",
   ) as HTMLDivElement;
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#image"
+      "#image",
     ) as HTMLImageElement
   ).style.width = `calc(100% * ${addon.data.imageViewer.scaling})`;
   if (addon.data.imageViewer.scaling > 1) {
     container.scrollLeft +=
-      addon.data.imageViewer.anchorPosition?.left! *
+      addon.data.imageViewer.anchorPosition!.left *
       (addon.data.imageViewer.scaling - oldScale);
     container.scrollTop +=
-      addon.data.imageViewer.anchorPosition?.top! *
+      addon.data.imageViewer.anchorPosition!.top *
       (addon.data.imageViewer.scaling - oldScale);
   }
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#bigger-container"
+      "#bigger-container",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.scaling === 10 ? "0.5" : "1";
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#smaller-container"
+      "#smaller-container",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.scaling === 0.1 ? "0.5" : "1";
   // (
@@ -276,7 +276,7 @@ function setScale(scaling: number) {
 
 function setTitle() {
   addon.data.imageViewer.window!.document.querySelector(
-    "title"
+    "title",
   )!.innerText! = `${addon.data.imageViewer.idx + 1}/${
     addon.data.imageViewer.srcList.length
   }:${addon.data.imageViewer.title}`;
@@ -288,6 +288,6 @@ function setPin() {
   showImageViewer(
     addon.data.imageViewer.srcList,
     addon.data.imageViewer.idx,
-    addon.data.imageViewer.title
+    addon.data.imageViewer.title,
   );
 }

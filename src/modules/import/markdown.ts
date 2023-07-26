@@ -8,7 +8,7 @@ export async function fromMD(
     ignoreVersion?: boolean;
     append?: boolean;
     appendLineIndex?: number;
-  } = {}
+  } = {},
 ) {
   let mdStatus: MDStatus;
   try {
@@ -26,7 +26,7 @@ export async function fromMD(
   ) {
     if (
       !window.confirm(
-        `The target note seems to be newer than the file ${filepath}. Are you sure you want to import it anyway?`
+        `The target note seems to be newer than the file ${filepath}. Are you sure you want to import it anyway?`,
       )
     ) {
       return;

@@ -47,6 +47,7 @@ import {
   createNoteFromMD,
 } from "./modules/createNote";
 import { annotationTagAction } from "./modules/annotationTagAction";
+import { createZToolkit } from "./utils/ztoolkit";
 
 async function onStartup() {
   await Promise.all([
@@ -57,26 +58,38 @@ async function onStartup() {
   initLocale();
   ztoolkit.ProgressWindow.setIconURI(
     "default",
-    `chrome://${config.addonRef}/content/icons/favicon.png`
+    `chrome://${config.addonRef}/content/icons/favicon.png`,
   );
 
   registerNoteLinkProxyHandler();
 
-  registerNotify(["tab", "item", "item-tag"]);
-
   registerEditorInstanceHook();
 
   initTemplates();
+
+  registerPrefsWindow();
+
+  setSyncing();
+
+  await onMainWindowLoad(window);
+}
+
+async function onMainWindowLoad(win: Window): Promise<void> {
+  // Create ztoolkit for every window
+  addon.data.ztoolkit = createZToolkit();
+
+  registerNotify(["tab", "item", "item-tag"]);
 
   registerMenus();
 
   registerWorkspaceTab();
 
   registerReaderInitializer();
+}
 
-  registerPrefsWindow();
-
-  setSyncing();
+async function onMainWindowUnload(win: Window): Promise<void> {
+  ztoolkit.unregisterAll();
+  unregisterReaderInitializer();
 }
 
 function onShutdown(): void {
@@ -96,7 +109,7 @@ function onNotify(
   event: string,
   type: string,
   ids: number[] | string[],
-  extraData: { [key: string]: any }
+  extraData: { [key: string]: any },
 ) {
   // Workspace tab select/unselect callback
   if (event === "select" && type === "tab") {
@@ -128,7 +141,7 @@ function onNotify(
   // Reader annotation buttons update
   if (event === "add" && type === "item") {
     const annotationItems = Zotero.Items.get(ids as number[]).filter((item) =>
-      item.isAnnotation()
+      item.isAnnotation(),
     );
     if (annotationItems.length !== 0) {
       checkReaderAnnotationButton(annotationItems);
@@ -163,7 +176,7 @@ function onOpenNote(
   mode: "auto" | "preview" | "workspace" | "standalone" = "auto",
   options: {
     lineIndex?: number;
-  } = {}
+  } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem?.isNote()) {
@@ -188,6 +201,7 @@ function onOpenNote(
       break;
     case "workspace":
       addon.hooks.onSetWorkspaceNote(noteId, "main", options);
+      break;
     case "standalone":
       ZoteroPane.openNoteWindow(noteId);
       break;
@@ -201,7 +215,7 @@ function onSetWorkspaceNote(
   type: "main" | "preview" = "main",
   options: {
     lineIndex?: number;
-  } = {}
+  } = {},
 ) {
   if (type === "main") {
     addon.data.workspace.mainId = noteId;
@@ -215,13 +229,13 @@ function onSetWorkspaceNote(
       addon.data.workspace.window.container,
       type,
       noteId,
-      options
+      options,
     );
     type === "preview" &&
       addon.hooks.onToggleWorkspacePane(
         "preview",
         true,
-        addon.data.workspace.window.container
+        addon.data.workspace.window.container,
       );
     addon.data.workspace.window.window?.focus();
   }
@@ -230,13 +244,13 @@ function onSetWorkspaceNote(
       addon.data.workspace.tab.container,
       type,
       noteId,
-      options
+      options,
     );
     type === "preview" &&
       addon.hooks.onToggleWorkspacePane(
         "preview",
         true,
-        addon.data.workspace.tab.container
+        addon.data.workspace.tab.container,
       );
     Zotero_Tabs.select(addon.data.workspace.tab.id!);
   }
@@ -263,7 +277,7 @@ const onInitWorkspace = initWorkspace;
 function onToggleWorkspacePane(
   type: "outline" | "preview" | "notes",
   visibility?: boolean,
-  container?: XUL.Box
+  container?: XUL.Box,
 ) {
   switch (type) {
     case "outline":
@@ -274,6 +288,7 @@ function onToggleWorkspacePane(
       break;
     case "notes":
       toggleNotesPane(visibility);
+      break;
     default:
       break;
   }
@@ -311,6 +326,8 @@ const onCreateNoteFromMD = createNoteFromMD;
 
 export default {
   onStartup,
+  onMainWindowLoad,
+  onMainWindowUnload,
   onShutdown,
   onNotify,
   onPrefsEvent,

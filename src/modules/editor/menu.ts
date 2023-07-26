@@ -31,8 +31,8 @@ export function initEditorMenu(editor: Zotero.EditorInstance) {
             editor._iframeWindow.prompt(
               getString("editor.resizeImage.prompt"),
               // @ts-ignore
-              getEditorCore(editor).view.state.selection.node?.attrs?.width
-            ) || ""
+              getEditorCore(editor).view.state.selection.node?.attrs?.width,
+            ) || "",
           );
           if (newWidth && newWidth > 10) {
             updateImageDimensionsAtCursor(editor, newWidth);

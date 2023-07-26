@@ -5,7 +5,7 @@ export { renderTemplatePreview };
 
 async function renderTemplatePreview(
   templateName: string,
-  inputItems?: Zotero.Item[]
+  inputItems?: Zotero.Item[],
 ): Promise<string> {
   let html: string = "<p>Preview rendering failed</p>";
   if (!inputItems) {
@@ -33,7 +33,7 @@ async function renderTemplatePreview(
         [data],
         {
           dryRun: true,
-        }
+        },
       );
     }
   } else if (templateName.includes("ExportMDFileHeader")) {
@@ -48,7 +48,7 @@ async function renderTemplatePreview(
         [data],
         {
           dryRun: true,
-        }
+        },
       );
       const header = Object.assign({}, JSON.parse(raw), {
         version: data.version,
@@ -73,7 +73,7 @@ async function renderTemplatePreview(
         [link, linkText, subNoteItem, noteItem],
         {
           dryRun: true,
-        }
+        },
       );
     }
   } else if (templateName.includes("QuickBackLink")) {
@@ -92,7 +92,7 @@ async function renderTemplatePreview(
         [link, linkText, subNoteItem, noteItem],
         {
           dryRun: true,
-        }
+        },
       );
     }
   } else if (templateName.includes("QuickImport")) {
@@ -109,7 +109,7 @@ async function renderTemplatePreview(
         [link, noteItem],
         {
           dryRun: true,
-        }
+        },
       );
     }
   } else if (templateName.includes("QuickNote")) {

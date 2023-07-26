@@ -20,7 +20,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
     id: string,
     content: string,
     title: string,
-    callback: (ev: Event) => void
+    callback: (ev: Event) => void,
   ) {
     return {
       tag: "div",
@@ -119,7 +119,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
                   getString("workspace.switchOutline"),
                   (ev) => {
                     setOutline(container);
-                  }
+                  },
                 ),
                 makeTooltipProp(
                   makeId("saveOutlineImage"),
@@ -127,7 +127,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
                   getString("workspace.saveOutlineImage"),
                   (ev) => {
                     saveImage(container);
-                  }
+                  },
                 ),
                 makeTooltipProp(
                   makeId("saveOutlineFreeMind"),
@@ -135,7 +135,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
                   getString("workspace.saveOutlineFreeMind"),
                   (ev) => {
                     saveFreeMind();
-                  }
+                  },
                 ),
               ],
             },
@@ -219,7 +219,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
         },
       ],
     },
-    container
+    container,
   );
   // Manually add custom editor items in Zotero 7
   if (ztoolkit.isZotero7()) {
@@ -227,10 +227,10 @@ export function initWorkspace(container: XUL.Box | undefined) {
     const customElements = container.ownerGlobal
       .customElements as CustomElementRegistry;
     const mainEditorContainer = container.querySelector(
-      `#${makeId("editor-main-container")}`
+      `#${makeId("editor-main-container")}`,
     );
     const previewEditorContainer = container.querySelector(
-      `#${makeId("editor-preview-container")}`
+      `#${makeId("editor-preview-container")}`,
     );
     const mainEditor = new (customElements.get("note-editor")!)();
     mainEditor.id = makeId("editor-main");
@@ -243,7 +243,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
   }
 
   const outlineContainer = container.querySelector(
-    `#${makeId("outline-container")}`
+    `#${makeId("outline-container")}`,
   ) as XUL.Box;
   const outlineMut = new (ztoolkit.getGlobal("MutationObserver"))(
     (mutations) => {
@@ -252,7 +252,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
       } else {
         outlineContainer.style.display = "flex";
       }
-    }
+    },
   );
   outlineMut.observe(outlineContainer, {
     attributes: true,
@@ -269,7 +269,7 @@ export async function initWorkspaceEditor(
   noteId: number,
   options: {
     lineIndex?: number;
-  } = {}
+  } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem || !noteItem.isNote()) {
@@ -279,7 +279,7 @@ export async function initWorkspaceEditor(
     return;
   }
   const editorElem = container?.querySelector(
-    `#${makeId("editor-" + type)}`
+    `#${makeId("editor-" + type)}`,
   ) as EditorElement;
   await waitUtilAsync(() => Boolean(editorElem._initialized))
     .then(() => ztoolkit.log("ok"))
@@ -300,7 +300,7 @@ export async function initWorkspaceEditor(
 }
 
 function getContainerType(
-  container: XUL.Box | undefined
+  container: XUL.Box | undefined,
 ): "tab" | "window" | "unknown" {
   if (!container) {
     return "unknown";
@@ -337,7 +337,7 @@ export function toggleNotesPane(visibility?: boolean) {
 
 export function getWorkspaceEditor(
   workspaceType: "tab" | "window",
-  editorType: "main" | "preview" = "main"
+  editorType: "main" | "preview" = "main",
 ) {
   const container =
     workspaceType === "tab"
@@ -359,7 +359,7 @@ const SRC_LIST = [
 
 function setOutline(
   container: XUL.Box,
-  newType: OutlineType = OutlineType.empty
+  newType: OutlineType = OutlineType.empty,
 ) {
   if (newType === OutlineType.empty) {
     newType = addon.data.workspace.outline + 1;
@@ -373,11 +373,11 @@ function setOutline(
   ).hidden = newType === OutlineType.treeView;
   (
     container.querySelector(
-      `#${makeId("saveOutlineFreeMind")}`
+      `#${makeId("saveOutlineFreeMind")}`,
     ) as HTMLDivElement
   ).hidden = newType === OutlineType.treeView;
   const iframe = container.querySelector(
-    `#${makeId("outline-iframe")}`
+    `#${makeId("outline-iframe")}`,
   ) as HTMLIFrameElement;
   iframe.setAttribute("src", SRC_LIST[addon.data.workspace.outline]);
   updateOutline(container);
@@ -386,22 +386,22 @@ function setOutline(
 
 export async function updateOutline(container: XUL.Box) {
   const iframe = container.querySelector(
-    `#${makeId("outline-iframe")}`
+    `#${makeId("outline-iframe")}`,
   ) as HTMLIFrameElement;
   await waitUtilAsync(
-    () => iframe.contentWindow?.document.readyState === "complete"
+    () => iframe.contentWindow?.document.readyState === "complete",
   );
   iframe.contentWindow?.postMessage(
     {
       type: "setMindMapData",
       nodes: getNoteTreeFlattened(
         Zotero.Items.get(addon.data.workspace.mainId),
-        { keepLink: true }
+        { keepLink: true },
       ),
       workspaceType: getContainerType(container),
       expandLevel: getPref("workspace.outline.expandLevel"),
     },
-    "*"
+    "*",
   );
 }
 
@@ -413,20 +413,20 @@ function updateOutlineButtons(container: XUL.Box) {
   ).style.visibility = isTreeView ? "hidden" : "visible";
   (
     container.querySelector(
-      `#${makeId("saveOutlineFreeMind")}`
+      `#${makeId("saveOutlineFreeMind")}`,
     ) as HTMLDivElement
   ).style.visibility = isTreeView ? "hidden" : "visible";
 }
 
 function saveImage(container: XUL.Box) {
   const iframe = container.querySelector(
-    `#${makeId("outline-iframe")}`
+    `#${makeId("outline-iframe")}`,
   ) as HTMLIFrameElement;
   iframe.contentWindow?.postMessage(
     {
       type: "saveSVG",
     },
-    "*"
+    "*",
   );
 }
 
@@ -436,7 +436,7 @@ async function saveFreeMind() {
     `${Zotero.getString("fileInterface.export")} FreeMind XML`,
     "save",
     [["FreeMind XML File(*.mm)", "*.mm"]],
-    `${Zotero.Items.get(addon.data.workspace.mainId).getNoteTitle()}.mm`
+    `${Zotero.Items.get(addon.data.workspace.mainId).getNoteTitle()}.mm`,
   ).open();
   if (filename) {
     await _saveFreeMind(filename, addon.data.workspace.mainId);

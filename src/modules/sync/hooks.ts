@@ -8,20 +8,26 @@ function setSyncing() {
   const syncPeriod = getPref("syncPeriodSeconds") as number;
   if (syncPeriod > 0) {
     showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
-    const timer = ztoolkit.getGlobal("setInterval")(() => {
-      if (!addon.data.alive) {
-        showHint(getString("sync.stop.hint"));
-        ztoolkit.getGlobal("clearInterval")(timer);
-      }
-      // Only when Zotero is active and focused
-      if (document.hasFocus() && (getPref("syncPeriodSeconds") as number) > 0) {
-        callSyncing(undefined, {
-          quiet: true,
-          skipActive: true,
-          reason: "auto",
-        });
-      }
-    }, Number(syncPeriod) * 1000);
+    const timer = ztoolkit.getGlobal("setInterval")(
+      () => {
+        if (!addon.data.alive) {
+          showHint(getString("sync.stop.hint"));
+          ztoolkit.getGlobal("clearInterval")(timer);
+        }
+        // Only when Zotero is active and focused
+        if (
+          document.hasFocus() &&
+          (getPref("syncPeriodSeconds") as number) > 0
+        ) {
+          callSyncing(undefined, {
+            quiet: true,
+            skipActive: true,
+            reason: "auto",
+          });
+        }
+      },
+      Number(syncPeriod) * 1000,
+    );
   }
 }
 
@@ -31,7 +37,7 @@ async function callSyncing(
     quiet: true,
     skipActive: true,
     reason: "unknown",
-  }
+  },
 ) {
   // Always log in development mode
   if (addon.data.env === "development") {
@@ -61,11 +67,11 @@ async function callSyncing(
         .filter(
           (editor) =>
             !Components.utils.isDeadWrapper(editor._iframeWindow) &&
-            editor._iframeWindow.document.hasFocus()
+            editor._iframeWindow.document.hasFocus(),
         )
         .map((editor) => editor._item.id);
       const filteredItems = items.filter(
-        (item) => !activeNoteIds.includes(item.id)
+        (item) => !activeNoteIds.includes(item.id),
       );
       skippedCount = items.length - filteredItems.length;
       items = filteredItems;
@@ -76,7 +82,7 @@ async function callSyncing(
       progress = new ztoolkit.ProgressWindow(
         `[${getString("sync.running.hint.title")}] ${
           addon.data.env === "development" ? reason : "Better Notes"
-        }`
+        }`,
       )
         .createLine({
           text: `[${getString("sync.running.hint.check")}] 0/${
@@ -95,7 +101,7 @@ async function callSyncing(
     for (const item of items) {
       const syncStatus = addon.api.sync.getSyncStatus(item.id);
       const filepath = syncStatus.path;
-      let compareResult = await doCompare(item);
+      const compareResult = await doCompare(item);
       switch (compareResult) {
         case SyncCode.NoteAhead:
           if (Object.keys(toExport).includes(filepath)) {
@@ -139,7 +145,7 @@ async function callSyncing(
     for (const syncStatus of toImport) {
       progress?.changeLine({
         text: `[${getString(
-          "sync.running.hint.updateNote"
+          "sync.running.hint.updateNote",
         )}] ${i}/${totalCount}, ${toDiff.length} queuing...`,
         progress: ((i - 1) / totalCount) * 100,
       });
@@ -160,7 +166,7 @@ async function callSyncing(
 
       await addon.hooks.onShowSyncDiff(
         syncStatus.itemID,
-        OS.Path.join(syncStatus.path, syncStatus.filename)
+        OS.Path.join(syncStatus.path, syncStatus.filename),
       );
       i += 1;
     }
@@ -170,10 +176,10 @@ async function callSyncing(
       text:
         (syncCount
           ? `[${getString(
-              "sync.running.hint.finish"
+              "sync.running.hint.finish",
             )}] ${syncCount} ${getString("sync.running.hint.synced")}`
           : `[${getString("sync.running.hint.finish")}] ${getString(
-              "sync.running.hint.upToDate"
+              "sync.running.hint.upToDate",
             )}`) + (skippedCount ? `, ${skippedCount} skipped.` : ""),
       progress: 100,
     });

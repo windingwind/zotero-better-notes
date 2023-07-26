@@ -18,13 +18,13 @@ export async function showTemplateEditor() {
       `chrome://${config.addonRef}/content/templateEditor.xhtml`,
       `${config.addonRef}-templateEditor`,
       `chrome,centerscreen,resizable,status,width=600,height=400,dialog=no`,
-      windowArgs
+      windowArgs,
     )!;
     addon.data.templateEditor.window = _window;
     await windowArgs._initPromise.promise;
     updateData();
     addon.data.templateEditor.tableHelper = new ztoolkit.VirtualizedTable(
-      _window!
+      _window!,
     )
       .setContainerId("table-container")
       .setProp({
@@ -40,7 +40,7 @@ export async function showTemplateEditor() {
         ].map((column) =>
           Object.assign(column, {
             label: getString(column.label),
-          })
+          }),
         ),
         showHeader: true,
         multiSelect: false,
@@ -53,7 +53,7 @@ export async function showTemplateEditor() {
         (index) =>
           (addon.data.templateEditor.templates[index] as { name: string }) || {
             name: "no data",
-          }
+          },
       )
       .setProp("onSelectionChange", (selection) => {
         updateEditor();
@@ -72,7 +72,7 @@ export async function showTemplateEditor() {
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || ""
+        (index) => addon.data.prefs?.rows[index].title || "",
       )
       .render();
     _window.document
@@ -87,12 +87,12 @@ export async function showTemplateEditor() {
       });
     _window.document.querySelector("#help")?.addEventListener("click", (ev) => {
       Zotero.launchURL(
-        "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md"
+        "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md",
       );
     });
     _window.document.querySelector("#more")?.addEventListener("click", (ev) => {
       Zotero.launchURL(
-        "https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates"
+        "https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates",
       );
     });
     _window.document.querySelector("#save")?.addEventListener("click", (ev) => {
@@ -147,22 +147,22 @@ function updateEditor() {
   const templateText = addon.api.template.getTemplateText(name);
 
   const header = addon.data.templateEditor.window?.document.getElementById(
-    "editor-name"
+    "editor-name",
   ) as HTMLInputElement;
   const text = addon.data.templateEditor.window?.document.getElementById(
-    "editor-textbox"
+    "editor-textbox",
   ) as HTMLTextAreaElement;
   const saveTemplate =
     addon.data.templateEditor.window?.document.getElementById(
-      "save"
+      "save",
     ) as XUL.Button;
   const deleteTemplate =
     addon.data.templateEditor.window?.document.getElementById(
-      "delete"
+      "delete",
     ) as XUL.Button;
   const resetTemplate =
     addon.data.templateEditor.window?.document.getElementById(
-      "reset"
+      "reset",
     ) as XUL.Button;
   if (!name) {
     header.value = "";
@@ -194,11 +194,11 @@ function updateEditor() {
 
 async function updatePreview() {
   const name = getSelectedTemplateName();
-  let html = (await addon.api.template.renderTemplatePreview(name))
+  const html = (await addon.api.template.renderTemplatePreview(name))
     .replace(/&nbsp;/g, "#160;")
     .replace(/<br>/g, "<br/>")
     .replace(/<hr>/g, "<hr/>")
-    .replace(/<img([^>]+)\>/g, "<img$1/>");
+    .replace(/<img([^>]+)>/g, "<img$1/>");
   const win = addon.data.templateEditor.window;
   const container = win?.document.getElementById("preview-container");
   if (container) {
@@ -207,15 +207,18 @@ async function updatePreview() {
     } else {
       container.innerHTML = "";
       container.appendChild(
-        ztoolkit.getDOMParser().parseFromString(html, "text/html").body
+        ztoolkit.getDOMParser().parseFromString(html, "text/html").body,
       );
     }
   }
 }
 
 function getSelectedTemplateName() {
-  const selectedTemplate = addon.data.templateEditor.templates.find((v, i) =>
-    addon.data.templateEditor.tableHelper?.treeInstance.selection.isSelected(i)
+  const selectedTemplate = addon.data.templateEditor.templates.find(
+    (v, i) =>
+      addon.data.templateEditor.tableHelper?.treeInstance.selection.isSelected(
+        i,
+      ),
   );
   return selectedTemplate?.name || "";
 }
@@ -232,7 +235,7 @@ function createTemplate() {
 async function importNoteTemplate() {
   const ids = await itemPicker();
   const note: Zotero.Item = Zotero.Items.get(ids).filter((item: Zotero.Item) =>
-    item.isNote()
+    item.isNote(),
   )[0];
   if (!note) {
     return;
@@ -248,10 +251,10 @@ async function importNoteTemplate() {
 function saveSelectedTemplate() {
   const name = getSelectedTemplateName();
   const header = addon.data.templateEditor.window?.document.getElementById(
-    "editor-name"
+    "editor-name",
   ) as HTMLInputElement;
   const text = addon.data.templateEditor.window?.document.getElementById(
-    "editor-textbox"
+    "editor-textbox",
   ) as HTMLTextAreaElement;
 
   if (
@@ -259,7 +262,7 @@ function saveSelectedTemplate() {
     header.value !== name
   ) {
     showHint(
-      `Template ${name} is a system template. Modifying template name is not allowed.`
+      `Template ${name} is a system template. Modifying template name is not allowed.`,
     );
     return;
   }
@@ -284,7 +287,7 @@ function deleteSelectedTemplate() {
   const name = getSelectedTemplateName();
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
     showHint(
-      `Template ${name} is a system template. Removing system template is note allowed.`
+      `Template ${name} is a system template. Removing system template is note allowed.`,
     );
     return;
   }
@@ -296,7 +299,7 @@ function resetSelectedTemplate() {
   const name = getSelectedTemplateName();
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
     const text = addon.data.templateEditor.window?.document.getElementById(
-      "editor-textbox"
+      "editor-textbox",
     ) as HTMLTextAreaElement;
     text.value =
       addon.api.template.DEFAULT_TEMPLATES.find((t) => t.name === name)?.text ||
@@ -325,7 +328,7 @@ ${content
 `;
   new ztoolkit.Clipboard().addText(yaml, "text/unicode").copy();
   showHint(
-    `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `
+    `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `,
   );
 }
 
@@ -335,7 +338,7 @@ async function backupTemplates() {
     "Save backup file",
     "save",
     [["yaml", "*.yaml"]],
-    `bn-template-backup-${time}.yaml`
+    `bn-template-backup-${time}.yaml`,
   ).open();
   if (!filepath) {
     return;
@@ -358,7 +361,7 @@ async function restoreTemplates(win: Window) {
     [["yaml", "*.yaml"]],
     undefined,
     win,
-    "text"
+    "text",
   ).open();
   if (!filepath) {
     return;
@@ -370,7 +373,7 @@ async function restoreTemplates(win: Window) {
   for (const t of templates) {
     if (existingNames.includes(t.name)) {
       const overwrite = win.confirm(
-        `Template ${t.name} already exists. Overwrite?`
+        `Template ${t.name} already exists. Overwrite?`,
       );
       if (!overwrite) {
         continue;

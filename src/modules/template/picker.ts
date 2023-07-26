@@ -7,17 +7,17 @@ export { updateTemplatePicker, showTemplatePicker };
 
 function showTemplatePicker(
   mode: "insert",
-  data?: { noteId?: number; lineIndex?: number }
+  data?: { noteId?: number; lineIndex?: number },
 ): void;
 function showTemplatePicker(
   mode: "create",
-  data?: { noteType?: "standalone" | "item"; parentItemId?: number }
+  data?: { noteType?: "standalone" | "item"; parentItemId?: number },
 ): void;
-function showTemplatePicker(mode: "export", data?: {}): void;
+function showTemplatePicker(mode: "export", data?: Record<string, never>): void;
 function showTemplatePicker(): void;
 function showTemplatePicker(
   mode: typeof addon.data.templatePicker.mode = "insert",
-  data: Record<string, any> = {}
+  data: Record<string, any> = {},
 ) {
   if (addon.data.prompt) {
     addon.data.templatePicker.mode = mode;
@@ -25,8 +25,8 @@ function showTemplatePicker(
     addon.data.prompt.promptNode.style.display = "flex";
     addon.data.prompt.showCommands(
       addon.data.prompt.commands.filter(
-        (cmd) => cmd.label === "BNotes Template"
-      )
+        (cmd) => cmd.label === "BNotes Template",
+      ),
     );
   }
 }
@@ -38,7 +38,7 @@ function updateTemplatePicker() {
     templates
       .filter(
         (template) =>
-          !addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(template.name)
+          !addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(template.name),
       )
       .map((template) => {
         return {
@@ -46,7 +46,7 @@ function updateTemplatePicker() {
           label: "BNotes Template",
           callback: getTemplatePromptHandler(template.name),
         };
-      })
+      }),
   );
   if (!addon.data.prompt) {
     addon.data.prompt = ToolkitGlobal.getInstance().prompt.instance;
@@ -77,7 +77,7 @@ function getTemplatePromptHandler(name: string) {
 
 async function insertTemplateCallback(name: string) {
   const targetNoteItem = Zotero.Items.get(
-    addon.data.templatePicker.data.noteId || addon.data.workspace.mainId
+    addon.data.templatePicker.data.noteId || addon.data.workspace.mainId,
   );
   let html = "";
   if (name.toLowerCase().startsWith("[item]")) {
@@ -92,7 +92,7 @@ async function insertTemplateCallback(name: string) {
   await addLineToNote(
     targetNoteItem,
     html,
-    addon.data.templatePicker.data.lineIndex
+    addon.data.templatePicker.data.lineIndex,
   );
 }
 

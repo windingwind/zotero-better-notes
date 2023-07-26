@@ -12,10 +12,10 @@ export async function saveFreeMind(filename: string, noteId: number) {
 
 async function note2mm(
   noteItem: Zotero.Item,
-  options: { withContent?: boolean } = { withContent: true }
+  options: { withContent?: boolean } = { withContent: true },
 ) {
   const root = getNoteTree(noteItem, false);
-  const textNodeForEach = (e: Node, callbackfn: Function) => {
+  const textNodeForEach = (e: Node, callbackfn: (e: any) => void) => {
     if (e.nodeType === document.TEXT_NODE) {
       callbackfn(e);
       return;
@@ -57,7 +57,7 @@ async function note2mm(
   };
   const convertNode = (node: TreeModel.Node<NoteNodeData>) => {
     mmXML += `<node ID="${node.model.id}" TEXT="${html2Escape(
-      node.model.name || noteItem.getNoteTitle()
+      node.model.name || noteItem.getNoteTitle(),
     )}"><hook NAME="AlwaysUnfoldedNode" />`;
     if (
       options.withContent &&
@@ -70,9 +70,9 @@ async function note2mm(
             node.model.lineIndex,
             node.hasChildren()
               ? node.children[0].model.lineIndex
-              : node.model.endIndex + 1
+              : node.model.endIndex + 1,
           )
-          .join("\n")
+          .join("\n"),
       )}</body></html></richcontent>`;
     }
     if (node.hasChildren()) {

@@ -86,10 +86,10 @@ and:
 ## 👋 Install
 
 - Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)
-  
+
   <details style="text-indent: 2em">
   <summary>More Versions</summary>
-  
+
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
   - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
@@ -98,6 +98,7 @@ and:
   </details>
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
+
 - In Zotero click `Tools` in the top menu bar and then click `Addons`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.

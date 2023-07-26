@@ -13,7 +13,7 @@ export {
 
 // Controller
 function getTemplateKeys(): { name: string }[] {
-  let templateKeys = getPref("templateKeys") as string;
+  const templateKeys = getPref("templateKeys") as string;
   return templateKeys ? JSON.parse(templateKeys) : [];
 }
 
@@ -52,7 +52,7 @@ function getTemplateText(keyName: string): string {
 
 function setTemplate(
   template: NoteTemplate,
-  updatePrompt: boolean = true
+  updatePrompt: boolean = true,
 ): void {
   template = JSON.parse(JSON.stringify(template));
   addTemplateKey({ name: template.name });
@@ -64,7 +64,7 @@ function setTemplate(
 
 function removeTemplate(
   keyName: string | undefined,
-  updatePrompt: boolean = true
+  updatePrompt: boolean = true,
 ): void {
   if (typeof keyName === "undefined") {
     return;
@@ -77,7 +77,7 @@ function removeTemplate(
 }
 
 function initTemplates() {
-  let templateKeys = getTemplateKeys();
+  const templateKeys = getTemplateKeys();
   const currentNames = templateKeys.map((t) => t.name);
   for (const defaultTemplate of addon.api.template.DEFAULT_TEMPLATES) {
     if (!currentNames.includes(defaultTemplate.name)) {

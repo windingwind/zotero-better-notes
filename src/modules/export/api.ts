@@ -22,7 +22,7 @@ async function exportNotes(
     exportDocx?: boolean;
     exportPDF?: boolean;
     exportFreeMind?: boolean;
-  }
+  },
 ) {
   let inputNoteItems = noteItems;
   // If embedLink or exportNote, create a new note item
@@ -51,26 +51,26 @@ async function exportNotes(
   if (options.standaloneLink) {
     const linkedNoteIds = [] as number[];
     for (const noteItem of inputNoteItems) {
-      let linkedIds: number[] = getLinkedNotesRecursively(
+      const linkedIds: number[] = getLinkedNotesRecursively(
         getNoteLink(noteItem) || "",
-        linkedNoteIds
+        linkedNoteIds,
       );
       linkedNoteIds.push(...linkedIds);
     }
     const targetNoteItemIds = inputNoteItems.map((item) => item.id);
     linkedNoteItems = Zotero.Items.get(
-      linkedNoteIds.filter((id) => !targetNoteItemIds.includes(id))
+      linkedNoteIds.filter((id) => !targetNoteItemIds.includes(id)),
     );
   }
 
   const allNoteItems = Array.from(
-    new Set(inputNoteItems.concat(linkedNoteItems))
+    new Set(inputNoteItems.concat(linkedNoteItems)),
   );
   if (options.exportMD) {
     if (options.setAutoSync) {
       const raw = await new ztoolkit.FilePicker(
         `${getString("fileInterface.sync")} MarkDown File`,
-        "folder"
+        "folder",
       ).open();
       if (raw) {
         const syncDir = formatPath(raw);
@@ -136,7 +136,7 @@ async function toMD(
     filename?: string;
     keepNoteLink?: boolean;
     withYAMLHeader?: boolean;
-  } = {}
+  } = {},
 ) {
   let filename = options.filename;
   if (!filename) {
@@ -144,7 +144,7 @@ async function toMD(
       `${Zotero.getString("fileInterface.export")} MarkDown File`,
       "save",
       [["MarkDown File(*.md)", "*.md"]],
-      `${noteItem.getNoteTitle()}.md`
+      `${noteItem.getNoteTitle()}.md`,
     ).open();
     if (!raw) return;
     filename = formatPath(raw, ".md");
@@ -155,7 +155,7 @@ async function toMD(
 async function toSync(
   noteItem: Zotero.Item,
   syncDir: string,
-  overwrite: boolean = false
+  overwrite: boolean = false,
 ) {
   if (!overwrite && addon.api.sync.isSyncNote(noteItem.id)) {
     return;
@@ -175,7 +175,7 @@ async function toDocx(noteItem: Zotero.Item) {
     `${Zotero.getString("fileInterface.export")} MS Word Docx`,
     "save",
     [["MS Word Docx File(*.docx)", "*.docx"]],
-    `${noteItem.getNoteTitle()}.docx`
+    `${noteItem.getNoteTitle()}.docx`,
   ).open();
   if (!raw) return;
   const filename = formatPath(raw, ".docx");
@@ -187,7 +187,7 @@ async function toFreeMind(noteItem: Zotero.Item) {
     `${Zotero.getString("fileInterface.export")} FreeMind XML`,
     "save",
     [["FreeMind XML File(*.mm)", "*.mm"]],
-    `${noteItem.getNoteTitle()}.mm`
+    `${noteItem.getNoteTitle()}.mm`,
   ).open();
   if (!raw) return;
   const filename = formatPath(raw, ".mm");
@@ -197,9 +197,9 @@ async function toFreeMind(noteItem: Zotero.Item) {
 async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
   const parser = ztoolkit.getDOMParser();
 
-  let newLines: string[] = [];
+  const newLines: string[] = [];
   const noteLines = getLinesInNote(noteItem);
-  for (let i in noteLines) {
+  for (const i in noteLines) {
     newLines.push(noteLines[i]);
     const doc = parser.parseFromString(noteLines[i], "text/html");
     const linkParams = Array.from(doc.querySelectorAll("a"))
@@ -210,7 +210,7 @@ async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
       const html = await addon.api.template.runTemplate(
         "[QuickImportV2]",
         "link, noteItem",
-        [linkParam.link, noteItem]
+        [linkParam.link, noteItem],
       );
       newLines.push(html);
     }

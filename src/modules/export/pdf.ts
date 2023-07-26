@@ -9,7 +9,7 @@ export async function savePDF(noteId: number) {
   const win = window.openDialog(
     `chrome://${config.addonRef}/content/pdfPrinter.html`,
     `${config.addonRef}-imageViewer`,
-    `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`
+    `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`,
   )!;
   await waitUtilAsync(() => win.document.readyState === "complete");
   await Zotero.Promise.delay(3000);

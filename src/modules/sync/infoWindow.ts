@@ -18,7 +18,7 @@ export async function showSyncInfo(noteId: number) {
       tag: "label",
       properties: {
         innerHTML: formatPath(
-          OS.Path.join(slice(status.path, 30), status.filename)
+          OS.Path.join(slice(status.path, 30), status.filename),
         ),
       },
     })
@@ -57,7 +57,7 @@ export async function showSyncInfo(noteId: number) {
       noClose: true,
       callback: (ev) => {
         Zotero.File.reveal(
-          formatPath(OS.Path.join(status.path, status.filename))
+          formatPath(OS.Path.join(status.path, status.filename)),
         );
       },
     })

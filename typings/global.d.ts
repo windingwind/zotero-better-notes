@@ -7,7 +7,7 @@ declare const _globalThis: {
   document: Document;
   OS: typeof OS;
   Blob: typeof Blob;
-  ztoolkit: typeof ztoolkit;
+  ztoolkit: ZToolkit;
   addon: typeof addon;
 };
 
@@ -20,8 +20,11 @@ declare interface Window {
   ): Window;
 }
 
-declare const ztoolkit: import("../src/addon").MyToolkit;
-// declare const ztoolkit: import("zotero-plugin-toolkit").ZoteroToolkit;
+declare type ZToolkit = ReturnType<
+  typeof import("../src/utils/ztoolkit").createZToolkit
+>;
+
+declare const ztoolkit: ZToolkit;
 
 declare const rootURI: string;
 

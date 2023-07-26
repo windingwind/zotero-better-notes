@@ -10,14 +10,14 @@ export function fill(
   options: { char: string; position: "start" | "end" } = {
     char: " ",
     position: "end",
-  }
+  },
 ) {
   if (str.length >= len) {
     return str;
   }
   return str[options.position === "start" ? "padStart" : "padEnd"](
     len - str.length,
-    options.char
+    options.char,
   );
 }
 
@@ -53,7 +53,7 @@ export function randomString(len: number, seed?: string, chars?: string) {
     len = 8;
   }
   let str = "";
-  const random: Function = seedrandom(seed);
+  const random = seedrandom(seed);
   for (let i = 0; i < len; i++) {
     const rnum = Math.floor(random() * chars.length);
     str += chars.substring(rnum, rnum + 1);
@@ -62,18 +62,19 @@ export function randomString(len: number, seed?: string, chars?: string) {
 }
 
 function arrayBufferToBase64(buffer: ArrayBufferLike) {
-  var binary = "";
-  var bytes = new Uint8Array(buffer);
-  var len = bytes.byteLength;
-  for (var i = 0; i < len; i++) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
   return ztoolkit.getGlobal("btoa")(binary);
 }
 
 export async function getItemDataURL(item: Zotero.Item) {
-  let path = (await item.getFilePathAsync()) as string;
-  let buf = new Uint8Array((await OS.File.read(path, {})) as Uint8Array).buffer;
+  const path = (await item.getFilePathAsync()) as string;
+  const buf = new Uint8Array((await OS.File.read(path, {})) as Uint8Array)
+    .buffer;
   return (
     "data:" + item.attachmentContentType + ";base64," + arrayBufferToBase64(buf)
   );

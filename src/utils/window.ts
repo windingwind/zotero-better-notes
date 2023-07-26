@@ -15,7 +15,7 @@ function localeWindow(win: Window) {
         const isProp = key in elem;
         try {
           const localeString = getString(
-            (isProp ? (elem as any)[key] : elem.getAttribute(key)).trim() || ""
+            (isProp ? (elem as any)[key] : elem.getAttribute(key)).trim() || "",
           );
           isProp
             ? ((elem as any)[key] = localeString)
@@ -26,6 +26,6 @@ function localeWindow(win: Window) {
             : elem.setAttribute(key, errorInfo);
         }
       });
-    }
+    },
   );
 }

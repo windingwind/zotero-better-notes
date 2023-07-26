@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 declare interface EditorCore {
   debouncedUpdate: Function;
   disableDrag: boolean;

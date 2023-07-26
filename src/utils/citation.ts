@@ -1,7 +1,7 @@
 export async function parseCitationHTML(citationIds: number[]) {
   let html = "";
-  let items = await Zotero.Items.getAsync(citationIds);
-  for (let item of items) {
+  const items = await Zotero.Items.getAsync(citationIds);
+  for (const item of items) {
     if (
       item.isNote() &&
       !(await Zotero.Notes.ensureEmbeddedImagesAreAvailable(item)) &&
@@ -11,11 +11,11 @@ export async function parseCitationHTML(citationIds: number[]) {
     }
   }
 
-  for (let item of items) {
+  for (const item of items) {
     if (item.isRegularItem()) {
       // @ts-ignore
-      let itemData = Zotero.Utilities.Item.itemToCSLJSON(item);
-      let citation = {
+      const itemData = Zotero.Utilities.Item.itemToCSLJSON(item);
+      const citation = {
         citationItems: [
           {
             uris: [Zotero.URI.getItemURI(item)],
@@ -24,9 +24,9 @@ export async function parseCitationHTML(citationIds: number[]) {
         ],
         properties: {},
       };
-      let formatted = Zotero.EditorInstanceUtilities.formatCitation(citation);
+      const formatted = Zotero.EditorInstanceUtilities.formatCitation(citation);
       html += `<p><span class="citation" data-citation="${encodeURIComponent(
-        JSON.stringify(citation)
+        JSON.stringify(citation),
       )}">${formatted}</span></p>`;
     }
   }
