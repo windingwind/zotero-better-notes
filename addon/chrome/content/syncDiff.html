@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
@@ -278,7 +278,7 @@
                 store: new DevExpress.data.ArrayStore({
                   key: "id",
                   data: window.diffData.filter(
-                    (diff) => diff.added || diff.removed
+                    (diff) => diff.added || diff.removed,
                   ),
                 }),
               }),
@@ -292,7 +292,7 @@
                       ? "added-list-item"
                       : e.itemData.removed
                       ? "removed-list-item"
-                      : ""
+                      : "",
                   );
                 }
               },
@@ -310,7 +310,7 @@
                   const diffViewer = document.querySelector(".diff-viewport");
                   diffViewer.scrollTo(
                     0,
-                    target.offsetTop - diffViewer.offsetTop
+                    target.offsetTop - diffViewer.offsetTop,
                   );
                 }
               },
@@ -364,7 +364,7 @@
       const syncScroller = function () {
         let nodes = Array.prototype.filter.call(
           arguments,
-          (item) => item instanceof HTMLElement
+          (item) => item instanceof HTMLElement,
         );
         let max = nodes.length;
         if (!max || max === 1) return;
@@ -381,7 +381,7 @@
                 if (node == this) continue;
                 node.scrollTo(
                   left * (node.scrollWidth - node.clientWidth),
-                  top * (node.scrollHeight - node.clientHeight)
+                  top * (node.scrollHeight - node.clientHeight),
                 );
               }
             } else --sign;

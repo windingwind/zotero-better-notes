@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
@@ -56,7 +56,7 @@
               new go.Binding("text", "text").makeTwoWay(),
               new go.Binding("scale", "scale").makeTwoWay(),
               new go.Binding("font", "font").makeTwoWay(),
-              new go.Binding("stroke", "stroke").makeTwoWay()
+              new go.Binding("stroke", "stroke").makeTwoWay(),
             ),
             $(
               go.Shape,
@@ -73,16 +73,16 @@
               new go.Binding("stroke", "brush"),
               // make sure links come in from the proper direction and go out appropriately
               new go.Binding("fromSpot", "dir", (d) => spotConverter(d, true)),
-              new go.Binding("toSpot", "dir", (d) => spotConverter(d, false))
+              new go.Binding("toSpot", "dir", (d) => spotConverter(d, false)),
             ),
             // remember the locations of each node in the node data
             new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-              go.Point.stringify
+              go.Point.stringify,
             ),
             // make sure text "grows" in the desired direction
             new go.Binding("locationSpot", "dir", (d) =>
-              spotConverter(d, false)
-            )
+              spotConverter(d, false),
+            ),
           );
 
           // selected nodes show a button for adding children
@@ -94,7 +94,7 @@
               "Auto",
               // this Adornment has a rectangular blue Shape around the selected node
               $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 3 }),
-              $(go.Placeholder, { margin: new go.Margin(4, 4, 0, 4) })
+              $(go.Placeholder, { margin: new go.Margin(4, 4, 0, 4) }),
             ),
             // and this Adornment has a Button to the right of the selected node
             $(
@@ -107,9 +107,9 @@
               $(
                 go.TextBlock,
                 "↗️", // the Button content
-                { font: "bold 8pt sans-serif" }
-              )
-            )
+                { font: "bold 8pt sans-serif" },
+              ),
+            ),
           );
 
           // a link is just a Bezier-curved line of the same color as the node to which it is connected
@@ -127,8 +127,8 @@
               new go.Binding("stroke", "toNode", (n) => {
                 if (n.data.brush) return n.data.brush;
                 return "black";
-              }).ofObject()
-            )
+              }).ofObject(),
+            ),
           );
 
           Diagram.addDiagramListener("SelectionMoved", (e) => {
@@ -263,7 +263,7 @@
             data.nodeDataArray.push({
               key: node.model.id,
               text: `${node.model.level === 7 ? "🔗" : ""}${wrapText(
-                node.model.name
+                node.model.name,
               )}`,
               stroke: "-moz-DialogText",
               parent: parent,
@@ -283,7 +283,7 @@
           if (olddata.noteLink) {
             window.parent.postMessage(
               { type: "openNote", link: olddata.noteLink, id: olddata.key },
-              "*"
+              "*",
             );
           } else {
             window.parent.postMessage(
@@ -293,7 +293,7 @@
                 id: olddata.key,
                 workspaceType: window.workspaceType || "tab",
               },
-              "*"
+              "*",
             );
           }
         }
@@ -312,7 +312,7 @@
               text: data.text,
               workspaceType: window.workspaceType || "tab",
             },
-            "*"
+            "*",
           );
         }
 
@@ -332,7 +332,7 @@
                   type: "saveImageReturn",
                   image: imgString,
                 },
-                "*"
+                "*",
               );
             case "saveSVG":
               const svgElement = Diagram.makeSvg({
@@ -343,7 +343,7 @@
                   type: "saveSVGReturn",
                   image: svgElement.outerHTML,
                 },
-                "*"
+                "*",
               );
             default:
               break;

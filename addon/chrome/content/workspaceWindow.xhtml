@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
+<!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero-react-client.css" type="text/css"?>
+<!-- prettier-ignore -->
 <!DOCTYPE html>
 <html
   lang="en"
@@ -19,40 +23,40 @@
     <script>
       document.addEventListener("DOMContentLoaded", (ev) => {
         const { Services } = ChromeUtils.import(
-          "resource://gre/modules/Services.jsm"
+          "resource://gre/modules/Services.jsm",
         );
 
         Services.scriptloader.loadSubScript(
           "chrome://zotero/content/include.js",
-          this
+          this,
         );
 
         Services.scriptloader.loadSubScript(
           "resource://zotero/require.js",
-          this
+          this,
         );
 
         if (Zotero.platformMajorVersion >= 102) {
           Services.scriptloader.loadSubScript(
             "chrome://global/content/customElements.js",
-            this
+            this,
           );
           if (!customElements.get("note-editor")) {
             Services.scriptloader.loadSubScript(
               "chrome://zotero/content/elements/shadowAutocompleteInput.js",
-              this
+              this,
             );
             Services.scriptloader.loadSubScript(
               "chrome://zotero/content/elements/noteEditor.js",
-              this
+              this,
             );
             Services.scriptloader.loadSubScript(
               "chrome://zotero/content/elements/relatedBox.js",
-              this
+              this,
             );
             Services.scriptloader.loadSubScript(
               "chrome://zotero/content/elements/tagsBox.js",
-              this
+              this,
             );
           }
         }

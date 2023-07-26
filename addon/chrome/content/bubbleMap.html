@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <script src="chrome://__addonRef__/content/lib/js/go.js"></script>
@@ -81,11 +81,11 @@
               contentAlignment: go.Spot.Center, // align document to the center of the viewport
               layout: $(
                 ContinuousForceDirectedLayout, // automatically spread nodes apart while dragging
-                { defaultSpringLength: 15, defaultElectricalCharge: 30 }
+                { defaultSpringLength: 15, defaultElectricalCharge: 30 },
               ),
               // do an extra layout at the end of a move
               SelectionMoved: (e) => e.diagram.layout.invalidateLayout(),
-            }
+            },
           );
 
           // dragging a node invalidates the Diagram.layout, causing a layout during the drag
@@ -114,9 +114,9 @@
                   desiredSize: new go.Size(10, 10),
                 },
                 new go.Binding("fill", "isSelected", (s, obj) =>
-                  s ? "#f2ac46" : "lightgray"
-                ).ofObject()
-              )
+                  s ? "#f2ac46" : "lightgray",
+                ).ofObject(),
+              ),
             ),
             $(
               go.TextBlock,
@@ -127,8 +127,8 @@
                 textEdited: editNode,
               },
               new go.Binding("text", "text").makeTwoWay(),
-              new go.Binding("stroke", "stroke")
-            )
+              new go.Binding("stroke", "stroke"),
+            ),
           );
           // the rest of this app is the same as samples/conceptMap.html
 
@@ -141,7 +141,7 @@
               "Auto",
               // this Adornment has a rectangular blue Shape around the selected node
               $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 3 }),
-              $(go.Placeholder, { margin: new go.Margin(4, 4, 0, 4) })
+              $(go.Placeholder, { margin: new go.Margin(4, 4, 0, 4) }),
             ),
             // and this Adornment has a Button to the right of the selected node
             $(
@@ -154,9 +154,9 @@
               $(
                 go.TextBlock,
                 "↗️", // the Button content
-                { font: "bold 8pt sans-serif" }
-              )
-            )
+                { font: "bold 8pt sans-serif" },
+              ),
+            ),
           );
 
           // replace the default Link template in the linkTemplateMap
@@ -164,13 +164,13 @@
             go.Link, // the whole link panel
             $(
               go.Shape, // the link shape
-              { stroke: "grey" }
+              { stroke: "grey" },
             ),
             $(
               go.Shape, // the arrowhead
-              { toArrow: "standard", stroke: null }
+              { toArrow: "standard", stroke: null },
             ),
-            $(go.Panel, "Auto")
+            $(go.Panel, "Auto"),
           );
           window.parent.postMessage({ type: "ready" }, "*");
           getData();
@@ -197,7 +197,7 @@
             nodeDataArray.push({
               key: node.model.id,
               text: `${node.model.level === 7 ? "🔗" : ""}${wrapText(
-                node.model.name
+                node.model.name,
               )}`,
               stroke: "-moz-DialogText",
               lineIndex: node.model.lineIndex,
@@ -221,7 +221,7 @@
           if (olddata.noteLink) {
             window.parent.postMessage(
               { type: "openNote", link: olddata.noteLink, id: olddata.key },
-              "*"
+              "*",
             );
           } else {
             window.parent.postMessage(
@@ -231,7 +231,7 @@
                 id: olddata.key,
                 workspaceType: window.workspaceType || "tab",
               },
-              "*"
+              "*",
             );
           }
         }
@@ -250,7 +250,7 @@
               text: data.text,
               workspaceType: window.workspaceType || "tab",
             },
-            "*"
+            "*",
           );
         }
 
@@ -270,7 +270,7 @@
                   type: "saveImageReturn",
                   image: imgString,
                 },
-                "*"
+                "*",
               );
             case "saveSVG":
               const svgElement = Diagram.makeSvg({
@@ -281,7 +281,7 @@
                   type: "saveSVGReturn",
                   image: svgElement.outerHTML,
                 },
-                "*"
+                "*",
               );
             default:
               break;

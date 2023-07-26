@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
@@ -141,7 +141,7 @@
                     : toItems[toItems.length - 1].itemData.id,
                   moveType: e.dropInsideItem ? "child" : "before",
                 },
-                "*"
+                "*",
               );
 
               const fromTopVisibleNode = getTopVisibleNode(fromTreeView);
@@ -182,7 +182,7 @@
           if (nodeElement) {
             return findNodeById(
               treeView.getNodes(),
-              nodeElement.getAttribute("data-item-id")
+              nodeElement.getAttribute("data-item-id"),
             );
           }
           return null;
@@ -208,7 +208,7 @@
           toNode,
           fromItems,
           toItems,
-          isDropInsideItem
+          isDropInsideItem,
         ) {
           const fromIndex = findIndex(fromItems, fromNode.itemData.id);
           fromItems.splice(fromIndex, 1);
@@ -326,7 +326,7 @@
                 link: itemData.noteLink,
                 id: parseInt(itemData.id),
               },
-              "*"
+              "*",
             );
           } else {
             window.parent.postMessage(
@@ -336,7 +336,7 @@
                 id: parseInt(itemData.id),
                 workspaceType: window.workspaceType || "tab",
               },
-              "*"
+              "*",
             );
           }
         }
