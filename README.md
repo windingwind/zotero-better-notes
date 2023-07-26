@@ -114,7 +114,7 @@ Start taking notes in Zotero with BN in **5 minutes**!
 
 The _workspace_ serves as the **central hub** where input flows (papers and annotations) converge with output flows (summaries and comparisons).
 
-To open the _workspace_, click the ![icon](addon/chrome/content/icons/favicon.png) button in the tabs bar.
+To open the _workspace_, click the <img src="addon/chrome/content/icons/favicon.png" alt="icon" width="20px"> button in the tabs bar.
 
 <div align=center><img src="https://user-images.githubusercontent.com/33902321/236622132-5ed9bd23-3c0e-4775-b273-745824cc4b51.gif" width="800px"></img></div>
 
@@ -170,7 +170,7 @@ _Note Template_ is designed for tasks like:
 - Compare papers across sections
 - Generate content programmatically
 
-> 💡 Need help or looking for community templates?[See here →](https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates)
+> 💡 Need help or looking for community templates? [See here →](https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates)
 >
 > 💡 Want to write/share your own templates?
 >
@@ -267,7 +267,7 @@ Sponsor me to buy a cup of coffee. I spend more than 24 hours every week coding,
 
 If you sponsor more than $10 a month, you can list your name/logo here and have priority for feature requests/bug fixes!
 
-## 🫶 Sponsors
+## 🙌 Sponsors
 
 Thanks
 [peachgirl100](https://github.com/peachgirl100), [Juan Gimenez](),
