@@ -1,8 +1,8 @@
+import YAML = require("yamljs");
 import { config } from "../../../package.json";
 import { showHint } from "../../utils/hint";
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
-import { localeWindow } from "../../utils/window";
 
 export async function showTemplateEditor() {
   if (
@@ -17,12 +17,11 @@ export async function showTemplateEditor() {
     const _window = window.openDialog(
       `chrome://${config.addonRef}/content/templateEditor.xhtml`,
       `${config.addonRef}-templateEditor`,
-      `chrome,centerscreen,resizable,status,width=800,height=400,dialog=no`,
+      `chrome,centerscreen,resizable,status,width=600,height=400,dialog=no`,
       windowArgs
     )!;
     addon.data.templateEditor.window = _window;
     await windowArgs._initPromise.promise;
-    localeWindow(_window);
     updateData();
     addon.data.templateEditor.tableHelper = new ztoolkit.VirtualizedTable(
       _window!
@@ -35,7 +34,7 @@ export async function showTemplateEditor() {
         columns: [
           {
             dataKey: "name",
-            label: "templateEditor.templateName",
+            label: "templateEditor-templateName",
             fixedWidth: false,
           },
         ].map((column) =>
@@ -108,6 +107,21 @@ export async function showTemplateEditor() {
       .querySelector("#reset")
       ?.addEventListener("click", (ev) => {
         resetSelectedTemplate();
+      });
+    _window.document
+      .querySelector("#share")
+      ?.addEventListener("click", (ev) => {
+        shareSelectedTemplate();
+      });
+    _window.document
+      .querySelector("#backup")
+      ?.addEventListener("click", (ev) => {
+        backupTemplates();
+      });
+    _window.document
+      .querySelector("#restore")
+      ?.addEventListener("click", (ev) => {
+        restoreTemplates(_window);
       });
   }
   addon.data.templateEditor.window?.focus();
@@ -289,4 +303,80 @@ function resetSelectedTemplate() {
       "";
     showHint(`Template ${name} is reset. Please save before leaving.`);
   }
+}
+
+function shareSelectedTemplate() {
+  const name = getSelectedTemplateName();
+  if (!name) {
+    return;
+  }
+  saveSelectedTemplate();
+  const content = addon.api.template.getTemplateText(name);
+  const yaml = `# This template is specifically for importing/sharing, using better 
+# notes 'import from clipboard': copy the content and
+# goto Zotero menu bar, click Edit->New Template from Clipboard.  
+# Do not copy-paste this to better notes template editor directly.
+name: "${name}"
+content: |-
+${content
+  .split("\n")
+  .map((line) => `  ${line}`)
+  .join("\n")}
+`;
+  new ztoolkit.Clipboard().addText(yaml, "text/unicode").copy();
+  showHint(
+    `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `
+  );
+}
+
+async function backupTemplates() {
+  const time = new Date().toISOString().replace(/:/g, "-");
+  const filepath = await new ztoolkit.FilePicker(
+    "Save backup file",
+    "save",
+    [["yaml", "*.yaml"]],
+    `bn-template-backup-${time}.yaml`
+  ).open();
+  if (!filepath) {
+    return;
+  }
+  const keys = addon.api.template.getTemplateKeys().map((t) => t.name);
+  const templates = keys.map((key) => {
+    return {
+      name: key,
+      text: addon.api.template.getTemplateText(key),
+    };
+  });
+  const yaml = YAML.stringify(templates);
+  await Zotero.File.putContentsAsync(filepath, yaml);
+}
+
+async function restoreTemplates(win: Window) {
+  const filepath = await new ztoolkit.FilePicker(
+    "Open backup file",
+    "open",
+    [["yaml", "*.yaml"]],
+    undefined,
+    win,
+    "text"
+  ).open();
+  if (!filepath) {
+    return;
+  }
+  const yaml = (await Zotero.File.getContentsAsync(filepath)) as string;
+  const templates = YAML.parse(yaml) as NoteTemplate[];
+  const existingNames = addon.api.template.getTemplateKeys().map((t) => t.name);
+
+  for (const t of templates) {
+    if (existingNames.includes(t.name)) {
+      const overwrite = win.confirm(
+        `Template ${t.name} already exists. Overwrite?`
+      );
+      if (!overwrite) {
+        continue;
+      }
+    }
+    addon.api.template.setTemplate(t);
+  }
+  await refresh();
 }

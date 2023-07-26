@@ -1,0 +1,27 @@
+title = Template Editor
+previewContainer = 
+    .label = Preview
+create = 
+    .label = New
+save = 
+    .label = Save
+delete = 
+    .label = Delete
+reset = 
+    .label = Reset
+more = 
+    .label = More Templates
+    .title = Get more templates online
+
+options = 
+    .label = Options
+import = 
+    .label = Import note as template
+share = 
+    .label = Copy share code
+backup = 
+    .label = Export backup file
+restore = 
+    .label = Restore from backup file
+help = 
+    .label = Help

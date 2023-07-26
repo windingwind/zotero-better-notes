@@ -28,16 +28,7 @@ menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
 
 menuEditor-resizeImage=缩放图片
 
-templateEditor-title=模板编辑器
-templateEditor-templateName=模板名称
-templateEditor-previewContainer=预览
-templateEditor-create=新建
-templateEditor-import=导入笔记
-templateEditor-more=更多模板
-templateEditor-save=保存
-templateEditor-delete=删除
-templateEditor-reset=重置
-templateEditor-help=帮助
+templateEditor-templateName = 模板名称
 
 tab-name=笔记工作区
 tab-openInWindow=拖放到此处以在新窗口打开

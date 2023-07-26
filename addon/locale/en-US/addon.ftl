@@ -28,16 +28,7 @@ menuAddReaderNote-newTemplateNote = New Item Note from Template
 
 menuEditor-resizeImage = Resize Image
 
-templateEditor-title = Template Editor
 templateEditor-templateName = Template Name
-templateEditor-previewContainer = Preview
-templateEditor-create = New
-templateEditor-import = Import Note
-templateEditor-more = More Templates
-templateEditor-save = Save
-templateEditor-delete = Delete
-templateEditor-reset = Reset
-templateEditor-help = Help
 
 tab-name = Note Workspace
 tab-openInWindow = Drag and drop here to open workspace in new window

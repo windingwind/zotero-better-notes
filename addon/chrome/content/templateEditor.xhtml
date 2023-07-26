@@ -16,7 +16,7 @@
   persist="screenX screenY width height sizemode"
 >
   <head>
-    <title locale-target="innerHTML">templateEditor.title</title>
+    <title data-l10n-id="title"></title>
     <meta charset="utf-8" />
     <meta name="referrer" content="no-referrer" />
     <script>
@@ -65,11 +65,6 @@
       }
       .footer-container {
         padding: 5px;
-        margin: 0;
-        height: 30px;
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
         background-color: #f0f0f0;
       }
       .list-viewport {
@@ -95,14 +90,6 @@
         width: calc(40% - 10px);
         padding: 5px;
       }
-      .tool-button {
-        width: 100px;
-        max-width: 100px;
-        min-width: 100px;
-        padding: 5px;
-        text-align: center;
-        margin: 0 10px 0 10px;
-      }
       .markdown-body {
         box-sizing: border-box;
         min-width: 200px;
@@ -116,6 +103,7 @@
       type="text/css"
       href="chrome://__addonRef__/content/lib/css/github-markdown-light.min.css"
     />
+    <link rel="localization" href="__addonRef__-templateEditor.ftl" />
   </head>
   <body>
     <div class="viewport-container">
@@ -124,9 +112,7 @@
       </div>
       <div class="viewport editor-viewport">
         <div style="display: flex">
-          <div style="flex-shrink: 0" locale-target="innerHTML">
-            templateEditor.templateName
-          </div>
+          <div style="flex-shrink: 0" data-l10n-id="templateName"></div>
           <input id="editor-name" type="text" style="width: 100%" />
         </div>
         <div style="display: flex; flex-direction: column; height: 100%">
@@ -138,9 +124,7 @@
       </div>
       <div class="viewport preview-viewport">
         <div style="display: flex">
-          <div style="flex-shrink: 0" locale-target="innerHTML">
-            templateEditor.previewContainer
-          </div>
+          <div style="flex-shrink: 0" data-l10n-id="previewContainer"></div>
         </div>
         <article id="preview-container" class="markdown-body"></article>
       </div>
@@ -148,62 +132,30 @@
     <div
       class="footer-container"
       style="justify-content: flex-start; padding: 10px"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     >
+      <button id="create" data-l10n-id="create"></button>
+      <button id="save" data-l10n-id="save"></button>
+      <button id="delete" data-l10n-id="delete"></button>
+      <button id="reset" data-l10n-id="reset"></button>
+      <button id="more" data-l10n-id="more"></button>
       <button
-        class="tool-button"
-        id="create"
-        locale-target="innerHTML,title"
-        title="templateEditor.createDetail"
+        id="options"
+        data-l10n-id="options"
+        tabindex="-1"
+        type="menu"
+        wantdropmarker="true"
       >
-        templateEditor.create
-      </button>
-      <button
-        class="tool-button"
-        id="import"
-        locale-target="innerHTML,title"
-        title="templateEditor.importDetail"
-      >
-        templateEditor.import
-      </button>
-      <button
-        class="tool-button"
-        id="more"
-        locale-target="innerHTML,title"
-        title="templateEditor.moreDetail"
-      >
-        templateEditor.more
-      </button>
-      <button
-        class="tool-button"
-        id="save"
-        locale-target="innerHTML,title"
-        title="templateEditor.saveDetail"
-      >
-        templateEditor.save
-      </button>
-      <button
-        class="tool-button"
-        id="delete"
-        locale-target="innerHTML,title"
-        title="templateEditor.deleteDetail"
-      >
-        templateEditor.delete
-      </button>
-      <button
-        class="tool-button"
-        id="reset"
-        locale-target="innerHTML,title"
-        title="templateEditor.resetDetail"
-      >
-        templateEditor.reset
-      </button>
-      <button
-        class="tool-button"
-        id="help"
-        locale-target="innerHTML,title"
-        title="templateEditor.helpDetail"
-      >
-        templateEditor.help
+        <menupopup>
+          <menuitem id="import" data-l10n-id="import"></menuitem>
+          <menuseparator />
+          <menuitem id="share" data-l10n-id="share"></menuitem>
+          <menuseparator />
+          <menuitem id="backup" data-l10n-id="backup"></menuitem>
+          <menuitem id="restore" data-l10n-id="restore"></menuitem>
+          <menuseparator />
+          <menuitem id="help" data-l10n-id="help"></menuitem>
+        </menupopup>
       </button>
     </div>
   </body>

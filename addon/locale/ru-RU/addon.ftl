@@ -28,16 +28,7 @@ menuAddReaderNote-newTemplateNote=Новая элементная заметка
 
 menuEditor-resizeImage=Изменить размер изображения
 
-templateEditor-title=Редактор шаблонов
-templateEditor-templateName=Имя шаблона
-templateEditor-previewContainer=Предпросмотр
-templateEditor-create=Новая
-templateEditor-import=Импортировать заметку
-templateEditor-more=Больше шаблонов
-templateEditor-save=Сохранить
-templateEditor-delete=Удалить
-templateEditor-reset=Сброс
-templateEditor-help=Помощь
+templateEditor-templateName = Имя шаблона
 
 tab-name=Рабочее пространство заметок
 tab-openInWindow=Перетащите сюда для открытия раб. пространства в новом окне
