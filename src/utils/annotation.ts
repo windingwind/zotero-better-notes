@@ -40,7 +40,7 @@ function serializeAnnotations(
   skipEmbeddingItemData: boolean = false,
   skipCitation: boolean = false,
 ) {
-  const storedCitationItems = [];
+  const storedCitationItems: Record<string, any>[] = [];
   let html = "";
   for (const annotation of annotations) {
     const attachmentItem = Zotero.Items.get(annotation.attachmentItemID);
@@ -92,7 +92,7 @@ function serializeAnnotations(
       }
 
       const item = storedCitationItems.find((item) =>
-        item.uris.some((uri) => uris.includes(uri)),
+        item.uris.some((uri: string) => uris.includes(uri)),
       );
       if (!item) {
         storedCitationItems.push({ uris, itemData });
