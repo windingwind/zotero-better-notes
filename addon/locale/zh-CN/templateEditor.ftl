@@ -14,10 +14,12 @@ more =
 
 options = 
     .label = 选项
-import = 
-    .label = 导入笔记
+importClipboard = 
+    .label = 导入笔记模板: 剪贴板中的模板分享代码
+importNote = 
+    .label = 导入笔记模板: 从现有笔记
 share = 
-    .label = 复制分享代码
+    .label = 复制模板分享代码到剪贴板
 backup = 
     .label = 导出模板备份文件
 restore = 

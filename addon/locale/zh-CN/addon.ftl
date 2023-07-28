@@ -9,9 +9,9 @@ menuFile-openRecent = 打开最近使用的工作区笔记
 menuFile-openRecent-empty = 无最近使用的工作区笔记
 
 menuEdit-insertTemplate=插入模板到工作区笔记
-menuEdit-exportTemplate=导出模板到文件...
+menuEdit-exportTemplate=运行模板并导出为文件...
 menuEdit-templateEditor=模板编辑器
-menuEdit-importTemplate=从剪贴板导入新模板
+menuEdit-importTemplate=从剪贴板导入笔记模板
 
 menuTools-syncManager=同步管理器
 

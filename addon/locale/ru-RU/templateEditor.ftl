@@ -15,10 +15,12 @@ more =
 
 options = 
     .label = Options
-import = 
-    .label = Import note as template
+importClipboard = 
+    .label = Import template: from template share code in clipboard
+importNote = 
+    .label = Import template: from existing note
 share = 
-    .label = Copy share code
+    .label = Copy template share code to clipboard
 backup = 
     .label = Export backup file
 restore = 

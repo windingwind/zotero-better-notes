@@ -80,11 +80,6 @@ export async function showTemplateEditor() {
       ?.addEventListener("click", (ev) => {
         createTemplate();
       });
-    _window.document
-      .querySelector("#import")
-      ?.addEventListener("click", (ev) => {
-        importNoteTemplate();
-      });
     _window.document.querySelector("#help")?.addEventListener("click", (ev) => {
       Zotero.launchURL(
         "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md",
@@ -107,6 +102,16 @@ export async function showTemplateEditor() {
       .querySelector("#reset")
       ?.addEventListener("click", (ev) => {
         resetSelectedTemplate();
+      });
+    _window.document
+      .querySelector("#importClipboard")
+      ?.addEventListener("click", (ev) => {
+        addon.hooks.onImportTemplateFromClipboard();
+      });
+    _window.document
+      .querySelector("#importNote")
+      ?.addEventListener("click", (ev) => {
+        importNoteTemplate();
       });
     _window.document
       .querySelector("#share")
