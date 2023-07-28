@@ -1,7 +1,7 @@
 import { config } from "../../../package.json";
 import { getLinkedNotesRecursively, getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
-import { isWindowAlive, localeWindow } from "../../utils/window";
+import { isWindowAlive } from "../../utils/window";
 
 export async function showSyncManager() {
   if (isWindowAlive(addon.data.sync.manager.window)) {
@@ -19,7 +19,6 @@ export async function showSyncManager() {
     )!;
     await windowArgs._initPromise.promise;
     addon.data.sync.manager.window = win;
-    localeWindow(win);
     updateData();
     addon.data.sync.manager.tableHelper = new ztoolkit.VirtualizedTable(win!)
       .setContainerId("table-container")

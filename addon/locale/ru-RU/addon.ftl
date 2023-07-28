@@ -56,12 +56,6 @@ export-confirm=Экспорт
 export-cancel=Закрыть
 export-target=Цель
 
-syncManager-title=Синк Менеджер
-syncManager-refresh=Обновить
-syncManager-sync=Синк
-syncManager-syncDetail=Проверить и синкнуть немедленно
-syncManager-unSync=ДеСинк
-syncManager-unSyncDetail=Удалить выделенные заметки из списка синхронизации
 syncManager-noteName=Имя заметки
 syncManager-lastSync=Последний Синк
 syncManager-filePath=MarkDown путь

@@ -56,12 +56,6 @@ export-confirm=导出
 export-cancel=关闭
 export-target=目标
 
-syncManager-title=同步管理
-syncManager-refresh=刷新
-syncManager-sync=同步
-syncManager-syncDetail=检查并立即同步
-syncManager-unSync=取消同步
-syncManager-unSyncDetail=从同步列表中移除选中的笔记
 syncManager-noteName=笔记名称
 syncManager-lastSync=最近同步
 syncManager-filePath=MarkDown路径

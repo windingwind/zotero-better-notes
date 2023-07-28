@@ -56,12 +56,6 @@ export-confirm = Export
 export-cancel = Close
 export-target = Target
 
-syncManager-title = Sync Manager
-syncManager-refresh = Refresh
-syncManager-sync = Sync
-syncManager-syncDetail = Check and sync immedietly
-syncManager-unSync = UnSync
-syncManager-unSyncDetail = Remove selected notes from syncing list
 syncManager-noteName = Note Name
 syncManager-lastSync = Last Sync
 syncManager-filePath = MarkDown Path

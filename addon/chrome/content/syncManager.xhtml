@@ -68,15 +68,6 @@
         overflow: hidden;
         background-color: #f0f0f0;
       }
-      .footer-container {
-        padding: 5px;
-        margin: 0;
-        height: 30px;
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-        background-color: #f0f0f0;
-      }
       .list-viewport {
         width: 100%;
         background-color: #ffffff;
@@ -87,15 +78,8 @@
         width: 100%;
         overflow: hidden;
       }
-      .tool-button {
-        width: 75px;
-        max-width: 75px;
-        min-width: 75px;
-        padding: 5px;
-        text-align: center;
-        margin: 0 10px 0 10px;
-      }
     </style>
+    <link rel="localization" href="__addonRef__-syncManager.ftl" />
   </head>
   <body>
     <div class="viewport-container">
@@ -106,26 +90,11 @@
     <div
       class="footer-container"
       style="justify-content: flex-start; padding: 10px"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     >
-      <button class="tool-button" id="refresh" locale-target="innerHTML">
-        syncManager.refresh
-      </button>
-      <button
-        class="tool-button"
-        id="sync"
-        locale-target="innerHTML,title"
-        title="syncManager.syncDetail"
-      >
-        syncManager.sync
-      </button>
-      <button
-        class="tool-button"
-        id="unSync"
-        locale-target="innerHTML,title"
-        title="syncManager.unSyncDetail"
-      >
-        syncManager.unSync
-      </button>
+      <button id="refresh" data-l10n-id="refresh"></button>
+      <button id="sync" data-l10n-id="sync"></button>
+      <button id="unSync" data-l10n-id="unSync"></button>
     </div>
   </body>
 </html>
