@@ -18,7 +18,7 @@
   persist="screenX screenY width height sizemode"
 >
   <head>
-    <title locale-target="innerHTML">workspaceWindow.name</title>
+    <title data-l10n-id="title"></title>
     <meta charset="utf-8" />
     <script>
       document.addEventListener("DOMContentLoaded", (ev) => {
@@ -84,6 +84,7 @@
         background-color: #f0f0f0;
       }
     </style>
+    <link rel="localization" href="__addonRef__-workspaceWindow.ftl" />
   </head>
   <body>
     <div id="workspace-container"></div>

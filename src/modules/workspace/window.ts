@@ -1,5 +1,5 @@
 import { config } from "../../../package.json";
-import { isWindowAlive, localeWindow } from "../../utils/window";
+import { isWindowAlive } from "../../utils/window";
 import { messageHandler } from "./message";
 
 export async function showWorkspaceWindow() {
@@ -17,7 +17,6 @@ export async function showWorkspaceWindow() {
     windowArgs,
   )!;
   await windowArgs._initPromise.promise;
-  localeWindow(win);
   addon.data.workspace.window.active = true;
   addon.data.workspace.window.window = win;
   addon.data.workspace.window.container = win.document.querySelector(

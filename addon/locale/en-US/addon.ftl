@@ -33,8 +33,6 @@ templateEditor-templateName = Template Name
 tab-name = Note Workspace
 tab-openInWindow = Drag and drop here to open workspace in new window
 
-workspaceWindow-name = Note Workspace
-
 export-title = Export Notes
 export-options-linkMode = Linked Notes Mode
 export-options-MD = MarkDown(.md)

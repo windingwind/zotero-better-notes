@@ -33,8 +33,6 @@ templateEditor-templateName = 模板名称
 tab-name=笔记工作区
 tab-openInWindow=拖放到此处以在新窗口打开
 
-workspaceWindow-name=笔记工作区
-
 export-title=导出笔记
 export-options-linkMode=链接笔记模式
 export-options-MD=MarkDown(.md)

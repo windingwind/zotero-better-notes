@@ -33,8 +33,6 @@ templateEditor-templateName = Имя шаблона
 tab-name=Рабочее пространство заметок
 tab-openInWindow=Перетащите сюда для открытия раб. пространства в новом окне
 
-workspaceWindow-name=Раб. пространство заметок
-
 export-title=Экспорт заметок
 export-options-linkMode=Режим связанных заметок
 export-options-MD=MarkDown(.md)
