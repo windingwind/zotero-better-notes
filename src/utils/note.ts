@@ -1,5 +1,5 @@
 import TreeModel = require("tree-model");
-import katex from "katex";
+import katex = require("katex");
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { getItemDataURL } from "./str";
 import { showHint } from "./hint";
