@@ -83,7 +83,7 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.18.20",
     "eslint": "^8.46.0",
-    "eslint-config-prettier": "^8.10.0",
+    "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.0.1",
     "prosemirror-model": "^1.19.3",
     "prosemirror-state": "^1.4.3",
