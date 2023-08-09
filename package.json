@@ -3,7 +3,7 @@
   "version": "1.1.4-5",
   "description": "Everything about note management. All in Zotero.",
   "config": {
-    "addonName": "Zotero Better Notes",
+    "addonName": "Better Notes for Zotero",
     "addonID": "Knowledge4Zotero@windingwind.com",
     "addonRef": "BetterNotes",
     "prefsPrefix": "extensions.zotero.Knowledge4Zotero",
