@@ -3,6 +3,7 @@ import { config } from "../../../package.json";
 import { showHint } from "../../utils/hint";
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
+import { waitUtilAsync } from "../../utils/wait";
 
 export async function showTemplateEditor() {
   if (
@@ -13,7 +14,6 @@ export async function showTemplateEditor() {
     const windowArgs = {
       _initPromise: Zotero.Promise.defer(),
     };
-    // @ts-ignore
     const _window = window.openDialog(
       `chrome://${config.addonRef}/content/templateEditor.xhtml`,
       `${config.addonRef}-templateEditor`,
@@ -128,8 +128,16 @@ export async function showTemplateEditor() {
       ?.addEventListener("click", (ev) => {
         restoreTemplates(_window);
       });
+    addon.data.templateEditor.window?.focus();
+    const editorWin = (_window.document.querySelector("#editor") as any)
+      .contentWindow;
+    await waitUtilAsync(() => editorWin?.loadMonaco);
+    const { monaco, editor } = await editorWin.loadMonaco({
+      language: "javascript",
+      theme: "vs-light",
+    });
+    addon.data.templateEditor.editor = editor;
   }
-  addon.data.templateEditor.window?.focus();
 }
 
 async function refresh() {
@@ -154,9 +162,9 @@ function updateEditor() {
   const header = addon.data.templateEditor.window?.document.getElementById(
     "editor-name",
   ) as HTMLInputElement;
-  const text = addon.data.templateEditor.window?.document.getElementById(
-    "editor-textbox",
-  ) as HTMLTextAreaElement;
+  const editor = addon.data.templateEditor.window?.document.getElementById(
+    "editor",
+  ) as HTMLIFrameElement;
   const saveTemplate =
     addon.data.templateEditor.window?.document.getElementById(
       "save",
@@ -172,8 +180,7 @@ function updateEditor() {
   if (!name) {
     header.value = "";
     header.setAttribute("disabled", "true");
-    text.value = "";
-    text.setAttribute("disabled", "true");
+    editor.hidden = true;
     saveTemplate.setAttribute("disabled", "true");
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
@@ -190,8 +197,8 @@ function updateEditor() {
       deleteTemplate.hidden = true;
       resetTemplate.hidden = false;
     }
-    text.value = templateText;
-    text.removeAttribute("disabled");
+    addon.data.templateEditor.editor.setValue(templateText);
+    editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
   }
@@ -258,9 +265,6 @@ function saveSelectedTemplate() {
   const header = addon.data.templateEditor.window?.document.getElementById(
     "editor-name",
   ) as HTMLInputElement;
-  const text = addon.data.templateEditor.window?.document.getElementById(
-    "editor-textbox",
-  ) as HTMLTextAreaElement;
 
   if (
     addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name) &&
@@ -274,7 +278,7 @@ function saveSelectedTemplate() {
 
   const template = {
     name: header.value,
-    text: text.value,
+    text: addon.data.templateEditor.editor.getValue(),
   };
   addon.api.template.setTemplate(template);
   if (name !== template.name) {
@@ -303,12 +307,10 @@ function deleteSelectedTemplate() {
 function resetSelectedTemplate() {
   const name = getSelectedTemplateName();
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
-    const text = addon.data.templateEditor.window?.document.getElementById(
-      "editor-textbox",
-    ) as HTMLTextAreaElement;
-    text.value =
+    addon.data.templateEditor.editor.setValue(
       addon.api.template.DEFAULT_TEMPLATES.find((t) => t.name === name)?.text ||
-      "";
+        "",
+    );
     showHint(`Template ${name} is reset. Please save before leaving.`);
   }
 }

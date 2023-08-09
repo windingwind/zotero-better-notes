@@ -89,6 +89,7 @@ class Addon {
     templateEditor: {
       window?: Window;
       tableHelper?: VirtualizedTableHelper;
+      editor?: any;
       templates: { name: string }[];
     };
     templatePicker: {

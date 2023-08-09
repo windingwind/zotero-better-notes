@@ -122,10 +122,12 @@
           <input id="editor-name" type="text" style="width: 100%" />
         </div>
         <div style="display: flex; flex-direction: column; height: 100%">
-          <textarea
-            id="editor-textbox"
-            style="height: 100%; resize: none"
-          ></textarea>
+          <iframe
+            id="editor"
+            src="chrome://scaffold/content/monaco/monaco.html"
+            style="width: 100%; height: 100%; border: none"
+            onmousedown="this.focus()"
+          ></iframe>
         </div>
       </div>
       <div class="viewport preview-viewport">
@@ -153,7 +155,10 @@
         wantdropmarker="true"
       >
         <menupopup>
-          <menuitem id="importClipboard" data-l10n-id="importClipboard"></menuitem>
+          <menuitem
+            id="importClipboard"
+            data-l10n-id="importClipboard"
+          ></menuitem>
           <menuitem id="importNote" data-l10n-id="importNote"></menuitem>
           <menuseparator />
           <menuitem id="share" data-l10n-id="share"></menuitem>
