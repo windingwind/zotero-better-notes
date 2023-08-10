@@ -66,7 +66,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^2.2.4"
+    "zotero-plugin-toolkit": "^2.2.5"
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^3.2.0",

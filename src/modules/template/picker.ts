@@ -1,5 +1,4 @@
 import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
-import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 import { addLineToNote } from "../../utils/note";
 import { getString } from "../../utils/locale";
 
@@ -48,9 +47,6 @@ function updateTemplatePicker() {
         };
       }),
   );
-  if (!addon.data.prompt) {
-    addon.data.prompt = ToolkitGlobal.getInstance().prompt.instance;
-  }
 }
 
 function getTemplatePromptHandler(name: string) {

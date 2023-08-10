@@ -48,6 +48,7 @@ import {
 } from "./modules/createNote";
 import { annotationTagAction } from "./modules/annotationTagAction";
 import { createZToolkit } from "./utils/ztoolkit";
+import { waitUtilAsync } from "./utils/wait";
 
 async function onStartup() {
   await Promise.all([
@@ -65,8 +66,6 @@ async function onStartup() {
 
   registerEditorInstanceHook();
 
-  initTemplates();
-
   registerPrefsWindow();
 
   setSyncing();
@@ -75,6 +74,7 @@ async function onStartup() {
 }
 
 async function onMainWindowLoad(win: Window): Promise<void> {
+  await waitUtilAsync(() => document.readyState === "complete");
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
 
@@ -85,6 +85,8 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   registerWorkspaceTab();
 
   registerReaderInitializer();
+
+  initTemplates();
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
