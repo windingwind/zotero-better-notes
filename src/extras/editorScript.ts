@@ -122,17 +122,13 @@ function getMarkRange($pos: ResolvedPos, type: MarkType, attributes = {}) {
 
 function getMarkRangeAtCursor(state: EditorState, type: MarkType) {
   const { selection } = state;
-  const { $from, empty } = selection;
+  const { $from } = selection;
 
-  if (empty) {
-    const start = $from.parent.childAfter($from.parentOffset);
-    if (start.node) {
-      const mark = start.node.marks.find(
-        (mark) => mark.type.name === type.name,
-      );
-      if (mark) {
-        return getMarkRange($from, type, mark.attrs);
-      }
+  const start = $from.parent.childAfter($from.parentOffset);
+  if (start.node) {
+    const mark = start.node.marks.find((mark) => mark.type.name === type.name);
+    if (mark) {
+      return getMarkRange($from, type, mark.attrs);
     }
   }
 
