@@ -57,6 +57,18 @@ async function renderTemplatePreview(
       });
       html = `<pre>${YAML.stringify(header, 10)}</pre>`;
     }
+  } else if (templateName.includes("ExportMDFileContent")) {
+    // noteItem
+    const data = inputItems?.find((item) => item.isNote());
+    if (!data) {
+      html = "<p>No note item selected</p>";
+    } else {
+      html = `<pre>${await addon.api.convert.note2md(
+        data,
+        Zotero.getTempDirectory().path,
+        { withYAMLHeader: false, skipSavingImages: true, keepNoteLink: true },
+      )}</pre>`;
+    }
   } else if (templateName.includes("QuickInsert")) {
     // link, linkText, subNoteItem, noteItem
     const data = inputItems?.find((item) => item.isNote());

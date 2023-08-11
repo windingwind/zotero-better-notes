@@ -8,6 +8,7 @@ const SYSTEM_TEMPLATE_NAMES = [
   "[QuickNoteV5]",
   "[ExportMDFileNameV2]",
   "[ExportMDFileHeaderV2]",
+  "[ExportMDFileContent]",
 ];
 
 // Non-system templates are removed from default templates
@@ -15,40 +16,40 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   {
     name: "[QuickInsertV2]",
     text: `<p>
-    <a href="\${link}">
-      \${linkText}
-    </a>
-  </p>`,
+  <a href="\${link}">
+    \${linkText}
+  </a>
+</p>`,
   },
   {
     name: "[QuickBackLinkV2]",
     text: `<p>
-    Referred in
-    <a href="\${link}">
-      \${linkText}
-    </a>
-  </p>`,
+  Referred in
+  <a href="\${link}">
+    \${linkText}
+  </a>
+</p>`,
   },
   {
     name: "[QuickImportV2]",
     text: `<blockquote>
-  \${await new Promise(async (r) => {
-    r(await Zotero.BetterNotes.api.convert.link2html(link, {noteItem, dryRun: _env.dryRun}));
-  })}
-  </blockquote>`,
+\${{
+  return await Zotero.BetterNotes.api.convert.link2html(link, {noteItem, dryRun: _env.dryRun}));
+}}$
+</blockquote>`,
   },
   {
     name: "[QuickNoteV5]",
-    text: `\${await new Promise(async (r) => {
-    let res = "";
-    if (annotationItem.annotationComment) {
-      res += await Zotero.BetterNotes.api.convert.md2html(
-        annotationItem.annotationComment
-      );
-    }
-    res += await Zotero.BetterNotes.api.convert.annotations2html([annotationItem], {noteItem, ignoreComment: true});
-    r(res);
-  })}`,
+    text: `\${{
+  let res = "";
+  if (annotationItem.annotationComment) {
+    res += await Zotero.BetterNotes.api.convert.md2html(
+      annotationItem.annotationComment
+    );
+  }
+  res += await Zotero.BetterNotes.api.convert.annotations2html([annotationItem], {noteItem, ignoreComment: true});
+  return res;
+}}$`,
   },
   {
     name: "[ExportMDFileNameV2]",
@@ -56,18 +57,24 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   },
   {
     name: "[ExportMDFileHeaderV2]",
-    text: `\${await new Promise(async (r) => {
-    let header = {};
-    header.tags = noteItem.getTags().map((_t) => _t.tag);
-    header.parent = noteItem.parentItem
-      ? noteItem.parentItem.getField("title")
-      : "";
-    header.collections = (
-      await Zotero.Collections.getCollectionsContainingItems([
-        (noteItem.parentItem || noteItem).id,
-      ])
-    ).map((c) => c.name);
-    r(JSON.stringify(header));
-  })}`,
+    text: `\${{
+  let header = {};
+  header.tags = noteItem.getTags().map((_t) => _t.tag);
+  header.parent = noteItem.parentItem
+    ? noteItem.parentItem.getField("title")
+    : "";
+  header.collections = (
+    await Zotero.Collections.getCollectionsContainingItems([
+      (noteItem.parentItem || noteItem).id,
+    ])
+  ).map((c) => c.name);
+  return JSON.stringify(header);
+}}$`,
+  },
+  {
+    name: "[ExportMDFileContent]",
+    text: `\${{
+  return mdContent;
+}}$`,
   },
 ];

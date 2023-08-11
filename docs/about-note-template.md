@@ -198,14 +198,15 @@ Basic user template.
 
 ### Builtin Templates
 
-| Name               | Description                                              | Variables                             |
-| ------------------ | -------------------------------------------------------- | ------------------------------------- |
-| QuickInsert        | For forward link.                                        | link, linkText, subNoteItem, noteItem |
-| QuickBackLink      | For back link.                                           | link, linkText, subNoteItem, noteItem |
-| QuickImport        | For importing note link content.                         | link, noteItem                        |
-| QuickNote          | For generating note from annotation.                     | annotationItem, topItem, noteItem     |
-| ExportMDFileName   | For generating Markdown file name when exporting.        | noteItem                              |
-| ExportMDFileHeader | For generating Markdown file yaml header when exporting. | noteItem                              |
+| Name                | Description                                              | Variables                             |
+| ------------------- | -------------------------------------------------------- | ------------------------------------- |
+| QuickInsert         | For forward link.                                        | link, linkText, subNoteItem, noteItem |
+| QuickBackLink       | For back link.                                           | link, linkText, subNoteItem, noteItem |
+| QuickImport         | For importing note link content.                         | link, noteItem                        |
+| QuickNote           | For generating note from annotation.                     | annotationItem, topItem, noteItem     |
+| ExportMDFileName    | For generating Markdown file name when exporting.        | noteItem                              |
+| ExportMDFileHeader  | For generating Markdown file yaml header when exporting. | noteItem                              |
+| ExportMDFileContent | For processing Markdown file content when exporting.     | noteItem, mdContent                   |
 
 ## Style Syntax
 

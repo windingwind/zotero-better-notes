@@ -81,6 +81,16 @@ async function note2md(
   );
   const remark = await rehype2remark(rehype);
   let md = remark2md(remark);
+  try {
+    md =
+      (await addon.api.template.runTemplate(
+        "[ExportMDFileContent]",
+        "noteItem, mdContent",
+        [noteItem, md],
+      )) ?? md;
+  } catch (e) {
+    ztoolkit.log(e);
+  }
 
   if (options.withYAMLHeader) {
     let header = {};
