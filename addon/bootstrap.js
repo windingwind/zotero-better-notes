@@ -39,11 +39,11 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
   );
 }
 
-function onMainWindowLoad({win}) {
+function onMainWindowLoad({ win }) {
   Zotero.__addonInstance__.hooks.onMainWindowLoad(win);
 }
 
-function onMainWindowUnload({win}) {
+function onMainWindowUnload({ win }) {
   Zotero.__addonInstance__.hooks.onMainWindowUnload(win);
 }
 

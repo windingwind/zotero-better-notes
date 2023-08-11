@@ -10,8 +10,8 @@ export async function saveMD(
   },
 ) {
   const noteItem = Zotero.Items.get(noteId);
-  const dir = OS.Path.join(
-    ...OS.Path.split(formatPath(filename)).components.slice(0, -1),
+  const dir = PathUtils.join(
+    ...PathUtils.split(formatPath(filename)).slice(0, -1),
   );
   const hasImage = noteItem.getNote().includes("<img");
   if (hasImage) {
@@ -30,7 +30,7 @@ export async function saveMD(
 export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   const noteItems = Zotero.Items.get(noteIds);
   await Zotero.File.createDirectoryIfMissingAsync(saveDir);
-  const attachmentsDir = formatPath(OS.Path.join(saveDir, "attachments"));
+  const attachmentsDir = formatPath(PathUtils.join(saveDir, "attachments"));
   const hasImage = noteItems.some((noteItem) =>
     noteItem.getNote().includes("<img"),
   );
@@ -39,7 +39,7 @@ export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   }
   for (const noteItem of noteItems) {
     const filename = await addon.api.sync.getMDFileName(noteItem.id, saveDir);
-    const filePath = OS.Path.join(saveDir, filename);
+    const filePath = PathUtils.join(saveDir, filename);
     const content = await addon.api.convert.note2md(noteItem, saveDir, {
       keepNoteLink: false,
       withYAMLHeader: true,

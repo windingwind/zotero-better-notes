@@ -150,7 +150,7 @@ async function callSyncing(
         progress: ((i - 1) / totalCount) * 100,
       });
       const item = Zotero.Items.get(syncStatus.itemID);
-      const filepath = OS.Path.join(syncStatus.path, syncStatus.filename);
+      const filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
       await addon.api.$import.fromMD(filepath, { noteId: item.id });
       // Update md file to keep the metadata synced
       await addon.api.$export.syncMDBatch(syncStatus.path, [item.id]);
@@ -166,7 +166,7 @@ async function callSyncing(
 
       await addon.hooks.onShowSyncDiff(
         syncStatus.itemID,
-        OS.Path.join(syncStatus.path, syncStatus.filename),
+        PathUtils.join(syncStatus.path, syncStatus.filename),
       );
       i += 1;
     }

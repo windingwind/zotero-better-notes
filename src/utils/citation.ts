@@ -1,5 +1,8 @@
 export async function parseCitationHTML(citationIds: number[]) {
   let html = "";
+  if (citationIds.length === 0 || !citationIds.every((id) => id)) {
+    return null;
+  }
   const items = await Zotero.Items.getAsync(citationIds);
   for (const item of items) {
     if (

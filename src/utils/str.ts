@@ -25,7 +25,7 @@ export function formatPath(path: string, suffix: string = "") {
   path = Zotero.File.normalizeToUnix(path);
   if (Zotero.isWin) {
     path = path.replace(/\\/g, "/");
-    path = OS.Path.join(...path.split(/\//));
+    path = PathUtils.join(...path.split(/\//));
   }
   if (Zotero.isMac && path.charAt(0) !== "/") {
     path = "/" + path;
@@ -73,9 +73,21 @@ function arrayBufferToBase64(buffer: ArrayBufferLike) {
 
 export async function getItemDataURL(item: Zotero.Item) {
   const path = (await item.getFilePathAsync()) as string;
-  const buf = new Uint8Array((await OS.File.read(path, {})) as Uint8Array)
-    .buffer;
+  const buf = (await IOUtils.read(path)).buffer;
   return (
     "data:" + item.attachmentContentType + ";base64," + arrayBufferToBase64(buf)
   );
+}
+
+export async function fileExists(path: string): Promise<boolean> {
+  if (!path) {
+    return false;
+  }
+  try {
+    // IOUtils.exists() will throw error if path is not valid
+    return await IOUtils.exists(path);
+  } catch (e) {
+    ztoolkit.log(e);
+    return false;
+  }
 }

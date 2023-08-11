@@ -105,7 +105,6 @@ async function createNoteFromMD() {
     });
     if (noteItem && syncNotes) {
       const pathSplit = Zotero.File.normalizeToUnix(filepath).split("/");
-      const stat = await OS.File.stat(filepath);
       addon.api.sync.updateSyncStatus(noteItem.id, {
         itemID: noteItem.id,
         path: Zotero.File.normalizeToUnix(pathSplit.slice(0, -1).join("/")),

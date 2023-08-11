@@ -2,6 +2,7 @@ import YAML = require("yamljs");
 import { clearPref, getPref, setPref } from "../../utils/prefs";
 import { getNoteLinkParams } from "../../utils/link";
 import { config } from "../../../package.json";
+import { fileExists } from "../../utils/str";
 
 export {
   getRelatedNoteIds,
@@ -158,24 +159,25 @@ async function getMDStatus(
       filepath = source;
     } else if (typeof source === "number") {
       const syncStatus = getSyncStatus(source);
-      filepath = `${syncStatus.path}/${syncStatus.filename}`;
+      filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
     } else if (source.isNote && source.isNote()) {
       const syncStatus = getSyncStatus(source.id);
-      filepath = `${syncStatus.path}/${syncStatus.filename}`;
+      filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
     }
     filepath = Zotero.File.normalizeToUnix(filepath);
-    if (await OS.File.exists(filepath)) {
-      const contentRaw = (await OS.File.read(filepath, {
-        encoding: "utf-8",
-      })) as string;
+    if (await fileExists(filepath)) {
+      const contentRaw = (await Zotero.File.getContentsAsync(
+        filepath,
+        "utf-8",
+      )) as string;
       ret = getMDStatusFromContent(contentRaw);
       const pathSplit = filepath.split("/");
       ret.filedir = Zotero.File.normalizeToUnix(
         pathSplit.slice(0, -1).join("/"),
       );
       ret.filename = filepath.split("/").pop() || "";
-      const stat = await OS.File.stat(filepath);
-      ret.lastmodify = stat.lastModificationDate;
+      const stat = await IOUtils.stat(filepath);
+      ret.lastmodify = new Date(stat.lastModified);
     }
   } catch (e) {
     ztoolkit.log(e);
@@ -189,16 +191,16 @@ async function getMDFileName(noteId: number, searchDir?: string) {
   if (
     (!searchDir || searchDir === syncStatus.path) &&
     syncStatus.filename &&
-    OS.File.exists(`${syncStatus.path}/${syncStatus.filename}`)
+    (await fileExists(`${syncStatus.path}/${syncStatus.filename}`))
   ) {
     return syncStatus.filename;
   }
   // If the note is not synced or the synced file does not exists, search for the latest file with the same key
   const noteItem = Zotero.Items.get(noteId);
-  if (searchDir !== undefined && (await OS.File.exists(searchDir))) {
+  if (searchDir !== undefined && (await fileExists(searchDir))) {
     const mdRegex = /\.(md|MD|Md|mD)$/;
     let matchedFileName = null;
-    let matchedDate = new Date(0);
+    let matchedDate = 0;
     await Zotero.File.iterateDirectory(
       searchDir,
       async (entry: OS.File.Entry) => {
@@ -207,10 +209,10 @@ async function getMDFileName(noteId: number, searchDir?: string) {
           if (
             entry.name.split(".").shift()?.split("-").pop() === noteItem.key
           ) {
-            const stat = await OS.File.stat(entry.path);
-            if (stat.lastModificationDate > matchedDate) {
+            const stat = await IOUtils.stat(entry.path);
+            if (stat.lastModified > matchedDate) {
               matchedFileName = entry.name;
-              matchedDate = stat.lastModificationDate;
+              matchedDate = stat.lastModified;
             }
           }
         }

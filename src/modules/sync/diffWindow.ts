@@ -1,6 +1,6 @@
 import { diffChars } from "diff";
 import { config } from "../../../package.json";
-import { getItemDataURL } from "../../utils/str";
+import { fileExists, getItemDataURL } from "../../utils/str";
 import { isWindowAlive } from "../../utils/window";
 import { waitUtilAsync } from "../../utils/wait";
 
@@ -9,7 +9,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
   const syncStatus = addon.api.sync.getSyncStatus(noteId);
   const noteStatus = addon.api.sync.getNoteStatus(noteId)!;
   mdPath = Zotero.File.normalizeToUnix(mdPath);
-  if (!noteItem || !noteItem.isNote() || !(await OS.File.exists(mdPath))) {
+  if (!noteItem || !noteItem.isNote() || !(await fileExists(mdPath))) {
     return;
   }
   const mdStatus = await addon.api.sync.getMDStatus(mdPath);

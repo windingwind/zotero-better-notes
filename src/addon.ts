@@ -1,6 +1,4 @@
-import {
-  Prompt,
-} from "zotero-plugin-toolkit/dist/managers/prompt";
+import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
 import {
   ColumnOptions,
   VirtualizedTableHelper,
@@ -156,7 +154,7 @@ class Addon {
     },
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;
-    }
+    },
   };
   // Lifecycle hooks
   public hooks: typeof hooks;

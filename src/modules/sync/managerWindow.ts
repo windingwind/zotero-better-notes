@@ -128,7 +128,7 @@ function updateData() {
         noteId: noteId,
         noteName: Zotero.Items.get(noteId).getNoteTitle(),
         lastSync: new Date(syncStatus.lastsync).toLocaleString(),
-        filePath: OS.Path.join(syncStatus.path, syncStatus.filename),
+        filePath: PathUtils.join(syncStatus.path, syncStatus.filename),
       };
     });
 }

@@ -21,7 +21,7 @@ import YAML = require("yamljs");
 import { Root as HRoot } from "hast";
 import { Root as MRoot } from "mdast";
 import { Node } from "hast-util-to-text/lib";
-import { formatPath, randomString } from "../../utils/str";
+import { fileExists, formatPath, randomString } from "../../utils/str";
 import { parseCitationHTML } from "../../utils/citation";
 import {
   copyEmbeddedImagesInHTML,
@@ -74,7 +74,7 @@ async function note2md(
   await processN2MRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
     noteItem.libraryID,
-    formatPath(OS.Path.join(dir, "attachments")),
+    formatPath(PathUtils.join(dir, "attachments")),
     options.skipSavingImages,
     false,
     NodeMode.direct,
@@ -789,6 +789,9 @@ function processN2MRehypeCitationNodes(
     let newNode = h("span", node.properties, [
       { type: "text", value: "(" },
       ...childNodes.map((child, i) => {
+        if (!child) {
+          return h("text", "");
+        }
         const newNode = h("span");
         replace(newNode, child);
         newNode.children = [h("a", { href: uris[i] }, child.children)];
@@ -893,7 +896,7 @@ async function processN2MRehypeImageNodes(
     let newFile = oldFile;
     try {
       // Don't overwrite
-      if (skipSavingImages || (await OS.File.exists(newAbsPath))) {
+      if (skipSavingImages || (await fileExists(newAbsPath))) {
         newFile = newAbsPath.replace(/\\/g, "/");
       } else {
         newFile = (await Zotero.File.copyToUnique(oldFile, newAbsPath)).path;
@@ -1010,6 +1013,7 @@ async function processM2NRehypeCitationNodes(
     return;
   }
   for (const node of nodes) {
+    let importFailed = false;
     if (isImport) {
       try {
         // {
@@ -1028,15 +1032,19 @@ async function processM2NRehypeCitationNodes(
         const ids = dataCitation.citationItems.map((c: { uris: string[] }) =>
           Zotero.URI.getURIItemID(c.uris[0]),
         );
-        const html = (await parseCitationHTML(ids)) || "";
-        const newNode = note2rehype(html);
-        // root -> p -> span(cite, this is what we actually want)
-        replace(node, (newNode.children[0] as any).children[0]);
+        const html = await parseCitationHTML(ids);
+        if (html) {
+          const newNode = note2rehype(html);
+          // root -> p -> span(cite, this is what we actually want)
+          replace(node, (newNode.children[0] as any).children[0]);
+        } else {
+          importFailed = true;
+        }
       } catch (e) {
         ztoolkit.log(e);
-        continue;
       }
-    } else {
+    }
+    if (importFailed || !isImport) {
       visit(
         node,
         (_n: any) => _n.properties?.className.includes("citation-item"),
@@ -1084,12 +1092,12 @@ async function processM2NRehypeImageNodes(
         ? "url"
         : "file";
       if (srcType === "file") {
-        if (!(await OS.File.exists(src))) {
-          src = OS.Path.join(fileDir, src);
-          if (!(await OS.File.exists(src))) {
-            ztoolkit.log("parse image, path invalid");
-            continue;
-          }
+        if (!PathUtils.isAbsolute(src)) {
+          src = PathUtils.joinRelative(fileDir, src);
+        }
+        if (!(await fileExists(src))) {
+          ztoolkit.log("parse image, path invalid", src);
+          continue;
         }
       }
       const key = await importImageToNote(noteItem, src, srcType);

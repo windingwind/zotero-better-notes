@@ -97,7 +97,7 @@ export async function showImageViewer(
           "images",
         ).open();
         if (filename) {
-          await OS.File.writeAtomic(formatPath(filename), u8arr);
+          await IOUtils.write(formatPath(filename), u8arr);
           showHintWithLink(
             `Image Saved to ${filename}`,
             "Show in Folder",
