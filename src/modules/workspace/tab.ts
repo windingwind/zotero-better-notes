@@ -94,12 +94,7 @@ function hoverWorkspaceTab(hovered: boolean) {
   const content = tabElem.querySelector(".tab-name") as HTMLDivElement;
   content.removeAttribute("style");
   if (hovered) {
-    if (ztoolkit.isZotero7()) {
-      content.style["-moz-box-pack" as any] = "start";
-    } else {
-      content.style.position = "absolute";
-      content.style.left = "22px";
-    }
+    content.style["-moz-box-pack" as any] = "start";
   }
 }
 

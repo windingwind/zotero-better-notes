@@ -6,10 +6,8 @@ export async function itemPicker() {
     deferred: Zotero.Promise.defer(),
   };
 
-  (window as unknown as XUL.XULWindow).openDialog(
-    ztoolkit.isZotero7()
-      ? "chrome://zotero/content/selectItemsDialog.xhtml"
-      : "chrome://zotero/content/selectItemsDialog.xul",
+  window.openDialog(
+    "chrome://zotero/content/selectItemsDialog.xhtml",
     "",
     "chrome,dialog=no,centerscreen,resizable=yes",
     io,

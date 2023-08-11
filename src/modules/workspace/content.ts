@@ -158,26 +158,6 @@ export function initWorkspace(container: XUL.Box | undefined) {
             flex: "1",
             width: "700",
           },
-          styles: ztoolkit.isZotero7()
-            ? {}
-            : {
-                display: "flex",
-                flexDirection: "column",
-              },
-          children: ztoolkit.isZotero7()
-            ? []
-            : [
-                {
-                  tag: "zoteronoteeditor",
-                  namespace: "html",
-                  id: makeId("editor-main"),
-                  attributes: { flex: "1" },
-                  styles: {
-                    display: "flex",
-                    height: "100%",
-                  },
-                },
-              ],
         },
         {
           tag: "splitter",
@@ -196,51 +176,29 @@ export function initWorkspace(container: XUL.Box | undefined) {
             flex: "1",
             width: "500",
           },
-          styles: ztoolkit.isZotero7()
-            ? {}
-            : {
-                display: "flex",
-                flexDirection: "column",
-              },
-          children: ztoolkit.isZotero7()
-            ? []
-            : [
-                {
-                  tag: "zoteronoteeditor",
-                  namespace: "html",
-                  id: makeId("editor-preview"),
-                  attributes: { flex: "1" },
-                  styles: {
-                    display: "flex",
-                    height: "100%",
-                  },
-                },
-              ],
         },
       ],
     },
     container,
   );
   // Manually add custom editor items in Zotero 7
-  if (ztoolkit.isZotero7()) {
-    // @ts-ignore
-    const customElements = container.ownerGlobal
-      .customElements as CustomElementRegistry;
-    const mainEditorContainer = container.querySelector(
-      `#${makeId("editor-main-container")}`,
-    );
-    const previewEditorContainer = container.querySelector(
-      `#${makeId("editor-preview-container")}`,
-    );
-    const mainEditor = new (customElements.get("note-editor")!)();
-    mainEditor.id = makeId("editor-main");
-    mainEditor.setAttribute("flex", "1");
-    const previewEditor = new (customElements.get("note-editor")!)();
-    previewEditor.id = makeId("editor-preview");
-    previewEditor.setAttribute("flex", "1");
-    mainEditorContainer?.append(mainEditor);
-    previewEditorContainer?.append(previewEditor);
-  }
+  // @ts-ignore
+  const customElements = container.ownerGlobal
+    .customElements as CustomElementRegistry;
+  const mainEditorContainer = container.querySelector(
+    `#${makeId("editor-main-container")}`,
+  );
+  const previewEditorContainer = container.querySelector(
+    `#${makeId("editor-preview-container")}`,
+  );
+  const mainEditor = new (customElements.get("note-editor")!)();
+  mainEditor.id = makeId("editor-main");
+  mainEditor.setAttribute("flex", "1");
+  const previewEditor = new (customElements.get("note-editor")!)();
+  previewEditor.id = makeId("editor-preview");
+  previewEditor.setAttribute("flex", "1");
+  mainEditorContainer?.append(mainEditor);
+  previewEditorContainer?.append(previewEditor);
 
   const outlineContainer = container.querySelector(
     `#${makeId("outline-container")}`,
