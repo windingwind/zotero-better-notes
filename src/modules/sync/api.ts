@@ -192,7 +192,7 @@ async function getMDFileName(noteId: number, searchDir?: string) {
   if (
     (!searchDir || searchDir === syncStatus.path) &&
     syncStatus.filename &&
-    (await fileExists(`${syncStatus.path}/${syncStatus.filename}`))
+    (await fileExists(PathUtils.join(syncStatus.path, syncStatus.filename)))
   ) {
     return syncStatus.filename;
   }
