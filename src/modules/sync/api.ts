@@ -2,7 +2,7 @@ import YAML = require("yamljs");
 import { clearPref, getPref, setPref } from "../../utils/prefs";
 import { getNoteLinkParams } from "../../utils/link";
 import { config } from "../../../package.json";
-import { fileExists } from "../../utils/str";
+import { fileExists, formatPath } from "../../utils/str";
 
 export {
   getRelatedNoteIds,
@@ -117,9 +117,11 @@ function getSyncStatus(noteId?: number): SyncStatus {
     lastsync: new Date().getTime(),
     itemID: -1,
   });
-  return JSON.parse(
+  const status = JSON.parse(
     (getPref(`syncDetail-${noteId}`) as string) || defaultStatus,
   );
+  status.path = formatPath(status.path);
+  return status;
 }
 
 function getMDStatusFromContent(contentRaw: string): MDStatus {
@@ -164,18 +166,16 @@ async function getMDStatus(
       const syncStatus = getSyncStatus(source.id);
       filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
     }
-    filepath = Zotero.File.normalizeToUnix(filepath);
+    filepath = formatPath(filepath);
     if (await fileExists(filepath)) {
       const contentRaw = (await Zotero.File.getContentsAsync(
         filepath,
         "utf-8",
       )) as string;
       ret = getMDStatusFromContent(contentRaw);
-      const pathSplit = filepath.split("/");
-      ret.filedir = Zotero.File.normalizeToUnix(
-        pathSplit.slice(0, -1).join("/"),
-      );
-      ret.filename = filepath.split("/").pop() || "";
+      const pathSplit = PathUtils.split(filepath);
+      ret.filedir = formatPath(pathSplit.slice(0, -1).join("/"));
+      ret.filename = pathSplit.pop() || "";
       const stat = await IOUtils.stat(filepath);
       ret.lastmodify = new Date(stat.lastModified);
     }

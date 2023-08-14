@@ -1,7 +1,7 @@
 import TreeModel = require("tree-model");
-import katex = require("katex");
+import katex from "katex";
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
-import { getItemDataURL } from "./str";
+import { formatPath, getItemDataURL } from "./str";
 import { showHint } from "./hint";
 import { config } from "../../package.json";
 
@@ -474,7 +474,7 @@ async function importImageToNote(
     }
     blob = res.response;
   } else if (type === "file") {
-    src = Zotero.File.normalizeToUnix(src);
+    src = formatPath(src);
     const noteAttachmentKeys = Zotero.Items.get(note.getAttachments()).map(
       (_i) => _i.key,
     );

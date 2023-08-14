@@ -1,5 +1,6 @@
 import { getString } from "../utils/locale";
 import { config } from "../../package.json";
+import { formatPath } from "../utils/str";
 
 export { createWorkspaceNote, createNoteFromTemplate, createNoteFromMD };
 
@@ -104,10 +105,10 @@ async function createNoteFromMD() {
       ignoreVersion: true,
     });
     if (noteItem && syncNotes) {
-      const pathSplit = Zotero.File.normalizeToUnix(filepath).split("/");
+      const pathSplit = PathUtils.split(formatPath(filepath));
       addon.api.sync.updateSyncStatus(noteItem.id, {
         itemID: noteItem.id,
-        path: Zotero.File.normalizeToUnix(pathSplit.slice(0, -1).join("/")),
+        path: formatPath(pathSplit.slice(0, -1).join("/")),
         filename: pathSplit.pop() || "",
         lastsync: new Date().getTime(),
         md5: "",

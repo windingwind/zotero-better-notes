@@ -24,8 +24,7 @@ export function fill(
 export function formatPath(path: string, suffix: string = "") {
   path = Zotero.File.normalizeToUnix(path);
   if (Zotero.isWin) {
-    path = path.replace(/\\/g, "/");
-    path = PathUtils.join(...path.split(/\//));
+    path = path.replace(/\//g, "\\");
   }
   if (Zotero.isMac && path.charAt(0) !== "/") {
     path = "/" + path;

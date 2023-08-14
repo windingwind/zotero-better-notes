@@ -907,13 +907,14 @@ async function processN2MRehypeImageNodes(
     try {
       // Don't overwrite
       if (skipSavingImages || (await fileExists(newAbsPath))) {
-        newFile = newAbsPath.replace(/\\/g, "/");
+        newFile = newAbsPath;
       } else {
         newFile = (await Zotero.File.copyToUnique(oldFile, newAbsPath)).path;
-        newFile = newFile.replace(/\\/g, "/");
       }
-      newFile = Zotero.File.normalizeToUnix(
-        absolutePath ? newFile : `attachments/${newFile.split(/\//).pop()}`,
+      newFile = formatPath(
+        absolutePath
+          ? newFile
+          : `attachments/${PathUtils.split(newFile).pop()}`,
       );
     } catch (e) {
       ztoolkit.log(e);
@@ -1093,9 +1094,7 @@ async function processM2NRehypeImageNodes(
   for (const node of nodes) {
     if (isImport) {
       // We encode the src in md2remark and decode it here.
-      let src = Zotero.File.normalizeToUnix(
-        decodeURIComponent(node.properties.src),
-      );
+      let src = formatPath(decodeURIComponent(node.properties.src));
       const srcType = (src as string).startsWith("data:")
         ? "b64"
         : (src as string).startsWith("http")
