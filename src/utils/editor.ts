@@ -163,15 +163,14 @@ function getRangeAtCursor(editor: Zotero.EditorInstance) {
 
 function getLineAtCursor(editor: Zotero.EditorInstance) {
   const position = getPositionAtCursor(editor);
+  const lastPos = getEditorCore(editor).view.state.tr.doc.content.size;
   let i = 0;
-  let lastPos = 0;
   let currentPos = getPositionAtLine(editor, 0);
-  while (currentPos !== lastPos) {
+  while (currentPos <= lastPos) {
     if (position <= currentPos) {
       break;
     }
     i += 1;
-    lastPos = currentPos;
     currentPos = getPositionAtLine(editor, i);
   }
   return i;
