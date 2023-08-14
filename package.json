@@ -48,7 +48,7 @@
     "hast-util-to-html": "^9.0.0",
     "hast-util-to-mdast": "^8.4.1",
     "hast-util-to-text": "^3.1.2",
-    "hastscript": "^7.2.0",
+    "hastscript": "^8.0.0",
     "html-docx-js-typescript": "^0.1.5",
     "katex": "^0.16.8",
     "rehype-format": "^4.0.1",
