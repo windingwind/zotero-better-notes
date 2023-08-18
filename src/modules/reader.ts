@@ -50,7 +50,7 @@ async function initializeReaderAnnotationButton(
     return [];
   }
   const hitItems: Zotero.Item[] = [];
-  for (const moreButton of _document.querySelectorAll(".more")) {
+  for (const moreButton of Array.from(_document.querySelectorAll(".more"))) {
     if (moreButton.getAttribute("_betternotesInitialized") === "true") {
       continue;
     }
@@ -171,7 +171,7 @@ async function unInitializeReaderAnnotationButton(
   if (!_document) {
     return;
   }
-  for (const moreButton of _document.querySelectorAll(".more")) {
+  for (const moreButton of Array.from(_document.querySelectorAll(".more"))) {
     if (moreButton.getAttribute("_betternotesInitialized") === "true") {
       moreButton.removeAttribute("_betternotesInitialized");
     }

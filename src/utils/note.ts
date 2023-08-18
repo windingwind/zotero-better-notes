@@ -1,5 +1,5 @@
 import TreeModel = require("tree-model");
-import katex from "katex";
+import katex = require("katex");
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { formatPath, getItemDataURL } from "./str";
 import { showHint } from "./hint";
@@ -220,7 +220,7 @@ async function renderNoteHTML(
   const bgNodes = doc.querySelectorAll(
     "span[style]",
   ) as NodeListOf<HTMLElement>;
-  for (const node of bgNodes) {
+  for (const node of Array.from(bgNodes)) {
     // Browser converts #RRGGBBAA hex color to rgba function, and we convert it to rgb function,
     // because word processors don't understand colors with alpha channel
     if (

@@ -18,9 +18,9 @@ import rehypeFormat from "rehype-format";
 import { h } from "hastscript";
 import YAML = require("yamljs");
 
-import { Root as HRoot } from "hast";
+import { Root as HRoot, RootContent } from "hast";
 import { Root as MRoot } from "mdast";
-import { Node } from "hast-util-to-text/lib";
+import { Nodes } from "hast-util-to-text/lib";
 import { fileExists, formatPath, randomString } from "../../utils/str";
 import { parseCitationHTML } from "../../utils/citation";
 import {
@@ -575,8 +575,8 @@ function rehype2note(rehype: HRoot) {
   );
 
   // Ignore empty lines, as they are not parsed to md
-  const tempChildren = [];
-  const isEmptyNode = (_n: Node) =>
+  const tempChildren: RootContent[] = [];
+  const isEmptyNode = (_n: Nodes) =>
     (_n.type === "text" && !_n.value.trim()) ||
     (_n.type === "element" &&
       _n.tagName === "p" &&
@@ -585,8 +585,8 @@ function rehype2note(rehype: HRoot) {
   for (const child of rehype.children) {
     if (
       tempChildren.length &&
-      isEmptyNode(tempChildren[tempChildren.length - 1]) &&
-      isEmptyNode(child)
+      isEmptyNode(tempChildren[tempChildren.length - 1] as Nodes) &&
+      isEmptyNode(child as Nodes)
     ) {
       continue;
     }
