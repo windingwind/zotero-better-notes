@@ -261,6 +261,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         onClickMenu(ev);
       }
     });
+    editor._iframeWindow.document.addEventListener("click", onExitMenu);
   }
 
   // Export
