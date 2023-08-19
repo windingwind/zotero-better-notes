@@ -921,6 +921,10 @@ async function processN2MRehypeImageNodes(
     }
 
     node.properties.src = newFile ? newFile : oldFile;
+    // If on Windows, convert path to Unix style
+    if (Zotero.isWin) {
+      node.properties.src = Zotero.File.normalizeToUnix(node.properties.src);
+    }
 
     if (mode === NodeMode.direct) {
       const newChild = h("span") as any;
