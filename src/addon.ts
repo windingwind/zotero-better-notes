@@ -28,7 +28,6 @@ class Addon {
     };
     export: {
       pdf: { promise?: _ZoteroTypes.PromiseObject };
-      docx: { worker?: HTMLIFrameElement };
     };
     sync: {
       lock: boolean;
@@ -92,7 +91,6 @@ class Addon {
     // ztoolkit: new ZoteroToolkit(),
     export: {
       pdf: { promise: undefined },
-      docx: { worker: undefined },
     },
     sync: {
       lock: false,
