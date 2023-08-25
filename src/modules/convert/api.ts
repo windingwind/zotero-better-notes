@@ -1,11 +1,11 @@
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
-import rehypeRemark from "rehype-remark";
+import rehypeRemark, { all } from "rehype-remark";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
-import { all, defaultHandlers } from "hast-util-to-mdast";
+import { defaultHandlers } from "hast-util-to-mdast";
 import { toHtml } from "hast-util-to-html";
 import { toText } from "hast-util-to-text";
 import remarkGfm from "remark-gfm";
@@ -59,11 +59,11 @@ async function note2md(
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = note2rehype(noteStatus.content);
   processN2MRehypeHighlightNodes(
-    getN2MRehypeHighlightNodes(rehype),
+    getN2MRehypeHighlightNodes(rehype as HRoot),
     NodeMode.direct,
   );
   processN2MRehypeCitationNodes(
-    getN2MRehypeCitationNodes(rehype),
+    getN2MRehypeCitationNodes(rehype as HRoot),
     NodeMode.direct,
   );
   await processN2MRehypeNoteLinkNodes(
@@ -79,8 +79,11 @@ async function note2md(
     false,
     NodeMode.direct,
   );
-  const remark = await rehype2remark(rehype);
-  let md = remark2md(remark);
+  const remark = await rehype2remark(rehype as HRoot);
+  if (!remark) {
+    return "Parsing Error: Rehype2Remark";
+  }
+  let md = remark2md(remark as MRoot);
   try {
     md =
       (await addon.api.template.runTemplate(
@@ -141,7 +144,7 @@ async function md2note(
     mdStatus.filedir,
     options.isImport,
   );
-  const noteContent = rehype2note(rehype);
+  const noteContent = rehype2note(rehype as HRoot);
   return noteContent;
 }
 
@@ -150,7 +153,7 @@ async function note2noteDiff(noteItem: Zotero.Item) {
   const rehype = note2rehype(noteStatus.content);
   await processM2NRehypeCitationNodes(getM2NRehypeCitationNodes(rehype), true);
   // Parse content like citations
-  return rehype2note(rehype);
+  return rehype2note(rehype as HRoot);
 }
 
 function note2link(
@@ -199,8 +202,11 @@ async function md2html(md: string) {
 
 async function html2md(html: string) {
   const rehype = note2rehype(html);
-  const remark = await rehype2remark(rehype);
-  const md = remark2md(remark);
+  const remark = await rehype2remark(rehype as HRoot);
+  if (!remark) {
+    return "Parsing Error: HTML2MD";
+  }
+  const md = remark2md(remark as MRoot);
   return md;
 }
 
@@ -353,7 +359,7 @@ async function rehype2remark(rehype: HRoot) {
         },
       },
     })
-    .run(rehype);
+    .run(rehype as any);
 }
 
 function remark2md(remark: MRoot) {
@@ -401,7 +407,7 @@ function remark2md(remark: MRoot) {
           },
         },
       } as any)
-      .stringify(remark),
+      .stringify(remark as any),
   );
 }
 
@@ -600,11 +606,13 @@ function rehype2note(rehype: HRoot) {
       allowDangerousCharacters: true,
       allowDangerousHtml: true,
     })
-    .stringify(rehype);
+    .stringify(rehype as any);
 }
 
 async function rehype2rehype(rehype: HRoot) {
-  return await unified().use(rehypeFormat).run(rehype);
+  return unified()
+    .use(rehypeFormat)
+    .run(rehype as any);
 }
 
 function replace(targetNode: any, sourceNode: any) {
