@@ -1,4 +1,6 @@
-<!doctype html>
+<?xml version="1.0"?>
+<!-- prettier-ignore -->
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
@@ -14,12 +16,42 @@
       crossorigin="anonymous"
     />
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var { Services } = ChromeUtils.import(
+          "resource://gre/modules/Services.jsm",
+        );
+        var { XPCOMUtils } = ChromeUtils.import(
+          "resource://gre/modules/XPCOMUtils.jsm",
+        );
+        window.XPCOMUtils = XPCOMUtils;
+        delete window.PrintPreview;
+        Services.scriptloader.loadSubScript(
+          "chrome://global/content/printUtils.js",
+          window,
+        );
+      });
       // Add message to print window
-      window.onmessage = function (e) {
+      window.onmessage = async function (e) {
         if (e.data.type === "print") {
           document.querySelector(".markdown-body").innerHTML = e.data.html;
-          window.print();
-          window.close();
+          const settings = PrintUtils.getPrintSettings("", false);
+          const doPrint = await PrintUtils.handleSystemPrintDialog(
+            window.browsingContext.topChromeWindow,
+            false,
+            settings,
+          );
+          if (doPrint) {
+            window.browsingContext.print(settings);
+            // An ugly hack to close the browser window that has a static clone
+            // of the content that is being printed. Without this, the window
+            // will be open while transferring the content into system print queue,
+            // which can take time for large PDF files
+            const emptyWin =
+              Services.wm.getMostRecentWindow("navigator:browser");
+            if (emptyWin?.document?.getElementById("statuspanel")) {
+              emptyWin.close();
+            }
+          }
         }
       };
     </script>
