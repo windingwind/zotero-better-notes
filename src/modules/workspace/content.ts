@@ -1,6 +1,5 @@
 import { config } from "../../../package.json";
 import { ICONS } from "../../utils/config";
-import { scroll } from "../../utils/editor";
 import { getString } from "../../utils/locale";
 import { getNoteTreeFlattened } from "../../utils/note";
 import { getPref } from "../../utils/prefs";
@@ -227,6 +226,7 @@ export async function initWorkspaceEditor(
   noteId: number,
   options: {
     lineIndex?: number;
+    sectionName?: string;
   } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
@@ -252,7 +252,13 @@ export async function initWorkspaceEditor(
   await waitUtilAsync(() => Boolean(editorElem._editorInstance));
   await editorElem._editorInstance._initPromise;
   if (typeof options.lineIndex === "number") {
-    scroll(editorElem._editorInstance, options.lineIndex);
+    addon.api.editor.scroll(editorElem._editorInstance, options.lineIndex);
+  }
+  if (typeof options.sectionName === "string") {
+    addon.api.editor.scrollToSection(
+      editorElem._editorInstance,
+      options.sectionName,
+    );
   }
   return;
 }

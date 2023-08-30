@@ -1,5 +1,6 @@
 import TreeModel = require("tree-model");
 import { TextSelection } from "prosemirror-state";
+import { getNoteTreeFlattened } from "./note";
 
 export {
   insert,
@@ -7,12 +8,14 @@ export {
   move,
   replace,
   scroll,
+  scrollToSection,
   getEditorInstance,
   moveHeading,
   updateHeadingTextAtLine,
   getEditorCore,
   getRangeAtCursor,
   getLineAtCursor,
+  getSectionAtCursor,
   getPositionAtLine,
   getPositionAtCursor,
   getURLAtCursor,
@@ -130,6 +133,16 @@ function scroll(editor: Zotero.EditorInstance, lineIndex: number) {
   core.view.dom.parentElement?.scrollTo(0, offset);
 }
 
+function scrollToSection(editor: Zotero.EditorInstance, sectionName: string) {
+  const item = editor._item;
+  const sectionTree = getNoteTreeFlattened(item);
+  const sectionNode = sectionTree.find(
+    (node) => node.model.name.trim() === sectionName.trim(),
+  );
+  if (!sectionNode) return;
+  scroll(editor, sectionNode.model.lineIndex);
+}
+
 function getEditorInstance(noteId: number) {
   const editor = Zotero.Notes._editorInstances.find(
     (e) =>
@@ -150,7 +163,11 @@ function getEditorAPI(editor: Zotero.EditorInstance) {
 
 function getPositionAtCursor(editor: Zotero.EditorInstance) {
   const selection = getEditorCore(editor).view.state.selection;
-  return selection.$anchor.after(selection.$anchor.depth);
+  try {
+    return selection.$anchor.after(selection.$anchor.depth);
+  } catch (e) {
+    return -1;
+  }
 }
 
 function getRangeAtCursor(editor: Zotero.EditorInstance) {
@@ -163,6 +180,9 @@ function getRangeAtCursor(editor: Zotero.EditorInstance) {
 
 function getLineAtCursor(editor: Zotero.EditorInstance) {
   const position = getPositionAtCursor(editor);
+  if (position < 0) {
+    return -1;
+  }
   const lastPos = getEditorCore(editor).view.state.tr.doc.content.size;
   let i = 0;
   let currentPos = getPositionAtLine(editor, 0);
@@ -174,6 +194,27 @@ function getLineAtCursor(editor: Zotero.EditorInstance) {
     currentPos = getPositionAtLine(editor, i);
   }
   return i;
+}
+
+function getSectionAtCursor(editor: Zotero.EditorInstance): string | undefined {
+  const lineIndex = getLineAtCursor(editor);
+  if (lineIndex < 0) return undefined;
+  const item = editor._item;
+  const sectionTree = getNoteTreeFlattened(item);
+  let sectionNode;
+  for (let i = 0; i < sectionTree.length; i++) {
+    if (
+      // Is before cursor
+      sectionTree[i].model.lineIndex <= lineIndex &&
+      // Is last node, or next node is after cursor
+      (i === sectionTree.length - 1 ||
+        sectionTree[i + 1].model.lineIndex > lineIndex)
+    ) {
+      sectionNode = sectionTree[i];
+      break;
+    }
+  }
+  return sectionNode?.model.name;
 }
 
 function getDOMAtLine(

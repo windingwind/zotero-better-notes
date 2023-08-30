@@ -1,6 +1,6 @@
 import { config } from "../../../package.json";
 import { ICONS } from "../../utils/config";
-import { getLineAtCursor } from "../../utils/editor";
+import { getLineAtCursor, getSectionAtCursor } from "../../utils/editor";
 import { showHint } from "../../utils/hint";
 import { getNoteLink, getNoteLinkParams } from "../../utils/link";
 import { getString } from "../../utils/locale";
@@ -49,6 +49,8 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       return;
     }
 
+    const currentLine = getLineAtCursor(editor);
+    const currentSection = getSectionAtCursor(editor);
     const settingsMenuData: PopupData[] = [
       {
         id: makeId("settings-openWorkspace"),
@@ -72,71 +74,110 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
           addon.hooks.onSetWorkspaceNote(e.editor._item.id, "preview");
         },
       },
-      {
-        type: "splitter",
-      },
-      {
-        id: makeId("settings-export"),
-        text: getString("editor.toolbar.settings.export"),
-        callback: (e) => {
-          if (addon.api.sync.isSyncNote(noteItem.id)) {
-            addon.hooks.onShowSyncInfo(noteItem.id);
-          } else {
-            addon.hooks.onShowExportNoteOptions([noteItem.id]);
-          }
-        },
-      },
-      {
-        type: "splitter",
-      },
-      {
-        id: makeId("settings-insertTemplate"),
-        text: getString("editor.toolbar.settings.insertTemplate"),
-        callback: (e) => {
-          addon.hooks.onShowTemplatePicker("insert", {
-            noteId: e.editor._item.id,
-            lineIndex: getLineAtCursor(e.editor),
-          });
-        },
-      },
-      {
-        type: "splitter",
-      },
-      {
-        id: makeId("settings-copyLink"),
-        text: getString("editor.toolbar.settings.copyLink"),
-        callback: (e) => {
-          const link =
-            getNoteLink(e.editor._item, {
-              lineIndex: getLineAtCursor(e.editor),
-            }) || "";
-          new ztoolkit.Clipboard()
-            .addText(link, "text/unicode")
-            .addText(
-              `<a href="${link}">${
-                e.editor._item.getNoteTitle().trim() || link
-              }</a>`,
-              "text/html",
-            )
-            .copy();
-          showHint(`Link ${link} copied`);
-        },
-      },
     ];
+
+    if (currentLine >= 0) {
+      settingsMenuData.push(
+        ...(<PopupData[]>[
+          {
+            type: "splitter",
+          },
+          {
+            id: makeId("settings-export"),
+            text: getString("editor.toolbar.settings.export"),
+            callback: (e) => {
+              if (addon.api.sync.isSyncNote(noteItem.id)) {
+                addon.hooks.onShowSyncInfo(noteItem.id);
+              } else {
+                addon.hooks.onShowExportNoteOptions([noteItem.id]);
+              }
+            },
+          },
+          {
+            type: "splitter",
+          },
+          {
+            id: makeId("settings-insertTemplate"),
+            text: getString("editor.toolbar.settings.insertTemplate"),
+            callback: (e) => {
+              addon.hooks.onShowTemplatePicker("insert", {
+                noteId: e.editor._item.id,
+                lineIndex: currentLine,
+              });
+            },
+          },
+          {
+            type: "splitter",
+          },
+          {
+            id: makeId("settings-copyLink"),
+            text: getString("editor.toolbar.settings.copyLink", {
+              args: {
+                line: currentLine,
+              },
+            }),
+            callback: (e) => {
+              const link =
+                getNoteLink(e.editor._item, {
+                  lineIndex: currentLine,
+                }) || "";
+              new ztoolkit.Clipboard()
+                .addText(link, "text/unicode")
+                .addText(
+                  `<a href="${link}">${
+                    e.editor._item.getNoteTitle().trim() || link
+                  }</a>`,
+                  "text/html",
+                )
+                .copy();
+              showHint(`Link ${link} copied`);
+            },
+          },
+          {
+            id: makeId("settings-copyLinkAtSection"),
+            text: getString("editor.toolbar.settings.copyLinkAtSection", {
+              args: {
+                section: currentSection,
+              },
+            }),
+            callback: (e) => {
+              const link =
+                getNoteLink(e.editor._item, {
+                  sectionName: currentSection,
+                }) || "";
+              new ztoolkit.Clipboard()
+                .addText(link, "text/unicode")
+                .addText(
+                  `<a href="${link}#${currentSection}">${
+                    e.editor._item.getNoteTitle().trim() || link
+                  }</a>`,
+                  "text/html",
+                )
+                .copy();
+              showHint(`Link ${link} copied`);
+            },
+          },
+        ]),
+      );
+    }
 
     const parentAttachment = await noteItem.parentItem?.getBestAttachment();
     if (parentAttachment) {
-      settingsMenuData.push({
-        type: "splitter",
-      });
-      settingsMenuData.push({
-        id: makeId("settings-openParent"),
-        text: getString("editor.toolbar.settings.openParent"),
-        callback: (e) => {
-          ZoteroPane.viewAttachment([parentAttachment.id]);
-          Zotero.Notifier.trigger("open", "file", parentAttachment.id);
-        },
-      });
+      settingsMenuData.push(
+        ...(<PopupData[]>[
+          {
+            type: "splitter",
+          },
+          {
+            id: makeId("settings-openParent"),
+            text: getString("editor.toolbar.settings.openParent"),
+            callback: (e) => {
+              ZoteroPane.viewAttachment([parentAttachment.id]);
+              Zotero.Notifier.trigger("open", "file", parentAttachment.id);
+            },
+          },
+        ]),
+      );
     }
 
     if (addon.api.sync.isSyncNote(noteItem.id)) {

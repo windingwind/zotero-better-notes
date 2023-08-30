@@ -18,8 +18,9 @@ export function getNoteLinkParams(link: string) {
       noteItem: Zotero.Items.getByLibraryAndKey(libraryID, noteKey || "") as
         | Zotero.Item
         | false,
-      ignore: Boolean(url.searchParams.get("ignore")),
-      lineIndex: typeof line === "string" ? parseInt(line) : null,
+      ignore: Boolean(url.searchParams.get("ignore")) || undefined,
+      lineIndex: typeof line === "string" ? parseInt(line) : undefined,
+      sectionName: url.searchParams.get("section") || undefined,
     };
   } catch (e: unknown) {
     return {
@@ -27,8 +28,9 @@ export function getNoteLinkParams(link: string) {
       libraryID: -1,
       noteKey: undefined,
       noteItem: false as const,
-      ignore: null,
-      lineIndex: null,
+      ignore: undefined,
+      lineIndex: undefined,
+      sectionName: undefined,
     };
   }
 }
@@ -36,8 +38,9 @@ export function getNoteLinkParams(link: string) {
 export function getNoteLink(
   noteItem: Zotero.Item,
   options: {
-    ignore?: boolean | null;
-    lineIndex?: number | null;
+    ignore?: boolean;
+    lineIndex?: number;
+    sectionName?: string;
   } = {},
 ) {
   const libraryID = noteItem.libraryID;
@@ -70,6 +73,12 @@ export function getNoteLink(
     }
     if (options.lineIndex) {
       link = addParam(link, `line=${options.lineIndex}`);
+    }
+    if (options.sectionName) {
+      link = addParam(
+        link,
+        `section=${encodeURIComponent(options.sectionName)}`,
+      );
     }
   }
   return link;

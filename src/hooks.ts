@@ -178,6 +178,7 @@ function onOpenNote(
   mode: "auto" | "preview" | "workspace" | "standalone" = "auto",
   options: {
     lineIndex?: number;
+    sectionName?: string;
   } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
@@ -217,6 +218,7 @@ function onSetWorkspaceNote(
   type: "main" | "preview" = "main",
   options: {
     lineIndex?: number;
+    sectionName?: string;
   } = {},
 ) {
   if (type === "main") {

@@ -1,7 +1,6 @@
 import {
   getEditorInstance,
   moveHeading,
-  scroll,
   updateHeadingTextAtLine,
 } from "../../utils/editor";
 import { showHintWithLink } from "../../utils/hint";
@@ -19,7 +18,7 @@ export async function messageHandler(ev: MessageEvent) {
       if (!editor) {
         return;
       }
-      scroll(editor, ev.data.lineIndex);
+      addon.api.editor.scroll(editor, ev.data.lineIndex);
       return;
     }
     case "openNote": {

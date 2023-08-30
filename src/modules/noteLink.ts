@@ -7,7 +7,8 @@ export function registerNoteLinkProxyHandler() {
       const linkParams = getNoteLinkParams(uri.spec);
       if (linkParams.noteItem) {
         addon.hooks.onOpenNote(linkParams.noteItem.id, "auto", {
-          lineIndex: linkParams.lineIndex || undefined,
+          lineIndex: linkParams.lineIndex,
+          sectionName: linkParams.sectionName,
         });
       }
     },
