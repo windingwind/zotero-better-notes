@@ -8,6 +8,7 @@ import {
   md2html,
   html2md,
   annotations2html,
+  note2html,
 } from "./modules/convert/api";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
@@ -90,6 +91,7 @@ const convert = {
   md2html,
   html2md,
   annotations2html,
+  note2html,
 };
 
 const template = {

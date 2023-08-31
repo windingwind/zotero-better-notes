@@ -1,6 +1,5 @@
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
-import { copyEmbeddedImagesInHTML, renderNoteHTML } from "../../utils/note";
 import { fill, slice } from "../../utils/str";
 
 export { runTemplate, runTextTemplate, runItemTemplate };
@@ -203,17 +202,11 @@ async function runItemTemplate(
     ),
   );
 
-  let html = results.join("\n");
-  if (targetNoteItem && targetNoteItem.isNote()) {
-    html = await copyEmbeddedImagesInHTML(
-      html,
-      targetNoteItem,
-      copyImageRefNotes,
-    );
-  } else {
-    html = await renderNoteHTML(html, copyImageRefNotes);
-  }
-  return html;
+  const html = results.join("\n");
+  return await addon.api.convert.note2html(copyImageRefNotes, {
+    targetNoteItem,
+    html,
+  });
 }
 
 async function getItemTemplateData() {

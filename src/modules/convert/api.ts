@@ -45,6 +45,7 @@ export {
   md2html,
   html2md,
   annotations2html,
+  note2html,
 };
 
 async function note2md(
@@ -215,6 +216,24 @@ function annotations2html(
   options: Parameters<typeof parseAnnotationHTML>[1] = {},
 ) {
   return parseAnnotationHTML(annotations, options);
+}
+
+async function note2html(
+  noteItems: Zotero.Item | Zotero.Item[],
+  options: { targetNoteItem?: Zotero.Item; html?: string },
+) {
+  if (!Array.isArray(noteItems)) {
+    noteItems = [noteItems];
+  }
+  const { targetNoteItem } = options;
+  let html = options.html;
+  if (!html) {
+    html = noteItems.map((item) => item.getNote()).join("\n");
+  }
+  if (targetNoteItem?.isNote()) {
+    return await copyEmbeddedImagesInHTML(html, targetNoteItem, noteItems);
+  }
+  return await renderNoteHTML(html, noteItems);
 }
 
 function note2rehype(str: string) {
