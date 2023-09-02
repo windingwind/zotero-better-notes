@@ -210,7 +210,7 @@ async function runItemTemplate(
 }
 
 async function getItemTemplateData() {
-  const librarySelectedIds = addon.data.templatePicker.data.librarySelectedIds;
+  const librarySelectedIds = addon.data.template.picker.data.librarySelectedIds;
   if (librarySelectedIds && librarySelectedIds.length !== 0) {
     const firstSelectedItem = Zotero.Items.get(librarySelectedIds[0]);
     const data = {} as Record<string, any>;

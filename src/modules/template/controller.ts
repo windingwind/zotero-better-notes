@@ -1,6 +1,7 @@
 import YAML = require("yamljs");
-import { clearPref, getPref, setPref } from "../../utils/prefs";
+import { getPref } from "../../utils/prefs";
 import { showHint } from "../../utils/hint";
+import { config } from "../../../package.json";
 
 export {
   getTemplateKeys,
@@ -11,52 +12,46 @@ export {
   importTemplateFromClipboard,
 };
 
-// Controller
-function getTemplateKeys(): { name: string }[] {
-  const templateKeys = getPref("templateKeys") as string;
-  return templateKeys ? JSON.parse(templateKeys) : [];
-}
-
-function setTemplateKeys(templateKeys: { name: string }[]): void {
-  setPref("templateKeys", JSON.stringify(templateKeys));
-}
-
-function addTemplateKey(templateKey: { name: string }): boolean {
-  const templateKeys = getTemplateKeys();
-  if (templateKeys.map((t) => t.name).includes(templateKey.name)) {
-    return false;
+function initTemplates() {
+  addon.data.template.data = new ztoolkit.LargePref(
+    `${config.prefsPrefix}.templateKeys`,
+    `${config.prefsPrefix}.template.`,
+    "parser",
+  );
+  // Convert old template keys to new format
+  const raw = getPref("templateKeys") as string;
+  let keys = raw ? JSON.parse(raw) : [];
+  if (keys.length > 0 && typeof keys[0] !== "string") {
+    keys = keys.map((t: { name: string }) => t.name);
+    setTemplateKeys(keys);
   }
-  templateKeys.push(templateKey);
-  setTemplateKeys(templateKeys);
-  return true;
+  // Add default templates
+  const templateKeys = getTemplateKeys();
+  for (const defaultTemplate of addon.api.template.DEFAULT_TEMPLATES) {
+    if (!templateKeys.includes(defaultTemplate.name)) {
+      setTemplate(defaultTemplate, false);
+    }
+  }
+  addon.hooks.onUpdateTemplatePicker();
 }
 
-function removeTemplateKey(keyName: string): boolean {
-  const templateKeys = getTemplateKeys();
-  if (!templateKeys.map((t) => t.name).includes(keyName)) {
-    return false;
-  }
-  templateKeys.splice(templateKeys.map((t) => t.name).indexOf(keyName), 1);
-  setTemplateKeys(templateKeys);
-  return true;
+function getTemplateKeys(): string[] {
+  return addon.data.template.data?.getKeys() || [];
+}
+
+function setTemplateKeys(templateKeys: string[]): void {
+  addon.data.template.data?.setKeys(templateKeys);
 }
 
 function getTemplateText(keyName: string): string {
-  let template = getPref(`template.${keyName}`) as string;
-  if (!template) {
-    template = "";
-    setPref(`template.${keyName}`, template);
-  }
-  return template;
+  return addon.data.template.data?.getValue(keyName) || "";
 }
 
 function setTemplate(
   template: NoteTemplate,
   updatePrompt: boolean = true,
 ): void {
-  template = JSON.parse(JSON.stringify(template));
-  addTemplateKey({ name: template.name });
-  setPref(`template.${template.name}`, template.text);
+  addon.data.template.data?.setValue(template.name, template.text);
   if (updatePrompt) {
     addon.hooks.onUpdateTemplatePicker();
   }
@@ -66,25 +61,13 @@ function removeTemplate(
   keyName: string | undefined,
   updatePrompt: boolean = true,
 ): void {
-  if (typeof keyName === "undefined") {
+  if (!keyName) {
     return;
   }
-  removeTemplateKey(keyName);
-  clearPref(`template.${keyName}`);
+  addon.data.template.data?.deleteKey(keyName);
   if (updatePrompt) {
     addon.hooks.onUpdateTemplatePicker();
   }
-}
-
-function initTemplates() {
-  const templateKeys = getTemplateKeys();
-  const currentNames = templateKeys.map((t) => t.name);
-  for (const defaultTemplate of addon.api.template.DEFAULT_TEMPLATES) {
-    if (!currentNames.includes(defaultTemplate.name)) {
-      setTemplate(defaultTemplate, false);
-    }
-  }
-  addon.hooks.onUpdateTemplatePicker();
 }
 
 function importTemplateFromClipboard() {

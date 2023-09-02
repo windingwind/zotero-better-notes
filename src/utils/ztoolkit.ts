@@ -40,6 +40,7 @@ import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PromptManager } from "zotero-plugin-toolkit/dist/managers/prompt";
 import { ReaderInstanceManager } from "zotero-plugin-toolkit/dist/managers/readerInstance";
 import { ReaderTabPanelManager } from "zotero-plugin-toolkit/dist/managers/readerTabPanel";
+import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 
 class MyToolkit extends BasicTool {
   UI: UITool;
@@ -54,6 +55,7 @@ class MyToolkit extends BasicTool {
   ProgressWindow: typeof ProgressWindowHelper;
   VirtualizedTable: typeof VirtualizedTableHelper;
   Dialog: typeof DialogHelper;
+  LargePref: typeof LargePrefHelper;
 
   constructor() {
     super();
@@ -69,6 +71,7 @@ class MyToolkit extends BasicTool {
     this.ProgressWindow = ProgressWindowHelper;
     this.VirtualizedTable = VirtualizedTableHelper;
     this.Dialog = DialogHelper;
+    this.LargePref = LargePrefHelper;
   }
 
   unregisterAll() {

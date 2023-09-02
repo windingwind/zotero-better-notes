@@ -15,12 +15,12 @@ function showTemplatePicker(
 function showTemplatePicker(mode: "export", data?: Record<string, never>): void;
 function showTemplatePicker(): void;
 function showTemplatePicker(
-  mode: typeof addon.data.templatePicker.mode = "insert",
+  mode: typeof addon.data.template.picker.mode = "insert",
   data: Record<string, any> = {},
 ) {
   if (addon.data.prompt) {
-    addon.data.templatePicker.mode = mode;
-    addon.data.templatePicker.data = data;
+    addon.data.template.picker.mode = mode;
+    addon.data.template.picker.data = data;
     addon.data.prompt.promptNode.style.display = "flex";
     addon.data.prompt.showCommands(
       addon.data.prompt.commands.filter(
@@ -32,18 +32,18 @@ function showTemplatePicker(
 
 function updateTemplatePicker() {
   ztoolkit.Prompt.unregisterAll();
-  const templates = addon.api.template.getTemplateKeys();
+  const templateKeys = addon.api.template.getTemplateKeys();
   ztoolkit.Prompt.register(
-    templates
+    templateKeys
       .filter(
         (template) =>
-          !addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(template.name),
+          !addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(template),
       )
       .map((template) => {
         return {
-          name: `Template: ${template.name}`,
+          name: `Template: ${template}`,
           label: "BNotes Template",
-          callback: getTemplatePromptHandler(template.name),
+          callback: getTemplatePromptHandler(template),
         };
       }),
   );
@@ -54,7 +54,7 @@ function getTemplatePromptHandler(name: string) {
     ztoolkit.log(prompt, name);
     prompt.promptNode.style.display = "none";
     // TODO: add preview when command is selected
-    switch (addon.data.templatePicker.mode) {
+    switch (addon.data.template.picker.mode) {
       case "create":
         await createTemplateNoteCallback(name);
         break;
@@ -66,14 +66,14 @@ function getTemplatePromptHandler(name: string) {
         await insertTemplateCallback(name);
         break;
     }
-    addon.data.templatePicker.mode = "insert";
-    addon.data.templatePicker.data = {};
+    addon.data.template.picker.mode = "insert";
+    addon.data.template.picker.data = {};
   };
 }
 
 async function insertTemplateCallback(name: string) {
   const targetNoteItem = Zotero.Items.get(
-    addon.data.templatePicker.data.noteId || addon.data.workspace.mainId,
+    addon.data.template.picker.data.noteId || addon.data.workspace.mainId,
   );
   let html = "";
   if (name.toLowerCase().startsWith("[item]")) {
@@ -88,14 +88,14 @@ async function insertTemplateCallback(name: string) {
   await addLineToNote(
     targetNoteItem,
     html,
-    addon.data.templatePicker.data.lineIndex,
+    addon.data.template.picker.data.lineIndex,
   );
 }
 
 async function createTemplateNoteCallback(name: string) {
-  addon.data.templatePicker.data.librarySelectedIds =
+  addon.data.template.picker.data.librarySelectedIds =
     ZoteroPane.getSelectedItems(true);
-  switch (addon.data.templatePicker.data.noteType) {
+  switch (addon.data.template.picker.data.noteType) {
     case "standalone": {
       const currentCollection = ZoteroPane.getSelectedCollection();
       if (!currentCollection) {
@@ -105,16 +105,16 @@ async function createTemplateNoteCallback(name: string) {
       const noteID = await ZoteroPane.newNote();
       const noteItem = Zotero.Items.get(noteID);
       await noteItem.saveTx();
-      addon.data.templatePicker.data.noteId = noteID;
+      addon.data.template.picker.data.noteId = noteID;
       break;
     }
     case "item": {
-      const parentID = addon.data.templatePicker.data.parentItemId;
+      const parentID = addon.data.template.picker.data.parentItemId;
       const noteItem = new Zotero.Item("note");
       noteItem.libraryID = Zotero.Items.get(parentID).libraryID;
       noteItem.parentID = parentID;
       await noteItem.saveTx();
-      addon.data.templatePicker.data.noteId = noteItem.id;
+      addon.data.template.picker.data.noteId = noteItem.id;
       break;
     }
     default:
@@ -124,13 +124,13 @@ async function createTemplateNoteCallback(name: string) {
 }
 
 async function exportTemplateCallback(name: string) {
-  addon.data.templatePicker.data.librarySelectedIds =
+  addon.data.template.picker.data.librarySelectedIds =
     ZoteroPane.getSelectedItems(true);
   // Create temp note
   const noteItem = new Zotero.Item("note");
   noteItem.libraryID = Zotero.Libraries.userLibraryID;
   await noteItem.saveTx();
-  addon.data.templatePicker.data.noteId = noteItem.id;
+  addon.data.template.picker.data.noteId = noteItem.id;
   await insertTemplateCallback(name);
   // Export note
   await addon.hooks.onShowExportNoteOptions([noteItem.id], {

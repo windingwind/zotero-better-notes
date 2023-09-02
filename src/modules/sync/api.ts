@@ -1,10 +1,11 @@
 import YAML = require("yamljs");
-import { clearPref, getPref, setPref } from "../../utils/prefs";
+import { getPref, setPref } from "../../utils/prefs";
 import { getNoteLinkParams } from "../../utils/link";
 import { config } from "../../../package.json";
 import { fileExists, formatPath } from "../../utils/str";
 
 export {
+  initSyncList,
   getRelatedNoteIds,
   removeSyncNote,
   isSyncNote,
@@ -18,16 +19,31 @@ export {
   getMDFileName,
 };
 
+function initSyncList() {
+  const rawKeys = getPref("syncNoteIds") as string;
+  if (!rawKeys.startsWith("[") || !rawKeys.endsWith("]")) {
+    const keys = rawKeys.split(",").map((id) => parseInt(id));
+    setPref("syncNoteIds", JSON.stringify(keys));
+  }
+  addon.data.sync.data = new ztoolkit.LargePref(
+    `${config.prefsPrefix}.syncNoteIds`,
+    `${config.prefsPrefix}.syncDetail-`,
+    "parser",
+  );
+}
+
 function getSyncNoteIds(): number[] {
-  const ids = getPref("syncNoteIds") as string;
-  return Zotero.Items.get(ids.split(",").map((id: string) => Number(id)))
+  const keys = addon.data.sync.data?.getKeys();
+  if (!keys) {
+    return [];
+  }
+  return Zotero.Items.get(keys)
     .filter((item) => item.isNote())
     .map((item) => item.id);
 }
 
 function isSyncNote(noteId: number): boolean {
-  const syncNoteIds = getSyncNoteIds();
-  return syncNoteIds.includes(noteId);
+  return !!addon.data.sync.data?.hasKey(String(noteId));
 }
 
 async function getRelatedNoteIds(noteId: number): Promise<number[]> {
@@ -49,34 +65,16 @@ async function getRelatedNoteIds(noteId: number): Promise<number[]> {
   return allNoteIds;
 }
 
-async function getRelatedNoteIdsFromNotes(
-  noteIds: number[],
-): Promise<number[]> {
-  let allNoteIds: number[] = [];
-  for (const noteId of noteIds) {
-    allNoteIds = allNoteIds.concat(await getRelatedNoteIds(noteId));
-  }
-  return allNoteIds;
-}
-
 function addSyncNote(noteId: number) {
-  const ids = getSyncNoteIds();
-  if (ids.includes(noteId)) {
-    return;
-  }
-  ids.push(noteId);
-  setPref("syncNoteIds", ids.join(","));
+  addon.data.sync.data?.setKey(String(noteId));
 }
 
 function removeSyncNote(noteId: number) {
-  const ids = getSyncNoteIds();
-  setPref("syncNoteIds", ids.filter((id) => id !== noteId).join(","));
-  clearPref(`syncDetail-${noteId}`);
+  addon.data.sync.data?.deleteKey(String(noteId));
 }
 
 function updateSyncStatus(noteId: number, status: SyncStatus) {
-  addSyncNote(noteId);
-  setPref(`syncDetail-${noteId}`, JSON.stringify(status));
+  addon.data.sync.data?.setValue(String(noteId), status);
 }
 
 function getNoteStatus(noteId: number) {
@@ -109,17 +107,18 @@ function getNoteStatus(noteId: number) {
 }
 
 function getSyncStatus(noteId?: number): SyncStatus {
-  const defaultStatus = JSON.stringify({
+  const defaultStatus = {
     path: "",
     filename: "",
     md5: "",
     noteMd5: "",
     lastsync: new Date().getTime(),
     itemID: -1,
-  });
-  const status = JSON.parse(
-    (getPref(`syncDetail-${noteId}`) as string) || defaultStatus,
-  );
+  };
+  const status = {
+    ...defaultStatus,
+    ...(addon.data.sync.data?.getValue(String(noteId)) as SyncStatus),
+  };
   status.path = formatPath(status.path);
   return status;
 }

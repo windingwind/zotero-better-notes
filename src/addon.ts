@@ -3,6 +3,7 @@ import {
   ColumnOptions,
   VirtualizedTableHelper,
 } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
+import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 
 import { getPref, setPref } from "./utils/prefs";
@@ -30,6 +31,7 @@ class Addon {
       pdf: { promise?: _ZoteroTypes.PromiseObject };
     };
     sync: {
+      data?: LargePrefHelper;
       lock: boolean;
       manager: {
         window?: Window;
@@ -73,15 +75,18 @@ class Addon {
         top: number;
       };
     };
-    templateEditor: {
-      window?: Window;
-      tableHelper?: VirtualizedTableHelper;
-      editor?: any;
-      templates: { name: string }[];
-    };
-    templatePicker: {
-      mode: "insert" | "create" | "export";
-      data: Record<string, any>;
+    template: {
+      data?: LargePrefHelper;
+      editor: {
+        window?: Window;
+        tableHelper?: VirtualizedTableHelper;
+        editor?: any;
+        templates: string[];
+      };
+      picker: {
+        mode: "insert" | "create" | "export";
+        data: Record<string, any>;
+      };
     };
     readonly prompt?: Prompt;
   } = {
@@ -141,14 +146,16 @@ class Addon {
       pined: false,
       anchorPosition: undefined,
     },
-    templateEditor: {
-      window: undefined,
-      tableHelper: undefined,
-      templates: [],
-    },
-    templatePicker: {
-      mode: "insert",
-      data: {},
+    template: {
+      editor: {
+        window: undefined,
+        tableHelper: undefined,
+        templates: [],
+      },
+      picker: {
+        mode: "insert",
+        data: {},
+      },
     },
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;

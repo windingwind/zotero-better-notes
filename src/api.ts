@@ -38,7 +38,6 @@ import {
   getTemplateKeys,
   getTemplateText,
   setTemplate,
-  initTemplates,
   removeTemplate,
 } from "./modules/template/controller";
 import {
@@ -103,7 +102,6 @@ const template = {
   getTemplateKeys,
   getTemplateText,
   setTemplate,
-  initTemplates,
   removeTemplate,
   renderTemplatePreview,
 };

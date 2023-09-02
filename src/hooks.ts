@@ -49,6 +49,7 @@ import {
 import { annotationTagAction } from "./modules/annotationTagAction";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
+import { initSyncList } from "./modules/sync/api";
 
 async function onStartup() {
   await Promise.all([
@@ -67,6 +68,8 @@ async function onStartup() {
   registerEditorInstanceHook();
 
   registerPrefsWindow();
+
+  initSyncList();
 
   setSyncing();
 

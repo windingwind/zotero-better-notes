@@ -7,9 +7,9 @@ import { waitUtilAsync } from "../../utils/wait";
 
 export async function showTemplateEditor() {
   if (
-    !addon.data.templateEditor.window ||
-    Components.utils.isDeadWrapper(addon.data.templateEditor.window) ||
-    addon.data.templateEditor.window.closed
+    !addon.data.template.editor.window ||
+    Components.utils.isDeadWrapper(addon.data.template.editor.window) ||
+    addon.data.template.editor.window.closed
   ) {
     const windowArgs = {
       _initPromise: Zotero.Promise.defer(),
@@ -20,10 +20,10 @@ export async function showTemplateEditor() {
       `chrome,centerscreen,resizable,status,width=600,height=400,dialog=no`,
       windowArgs,
     )!;
-    addon.data.templateEditor.window = _window;
+    addon.data.template.editor.window = _window;
     await windowArgs._initPromise.promise;
     updateData();
-    addon.data.templateEditor.tableHelper = new ztoolkit.VirtualizedTable(
+    addon.data.template.editor.tableHelper = new ztoolkit.VirtualizedTable(
       _window!,
     )
       .setContainerId("table-container")
@@ -47,14 +47,10 @@ export async function showTemplateEditor() {
         staticColumns: true,
         disableFontSizeScaling: true,
       })
-      .setProp("getRowCount", () => addon.data.templateEditor.templates.length)
-      .setProp(
-        "getRowData",
-        (index) =>
-          (addon.data.templateEditor.templates[index] as { name: string }) || {
-            name: "no data",
-          },
-      )
+      .setProp("getRowCount", () => addon.data.template.editor.templates.length)
+      .setProp("getRowData", (index) => ({
+        name: addon.data.template.editor.templates[index] || "no data",
+      }))
       .setProp("onSelectionChange", (selection) => {
         updateEditor();
         updatePreview();
@@ -128,7 +124,7 @@ export async function showTemplateEditor() {
       ?.addEventListener("click", (ev) => {
         restoreTemplates(_window);
       });
-    addon.data.templateEditor.window?.focus();
+    addon.data.template.editor.window?.focus();
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
     await waitUtilAsync(() => editorWin?.loadMonaco);
@@ -136,7 +132,7 @@ export async function showTemplateEditor() {
       language: "javascript",
       theme: "vs-light",
     });
-    addon.data.templateEditor.editor = editor;
+    addon.data.template.editor.editor = editor;
   }
 }
 
@@ -148,33 +144,33 @@ async function refresh() {
 }
 
 function updateData() {
-  addon.data.templateEditor.templates = addon.api.template.getTemplateKeys();
+  addon.data.template.editor.templates = addon.api.template.getTemplateKeys();
 }
 
 function updateTable(selectId?: number) {
-  addon.data.templateEditor.tableHelper?.render(selectId);
+  addon.data.template.editor.tableHelper?.render(selectId);
 }
 
 function updateEditor() {
   const name = getSelectedTemplateName();
   const templateText = addon.api.template.getTemplateText(name);
 
-  const header = addon.data.templateEditor.window?.document.getElementById(
+  const header = addon.data.template.editor.window?.document.getElementById(
     "editor-name",
   ) as HTMLInputElement;
-  const editor = addon.data.templateEditor.window?.document.getElementById(
+  const editor = addon.data.template.editor.window?.document.getElementById(
     "editor",
   ) as HTMLIFrameElement;
   const saveTemplate =
-    addon.data.templateEditor.window?.document.getElementById(
+    addon.data.template.editor.window?.document.getElementById(
       "save",
     ) as XUL.Button;
   const deleteTemplate =
-    addon.data.templateEditor.window?.document.getElementById(
+    addon.data.template.editor.window?.document.getElementById(
       "delete",
     ) as XUL.Button;
   const resetTemplate =
-    addon.data.templateEditor.window?.document.getElementById(
+    addon.data.template.editor.window?.document.getElementById(
       "reset",
     ) as XUL.Button;
   if (!name) {
@@ -197,7 +193,7 @@ function updateEditor() {
       deleteTemplate.hidden = true;
       resetTemplate.hidden = false;
     }
-    addon.data.templateEditor.editor.setValue(templateText);
+    addon.data.template.editor.editor.setValue(templateText);
     editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
@@ -211,7 +207,7 @@ async function updatePreview() {
     .replace(/<br>/g, "<br/>")
     .replace(/<hr>/g, "<hr/>")
     .replace(/<img([^>]+)>/g, "<img$1/>");
-  const win = addon.data.templateEditor.window;
+  const win = addon.data.template.editor.window;
   const container = win?.document.getElementById("preview-container");
   if (container) {
     container.innerHTML = html;
@@ -219,13 +215,13 @@ async function updatePreview() {
 }
 
 function getSelectedTemplateName() {
-  const selectedTemplate = addon.data.templateEditor.templates.find(
+  const selectedTemplate = addon.data.template.editor.templates.find(
     (v, i) =>
-      addon.data.templateEditor.tableHelper?.treeInstance.selection.isSelected(
+      addon.data.template.editor.tableHelper?.treeInstance.selection.isSelected(
         i,
       ),
   );
-  return selectedTemplate?.name || "";
+  return selectedTemplate || "";
 }
 
 function createTemplate() {
@@ -255,7 +251,7 @@ async function importNoteTemplate() {
 
 function saveSelectedTemplate() {
   const name = getSelectedTemplateName();
-  const header = addon.data.templateEditor.window?.document.getElementById(
+  const header = addon.data.template.editor.window?.document.getElementById(
     "editor-name",
   ) as HTMLInputElement;
 
@@ -271,7 +267,7 @@ function saveSelectedTemplate() {
 
   const template = {
     name: header.value,
-    text: addon.data.templateEditor.editor.getValue(),
+    text: addon.data.template.editor.editor.getValue(),
   };
   addon.api.template.setTemplate(template);
   if (name !== template.name) {
@@ -279,7 +275,7 @@ function saveSelectedTemplate() {
   }
   showHint(`Template ${template.name} saved.`);
   const selectedId =
-    addon.data.templateEditor.tableHelper?.treeInstance.selection.selected
+    addon.data.template.editor.tableHelper?.treeInstance.selection.selected
       .values()
       .next().value;
   refresh().then(() => updateTable(selectedId));
@@ -300,7 +296,7 @@ function deleteSelectedTemplate() {
 function resetSelectedTemplate() {
   const name = getSelectedTemplateName();
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
-    addon.data.templateEditor.editor.setValue(
+    addon.data.template.editor.editor.setValue(
       addon.api.template.DEFAULT_TEMPLATES.find((t) => t.name === name)?.text ||
         "",
     );
@@ -343,7 +339,7 @@ async function backupTemplates() {
   if (!filepath) {
     return;
   }
-  const keys = addon.api.template.getTemplateKeys().map((t) => t.name);
+  const keys = addon.api.template.getTemplateKeys();
   const templates = keys.map((key) => {
     return {
       name: key,
@@ -368,7 +364,7 @@ async function restoreTemplates(win: Window) {
   }
   const yaml = (await Zotero.File.getContentsAsync(filepath)) as string;
   const templates = YAML.parse(yaml) as NoteTemplate[];
-  const existingNames = addon.api.template.getTemplateKeys().map((t) => t.name);
+  const existingNames = addon.api.template.getTemplateKeys();
 
   for (const t of templates) {
     if (existingNames.includes(t.name)) {
