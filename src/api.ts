@@ -61,6 +61,7 @@ import {
   move,
   replace,
 } from "./utils/editor";
+import { addLineToNote } from "./utils/note";
 
 const workspace = {
   getWorkspaceEditor,
@@ -135,6 +136,10 @@ const editor = {
   getTextBetweenLines,
 };
 
+const note = {
+  insert: addLineToNote,
+};
+
 export default {
   workspace,
   sync,
@@ -143,4 +148,5 @@ export default {
   $export,
   $import,
   editor,
+  note,
 };
