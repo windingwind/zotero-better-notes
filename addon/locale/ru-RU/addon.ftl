@@ -3,28 +3,28 @@ pref-title=BNotes
 menuItem-setMainNote=Как заметка раб. пространства
 menuItem-exportNote=Экспорт заметки
 
-menuFile-openMainNote = Choose and Open Workspace Note
-menuFile-openMainNote-error = Choosen item is not a valid note item
-menuFile-openRecent = Open Recent Workspace Note
-menuFile-openRecent-empty = No Recent Workspace Note
+menuFile-openMainNote = Выбрать и Открыть Заметку раб. пространства
+menuFile-openMainNote-error = Выбрана невалидная Заметка
+menuFile-openRecent = Открыть недавнюю Заметку раб. пространства
+menuFile-openRecent-empty = Нет недавних Заметок раб. пространства
 
-menuEdit-insertTemplate=Вставить шаблон в заметку раб. пространства
+menuEdit-insertTemplate=Вставить шаблон в Заметку раб. пространства
 menuEdit-exportTemplate=Экспорт шаблона в файл...
 menuEdit-templateEditor=Редактор шаблонов
-menuEdit-importTemplate=New Template from Clipboard
+menuEdit-importTemplate=Новый шаблон из буфера обмена
 
 menuTools-syncManager=Синк менеджер
 
-menuAddNote-newMainNote=Новая заметка раб. пространства
-menuAddNote-newMainNote-confirmHead=Создать новую заметку в коллекции
-menuAddNote-newMainNote-confirmTail=и установить её как заметку раб. пространства. Продолжить?
-menuAddNote-newMainNote-enterNoteTitle=Ввести имя новой заметки:
-menuAddNote-newMainNote-openWorkspaceTab=Открыть пространство заметок?
-menuAddNote-newTemplateStandaloneNote=Новая отдельная заметка из шаблона
-menuAddNote-newTemplateItemNote=Новая элементная заметка из шаблона
+menuAddNote-newMainNote=Новая Заметка раб. пространства
+menuAddNote-newMainNote-confirmHead=Создать новую Заметку в коллекции
+menuAddNote-newMainNote-confirmTail=и установить её как Заметку раб. пространства. Продолжить?
+menuAddNote-newMainNote-enterNoteTitle=Ввести имя новой Заметки:
+menuAddNote-newMainNote-openWorkspaceTab=Открыть Пространство заметок?
+menuAddNote-newTemplateStandaloneNote=Новая отдельная Заметка из шаблона
+menuAddNote-newTemplateItemNote=Новая элементная Заметка из шаблона
 menuAddNote-importMD = Импорт файла MarkDown в качестве примечания
 
-menuAddReaderNote-newTemplateNote=Новая элементная заметка из шаблона
+menuAddReaderNote-newTemplateNote=Новая элементная Заметка из шаблона
 
 menuEditor-resizeImage=Изменить размер изображения
 
@@ -33,7 +33,7 @@ templateEditor-templateName = Имя шаблона
 tab-name=Рабочее пространство заметок
 tab-openInWindow=Перетащите сюда для открытия раб. пространства в новом окне
 
-export-title=Экспорт заметок
+export-title=Экспорт Заметок
 export-options-linkMode=Режим связанных заметок
 export-options-MD=MarkDown(.md)
 export-options-Docx=MS Word(.docx)
@@ -88,21 +88,21 @@ workspace-saveOutlineFreeMind=Сохранить MindMap
 editor-toolbar-main=Заметка рабочего пространства
 editor-toolbar-settings-title=Настройки рабочего пространства
 editor-toolbar-settings-openWorkspace=Открыть пространство заметок
-editor-toolbar-settings-setWorkspace=Установить как заметку раб. пространства
+editor-toolbar-settings-setWorkspace=Установить как Заметку раб. пространства
 editor-toolbar-settings-previewInWorkspace=Предпросмотр в рабочем пространстве
 editor-toolbar-settings-insertTemplate=Вставить шаблон в строку курсора
-editor-toolbar-settings-copyLink = Copy Note Link at Line ({ $line })
-editor-toolbar-settings-copyLinkAtSection = Copy Note Link at Section ({ $section })
+editor-toolbar-settings-copyLink = Копировать Ссылку на Заметку на строке ({ $line })
+editor-toolbar-settings-copyLinkAtSection = Копировать Ссылку на Заметку в секции ({ $section })
 editor-toolbar-settings-openParent=Открыть вложение
 editor-toolbar-settings-export=Экспортировать текущую заметку...
 editor-toolbar-settings-refreshSyncing=Синхронизировать сейчас
 editor-toolbar-link-title=Ссылка текущей заметки в рабочее пространство
-editor-toolbar-link-popup-nodata=Workspace note is invalid
+editor-toolbar-link-popup-nodata=Невалидная Заметка раб. пространства
 
-templatePicker-itemData-info=are selected in library. Please choose the data source:
-templatePicker-itemData-useLibrary=Use selected items in library
-templatePicker-itemData-useCustom=Choose another...
-templatePicker-itemData-title=Choose Item Template Data Source
+templatePicker-itemData-info=выбрано в библиотеке. Выберите источник данных:
+templatePicker-itemData-useLibrary=Использовать выбранные записи в библиотеке
+templatePicker-itemData-useCustom=Выбрать другой...
+templatePicker-itemData-title=Выбрать источник данных шаблона записи
 
 alert-notValidCollectionError=Выберите валидную коллекцию.
 alert-notValidParentItemError=Нет валидного родительского элемента.
