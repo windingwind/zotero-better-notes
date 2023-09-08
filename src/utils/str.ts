@@ -26,9 +26,6 @@ export function formatPath(path: string, suffix: string = "") {
   if (Zotero.isWin) {
     path = path.replace(/\//g, "\\");
   }
-  if (Zotero.isMac && path.charAt(0) !== "/") {
-    path = "/" + path;
-  }
   if (suffix && !path.endsWith(suffix)) {
     path += suffix;
   }
