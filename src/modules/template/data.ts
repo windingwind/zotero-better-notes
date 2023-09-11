@@ -34,7 +34,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     name: "[QuickImportV2]",
     text: `<blockquote>
 \${{
-  return await Zotero.BetterNotes.api.convert.link2html(link, {noteItem, dryRun: _env.dryRun}));
+  return await Zotero.BetterNotes.api.convert.link2html(link, {noteItem, dryRun: _env.dryRun});
 }}$
 </blockquote>`,
   },
