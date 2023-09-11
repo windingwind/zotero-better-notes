@@ -147,7 +147,12 @@ async function runItemTemplate(
     return "";
   }
 
-  const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
+  let targetNoteItem: Zotero.Item | undefined = Zotero.Items.get(
+    targetNoteId || -1,
+  );
+  if (!targetNoteItem) {
+    targetNoteItem = undefined;
+  }
 
   const items = itemIds?.map((id) => Zotero.Items.get(id)) || [];
 
