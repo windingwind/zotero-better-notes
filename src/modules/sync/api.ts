@@ -22,7 +22,7 @@ export {
 function initSyncList() {
   const rawKeys = getPref("syncNoteIds") as string;
   if (!rawKeys.startsWith("[") || !rawKeys.endsWith("]")) {
-    const keys = rawKeys.split(",").map((id) => parseInt(id));
+    const keys = rawKeys.split(",").map((id) => String(id));
     setPref("syncNoteIds", JSON.stringify(keys));
   }
   addon.data.sync.data = new ztoolkit.LargePref(
@@ -30,6 +30,9 @@ function initSyncList() {
     `${config.prefsPrefix}.syncDetail-`,
     "parser",
   );
+  // Due to the bug in v1.1.4-22, the sync data may be corrupted
+  const keys = addon.data.sync.data?.getKeys().map((key) => String(key));
+  setPref("syncNoteIds", JSON.stringify(keys));
 }
 
 function getSyncNoteIds(): number[] {

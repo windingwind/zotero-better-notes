@@ -1,6 +1,6 @@
 import { showHint } from "../../utils/hint";
 import { getString } from "../../utils/locale";
-import { formatPath, slice } from "../../utils/str";
+import { formatPath, jointPath, slice } from "../../utils/str";
 
 export async function showSyncInfo(noteId: number) {
   const status = addon.api.sync.getSyncStatus(noteId);
@@ -54,9 +54,7 @@ export async function showSyncInfo(noteId: number) {
     .addButton(getString("syncInfo.reveal"), "reveal", {
       noClose: true,
       callback: (ev) => {
-        Zotero.File.reveal(
-          formatPath(PathUtils.join(status.path, status.filename)),
-        );
+        Zotero.File.reveal(jointPath(status.path, status.filename));
       },
     })
     .addButton(getString("syncInfo.manager"), "manager", {

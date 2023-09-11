@@ -83,7 +83,16 @@ export async function fileExists(path: string): Promise<boolean> {
     // IOUtils.exists() will throw error if path is not valid
     return await IOUtils.exists(formatPath(path));
   } catch (e) {
-    ztoolkit.log(e);
+    ztoolkit.log("[fileExists]", e);
     return false;
+  }
+}
+
+export function jointPath(...paths: string[]) {
+  try {
+    return formatPath(PathUtils.join(...paths));
+  } catch (e) {
+    ztoolkit.log("[jointPath]", e);
+    return "";
   }
 }

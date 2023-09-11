@@ -1,6 +1,7 @@
 import { config } from "../../../package.json";
 import { getLinkedNotesRecursively, getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
+import { jointPath } from "../../utils/str";
 import { isWindowAlive } from "../../utils/window";
 
 export async function showSyncManager() {
@@ -49,7 +50,7 @@ export async function showSyncManager() {
         ),
         showHeader: true,
         multiSelect: true,
-        staticColumns: true,
+        staticColumns: false,
         disableFontSizeScaling: true,
       })
       .setProp("getRowCount", () => addon.data.sync.manager.data.length)
@@ -128,7 +129,7 @@ function updateData() {
         noteId: noteId,
         noteName: Zotero.Items.get(noteId).getNoteTitle(),
         lastSync: new Date(syncStatus.lastsync).toLocaleString(),
-        filePath: PathUtils.join(syncStatus.path, syncStatus.filename),
+        filePath: jointPath(syncStatus.path, syncStatus.filename),
       };
     });
 }

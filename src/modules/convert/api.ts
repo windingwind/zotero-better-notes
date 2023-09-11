@@ -21,7 +21,12 @@ import YAML = require("yamljs");
 import { Root as HRoot, RootContent } from "hast";
 import { Root as MRoot } from "mdast";
 import { Nodes } from "hast-util-to-text/lib";
-import { fileExists, formatPath, randomString } from "../../utils/str";
+import {
+  fileExists,
+  formatPath,
+  jointPath,
+  randomString,
+} from "../../utils/str";
 import { parseCitationHTML } from "../../utils/citation";
 import {
   copyEmbeddedImagesInHTML,
@@ -75,7 +80,7 @@ async function note2md(
   await processN2MRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
     noteItem.libraryID,
-    formatPath(PathUtils.join(dir, "attachments")),
+    jointPath(dir, "attachments"),
     options.skipSavingImages,
     false,
     NodeMode.direct,

@@ -1,5 +1,5 @@
 import { showHintWithLink } from "../../utils/hint";
-import { formatPath } from "../../utils/str";
+import { formatPath, jointPath } from "../../utils/str";
 
 export async function saveMD(
   filename: string,
@@ -30,7 +30,7 @@ export async function saveMD(
 export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   const noteItems = Zotero.Items.get(noteIds);
   await Zotero.File.createDirectoryIfMissingAsync(saveDir);
-  const attachmentsDir = formatPath(PathUtils.join(saveDir, "attachments"));
+  const attachmentsDir = jointPath(saveDir, "attachments");
   const hasImage = noteItems.some((noteItem) =>
     noteItem.getNote().includes("<img"),
   );

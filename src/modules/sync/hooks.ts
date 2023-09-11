@@ -184,7 +184,7 @@ async function callSyncing(
       progress: 100,
     });
   } catch (e) {
-    ztoolkit.log(e);
+    ztoolkit.log("[BetterNotes Syncing Error]", e);
     showHint(`Sync Error: ${String(e)}`);
   } finally {
     progress?.startCloseTimer(5000);
