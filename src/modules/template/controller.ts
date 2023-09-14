@@ -21,9 +21,14 @@ function initTemplates() {
   // Convert old template keys to new format
   const raw = getPref("templateKeys") as string;
   let keys = raw ? JSON.parse(raw) : [];
-  if (keys.length > 0 && typeof keys[0] !== "string") {
-    keys = keys.map((t: { name: string }) => t.name);
-    setTemplateKeys(keys);
+  if (keys.length > 0) {
+    keys = keys.map((t: { name: string } | string) => {
+      if (typeof t === "string") {
+        return t;
+      }
+      return t.name;
+    });
+    setTemplateKeys(Array.from(new Set(keys)));
   }
   // Add default templates
   const templateKeys = getTemplateKeys();
