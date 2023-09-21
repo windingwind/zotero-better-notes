@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Note Template Community
+    url: https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates
+    about: Find & contribute note templates here.
+  - name: Better Notes Q&A
+    url: https://github.com/windingwind/zotero-better-notes/discussions/categories/q-a
+    about: Please ask and answer questions (not feature requests or bug reports) here.
