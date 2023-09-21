@@ -9,7 +9,7 @@ body:
     id: check-search
     attributes:
       label: Is there an existing issue for this?
-      description: Please search to see if an issue already exists for the bug you encountered.
+      description: Please search to see if an issue already exists for this feature request.
       options:
         - label: I have searched the existing issues
           required: true
