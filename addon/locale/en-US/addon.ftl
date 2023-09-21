@@ -46,6 +46,7 @@ export-keepLink = Keep Zotero Links(zotero://note/)
 export-exportMD = Export MD File(s)
 export-setAutoSync = Set Auto-Sync
 export-withYAMLHeader = With YAML Header
+export-autoMDFileName = Auto Generate MD File Name
 export-exportDocx = Export Docx File
 export-exportPDF = Export PDF File
 export-exportFreeMind = Export FreeMind File

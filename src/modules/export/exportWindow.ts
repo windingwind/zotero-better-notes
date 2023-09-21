@@ -64,7 +64,7 @@ export async function showExportNoteOptions(
     updateSyncCheckbox();
   };
 
-  const dialog = new ztoolkit.Dialog(17, 1)
+  const dialog = new ztoolkit.Dialog(18, 1)
     .setDialogData(data)
     .addCell(0, 0, {
       tag: "div",
@@ -96,14 +96,15 @@ export async function showExportNoteOptions(
     .addCell(6, 0, makeCheckboxLine("exportMD"))
     .addCell(7, 0, makeCheckboxLine("setAutoSync"))
     .addCell(8, 0, makeCheckboxLine("withYAMLHeader"))
-    .addCell(9, 0, makeHeadingLine(getString("export.options.Docx")))
-    .addCell(10, 0, makeCheckboxLine("exportDocx"))
-    .addCell(11, 0, makeHeadingLine(getString("export.options.PDF")))
-    .addCell(12, 0, makeCheckboxLine("exportPDF"))
-    .addCell(13, 0, makeHeadingLine(getString("export.options.mm")))
-    .addCell(14, 0, makeCheckboxLine("exportFreeMind"))
-    .addCell(15, 0, makeHeadingLine(getString("export.options.note")))
-    .addCell(16, 0, makeCheckboxLine("exportNote"))
+    .addCell(9, 0, makeCheckboxLine("autoMDFileName"))
+    .addCell(10, 0, makeHeadingLine(getString("export.options.Docx")))
+    .addCell(11, 0, makeCheckboxLine("exportDocx"))
+    .addCell(12, 0, makeHeadingLine(getString("export.options.PDF")))
+    .addCell(13, 0, makeCheckboxLine("exportPDF"))
+    .addCell(14, 0, makeHeadingLine(getString("export.options.mm")))
+    .addCell(15, 0, makeCheckboxLine("exportFreeMind"))
+    .addCell(16, 0, makeHeadingLine(getString("export.options.note")))
+    .addCell(17, 0, makeCheckboxLine("exportNote"))
     .addButton(getString("export.confirm"), "confirm")
     .addButton(getString("export.cancel"), "cancel")
     .open(getString("export.title"), {

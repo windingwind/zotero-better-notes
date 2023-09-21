@@ -46,6 +46,7 @@ export-keepLink=保留Zotero链接(zotero://note/)
 export-exportMD=导出MD文件
 export-setAutoSync=设置自动同步
 export-withYAMLHeader=带有YAML头
+export-autoMDFileName=自动生成MD文件名
 export-exportDocx=导出Word文件
 export-exportPDF=导出PDF文件
 export-exportFreeMind=导出FreeMind文件

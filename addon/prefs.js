@@ -11,6 +11,7 @@ pref("__prefsPrefix__.keepLink", true);
 pref("__prefsPrefix__.exportMD", true);
 pref("__prefsPrefix__.setAutoSync", false);
 pref("__prefsPrefix__.withYAMLHeader", false);
+pref("__prefsPrefix__.autoMDFileName", false);
 pref("__prefsPrefix__.exportDocx", false);
 pref("__prefsPrefix__.exportPDF", false);
 pref("__prefsPrefix__.exportFreeMind", false);

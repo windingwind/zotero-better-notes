@@ -5,7 +5,7 @@ import {
 } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { getLinesInNote } from "../../utils/note";
-import { formatPath } from "../../utils/str";
+import { formatPath, jointPath } from "../../utils/str";
 
 export { exportNotes };
 
@@ -17,6 +17,7 @@ async function exportNotes(
     exportNote?: boolean;
     exportMD?: boolean;
     setAutoSync?: boolean;
+    autoMDFileName?: boolean;
     syncDir?: string;
     withYAMLHeader?: boolean;
     exportDocx?: boolean;
@@ -91,8 +92,24 @@ async function exportNotes(
         });
       }
     } else {
+      let exportDir: string | false = false;
+      if (options.autoMDFileName) {
+        const raw = await new ztoolkit.FilePicker(
+          `${getString("fileInterface.export")} MarkDown File`,
+          "folder",
+        ).open();
+        exportDir = raw && formatPath(raw);
+      }
+
       for (const noteItem of allNoteItems) {
         await toMD(noteItem, {
+          filename:
+            (exportDir &&
+              jointPath(
+                exportDir,
+                await addon.api.sync.getMDFileName(noteItem.id, exportDir),
+              )) ||
+            undefined,
           withYAMLHeader: options.withYAMLHeader,
           keepNoteLink: true,
         });
