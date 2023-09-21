@@ -4,10 +4,10 @@ title: "[Bug] "
 labels:
     - bug
     # - Needs Triage
-assignees: 
+assignees: windingwind
 body:
     - type: checkboxes
-      id: checklist
+      id: check-search
       attributes:
           label: Is there an existing issue for this?
           description: Please search to see if an issue already exists for the bug you encountered.
@@ -16,7 +16,7 @@ body:
                 required: true
 
     - type: checkboxes
-      id: checklist
+      id: check-version
       attributes:
           label: Are you using the latest Zotero and the latest plugin?
           description: Only bug reports that can be reproduced on the latest Zotero and plugin will be considered.
@@ -39,7 +39,7 @@ body:
       validations:
           required: true
 
-    - type: markdown
+    - type: textarea
       id: description
       attributes:
           label: Describe the bug
@@ -49,7 +49,7 @@ body:
       validations:
           required: true
 
-    - type: markdown
+    - type: textarea
       id: debug-output
       attributes:
           label: Debug Output
