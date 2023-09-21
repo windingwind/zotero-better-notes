@@ -36,6 +36,8 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 
 [GPT Integration](#gpt-integration)
 
+[Action Workflow](#action-workflow)
+
 [Other Features](#other-features)
 
 </details>
@@ -216,6 +218,14 @@ You can:
 - Ask GPT questions about current note
 - Summarize/fix spelling and grammar/translate/polish the selection
 - Accept suggestions/modifications from GPT with `enter` key.
+
+### Action Workflow
+
+The [Actions & Tags](https://github.com/windingwind/zotero-actions-tags) plugin provides a powerful workflow engine for Zotero. If you also have Better Notes installed, you can use the following actions to automate note generation/editing/syncing/etc.:
+
+- [Auto-generate note from template when opening an item](https://github.com/windingwind/zotero-actions-tags/discussions/108)
+- [Auto-sync note when opening/creating an item](https://github.com/windingwind/zotero-actions-tags/discussions/140)
+- [More...](https://github.com/windingwind/zotero-actions-tags/discussions/categories/action-scripts)
 
 ### Other Features
 
