@@ -198,6 +198,12 @@ Basic user template.
 
 ### Builtin Templates
 
+The name of builtin templates are not allowed to be modified.
+
+> Every time there is a breaking change, the corresponding builtin template will be updated and renamed to `{TEMPLATE_NAME}V{n+1}`, where `n` is the version number of the old builtin template and `{TEMPLATE_NAME}` is the name of the template. The old builtin template will be kept for compatibility.
+>
+> For example, the builtin template `[ExportMDFileNameV2]` may be renamed to `[ExportMDFileNameV3]` in the future.
+
 | Name                | Description                                              | Variables                             |
 | ------------------- | -------------------------------------------------------- | ------------------------------------- |
 | QuickInsert         | For forward link.                                        | link, linkText, subNoteItem, noteItem |
