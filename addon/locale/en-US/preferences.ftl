@@ -1,5 +1,7 @@
 workspace-title = Workspace
 workspace-expandLevel-label = Outline expand to heading level
+workspace-keepLinks = 
+    .label = Show note links in outline
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)
 sync-manager =

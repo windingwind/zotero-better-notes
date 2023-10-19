@@ -360,7 +360,7 @@ export async function updateOutline(container: XUL.Box) {
       type: "setMindMapData",
       nodes: getNoteTreeFlattened(
         Zotero.Items.get(addon.data.workspace.mainId),
-        { keepLink: true },
+        { keepLink: !!getPref("workspace.outline.keepLinks") },
       ),
       workspaceType: getContainerType(container),
       expandLevel: getPref("workspace.outline.expandLevel"),

@@ -1,5 +1,7 @@
 workspace-title = 工作区
 workspace-expandLevel-label = 大纲展开至标题层级
+workspace-keepLinks = 
+    .label = 在大纲中显示笔记链接
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)
 sync-manager =
