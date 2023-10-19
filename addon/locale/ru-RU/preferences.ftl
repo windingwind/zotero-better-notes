@@ -1,7 +1,9 @@
 workspace-title = Рабочее пространство
 workspace-expandLevel-label = Outline расширить до уровня заголовка
 workspace-keepLinks = 
-    .label = Show note links in outline
+    .label = Сохранить ссылки
+workspace-autoUpdateRelatedNotes =
+    .label = Автообновление связанных заметок
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)
 sync-manager =

@@ -50,6 +50,7 @@ import { annotationTagAction } from "./modules/annotationTagAction";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
+import { getPref } from "./utils/prefs";
 
 async function onStartup() {
   await Promise.all([
@@ -116,6 +117,9 @@ function onNotify(
   ids: number[] | string[],
   extraData: { [key: string]: any },
 ) {
+  if (extraData.skipBN) {
+    return;
+  }
   // Workspace tab select/unselect callback
   if (event === "select" && type === "tab") {
     if (extraData[ids[0]].type == TAB_TYPE) {
@@ -131,6 +135,9 @@ function onNotify(
         updateOutline(addon.data.workspace.tab.container!);
       addon.data.workspace.window.active &&
         updateOutline(addon.data.workspace.window.container!);
+      if (getPref("workspace.autoUpdateRelatedNotes")) {
+        addon.api.note.updateRelatedNotes(addon.data.workspace.mainId);
+      }
     }
   }
   if (event === "modify" && type === "item") {

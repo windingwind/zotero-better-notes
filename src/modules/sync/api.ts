@@ -1,12 +1,10 @@
 import YAML = require("yamljs");
 import { getPref, setPref } from "../../utils/prefs";
-import { getNoteLinkParams } from "../../utils/link";
 import { config } from "../../../package.json";
 import { fileExists, formatPath } from "../../utils/str";
 
 export {
   initSyncList,
-  getRelatedNoteIds,
   removeSyncNote,
   isSyncNote,
   getSyncNoteIds,
@@ -47,25 +45,6 @@ function getSyncNoteIds(): number[] {
 
 function isSyncNote(noteId: number): boolean {
   return !!addon.data.sync.data?.hasKey(String(noteId));
-}
-
-async function getRelatedNoteIds(noteId: number): Promise<number[]> {
-  let allNoteIds: number[] = [noteId];
-  const note = Zotero.Items.get(noteId);
-  const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
-  if (!linkMatches) {
-    return allNoteIds;
-  }
-  const subNoteIds = (
-    await Promise.all(
-      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
-    )
-  )
-    .filter((item) => item && item.isNote())
-    .map((item) => (item as Zotero.Item).id);
-  allNoteIds = allNoteIds.concat(subNoteIds);
-  allNoteIds = new Array(...new Set(allNoteIds));
-  return allNoteIds;
 }
 
 function addSyncNote(noteId: number) {

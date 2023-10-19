@@ -27,7 +27,6 @@ import {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
-  getRelatedNoteIds,
 } from "./modules/sync/api";
 import {
   runTemplate,
@@ -61,7 +60,11 @@ import {
   move,
   replace,
 } from "./utils/editor";
-import { addLineToNote } from "./utils/note";
+import {
+  addLineToNote,
+  updateRelatedNotes,
+  getRelatedNoteIds,
+} from "./utils/note";
 
 const workspace = {
   getWorkspaceEditor,
@@ -78,6 +81,9 @@ const sync = {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  /**
+   * @deprecated Use `api.note.getRelatedNoteIds` instead
+   */
   getRelatedNoteIds,
 };
 
@@ -138,6 +144,8 @@ const editor = {
 
 const note = {
   insert: addLineToNote,
+  updateRelatedNotes,
+  getRelatedNoteIds,
 };
 
 export default {

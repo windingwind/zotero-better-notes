@@ -26,3 +26,4 @@ pref("__prefsPrefix__.OCRMathpix.APIKey", "");
 
 pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
+pref("__prefsPrefix__.workspace.autoUpdateRelatedNotes", false);

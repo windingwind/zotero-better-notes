@@ -157,6 +157,13 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
               showHint(`Link ${link} copied`);
             },
           },
+          {
+            id: makeId("settings-updateRelatedNotes"),
+            text: getString("editor.toolbar.settings.updateRelatedNotes"),
+            callback: (e) => {
+              addon.api.note.updateRelatedNotes(e.editor._item.id);
+            },
+          },
         ]),
       );
     }

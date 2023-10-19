@@ -4,6 +4,7 @@ import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { formatPath, getItemDataURL } from "./str";
 import { showHint } from "./hint";
 import { config } from "../../package.json";
+import { getNoteLinkParams } from "./link";
 
 export {
   renderNoteHTML,
@@ -17,6 +18,8 @@ export {
   copyEmbeddedImagesFromNote,
   copyEmbeddedImagesInHTML,
   importImageToNote,
+  getRelatedNoteIds,
+  updateRelatedNotes,
 };
 
 function parseHTMLLines(html: string): string[] {
@@ -506,4 +509,76 @@ async function importImageToNote(
   });
 
   return attachment.key;
+}
+
+async function updateRelatedNotes(noteID: number) {
+  const noteItem = Zotero.Items.get(noteID);
+  if (!noteItem) {
+    ztoolkit.log(`updateRelatedNotes: ${noteID} is not a note.`);
+    return;
+  }
+  const relatedNoteIDs = await getRelatedNoteIds(noteID);
+  const relatedNotes = Zotero.Items.get(relatedNoteIDs);
+  const currentRelatedNotes = {} as Record<number, Zotero.Item>;
+
+  // Get current related items
+  for (const relItemKey of noteItem.relatedItems) {
+    try {
+      const relItem = (await Zotero.Items.getByLibraryAndKeyAsync(
+        noteItem.libraryID,
+        relItemKey,
+      )) as Zotero.Item;
+      if (relItem.isNote()) {
+        currentRelatedNotes[relItem.id] = relItem;
+      }
+    } catch (e) {
+      ztoolkit.log(e);
+    }
+  }
+  await Zotero.DB.executeTransaction(async () => {
+    const saveParams = {
+      skipDateModifiedUpdate: true,
+      skipSelect: true,
+      notifierData: {
+        skipBN: true,
+      },
+    };
+    for (const toAddNote of relatedNotes) {
+      if (toAddNote.id in currentRelatedNotes) {
+        // Remove existing notes from current dict for later process
+        delete currentRelatedNotes[toAddNote.id];
+        continue;
+      }
+      toAddNote.addRelatedItem(noteItem);
+      noteItem.addRelatedItem(toAddNote);
+      toAddNote.save(saveParams);
+      delete currentRelatedNotes[toAddNote.id];
+    }
+    for (const toRemoveNote of Object.values(currentRelatedNotes)) {
+      // Remove related notes that are not in the new list
+      toRemoveNote.removeRelatedItem(noteItem);
+      noteItem.removeRelatedItem(toRemoveNote);
+      toRemoveNote.save(saveParams);
+    }
+    noteItem.save(saveParams);
+  });
+}
+
+async function getRelatedNoteIds(noteId: number): Promise<number[]> {
+  let allNoteIds: number[] = [noteId];
+  const note = Zotero.Items.get(noteId);
+  const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
+  if (!linkMatches) {
+    return allNoteIds;
+  }
+  const subNoteIds = (
+    await Promise.all(
+      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
+    )
+  )
+    .filter((item) => item && item.isNote())
+    .map((item) => (item as Zotero.Item).id);
+  allNoteIds = allNoteIds.concat(subNoteIds);
+  allNoteIds = new Array(...new Set(allNoteIds));
+  return allNoteIds;
 }
