@@ -233,7 +233,7 @@ function onSetWorkspaceNote(
   }
   if (addon.data.workspace.window.active) {
     initWorkspaceEditor(
-      addon.data.workspace.window.container,
+      addon.data.workspace.window.container!,
       type,
       noteId,
       options,
@@ -248,7 +248,7 @@ function onSetWorkspaceNote(
   }
   if (addon.data.workspace.tab.active) {
     initWorkspaceEditor(
-      addon.data.workspace.tab.container,
+      addon.data.workspace.tab.container!,
       type,
       noteId,
       options,
