@@ -16,24 +16,28 @@
       crossorigin="anonymous"
     />
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var { Services } = ChromeUtils.import(
-          "resource://gre/modules/Services.jsm",
-        );
-        var { XPCOMUtils } = ChromeUtils.import(
-          "resource://gre/modules/XPCOMUtils.jsm",
-        );
-        window.XPCOMUtils = XPCOMUtils;
-        delete window.PrintPreview;
-        Services.scriptloader.loadSubScript(
-          "chrome://global/content/printUtils.js",
-          window,
-        );
-      });
       // Add message to print window
       window.onmessage = async function (e) {
         if (e.data.type === "print") {
-          document.querySelector(".markdown-body").innerHTML = e.data.html;
+          var { Services } = ChromeUtils.import(
+            "resource://gre/modules/Services.jsm",
+          );
+          var { XPCOMUtils } = ChromeUtils.import(
+            "resource://gre/modules/XPCOMUtils.jsm",
+          );
+          window.XPCOMUtils = XPCOMUtils;
+          delete window.PrintPreview;
+          Services.scriptloader.loadSubScript(
+            "chrome://global/content/printUtils.js",
+            window,
+          );
+          // Serialize the HTMLDocument as an XHTML string
+          var parser = new DOMParser();
+          var serializer = new XMLSerializer();
+          var htmlString = e.data.html;
+          var htmlDoc = parser.parseFromString(htmlString, "text/html");
+          var xhtmlString = serializer.serializeToString(htmlDoc);
+          document.querySelector(".markdown-body").innerHTML = xhtmlString;
           const settings = PrintUtils.getPrintSettings("", false);
           const doPrint = await PrintUtils.handleSystemPrintDialog(
             window.browsingContext.topChromeWindow,
