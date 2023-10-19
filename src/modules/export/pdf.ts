@@ -1,18 +1,24 @@
 import { config } from "../../../package.json";
 import { showHint } from "../../utils/hint";
 import { renderNoteHTML } from "../../utils/note";
-import { waitUtilAsync } from "../../utils/wait";
 
 export async function savePDF(noteId: number) {
   const html = await renderNoteHTML(Zotero.Items.get(noteId));
   disablePrintFooterHeader();
+  const args = {
+    _initPromise: Zotero.Promise.defer(),
+    browser: undefined as any,
+    url: `chrome://${config.addonRef}/content/printTemplate.xhtml`,
+  };
   const win = window.openDialog(
-    `chrome://${config.addonRef}/content/pdfPrinter.xhtml`,
-    `${config.addonRef}-pdfPrinter`,
+    `chrome://${config.addonRef}/content/printWrapper.xhtml`,
+    `${config.addonRef}-printWrapper`,
     `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`,
+    args,
   )!;
-  await waitUtilAsync(() => win.document.readyState === "complete");
-  win.postMessage({ type: "print", html }, "*");
+  await args._initPromise.promise;
+  args.browser?.contentWindow.postMessage({ type: "print", html }, "*");
+  win.print();
   showHint("Note Saved as PDF");
 }
 
