@@ -85,6 +85,10 @@ workspace-notesPane-hint = PDF NotePane is not accesible if no PDF files are ope
 workspace-switchOutline = Swith Outline Mode
 workspace-saveOutlineImage = Save Image
 workspace-saveOutlineFreeMind = Save MindMap
+workspace-emptyWorkspaceGuideInfo = No note opened in workspace.
+workspace-emptyWorkspaceGuideOpen = Choose a note to open
+workspace-emptyWorkspaceGuideOr = or
+workspace-emptyWorkspaceGuideCreate = Create a new note
 
 editor-toolbar-main = Workspace Note
 editor-toolbar-settings-title = Workspace Settings

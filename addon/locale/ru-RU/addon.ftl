@@ -85,6 +85,10 @@ workspace-notesPane-hint=PDF панель заметок недоступна е
 workspace-switchOutline=Переключить режим Набросок
 workspace-saveOutlineImage=Сохранить изображение
 workspace-saveOutlineFreeMind=Сохранить MindMap
+workspace-emptyWorkspaceGuideInfo = No note opened in workspace.
+workspace-emptyWorkspaceGuideOpen = Choose a note to open
+workspace-emptyWorkspaceGuideOr = or
+workspace-emptyWorkspaceGuideCreate = Create a new note
 
 editor-toolbar-main=Заметка рабочего пространства
 editor-toolbar-settings-title=Настройки рабочего пространства

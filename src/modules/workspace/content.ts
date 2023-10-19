@@ -1,5 +1,6 @@
 import { config } from "../../../package.json";
 import { ICONS } from "../../utils/config";
+import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
 import { getNoteTreeFlattened } from "../../utils/note";
 import { getPref } from "../../utils/prefs";
@@ -221,7 +222,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
 }
 
 export async function initWorkspaceEditor(
-  container: XUL.Box | undefined,
+  container: XUL.Box,
   type: "main" | "preview",
   noteId: number,
   options: {
@@ -231,12 +232,100 @@ export async function initWorkspaceEditor(
 ) {
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem || !noteItem.isNote()) {
-    if (window.confirm(getString("alert.notValidWorkspaceNote"))) {
-      await addon.hooks.onCreateWorkspaceNote();
-    }
+    ztoolkit.UI.appendElement(
+      {
+        tag: "div",
+        id: makeId("emptyWorkspaceGuide"),
+        styles: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          backgroundColor: "rgba(255,255,255,0.8)",
+          zIndex: "100",
+        },
+        children: [
+          {
+            tag: "div",
+            properties: {
+              innerHTML: getString("workspace-emptyWorkspaceGuideInfo"),
+            },
+            styles: {
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "gray",
+            },
+          },
+          {
+            tag: "button",
+            namespace: "xul",
+            properties: {
+              label: getString("workspace-emptyWorkspaceGuideOpen"),
+            },
+            styles: {
+              fontSize: "16px",
+            },
+            listeners: [
+              {
+                type: "command",
+                listener: async (ev) => {
+                  const selectedIds = await itemPicker();
+                  if (
+                    selectedIds?.length === 1 &&
+                    Zotero.Items.get(selectedIds[0]).isNote()
+                  ) {
+                    addon.hooks.onSetWorkspaceNote(selectedIds[0], "main");
+                    addon.hooks.onOpenWorkspace();
+                  } else {
+                    window.alert(getString("menuFile-openMainNote-error"));
+                  }
+                },
+              },
+            ],
+          },
+          {
+            tag: "div",
+            properties: {
+              innerHTML: getString("workspace-emptyWorkspaceGuideOr"),
+            },
+            styles: {
+              fontSize: "16px",
+              color: "gray",
+            },
+          },
+          {
+            tag: "button",
+            namespace: "xul",
+            properties: {
+              label: getString("workspace-emptyWorkspaceGuideCreate"),
+            },
+            styles: {
+              fontSize: "16px",
+            },
+            listeners: [
+              {
+                type: "command",
+                listener: () => {
+                  addon.hooks.onCreateWorkspaceNote();
+                },
+              },
+            ],
+          },
+        ],
+      },
+      container,
+    );
     return;
+  } else {
+    container.querySelector(`#${makeId("emptyWorkspaceGuide")}`)?.remove();
   }
-  const editorElem = container?.querySelector(
+  const editorElem = container.querySelector(
     `#${makeId("editor-" + type)}`,
   ) as EditorElement;
   await waitUtilAsync(() => Boolean(editorElem._initialized))

@@ -85,6 +85,10 @@ workspace-notesPane-hint=PDF笔记侧栏在没有PDF文件打开时不可访问-
 workspace-switchOutline=切换大纲模式
 workspace-saveOutlineImage=保存图片
 workspace-saveOutlineFreeMind=保存思维导图
+workspace-emptyWorkspaceGuideInfo = 没有打开的工作区笔记。您可以：
+workspace-emptyWorkspaceGuideOpen = 打开现有笔记
+workspace-emptyWorkspaceGuideOr = 或
+workspace-emptyWorkspaceGuideCreate = 创建新笔记
 
 editor-toolbar-main=工作区笔记
 editor-toolbar-settings-title=工作区选项
