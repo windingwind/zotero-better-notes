@@ -46,13 +46,10 @@
         browser = PrintUtils.createBrowser();
         document.body.appendChild(browser);
         browser.contentWindow.location.href = args.url;
-        console.log("loading");
         loaded = true;
-        await waitUtilAsync(() => {
-          console.log(browser, browser.contentWindow);
-          return browser.contentWindow?.document.readyState === "complete";
-        });
-        console.log("loaded");
+        await waitUtilAsync(
+          () => browser.contentWindow?.document.readyState === "complete",
+        );
         args.browser = browser;
         args._initPromise.resolve();
       });
@@ -71,7 +68,7 @@
         });
       }
       window.print = async () => {
-        scope.PrintUtils.startPrintWindow(browser.browsingContext);
+        PrintUtils.startPrintWindow(browser.browsingContext);
       };
     </script>
   </head>
