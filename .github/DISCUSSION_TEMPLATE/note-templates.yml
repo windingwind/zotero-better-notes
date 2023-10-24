@@ -1,0 +1,65 @@
+title: "[Item/Text] Note Template Name"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to share this!
+        Before you submit, please change the title of this issue to the name of your note template.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please add a description of this note template here.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Please add screenshots of this note template here.
+    validations:
+      required: true
+  - type: textarea
+    id: z_version
+    attributes:
+      label: Test on Zotero version
+      description: Please provide the Zotero version you are using here. You can find this in the menu -> Help -> About Zotero.
+    validations:
+      required: true
+  - type: textarea
+    id: bn_version
+    attributes:
+      label: Test on Better Notes version
+      description: Please provide the Better Notes version you are using here. You can find this in the menu -> Edit -> Settings -> Better Notes.
+    validations:
+      required: true
+  - type: dropdown
+    id: template type
+    attributes:
+      label: Template Type
+      options:
+        - Item
+        - Text
+        - QuickInsert
+        - QuickBackLink
+        - QuickImport
+        - QuickNote
+        - ExportMDFileName
+        - ExportMDFileHeader
+        - ExportMDFileContent
+  - type: textarea
+    id: data
+    attributes:
+      label: Data
+      description: |
+        Please paste template share code here.
+        Steps to get the template share code:
+        1. Open the template editor (menu -> Edit -> Note Template Editor)
+        2. Select the template you want to share
+        3. Click the "Options" button on the bottom right corner of the editor
+        4. Click "Copy template share code to clipboard". Paste the code here.
+      render: yaml
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
