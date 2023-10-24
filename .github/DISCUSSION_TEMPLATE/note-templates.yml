@@ -19,18 +19,20 @@ body:
       description: Please add screenshots of this note template here.
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: z_version
     attributes:
       label: Test on Zotero version
       description: Please provide the Zotero version you are using here. You can find this in the menu -> Help -> About Zotero.
+      placeholder: e.g. 6.0.30
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: bn_version
     attributes:
       label: Test on Better Notes version
       description: Please provide the Better Notes version you are using here. You can find this in the menu -> Edit -> Settings -> Better Notes.
+      placeholder: e.g. 1.0.4
     validations:
       required: true
   - type: dropdown
@@ -47,10 +49,12 @@ body:
         - ExportMDFileName
         - ExportMDFileHeader
         - ExportMDFileContent
+    validations:
+      required: true
   - type: textarea
     id: data
     attributes:
-      label: Data
+      label: Template Share Code
       description: |
         Please paste template share code here.
         Steps to get the template share code:
@@ -59,6 +63,8 @@ body:
         3. Click the "Options" button on the bottom right corner of the editor
         4. Click "Copy template share code to clipboard". Paste the code here.
       render: yaml
+    validations:
+      required: true
   - type: textarea
     id: more
     attributes:
