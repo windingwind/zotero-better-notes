@@ -50,9 +50,9 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 
 [🔎 My Zotero Plugins](#-my-zotero-plugins)
 
-[💰 Sponsor Me](#-sponsor-me)
-
 [🫶 Sponsors](#-sponsors)
+
+[🤗 Contributors](#-contributors)
 
 ## 🧐 What is this?
 
@@ -87,17 +87,12 @@ and:
 
 ## 👋 Install
 
-- Download the latest release (.xpi file) from the [Releases Page](https://github.com/windingwind/zotero-better-notes/releases)
-
-  <details style="text-indent: 2em">
-  <summary>More Versions</summary>
+- Download the latest release (.xpi file) from:
 
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
   - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
   - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including Beta)
-
-  </details>
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
@@ -159,7 +154,7 @@ The _workspace_ includes the note editor for the _workspace note_. You can use i
 
 ### Note Link
 
-To create a _note link_ between current note and the _workspace note_, simply click the ![icon](addon/chrome/content/icons/favicon.png) button in the title bar of current note editor.
+To create a _note link_ between current note and the _workspace note_, simply click the <img src="addon/chrome/content/icons/favicon.png" width="20px"></img> button in the title bar of current note editor.
 
 <div align=center><img src="https://user-images.githubusercontent.com/33902321/236622693-f7c7c82f-7434-4dbf-baf3-d03a72eb51c5.png" width="800px"></img></div>
 
@@ -270,14 +265,6 @@ Use this code under AGPL. No warranties are provided. Keep the laws of your loca
 - [zotero-pdf-preview](https://github.com/windingwind/zotero-tag): PDF preview for Zotero
 - [zotero-tag](https://github.com/windingwind/zotero-tag): Automatically tag items/Batch tagging
 
-## 💰 Sponsor Me
-
-I'm windingwind, an active Zotero(https://www.zotero.org) plugin developer. Devoting to making reading papers easier.
-
-Sponsor me to buy a cup of coffee. I spend more than 24 hours every week coding, debugging, and replying to issues in my plugin repositories. The plugins are open-source and totally free.
-
-If you sponsor more than $10 a month, you can list your name/logo here and have priority for feature requests/bug fixes!
-
 ## 🙌 Sponsors
 
 Thanks
@@ -285,3 +272,9 @@ Thanks
 and other anonymous sponsors!
 
 If you want to leave your name here, please email me or leave a message with the donation.
+
+## 🤗 Contributors
+
+<a href="https://github.com/windingwind/zotero-better-notes/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=windingwind/zotero-better-notes" />
+</a>
