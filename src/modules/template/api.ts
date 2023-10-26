@@ -215,7 +215,13 @@ async function runItemTemplate(
 }
 
 async function getItemTemplateData() {
-  const librarySelectedIds = addon.data.template.picker.data.librarySelectedIds;
+  // If topItems are pre-defined, use it without asking
+  if (addon.data.template.picker.data.topItemIds?.length !== 0) {
+    return addon.data.template.picker.data.topItemIds;
+  }
+  const librarySelectedIds = addon.data.template.picker.data
+    .librarySelectedIds as number[];
+  // If librarySelectedIds are pre-defined, ask user whether to use it
   if (librarySelectedIds && librarySelectedIds.length !== 0) {
     const firstSelectedItem = Zotero.Items.get(librarySelectedIds[0]);
     const data = {} as Record<string, any>;

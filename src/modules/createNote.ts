@@ -73,6 +73,8 @@ async function createNoteFromTemplate(
     addon.hooks.onShowTemplatePicker("create", {
       noteType,
       parentItemId,
+      // Only pre-select the top item if the parent is a reader item
+      topItemIds: parentType === "reader" ? [parentItemId] : undefined,
     });
   } else {
     addon.hooks.onShowTemplatePicker("create", {

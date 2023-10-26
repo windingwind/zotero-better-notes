@@ -10,7 +10,7 @@ function showTemplatePicker(
 ): void;
 function showTemplatePicker(
   mode: "create",
-  data?: { noteType?: "standalone" | "item"; parentItemId?: number },
+  data?: { noteType?: "standalone" | "item"; parentItemId?: number, topItemIds?: number[] },
 ): void;
 function showTemplatePicker(mode: "export", data?: Record<string, never>): void;
 function showTemplatePicker(): void;
