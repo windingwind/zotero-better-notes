@@ -97,7 +97,7 @@ async function runTemplate(
   } catch (e) {
     ztoolkit.log(e);
     if (options.dryRun) {
-      return String(e);
+      return "Template Preview Error: " + String(e);
     }
     window.alert(`Template ${key} Error: ${e}`);
     return "";

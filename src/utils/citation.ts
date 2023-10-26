@@ -1,4 +1,12 @@
-export async function parseCitationHTML(citationIds: number[]) {
+export async function parseCitationHTML(
+  citationIds: number[],
+  args: {
+    locator?: string;
+    label?: string;
+    prefix?: string;
+    suffix?: string;
+  }[] = [],
+) {
   let html = "";
   if (citationIds.length === 0 || !citationIds.every((id) => id)) {
     return null;
@@ -14,6 +22,7 @@ export async function parseCitationHTML(citationIds: number[]) {
     }
   }
 
+  let i = 0;
   for (const item of items) {
     if (item.isRegularItem()) {
       // @ts-ignore
@@ -22,6 +31,12 @@ export async function parseCitationHTML(citationIds: number[]) {
         citationItems: [
           {
             uris: [Zotero.URI.getItemURI(item)],
+            ...(args[i++] || {
+              locator: "",
+              label: "",
+              prefix: "",
+              suffix: "",
+            }),
             itemData,
           },
         ],

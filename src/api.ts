@@ -45,6 +45,7 @@ import {
 } from "./modules/template/data";
 import { renderTemplatePreview } from "./modules/template/preview";
 import { getWorkspaceEditor } from "./modules/workspace/content";
+import { parseCitationHTML } from "./utils/citation";
 import {
   getEditorInstance,
   insert,
@@ -98,6 +99,7 @@ const convert = {
   html2md,
   annotations2html,
   note2html,
+  item2citation: parseCitationHTML,
 };
 
 const template = {

@@ -27,7 +27,6 @@ import {
   jointPath,
   randomString,
 } from "../../utils/str";
-import { parseCitationHTML } from "../../utils/citation";
 import {
   copyEmbeddedImagesInHTML,
   importImageToNote,
@@ -1079,7 +1078,7 @@ async function processM2NRehypeCitationNodes(
         const ids = dataCitation.citationItems.map((c: { uris: string[] }) =>
           Zotero.URI.getURIItemID(c.uris[0]),
         );
-        const html = await parseCitationHTML(ids);
+        const html = await addon.api.convert.item2citation(ids);
         if (html) {
           const newNode = note2rehype(html);
           // root -> p -> span(cite, this is what we actually want)
