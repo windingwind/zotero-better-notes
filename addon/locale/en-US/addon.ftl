@@ -30,6 +30,10 @@ menuEditor-resizeImage = Resize Image
 
 templateEditor-templateName = Template Name
 
+editor-resizeImage-title = Resize Image
+editor-resizeImage-prompt = Resize image width to:
+editor-previewImage-title = Preview Image
+
 tab-name = Note Workspace
 tab-openInWindow = Drag and drop here to open workspace in new window
 

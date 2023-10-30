@@ -24,12 +24,12 @@ export function initEditorMenu(editor: Zotero.EditorInstance) {
         tag: "menuitem",
         id: menuitemID,
         classList: [config.addonRef],
-        label: getString("menuEditor.resizeImage"),
+        label: getString("menuEditor-resizeImage"),
         icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
         commandListener: (ev) => {
           const newWidth = parseFloat(
             editor._iframeWindow.prompt(
-              getString("editor.resizeImage.prompt"),
+              getString("editor-resizeImage-prompt"),
               // @ts-ignore
               getEditorCore(editor).view.state.selection.node?.attrs?.width,
             ) || "",

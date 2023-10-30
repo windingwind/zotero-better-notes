@@ -30,6 +30,10 @@ menuEditor-resizeImage=Изменить размер изображения
 
 templateEditor-templateName = Имя шаблона
 
+editor-resizeImage-title = Resize Image
+editor-resizeImage-prompt = Resize image width to:
+editor-previewImage-title = Preview Image
+
 tab-name=Рабочее пространство заметок
 tab-openInWindow=Перетащите сюда для открытия раб. пространства в новом окне
 

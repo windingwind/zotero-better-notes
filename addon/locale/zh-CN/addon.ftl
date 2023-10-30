@@ -30,6 +30,10 @@ menuEditor-resizeImage=缩放图片
 
 templateEditor-templateName = 模板名称
 
+editor-resizeImage-title = 缩放图片
+editor-resizeImage-prompt = 缩放图片宽度为：
+editor-previewImage-title = 预览图片
+
 tab-name=笔记工作区
 tab-openInWindow=拖放到此处以在新窗口打开
 

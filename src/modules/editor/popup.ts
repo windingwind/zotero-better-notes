@@ -199,7 +199,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
           id: "image-popup-preview",
           properties: {
             innerHTML: ICONS.previewImage,
-            title: getString("editor.previewImage.title"),
+            title: getString("editor-previewImage-title"),
           },
           removeIfExists: true,
           enableElementRecord: false,
@@ -233,7 +233,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
           id: "image-popup-resize",
           properties: {
             innerHTML: ICONS.resizeImage,
-            title: getString("editor.resizeImage.title"),
+            title: getString("editor-resizeImage-title"),
           },
           removeIfExists: true,
           listeners: [
@@ -242,7 +242,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
               listener: (e) => {
                 const newWidth = parseFloat(
                   editor._iframeWindow.prompt(
-                    getString("editor.resizeImage.prompt"),
+                    getString("editor-resizeImage-prompt"),
                     // @ts-ignore
                     getEditorCore(editor).view.state.selection.node?.attrs
                       ?.width,
