@@ -440,9 +440,9 @@ function md2remark(str: string) {
   str = str
     .replace(/!\[\[(.*)\]\]/g, (s: string) => `![](${s.slice(3, -2)})`)
     .replace(
-      /!\[.*\]\((.*)\)/g,
-      (s: string) =>
-        `![](${encodeURIComponent(s.match(/\(.*\)/g)![0].slice(1, -1))})`,
+      /!\[(.*)\]\((.*)\)/g,
+      (match, altText, imageURL) =>
+        `![${altText}](${encodeURIComponent(imageURL)})`,
     );
   const remark = unified()
     .use(remarkGfm)
@@ -1029,11 +1029,14 @@ function processM2NRehypeMetaImageNodes(nodes: string | any[]) {
 
   for (const node of nodes) {
     if (/zimage/.test(node.properties.alt)) {
-      const newNode: any = unified()
+      const newNode = unified()
         .use(remarkGfm)
         .use(remarkMath)
         .use(rehypeParse, { fragment: true })
-        .parse(node.properties.alt);
+        .parse(node.properties.alt).children[0] as any;
+      if (!newNode) {
+        continue;
+      }
       newNode.properties.src = node.properties.src;
       replace(node, newNode);
     }
@@ -1093,7 +1096,7 @@ async function processM2NRehypeCitationNodes(
     if (importFailed || !isImport) {
       visit(
         node,
-        (_n: any) => _n.properties?.className.includes("citation-item"),
+        (_n: any) => _n.properties?.className?.includes("citation-item"),
         (_n) => {
           _n.children = [{ type: "text", value: toText(_n) }];
         },
