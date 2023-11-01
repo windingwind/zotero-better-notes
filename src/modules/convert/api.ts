@@ -442,7 +442,7 @@ function md2remark(str: string) {
     .replace(
       /!\[(.*)\]\((.*)\)/g,
       (match, altText, imageURL) =>
-        `![${altText}](${encodeURIComponent(imageURL)})`,
+        `![${altText}](${encodeURI(imageURL)})`,
     );
   const remark = unified()
     .use(remarkGfm)
@@ -812,7 +812,7 @@ function processN2MRehypeCitationNodes(
 
     visit(
       node,
-      (_n: any) => _n.properties?.className.includes("citation-item"),
+      (_n: any) => _n.properties?.className?.includes("citation-item"),
       (_n: any) => {
         return childNodes?.push(_n);
       },
@@ -1140,7 +1140,7 @@ async function processM2NRehypeImageNodes(
         : "file";
       if (srcType === "file") {
         if (!PathUtils.isAbsolute(src)) {
-          src = PathUtils.joinRelative(fileDir, src);
+          src = jointPath(fileDir, src);
         }
         if (!(await fileExists(src))) {
           ztoolkit.log("parse image, path invalid", src);

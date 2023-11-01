@@ -1,7 +1,7 @@
 import YAML = require("yamljs");
 import { getPref, setPref } from "../../utils/prefs";
 import { config } from "../../../package.json";
-import { fileExists, formatPath } from "../../utils/str";
+import { fileExists, formatPath, jointPath } from "../../utils/str";
 
 export {
   initSyncList,
@@ -143,10 +143,10 @@ async function getMDStatus(
       filepath = source;
     } else if (typeof source === "number") {
       const syncStatus = getSyncStatus(source);
-      filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
+      filepath = jointPath(syncStatus.path, syncStatus.filename);
     } else if (source.isNote && source.isNote()) {
       const syncStatus = getSyncStatus(source.id);
-      filepath = PathUtils.join(syncStatus.path, syncStatus.filename);
+      filepath = jointPath(syncStatus.path, syncStatus.filename);
     }
     filepath = formatPath(filepath);
     if (await fileExists(filepath)) {
@@ -173,7 +173,7 @@ async function getMDFileName(noteId: number, searchDir?: string) {
   if (
     (!searchDir || searchDir === syncStatus.path) &&
     syncStatus.filename &&
-    (await fileExists(PathUtils.join(syncStatus.path, syncStatus.filename)))
+    (await fileExists(jointPath(syncStatus.path, syncStatus.filename)))
   ) {
     return syncStatus.filename;
   }

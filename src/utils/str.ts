@@ -1,4 +1,5 @@
 import seedrandom = require("seedrandom");
+import pathHelper = require("path-browserify");
 
 export function slice(str: string, len: number) {
   return str.length > len ? `${str.slice(0, len - 3)}...` : str;
@@ -90,7 +91,7 @@ export async function fileExists(path: string): Promise<boolean> {
 
 export function jointPath(...paths: string[]) {
   try {
-    return formatPath(PathUtils.join(...paths));
+    return formatPath(pathHelper.join(...paths));
   } catch (e) {
     ztoolkit.log("[jointPath]", e);
     return "";

@@ -10,7 +10,7 @@ export async function saveMD(
   },
 ) {
   const noteItem = Zotero.Items.get(noteId);
-  const dir = PathUtils.join(
+  const dir = jointPath(
     ...PathUtils.split(formatPath(filename)).slice(0, -1),
   );
   const hasImage = noteItem.getNote().includes("<img");
@@ -39,7 +39,7 @@ export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   }
   for (const noteItem of noteItems) {
     const filename = await addon.api.sync.getMDFileName(noteItem.id, saveDir);
-    const filePath = PathUtils.join(saveDir, filename);
+    const filePath = jointPath(saveDir, filename);
     const content = await addon.api.convert.note2md(noteItem, saveDir, {
       keepNoteLink: false,
       withYAMLHeader: true,
