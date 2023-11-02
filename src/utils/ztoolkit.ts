@@ -38,7 +38,6 @@ import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtu
 import { LibraryTabPanelManager } from "zotero-plugin-toolkit/dist/managers/libraryTabPanel";
 import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PromptManager } from "zotero-plugin-toolkit/dist/managers/prompt";
-import { ReaderInstanceManager } from "zotero-plugin-toolkit/dist/managers/readerInstance";
 import { ReaderTabPanelManager } from "zotero-plugin-toolkit/dist/managers/readerTabPanel";
 import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 
@@ -47,7 +46,6 @@ class MyToolkit extends BasicTool {
   Prompt: PromptManager;
   LibraryTabPanel: LibraryTabPanelManager;
   ReaderTabPanel: ReaderTabPanelManager;
-  ReaderInstance: ReaderInstanceManager;
   Menu: MenuManager;
   PreferencePane: PreferencePaneManager;
   Clipboard: typeof ClipboardHelper;
@@ -63,7 +61,6 @@ class MyToolkit extends BasicTool {
     this.Prompt = new PromptManager(this);
     this.LibraryTabPanel = new LibraryTabPanelManager(this);
     this.ReaderTabPanel = new ReaderTabPanelManager(this);
-    this.ReaderInstance = new ReaderInstanceManager(this);
     this.Menu = new MenuManager(this);
     this.PreferencePane = new PreferencePaneManager(this);
     this.Clipboard = ClipboardHelper;
