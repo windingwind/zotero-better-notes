@@ -216,7 +216,7 @@ async function runItemTemplate(
 
 async function getItemTemplateData() {
   // If topItems are pre-defined, use it without asking
-  if (addon.data.template.picker.data.topItemIds?.length !== 0) {
+  if (addon.data.template.picker.data.topItemIds?.length > 0) {
     return addon.data.template.picker.data.topItemIds;
   }
   const librarySelectedIds = addon.data.template.picker.data
