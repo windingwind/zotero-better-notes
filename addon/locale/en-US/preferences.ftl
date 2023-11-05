@@ -6,6 +6,7 @@ workspace-autoUpdateRelatedNotes =
     .label = Automatically update related
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)
+sync-attachmentFolder-label = Attachment folder
 sync-manager =
     .label = Open Sync Manager
 template-title = Template

@@ -38,6 +38,7 @@ import {
   getNoteLinkParams,
 } from "../../utils/link";
 import { parseAnnotationHTML } from "../../utils/annotation";
+import { getPref } from "../../utils/prefs";
 
 export {
   md2note,
@@ -79,7 +80,7 @@ async function note2md(
   await processN2MRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
     noteItem.libraryID,
-    jointPath(dir, "attachments"),
+    jointPath(dir, getPref("syncAttachmentFolder") as string),
     options.skipSavingImages,
     false,
     NodeMode.direct,
@@ -441,8 +442,7 @@ function md2remark(str: string) {
     .replace(/!\[\[(.*)\]\]/g, (s: string) => `![](${s.slice(3, -2)})`)
     .replace(
       /!\[(.*)\]\((.*)\)/g,
-      (match, altText, imageURL) =>
-        `![${altText}](${encodeURI(imageURL)})`,
+      (match, altText, imageURL) => `![${altText}](${encodeURI(imageURL)})`,
     );
   const remark = unified()
     .use(remarkGfm)
@@ -945,7 +945,10 @@ async function processN2MRehypeImageNodes(
       newFile = formatPath(
         absolutePath
           ? newFile
-          : `attachments/${PathUtils.split(newFile).pop()}`,
+          : jointPath(
+              getPref("syncAttachmentFolder") as string,
+              PathUtils.split(newFile).pop() || "",
+            ),
       );
     } catch (e) {
       ztoolkit.log(e);

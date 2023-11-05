@@ -6,6 +6,7 @@ workspace-autoUpdateRelatedNotes =
     .label = 自动更新"相关"
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)
+sync-attachmentFolder-label = 附件文件夹
 sync-manager =
     .label = 打开同步管理器
 template-title = 模板
