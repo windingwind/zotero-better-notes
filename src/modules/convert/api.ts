@@ -135,7 +135,7 @@ async function md2note(
   const _note = rehype2note(_rehype as HRoot);
   const rehype = note2rehype(_note);
 
-  // Check if image already belongs to note
+  // Check if image citation already belongs to note
   processM2NRehypeMetaImageNodes(getM2NRehypeImageNodes(rehype));
 
   processM2NRehypeHighlightNodes(getM2NRehypeHighlightNodes(rehype));
@@ -1122,7 +1122,6 @@ function processM2NRehypeNoteLinkNodes(nodes: string | any[]) {
 }
 
 async function processM2NRehypeImageNodes(
-  this: any,
   nodes: any[],
   noteItem: Zotero.Item,
   fileDir: string,
@@ -1132,26 +1131,36 @@ async function processM2NRehypeImageNodes(
     return;
   }
 
+  let attKeys = [] as string[];
+  if (isImport) {
+    attKeys = Zotero.Items.get(noteItem.getAttachments()).map(
+      (item) => item.key,
+    );
+  }
+
   for (const node of nodes) {
     if (isImport) {
-      // We encode the src in md2remark and decode it here.
-      let src = formatPath(decodeURIComponent(node.properties.src));
-      const srcType = (src as string).startsWith("data:")
-        ? "b64"
-        : (src as string).startsWith("http")
-        ? "url"
-        : "file";
-      if (srcType === "file") {
-        if (!PathUtils.isAbsolute(src)) {
-          src = jointPath(fileDir, src);
+      // If image is already an attachment of note, skip import
+      if (!attKeys.includes(node.properties.dataAttachmentKey)) {
+        // We encode the src in md2remark and decode it here.
+        let src = formatPath(decodeURIComponent(node.properties.src));
+        const srcType = (src as string).startsWith("data:")
+          ? "b64"
+          : (src as string).startsWith("http")
+          ? "url"
+          : "file";
+        if (srcType === "file") {
+          if (!PathUtils.isAbsolute(src)) {
+            src = jointPath(fileDir, src);
+          }
+          if (!(await fileExists(src))) {
+            ztoolkit.log("parse image, path invalid", src);
+            continue;
+          }
         }
-        if (!(await fileExists(src))) {
-          ztoolkit.log("parse image, path invalid", src);
-          continue;
-        }
+        const key = await importImageToNote(noteItem, src, srcType);
+        node.properties.dataAttachmentKey = key;
       }
-      const key = await importImageToNote(noteItem, src, srcType);
-      node.properties.dataAttachmentKey = key;
     }
     delete node.properties.src;
     node.properties.ztype && delete node.properties.ztype;
