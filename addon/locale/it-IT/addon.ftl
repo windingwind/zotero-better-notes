@@ -101,14 +101,14 @@ editor-toolbar-settings-copyLinkAtSection = Copia link della nota alla sezione (
 editor-toolbar-settings-openParent = Apri allegato
 editor-toolbar-settings-export = Esporta nota corrente...
 editor-toolbar-settings-refreshSyncing = Sincronizza ora
-editor-toolbar-settings-updateRelatedNotes = Update Related Notes
+editor-toolbar-settings-updateRelatedNotes = Aggiorna note connesse
 editor-toolbar-link-title = Collega la nota corrente alla nota di lavoro
 editor-toolbar-link-popup-nodata = La nota di lavoro non è valida
 
 templatePicker-itemData-info = sono in uso nella biblioteca. Si prega di selezionare la sorgente dei dati:
 templatePicker-itemData-useLibrary = Usa gli elementi selezionati nella biblioteca
 templatePicker-itemData-useCustom = Altro.
-templatePicker-itemData-title = Scegli la sorgenti dei dati del template dell'elemento
+templatePicker-itemData-title = Scegli la sorgente dei dati del template dell'elemento
 
 alert-notValidCollectionError = Si prega di scegliere una collezione valida.
 alert-notValidParentItemError = Nessun elemento genitore valido.
