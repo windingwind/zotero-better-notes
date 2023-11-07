@@ -6,6 +6,7 @@ workspace-autoUpdateRelatedNotes =
     .label = Автообновление связанных заметок
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)
+sync-attachmentFolder-label = Attachment folder
 sync-manager =
     .label = Открыть Синк менеджер
 template-title = Шаблон

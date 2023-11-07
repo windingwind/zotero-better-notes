@@ -105,6 +105,7 @@ editor-toolbar-settings-copyLinkAtSection = Копировать Ссылку н
 editor-toolbar-settings-openParent=Открыть вложение
 editor-toolbar-settings-export=Экспортировать текущую заметку...
 editor-toolbar-settings-refreshSyncing=Синхронизировать сейчас
+editor-toolbar-settings-updateRelatedNotes = Update Related Notes
 editor-toolbar-link-title=Ссылка текущей заметки в рабочее пространство
 editor-toolbar-link-popup-nodata=Невалидная Заметка раб. пространства
 

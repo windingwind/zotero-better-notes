@@ -91,7 +91,9 @@ export async function fileExists(path: string): Promise<boolean> {
 
 export function jointPath(...paths: string[]) {
   try {
-    return formatPath(pathHelper.join(...paths));
+    return formatPath(
+      pathHelper.join(...paths.map((p) => p.replaceAll("\\", "/"))),
+    );
   } catch (e) {
     ztoolkit.log("[jointPath]", e);
     return "";

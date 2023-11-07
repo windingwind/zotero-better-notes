@@ -105,6 +105,7 @@ editor-toolbar-settings-copyLinkAtSection=复制当前节({ $section })笔记链
 editor-toolbar-settings-openParent=打开附件
 editor-toolbar-settings-export=导出当前笔记...
 editor-toolbar-settings-refreshSyncing=立即同步
+editor-toolbar-settings-updateRelatedNotes = 更新关联笔记
 editor-toolbar-link-title=链接当前笔记到工作区
 editor-toolbar-link-popup-nodata=工作区笔记不可用
 

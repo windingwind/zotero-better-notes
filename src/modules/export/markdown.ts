@@ -1,4 +1,5 @@
 import { showHintWithLink } from "../../utils/hint";
+import { getPref } from "../../utils/prefs";
 import { formatPath, jointPath } from "../../utils/str";
 
 export async function saveMD(
@@ -10,12 +11,15 @@ export async function saveMD(
   },
 ) {
   const noteItem = Zotero.Items.get(noteId);
-  const dir = jointPath(
-    ...PathUtils.split(formatPath(filename)).slice(0, -1),
-  );
+  const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
+  await IOUtils.makeDirectory(dir);
   const hasImage = noteItem.getNote().includes("<img");
   if (hasImage) {
-    await Zotero.File.createDirectoryIfMissingAsync(dir);
+    const attachmentsDir = jointPath(
+      dir,
+      getPref("syncAttachmentFolder") as string,
+    );
+    await IOUtils.makeDirectory(attachmentsDir);
   }
   await Zotero.File.putContentsAsync(
     filename,
@@ -29,13 +33,16 @@ export async function saveMD(
 
 export async function syncMDBatch(saveDir: string, noteIds: number[]) {
   const noteItems = Zotero.Items.get(noteIds);
-  await Zotero.File.createDirectoryIfMissingAsync(saveDir);
-  const attachmentsDir = jointPath(saveDir, "attachments");
+  await IOUtils.makeDirectory(saveDir);
+  const attachmentsDir = jointPath(
+    saveDir,
+    getPref("syncAttachmentFolder") as string,
+  );
   const hasImage = noteItems.some((noteItem) =>
     noteItem.getNote().includes("<img"),
   );
   if (hasImage) {
-    await Zotero.File.createDirectoryIfMissingAsync(attachmentsDir);
+    await IOUtils.makeDirectory(attachmentsDir);
   }
   for (const noteItem of noteItems) {
     const filename = await addon.api.sync.getMDFileName(noteItem.id, saveDir);

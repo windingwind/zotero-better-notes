@@ -26,9 +26,7 @@ import {
 import { registerNotify } from "./modules/notify";
 import { showWorkspaceWindow } from "./modules/workspace/window";
 import {
-  checkReaderAnnotationButton,
-  registerReaderInitializer,
-  unregisterReaderInitializer,
+  registerReaderAnnotationButton,
 } from "./modules/reader";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import {
@@ -70,6 +68,8 @@ async function onStartup() {
 
   registerPrefsWindow();
 
+  registerReaderAnnotationButton();
+
   initSyncList();
 
   setSyncing();
@@ -88,19 +88,15 @@ async function onMainWindowLoad(win: Window): Promise<void> {
 
   registerWorkspaceTab();
 
-  registerReaderInitializer();
-
   initTemplates();
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
   ztoolkit.unregisterAll();
-  unregisterReaderInitializer();
 }
 
 function onShutdown(): void {
   ztoolkit.unregisterAll();
-  unregisterReaderInitializer();
   // Remove addon object
   addon.data.alive = false;
   unregisterWorkspaceTab();
@@ -148,15 +144,6 @@ function onNotify(
         skipActive: true,
         reason: "item-modify",
       });
-    }
-  }
-  // Reader annotation buttons update
-  if (event === "add" && type === "item") {
-    const annotationItems = Zotero.Items.get(ids as number[]).filter((item) =>
-      item.isAnnotation(),
-    );
-    if (annotationItems.length !== 0) {
-      checkReaderAnnotationButton(annotationItems);
     }
   }
   // Insert annotation when assigning tag starts with @

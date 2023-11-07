@@ -105,6 +105,7 @@ editor-toolbar-settings-copyLinkAtSection = Copy Note Link at Section ({ $sectio
 editor-toolbar-settings-openParent = Open Attachment
 editor-toolbar-settings-export = Export Current Note...
 editor-toolbar-settings-refreshSyncing = Sync Now
+editor-toolbar-settings-updateRelatedNotes = Update Related Notes
 editor-toolbar-link-title = Link current note to workspace
 editor-toolbar-link-popup-nodata = Workspace note is invalid
 
