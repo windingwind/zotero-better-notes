@@ -7,17 +7,8 @@ export function registerReaderAnnotationButton() {
   Zotero.Reader.registerEventListener(
     "renderSidebarAnnotationHeader",
     (event) => {
-      const { doc, append, params } = event;
+      const { doc, append, params, reader } = event;
       const annotationData = params.annotation;
-      const annotationItem = Zotero.Items.getByLibraryAndKey(
-        annotationData.libraryID,
-        annotationData.id,
-      ) as Zotero.Item;
-
-      if (!annotationItem) {
-        return;
-      }
-      const itemID = annotationItem.id;
       append(
         ztoolkit.UI.createElement(doc, "div", {
           tag: "div",
@@ -30,7 +21,8 @@ export function registerReaderAnnotationButton() {
               type: "click",
               listener: (e) => {
                 createNoteFromAnnotation(
-                  itemID,
+                  reader._item.libraryID,
+                  annotationData.id,
                   (e as MouseEvent).shiftKey ? "standalone" : "auto",
                 );
                 e.preventDefault();
@@ -60,10 +52,14 @@ export function registerReaderAnnotationButton() {
 }
 
 async function createNoteFromAnnotation(
-  itemID: number,
+  libraryID: number,
+  itemKey: string,
   openMode: "standalone" | "auto" = "auto",
 ) {
-  const annotationItem = Zotero.Items.get(itemID);
+  const annotationItem = Zotero.Items.getByLibraryAndKey(
+    libraryID,
+    itemKey,
+  ) as Zotero.Item;
   if (!annotationItem) {
     return;
   }
@@ -88,8 +84,6 @@ async function createNoteFromAnnotation(
   note.libraryID = annotationItem.libraryID;
   note.parentID = annotationItem.parentItem!.parentID;
   await note.saveTx();
-
-  // await waitUtilAsync(() => Boolean(getEditorInstance(note.id)));
 
   const renderredTemplate = await addon.api.template.runTemplate(
     "[QuickNoteV5]",
