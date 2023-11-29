@@ -20,9 +20,9 @@ export async function fromMD(
   let noteItem = options.noteId ? Zotero.Items.get(options.noteId) : undefined;
   if (
     !options.ignoreVersion &&
-    typeof mdStatus.meta?.version === "number" &&
+    typeof mdStatus.meta?.$version === "number" &&
     typeof noteItem?.version === "number" &&
-    mdStatus.meta?.version < noteItem?.version
+    mdStatus.meta?.$version < noteItem?.version
   ) {
     if (
       !window.confirm(

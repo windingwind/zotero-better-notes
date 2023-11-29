@@ -59,6 +59,7 @@ async function note2md(
   options: {
     keepNoteLink?: boolean;
     withYAMLHeader?: boolean;
+    cachedYAMLHeader?: Record<string, any>;
     skipSavingImages?: boolean;
   } = {},
 ) {
@@ -102,22 +103,25 @@ async function note2md(
   }
 
   if (options.withYAMLHeader) {
-    let header = {};
+    let header = {} as Record<string, any>;
     try {
-      header = JSON.parse(
-        await addon.api.template.runTemplate(
-          "[ExportMDFileHeaderV2]",
-          "noteItem",
-          [noteItem],
+      header = Object.assign(
+        JSON.parse(
+          await addon.api.template.runTemplate(
+            "[ExportMDFileHeaderV2]",
+            "noteItem",
+            [noteItem],
+          ),
         ),
+        options.cachedYAMLHeader || {},
       );
     } catch (e) {
       ztoolkit.log(e);
     }
     Object.assign(header, {
-      version: noteItem.version,
-      libraryID: noteItem.libraryID,
-      itemKey: noteItem.key,
+      $version: noteItem.version,
+      $libraryID: noteItem.libraryID,
+      $itemKey: noteItem.key,
     });
     const yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
     md = `${yamlFrontMatter}\n${md}`;

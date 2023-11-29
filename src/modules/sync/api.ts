@@ -109,7 +109,7 @@ function getMDStatusFromContent(contentRaw: string): MDStatus {
   contentRaw = contentRaw.replace(/\r\n/g, "\n");
   const result = contentRaw.match(/^---\n(.*\n)+?---$/gm);
   const ret: MDStatus = {
-    meta: { version: -1 },
+    meta: { $version: -1 },
     content: contentRaw,
     filedir: "",
     filename: "",

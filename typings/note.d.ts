@@ -25,7 +25,9 @@ declare interface SyncStatus {
 
 declare interface MDStatus {
   meta: {
-    version: number;
+    $version: number;
+    $libraryID?: number;
+    $itemKey?: string;
   } | null;
   content: string;
   filedir: string;
