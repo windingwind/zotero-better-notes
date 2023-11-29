@@ -61,11 +61,23 @@
       #outline-container {
         color: -moz-DialogText;
       }
+
+      .dx-treeview-toggle-item-visibility {
+        color: currentColor !important;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        
+        :not(.dx-state-focused) > .dx-treeview-item.dx-state-hover {
+          background-color: #494949;
+          color: #fff;
+        }
+      }
     </style>
     <link
       rel="stylesheet"
       type="text/css"
-      href="chrome://__addonRef__/content/lib/css/dx.light.css"
+      href="chrome://__addonRef__/content/lib/css/dx.light.compact.css"
     />
     <div
       class="dx-viewport"

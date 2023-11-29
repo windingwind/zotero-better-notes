@@ -48,3 +48,18 @@
   background: #b3b3b3;
   text-decoration: none;
 }
+
+@media (prefers-color-scheme: dark) {
+  .tool-button {
+    background: #2e2e2e;
+    border: solid #797979 1px;
+  }
+
+  .tool-button:hover {
+    background: #494949;
+  }
+
+  .tool-button:active {
+    background: #5c5c5c;
+  }
+}
