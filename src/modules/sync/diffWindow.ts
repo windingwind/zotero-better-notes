@@ -133,7 +133,11 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
           autoSyncDelay: Zotero.Notes.AUTO_SYNC_DELAY,
         },
       });
-      await addon.api.$export.syncMDBatch(mdStatus.filedir, [noteItem.id], [mdStatus.meta]);
+      await addon.api.$export.syncMDBatch(
+        mdStatus.filedir,
+        [noteItem.id],
+        [mdStatus.meta],
+      );
       break;
     default:
       break;

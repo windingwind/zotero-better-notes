@@ -35,7 +35,7 @@ body:
       value: |
         - OS: 
         - Zotero Version: 
-        - Plugin Version: 
+        - Plugin Version:
     validations:
       required: true
 

@@ -25,9 +25,7 @@ import {
 } from "./modules/workspace/content";
 import { registerNotify } from "./modules/notify";
 import { showWorkspaceWindow } from "./modules/workspace/window";
-import {
-  registerReaderAnnotationButton,
-} from "./modules/reader";
+import { registerReaderAnnotationButton } from "./modules/reader";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import {
   showTemplatePicker,
