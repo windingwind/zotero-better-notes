@@ -114,7 +114,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
 
   switch (io.type) {
     case "skip":
-      alert(
+      window.alert(
         `Syncing of "${noteItem.getNoteTitle()}" is skipped.\nTo sync manually, go to File->Better Notes Sync Manager.`,
       );
       addon.data.sync.diff.window?.closed ||

@@ -128,9 +128,11 @@ export async function showTemplateEditor() {
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
     await waitUtilAsync(() => editorWin?.loadMonaco);
+    const isDark = editorWin?.matchMedia("(prefers-color-scheme: dark)")
+      .matches;
     const { monaco, editor } = await editorWin.loadMonaco({
       language: "javascript",
-      theme: "vs-light",
+      theme: "vs-" + (isDark ? "dark" : "light"),
     });
     addon.data.template.editor.editor = editor;
   }
