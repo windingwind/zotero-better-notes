@@ -37,6 +37,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     `${rootURI}/chrome/content/scripts/__addonRef__.js`,
     ctx,
   );
+  Zotero.__addonInstance__.hooks.onStartup();
 }
 
 function onMainWindowLoad({ win }) {
