@@ -175,20 +175,20 @@ function parseDocxCitationFields(html: string) {
 
   // Replace all <span data-bn-citation-index="T21wEH05"></span> with ADDIN ZOTERO_ITEM CSL_CITATION {...}
   const re = /<span data-bn-citation-index="([^"]+)"><\/span>/g;
-  const parsed = str
-    .replace(re, (match, p1) => {
-      return `<!--[if supportFields]>
-<span style='mso-element:field-begin'></span>
-<span style='mso-spacerun:yes'> </span>
-ADDIN ZOTERO_ITEM CSL_CITATION ${htmlEscape(doc, citationCache[p1].field)}
-<span style='mso-element:field-separator'></span>
-<span style='mso-no-proof:yes'>
-${htmlEscape(doc, citationCache[p1].text)}
-</span>
-<span style='mso-element:field-end'></span>
-<![endif]-->`;
-    })
-    .replaceAll("\x3C!--[if supportFields]>", "<!--[if supportFields]>");
+  let parsed = str.replace(re, (match, p1) => {
+    return generateDocxField(
+      `ADDIN ZOTERO_ITEM CSL_CITATION ${htmlEscape(
+        doc,
+        citationCache[p1].field,
+      )}`,
+      htmlEscape(doc, citationCache[p1].text),
+    );
+  });
+
+  parsed += generateDocxField(
+    `ADDIN ZOTERO_BIBL {"uncited":[],"omitted":[],"custom":[]} CSL_BIBLIOGRAPHY`,
+    "[BIBLIOGRAPHY] Please click Zotero - Refresh in Word/LibreOffice to update all fields",
+  );
 
   return parsed;
 }
@@ -218,6 +218,19 @@ function htmlEscape(doc: Document, str: string) {
   const text = doc.createTextNode(str);
   div.appendChild(text);
   return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function generateDocxField(fieldCode: string, text: string) {
+  return `<!--[if supportFields]>
+<span style='mso-element:field-begin'></span>
+<span style='mso-spacerun:yes'> </span>
+${fieldCode}
+<span style='mso-element:field-separator'></span>
+<span style='mso-no-proof:yes'>
+${text}
+</span>
+<span style='mso-element:field-end'></span>
+<![endif]-->`;
 }
 
 async function getWorker(): Promise<HTMLIFrameElement> {

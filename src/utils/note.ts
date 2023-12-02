@@ -212,7 +212,22 @@ async function renderNoteHTML(
       if (imageNodes.length) {
         try {
           const b64 = await getItemDataURL(attachment);
-          imageNodes.forEach((node) => node.setAttribute("src", b64));
+          imageNodes.forEach((node) => {
+            node.setAttribute("src", b64);
+            const width = Number(node.getAttribute("width"));
+            const height = Number(node.getAttribute("height"));
+            // 650/470 is the default width of images in Word
+            const maxWidth = Zotero.isMac ? 470 : 650;
+            if (width > maxWidth) {
+              node.setAttribute("width", maxWidth.toString());
+              if (height) {
+                node.setAttribute(
+                  "height",
+                  Math.round((height * maxWidth) / width).toString(),
+                );
+              }
+            }
+          });
         } catch (e) {
           ztoolkit.log(e);
         }
