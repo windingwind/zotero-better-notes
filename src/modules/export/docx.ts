@@ -104,8 +104,11 @@ function parseDocxCitationFields(html: string) {
       citationItems.push(item);
     }
     const properties = citation.properties;
-    const formattedCitation = elem.textContent || "";
+    const formattedCitation = `${
+      elem.textContent || "Zotero Citation"
+    } - Please click Zotero - Refresh in Word/LibreOffice to update all fields.`;
     properties.formattedCitation = formattedCitation;
+    properties.plainCitation = formattedCitation + " ";
     properties.noteIndex = 0;
     const citationID = getCitationID(citationCache);
 
@@ -177,16 +180,15 @@ function parseDocxCitationFields(html: string) {
       return `<!--[if supportFields]>
 <span style='mso-element:field-begin'></span>
 <span style='mso-spacerun:yes'> </span>
-ADDIN ZOTERO_ITEM CSL_CITATION ${citationCache[p1].field}
+ADDIN ZOTERO_ITEM CSL_CITATION ${htmlEscape(doc, citationCache[p1].field)}
 <span style='mso-element:field-separator'></span>
 <span style='mso-no-proof:yes'>
-${citationCache[p1].text} - Please click Zotero - Refresh in Word/LibreOffice to update all fields.
+${htmlEscape(doc, citationCache[p1].text)}
 </span>
 <span style='mso-element:field-end'></span>
 <![endif]-->`;
     })
-    .replaceAll("\x3C", "<")
-    .replaceAll("\x3E", ">");
+    .replaceAll("\x3C!--[if supportFields]>", "<!--[if supportFields]>");
 
   return parsed;
 }
@@ -209,6 +211,13 @@ function tryParse(s: string) {
   } catch (e) {
     return null;
   }
+}
+
+function htmlEscape(doc: Document, str: string) {
+  const div = doc.createElement("div");
+  const text = doc.createTextNode(str);
+  div.appendChild(text);
+  return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 async function getWorker(): Promise<HTMLIFrameElement> {
