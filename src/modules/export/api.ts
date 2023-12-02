@@ -5,7 +5,7 @@ import {
 } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { getLinesInNote } from "../../utils/note";
-import { formatPath, jointPath } from "../../utils/str";
+import { formatPath, jointPath, tryDecodeParse } from "../../utils/str";
 
 export { exportNotes };
 
@@ -214,6 +214,8 @@ async function toFreeMind(noteItem: Zotero.Item) {
 async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
   const parser = ztoolkit.getDOMParser();
 
+  const globalCitationData = getNoteCitationData(noteItem as Zotero.Item);
+
   const newLines: string[] = [];
   const noteLines = getLinesInNote(noteItem);
   for (const i in noteLines) {
@@ -230,7 +232,49 @@ async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
         [linkParam.link, noteItem],
       );
       newLines.push(html);
+      const citationData = getNoteCitationData(
+        linkParam.noteItem as Zotero.Item,
+      );
+      globalCitationData.items.push(...citationData.items);
     }
   }
-  return newLines.join("\n");
+  // Clean up globalCitationItems
+  const seenCitationItemIDs = [] as string[];
+  const finalCitationItems = [];
+  for (const citationItem of globalCitationData.items) {
+    const currentID = citationItem.uris[0];
+    if (!(currentID in seenCitationItemIDs)) {
+      finalCitationItems.push(citationItem);
+      seenCitationItemIDs.push(currentID);
+    }
+  }
+  return `<div data-schema-version="${
+    globalCitationData.schemaVersion
+  }" data-citation-items="${encodeURIComponent(
+    JSON.stringify(finalCitationItems),
+  )}">${newLines.join("\n")}</div>`;
+}
+
+function getNoteCitationData(noteItem: Zotero.Item) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(noteItem.getNote(), "text/html");
+  const citationItems = tryDecodeParse(
+    doc
+      .querySelector("div[data-citation-items]")
+      ?.getAttribute("data-citation-items") || "[]",
+  ) as unknown as Array<{
+    uris: string[];
+    itemData: Record<string, any>;
+    schemaVersion: string;
+  }>;
+
+  const citationData = {
+    items: citationItems,
+    schemaVersion:
+      doc
+        .querySelector("div[data-schema-version]")
+        ?.getAttribute("data-schema-version") || "",
+  };
+
+  return citationData;
 }

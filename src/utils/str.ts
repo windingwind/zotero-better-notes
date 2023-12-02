@@ -99,3 +99,18 @@ export function jointPath(...paths: string[]) {
     return "";
   }
 }
+
+export function tryDecodeParse(s: string) {
+  try {
+    return JSON.parse(decodeURIComponent(s));
+  } catch (e) {
+    return null;
+  }
+}
+
+export function htmlEscape(doc: Document, str: string) {
+  const div = doc.createElement("div");
+  const text = doc.createTextNode(str);
+  div.appendChild(text);
+  return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}

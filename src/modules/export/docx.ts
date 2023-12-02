@@ -1,6 +1,6 @@
 import { showHintWithLink } from "../../utils/hint";
 import { renderNoteHTML } from "../../utils/note";
-import { randomString } from "../../utils/str";
+import { htmlEscape, randomString, tryDecodeParse } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
 import { config } from "../../../package.json";
 
@@ -76,10 +76,10 @@ function parseDocxCitationFields(html: string) {
     }
   ]
   */
-  const globalCitationItems = tryParse(
+  const globalCitationItems = tryDecodeParse(
     doc
       .querySelector("div[data-citation-items]")
-      ?.getAttribute("data-citation-items") || "{}",
+      ?.getAttribute("data-citation-items") || "[]",
   );
   const citationElements = Array.from(
     doc.querySelectorAll(".citation[data-citation]"),
@@ -95,7 +95,7 @@ function parseDocxCitationFields(html: string) {
       "properties": {}
     }
     */
-    const citation = tryParse(elem.getAttribute("data-citation") || "{}");
+    const citation = tryDecodeParse(elem.getAttribute("data-citation") || "{}");
     const citationItems = [];
     for (const citationItem of citation.citationItems) {
       const item = globalCitationItems.find(
@@ -203,21 +203,6 @@ function getCitationID(citationCache: CitationCache) {
     text: "",
   };
   return citationID;
-}
-
-function tryParse(s: string) {
-  try {
-    return JSON.parse(decodeURIComponent(s));
-  } catch (e) {
-    return null;
-  }
-}
-
-function htmlEscape(doc: Document, str: string) {
-  const div = doc.createElement("div");
-  const text = doc.createTextNode(str);
-  div.appendChild(text);
-  return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 function generateDocxField(fieldCode: string, text: string) {
