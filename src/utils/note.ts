@@ -258,7 +258,7 @@ async function renderNoteHTML(
   doc.querySelectorAll(".math").forEach((node) => {
     const displayMode = node.innerHTML.startsWith("$$");
     node.innerHTML = katex.renderToString(
-      node.innerHTML.replace(mathDelimiterRegex, ""),
+      node.textContent!.replace(mathDelimiterRegex, ""),
       {
         throwOnError: false,
         // output: "mathml",

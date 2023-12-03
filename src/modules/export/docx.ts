@@ -1,6 +1,11 @@
 import { showHintWithLink } from "../../utils/hint";
 import { renderNoteHTML } from "../../utils/note";
-import { htmlEscape, randomString, tryDecodeParse } from "../../utils/str";
+import {
+  htmlEscape,
+  htmlUnescape,
+  randomString,
+  tryDecodeParse,
+} from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
 import { config } from "../../../package.json";
 
@@ -48,7 +53,7 @@ async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
     let str = (await sendWorkerTask(
       worker,
       "parseMML",
-      elem.outerHTML,
+      htmlUnescape(elem.outerHTML),
     )) as string;
     if (!str) {
       continue;

@@ -114,3 +114,16 @@ export function htmlEscape(doc: Document, str: string) {
   div.appendChild(text);
   return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
+
+export function htmlUnescape(str: string) {
+  const map = {
+    "&nbsp;": " ",
+    "&quot;": '"',
+    "&#39;": "'",
+    "\n": "",
+  };
+  const re = new RegExp(Object.keys(map).join("|"), "g");
+  return str.replace(re, function (match) {
+    return map[match as keyof typeof map];
+  });
+}
