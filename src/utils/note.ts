@@ -256,10 +256,13 @@ async function renderNoteHTML(
 
   const mathDelimiterRegex = /^\$+|\$+$/g;
   doc.querySelectorAll(".math").forEach((node) => {
+    const displayMode = node.innerHTML.startsWith("$$");
     node.innerHTML = katex.renderToString(
       node.innerHTML.replace(mathDelimiterRegex, ""),
       {
         throwOnError: false,
+        // output: "mathml",
+        displayMode,
       },
     );
   });

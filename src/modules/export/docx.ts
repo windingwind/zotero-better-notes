@@ -13,8 +13,11 @@ export async function saveDocx(filename: string, noteId: number) {
 }
 
 async function note2docx(noteItem: Zotero.Item) {
-  const renderedContent = parseDocxCitationFields(
+  const worker = await getWorker();
+
+  const renderedContent = await parseDocxFields(
     await renderNoteHTML(noteItem),
+    worker,
   );
   let htmlDoc =
     '<!DOCTYPE html>\n<html lang="en"><head><meta charset="UTF-8"></head>\n';
@@ -23,36 +26,46 @@ async function note2docx(noteItem: Zotero.Item) {
 
   ztoolkit.log(`[Note2DOCX] ${htmlDoc}`);
 
-  let blob: ArrayBufferLike;
-  const lock = Zotero.Promise.defer();
-  const jobId = randomString(6, new Date().toUTCString());
-  const listener = (ev: MessageEvent) => {
-    if (ev.data.type === "parseDocxReturn" && ev.data.jobId === jobId) {
-      blob = ev.data.message;
-      lock.resolve();
-    }
-  };
-  const worker = await getWorker();
-  worker.contentWindow?.addEventListener("message", listener);
-  worker.contentWindow?.postMessage(
-    {
-      type: "parseDocx",
-      jobId,
-      message: htmlDoc,
-    },
-    "*",
-  );
-  await lock.promise;
-  worker.contentWindow?.removeEventListener("message", listener);
+  const blob = await sendWorkerTask(worker, "parseDocx", htmlDoc);
   destroyWorker(worker);
   return blob!;
 }
 
 type CitationCache = Record<string, { field: string; text: string }>;
 
-function parseDocxCitationFields(html: string) {
+async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
+
+  // Remove katex html elements to prevent duplicate rendering
+  doc.querySelectorAll(".katex-html").forEach((elem) => {
+    elem.remove();
+  });
+
+  const mathCache = {} as MathCache;
+
+  for (const elem of Array.from(doc.querySelectorAll("math"))) {
+    let str = (await sendWorkerTask(
+      worker,
+      "parseMML",
+      elem.outerHTML,
+    )) as string;
+    if (!str) {
+      continue;
+    }
+    str = str.replaceAll('<?xml version="1.0" encoding="UTF-8"?>', "");
+    if (elem.getAttribute("display") === "block") {
+      str = `<m:oMathPara xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">${str}</m:oMathPara>`;
+    }
+    const newElem = doc.createElement("span");
+    const mathID = getCacheID(mathCache, {
+      math: "",
+    });
+    mathCache[mathID].math = str;
+    newElem.setAttribute("data-bn-math-index", mathID);
+    elem.parentNode!.replaceChild(newElem, elem);
+  }
+
   const citationCache = {} as CitationCache;
   /*
   [
@@ -110,7 +123,10 @@ function parseDocxCitationFields(html: string) {
     properties.formattedCitation = formattedCitation;
     properties.plainCitation = formattedCitation + " ";
     properties.noteIndex = 0;
-    const citationID = getCitationID(citationCache);
+    const citationID = getCacheID(citationCache, {
+      field: "",
+      text: "",
+    });
 
     const csl = {
       citationID,
@@ -171,11 +187,22 @@ function parseDocxCitationFields(html: string) {
     */
   }
 
-  const str = doc.body.innerHTML;
+  let str = doc.body.innerHTML;
+
+  // Replace all <span data-bn-math-index="T21wEH05"></span> with <!--[if gte msEquation 12]><m:oMath...</m:oMath><![endif]-->
+  const mathRegexp = /<span data-bn-math-index="([^"]+)"><\/span>/g;
+  str = str.replace(mathRegexp, (match, p1) => {
+    return `<!--[if gte msEquation 12]>${mathCache[p1].math}<![endif]-->`;
+  });
+
+  str = str.replaceAll(
+    "http://schemas.openxmlformats.org/officeDocument/2006/math",
+    "http://schemas.microsoft.com/office/2004/12/omml",
+  );
 
   // Replace all <span data-bn-citation-index="T21wEH05"></span> with ADDIN ZOTERO_ITEM CSL_CITATION {...}
-  const re = /<span data-bn-citation-index="([^"]+)"><\/span>/g;
-  let parsed = str.replace(re, (match, p1) => {
+  const citationRegexp = /<span data-bn-citation-index="([^"]+)"><\/span>/g;
+  str = str.replace(citationRegexp, (match, p1) => {
     return generateDocxField(
       `ADDIN ZOTERO_ITEM CSL_CITATION ${htmlEscape(
         doc,
@@ -185,24 +212,23 @@ function parseDocxCitationFields(html: string) {
     );
   });
 
-  parsed += generateDocxField(
-    `ADDIN ZOTERO_BIBL {"uncited":[],"omitted":[],"custom":[]} CSL_BIBLIOGRAPHY`,
-    "[BIBLIOGRAPHY] Please click Zotero - Refresh in Word/LibreOffice to update all fields",
-  );
+  if (Object.keys(citationCache).length > 0) {
+    str += generateDocxField(
+      `ADDIN ZOTERO_BIBL {"uncited":[],"omitted":[],"custom":[]} CSL_BIBLIOGRAPHY`,
+      "[BIBLIOGRAPHY] Please click Zotero - Refresh in Word/LibreOffice to update all fields",
+    );
+  }
 
-  return parsed;
+  return str;
 }
 
-function getCitationID(citationCache: CitationCache) {
-  let citationID = Zotero.Utilities.randomString();
-  while (citationID in citationCache) {
-    citationID = Zotero.Utilities.randomString();
+function getCacheID(cache: Record<string, any>, defaultValue: any) {
+  let id = Zotero.Utilities.randomString();
+  while (id in cache) {
+    id = Zotero.Utilities.randomString();
   }
-  citationCache[citationID] = {
-    field: "",
-    text: "",
-  };
-  return citationID;
+  cache[id] = defaultValue;
+  return id;
 }
 
 function generateDocxField(fieldCode: string, text: string) {
@@ -217,6 +243,8 @@ ${text}
 <span style='mso-element:field-end'></span>
 <![endif]-->`;
 }
+
+type MathCache = Record<string, { math: string }>;
 
 async function getWorker(): Promise<HTMLIFrameElement> {
   const worker = ztoolkit.UI.createElement(document, "iframe", {
@@ -233,6 +261,34 @@ async function getWorker(): Promise<HTMLIFrameElement> {
   window.document.documentElement.appendChild(worker);
   await waitUtilAsync(() => worker.contentDocument?.readyState === "complete");
   return worker;
+}
+
+async function sendWorkerTask(
+  worker: HTMLIFrameElement,
+  type: string,
+  message: any,
+): Promise<any> {
+  const jobID = randomString(6, new Date().toUTCString());
+  const lock = Zotero.Promise.defer();
+  let retMessage: any;
+  const listener = (ev: MessageEvent) => {
+    if (ev.data.type === `${type}Return` && ev.data.jobID === jobID) {
+      retMessage = ev.data.message;
+      lock.resolve();
+    }
+  };
+  worker.contentWindow?.addEventListener("message", listener);
+  worker.contentWindow?.postMessage(
+    {
+      type,
+      jobID,
+      message,
+    },
+    "*",
+  );
+  await lock.promise;
+  worker.contentWindow?.removeEventListener("message", listener);
+  return retMessage;
 }
 
 function destroyWorker(worker: any) {
