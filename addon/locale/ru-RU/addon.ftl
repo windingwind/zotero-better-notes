@@ -99,6 +99,7 @@ editor-toolbar-settings-title=Настройки рабочего простра
 editor-toolbar-settings-openWorkspace=Открыть пространство заметок
 editor-toolbar-settings-setWorkspace=Установить как Заметку раб. пространства
 editor-toolbar-settings-previewInWorkspace=Предпросмотр в рабочем пространстве
+editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate=Вставить шаблон в строку курсора
 editor-toolbar-settings-copyLink = Копировать Ссылку на Заметку на строке ({ $line })
 editor-toolbar-settings-copyLinkAtSection = Копировать Ссылку на Заметку в секции ({ $section })

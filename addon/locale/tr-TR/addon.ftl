@@ -99,6 +99,7 @@ editor-toolbar-settings-title = Çalışma Alanı Ayarları
 editor-toolbar-settings-openWorkspace = Not Çalışma Alanı Açın
 editor-toolbar-settings-setWorkspace = Çalışma Alanı Notu Olarak Ayarla
 editor-toolbar-settings-previewInWorkspace = Çalışma Alanında Ön İzle Preview in Workspace
+editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate = İşaretçi Satırına Şablon Ekle
 editor-toolbar-settings-copyLink = Satıra Not Linki Kopyala ({ $line })
 editor-toolbar-settings-copyLinkAtSection = Bölüme Not Linki Kopyala ({ $section })

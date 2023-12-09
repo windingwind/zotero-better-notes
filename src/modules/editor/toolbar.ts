@@ -74,6 +74,13 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
           addon.hooks.onSetWorkspaceNote(e.editor._item.id, "preview");
         },
       },
+      {
+        id: makeId("settings-showInLibrary"),
+        text: getString("editor.toolbar.settings.showInLibrary"),
+        callback: (e) => {
+          ZoteroPane.selectItems([e.editor._item.id]);
+        },
+      },
     ];
 
     if (currentLine >= 0) {

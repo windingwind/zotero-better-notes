@@ -99,6 +99,7 @@ editor-toolbar-settings-title=工作区选项
 editor-toolbar-settings-openWorkspace=打开笔记工作区
 editor-toolbar-settings-setWorkspace=设为工作区笔记
 editor-toolbar-settings-previewInWorkspace=在工作区预览
+editor-toolbar-settings-showInLibrary = 在文库中显示
 editor-toolbar-settings-insertTemplate=插入模板到光标行
 editor-toolbar-settings-copyLink=复制当前行({ $line })笔记链接
 editor-toolbar-settings-copyLinkAtSection=复制当前节({ $section })笔记链接

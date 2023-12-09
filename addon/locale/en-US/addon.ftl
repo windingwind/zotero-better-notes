@@ -99,6 +99,7 @@ editor-toolbar-settings-title = Workspace Settings
 editor-toolbar-settings-openWorkspace = Open Note Workspace
 editor-toolbar-settings-setWorkspace = Set as Workspace Note
 editor-toolbar-settings-previewInWorkspace = Preview in Workspace
+editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate = Insert Template to Cursor Line
 editor-toolbar-settings-copyLink = Copy Note Link at Line ({ $line })
 editor-toolbar-settings-copyLinkAtSection = Copy Note Link at Section ({ $section })

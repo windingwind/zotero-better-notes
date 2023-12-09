@@ -95,6 +95,7 @@ editor-toolbar-settings-title = Impostazioni dello spazio di lavoro
 editor-toolbar-settings-openWorkspace = Apri nota di lavoro
 editor-toolbar-settings-setWorkspace = Imposta come nota di lavoro
 editor-toolbar-settings-previewInWorkspace = Anteprima nello spazio di lavoro
+editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate = Inserisci template nella posizione del cursore
 editor-toolbar-settings-copyLink = Copia link della nota alla riga ({ $line })
 editor-toolbar-settings-copyLinkAtSection = Copia link della nota alla sezione ({ $section })
