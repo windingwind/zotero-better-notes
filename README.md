@@ -79,7 +79,7 @@ and:
 
 🗂️ Simplify and automate knowledge analysis with extensive _note templates_. With one click. [Learn more →](#note-template)
 
-🔄️ Keep in sync with your Markdown files. Two-way, automatically. [Learn more →](#syncing-note-🔄️-markdown)
+🔄️ Keep in sync with your Markdown files. Two-way, automatically. [Learn more →](#syncing-note-%EF%B8%8F-markdown)
 
 🖨️ Export notes to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
 
