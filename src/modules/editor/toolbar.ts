@@ -492,7 +492,7 @@ async function registerEditorToolbarPopup(
               properties: {
                 id: props.id,
                 innerHTML:
-                  slice((props.prefix || "") + props.text, 30) +
+                  slice((props.prefix || "") + props.text, 50) +
                   (props.suffix || ""),
                 title: "",
               },
