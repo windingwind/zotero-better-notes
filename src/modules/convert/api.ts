@@ -1151,8 +1151,8 @@ async function processM2NRehypeImageNodes(
         const srcType = (src as string).startsWith("data:")
           ? "b64"
           : (src as string).startsWith("http")
-          ? "url"
-          : "file";
+            ? "url"
+            : "file";
         if (srcType === "file") {
           if (!PathUtils.isAbsolute(src)) {
             src = jointPath(fileDir, src);

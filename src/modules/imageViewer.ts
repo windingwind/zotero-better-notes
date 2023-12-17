@@ -275,11 +275,10 @@ function setScale(scaling: number) {
 }
 
 function setTitle() {
-  addon.data.imageViewer.window!.document.querySelector(
-    "title",
-  )!.innerText! = `${addon.data.imageViewer.idx + 1}/${
-    addon.data.imageViewer.srcList.length
-  }:${addon.data.imageViewer.title}`;
+  addon.data.imageViewer.window!.document.querySelector("title")!.innerText! =
+    `${addon.data.imageViewer.idx + 1}/${
+      addon.data.imageViewer.srcList.length
+    }:${addon.data.imageViewer.title}`;
 }
 
 function setPin() {

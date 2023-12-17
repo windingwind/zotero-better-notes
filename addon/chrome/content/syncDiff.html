@@ -278,8 +278,8 @@
                     e.itemData.added
                       ? "added-list-item"
                       : e.itemData.removed
-                      ? "removed-list-item"
-                      : "",
+                        ? "removed-list-item"
+                        : "",
                   );
                 }
               },
@@ -318,8 +318,8 @@
           span.className = diff.added
             ? "added"
             : diff.removed
-            ? "removed"
-            : "normal";
+              ? "removed"
+              : "normal";
           span.innerText = diff.value;
           frag.append(span);
           diff.element = span;
