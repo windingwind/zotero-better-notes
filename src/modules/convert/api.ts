@@ -446,7 +446,8 @@ function md2remark(str: string) {
     .replace(/!\[\[(.*)\]\]/g, (s: string) => `![](${s.slice(3, -2)})`)
     .replace(
       /!\[(.*)\]\((.*)\)/g,
-      (match, altText, imageURL) => `![${altText}](${encodeURI(imageURL)})`,
+      (match, altText, imageURL) =>
+        `![${altText}](${encodeURI(decodeURI(imageURL))})`,
     );
   const remark = unified()
     .use(remarkGfm)
