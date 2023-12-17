@@ -47,6 +47,7 @@ function replaceString(buildTime) {
   const replaceResult = replaceInFileSync({
     files: [
       `${buildDir}/addon/**/*.xhtml`,
+      `${buildDir}/addon/**/*.html`,
       `${buildDir}/addon/**/*.json`,
       `${buildDir}/addon/prefs.js`,
       `${buildDir}/addon/manifest.json`,
