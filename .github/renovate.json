@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticPrefixChore",
+    ":prHourlyLimitNone",
+    ":prConcurrentLimitNone",
+    ":enableVulnerabilityAlerts",
+    ":dependencyDashboard",
+    "schedule:weekends"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["zotero-plugin-toolkit", "zotero-types"],
+      "automerge": true
+    }
+  ],
+  "git-submodules": {
+    "enabled": true
+  }
+}

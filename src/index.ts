@@ -6,12 +6,10 @@ const basicTool = new BasicTool();
 
 if (!basicTool.getGlobal("Zotero")[config.addonInstance]) {
   // Set global variables
-  _globalThis.Zotero = basicTool.getGlobal("Zotero");
   defineGlobal("window");
   defineGlobal("document");
   defineGlobal("ZoteroPane");
   defineGlobal("Zotero_Tabs");
-  defineGlobal("OS");
   _globalThis.addon = new Addon();
   Object.defineProperty(_globalThis, "ztoolkit", {
     get() {

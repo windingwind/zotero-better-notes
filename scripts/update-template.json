@@ -1,0 +1,17 @@
+{
+  "addons": {
+    "__addonID__": {
+      "updates": [
+        {
+          "version": "__buildVersion__",
+          "update_link": "__updateLink__",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "6.999"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
