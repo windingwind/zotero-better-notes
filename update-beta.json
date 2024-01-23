@@ -3,8 +3,8 @@
     "Knowledge4Zotero@windingwind.com": {
       "updates": [
         {
-          "version": "1.1.4-49",
-          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi/download/v1.1.4-49/zotero-better-notes.xpi",
+          "version": "1.1.4-beta.50",
+          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi/download/v1.1.4-beta.50/zotero-better-notes.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "6.999"
