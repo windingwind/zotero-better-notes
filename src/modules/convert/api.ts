@@ -1089,7 +1089,7 @@ async function processM2NRehypeCitationNodes(
         const ids = dataCitation.citationItems.map((c: { uris: string[] }) =>
           Zotero.URI.getURIItemID(c.uris[0]),
         );
-        const html = await addon.api.convert.item2citation(ids);
+        const html = await addon.api.convert.item2citation(ids, dataCitation);
         if (html) {
           const newNode = note2rehype(html);
           // root -> p -> span(cite, this is what we actually want)
