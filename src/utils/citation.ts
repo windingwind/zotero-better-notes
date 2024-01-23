@@ -25,18 +25,19 @@ export async function parseCitationHTML(
   let i = 0;
   for (const item of items) {
     if (item.isRegularItem()) {
+      const currentArgs = {
+        locator: args[i].locator || "",
+        label: args[i].label || "",
+        prefix: args[i].prefix || "",
+        suffix: args[i].suffix || "",
+      };
       // @ts-ignore
       const itemData = Zotero.Utilities.Item.itemToCSLJSON(item);
       const citation = {
         citationItems: [
           {
             uris: [Zotero.URI.getItemURI(item)],
-            ...(args[i++] || {
-              locator: "",
-              label: "",
-              prefix: "",
-              suffix: "",
-            }),
+            ...currentArgs,
             itemData,
           },
         ],
@@ -46,6 +47,7 @@ export async function parseCitationHTML(
       html += `<p><span class="citation" data-citation="${encodeURIComponent(
         JSON.stringify(citation),
       )}">${formatted}</span></p>`;
+      i++;
     }
   }
   return html;

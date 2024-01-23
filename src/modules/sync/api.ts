@@ -71,20 +71,19 @@ function getNoteStatus(noteId: number) {
     tail: "</div>",
     lastmodify: Zotero.Date.sqlToDate(noteItem.dateModified, true),
   };
-  const metaRegex = /"?data-schema-version"?="[0-9]*">/;
-  const match = fullContent?.match(metaRegex);
-  if (!match || match.length == 0) {
+  const metaRegex = /^<div[^>]*>/;
+  // Not wrapped inside div
+  if (!metaRegex.test(fullContent)) {
     ret.meta = `<div "data-schema-version"="${config.dataSchemaVersion}">`;
     ret.content = fullContent || "";
     return ret;
   }
-  const idx = fullContent.search(metaRegex);
-  if (idx != -1) {
-    ret.content = fullContent.substring(
-      idx + match[0].length,
-      fullContent.length - ret.tail.length,
-    );
-  }
+  const metaMatch = fullContent.match(metaRegex);
+  ret.meta = metaMatch ? metaMatch[0] : "";
+  ret.content = fullContent.substring(
+    ret.meta.length,
+    fullContent.length - ret.tail.length,
+  );
   return ret;
 }
 
