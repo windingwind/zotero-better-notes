@@ -107,18 +107,16 @@ export async function showImageViewer(
           );
         }
       });
-    addon.data.imageViewer.window.document.querySelector("#pin")!.innerHTML =
-      addon.data.imageViewer.pined
-        ? ICONS.imageViewerPined
-        : ICONS.imageViewerPin;
-    addon.data.imageViewer.window.document.querySelector(
-      "#pin-tooltip",
-    )!.innerHTML = addon.data.imageViewer.pined ? "Unpin" : "Pin";
-    addon.data.imageViewer.window.document
-      .querySelector("#pin")
-      ?.addEventListener("click", (e) => {
-        setPin();
-      });
+    const pin = addon.data.imageViewer.window.document.querySelector(
+      "#pin",
+    ) as HTMLButtonElement;
+    pin.innerHTML = addon.data.imageViewer.pined
+      ? ICONS.imageViewerPined
+      : ICONS.imageViewerPin;
+    pin.title = addon.data.imageViewer.pined ? "Unpin" : "Pin";
+    pin?.addEventListener("click", (e) => {
+      setPin();
+    });
     addon.data.imageViewer.window.addEventListener("keydown", (e) => {
       // ctrl+w or esc
       if ((e.key === "w" && e.ctrlKey) || e.keyCode === 27) {

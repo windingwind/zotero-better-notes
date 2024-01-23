@@ -60,24 +60,11 @@ async function addWorkspaceTab() {
   tabElem.style.width = "30px";
   tabElem.style.minWidth = "30px";
   tabElem.style.maxWidth = "30px";
-  tabElem.style.padding = "0px";
   const content = tabElem.querySelector(".tab-name") as HTMLDivElement;
   const close = tabElem.querySelector(".tab-close") as HTMLDivElement;
-  content.style.verticalAlign = "middle";
   content.style.width = "20px";
   content.style.height = "20px";
-  content.style.display = "inline";
   content.innerHTML = "";
-  ztoolkit.UI.appendElement(
-    {
-      tag: "span",
-      classList: ["icon-bg"],
-      styles: {
-        backgroundImage: `url("chrome://${config.addonRef}/content/icons/favicon.png")`,
-      },
-    },
-    content,
-  );
   close.style.visibility = "hidden";
   addon.data.workspace.tab.id = id;
   container.setAttribute("workspace-type", "tab");
@@ -162,14 +149,15 @@ function isContextPaneInitialized() {
 
 export async function activateWorkspaceTab() {
   if (Zotero_Tabs.selectedType === TAB_TYPE && isContextPaneInitialized()) {
-    (
-      document.querySelector("#zotero-tab-toolbar") as XUL.Box
-    ).style.visibility = "collapse";
+    const tabToolbar = document.querySelector("#zotero-tab-toolbar") as XUL.Box;
+    tabToolbar && (tabToolbar.style.visibility = "collapse");
     const toolbar = document.querySelector(
       "#zotero-context-toolbar-extension",
     ) as XUL.Box;
-    toolbar.style.visibility = "collapse";
-    toolbar.nextElementSibling?.setAttribute("selectedIndex", "1");
+    if (toolbar) {
+      toolbar.style.visibility = "collapse";
+      toolbar.nextElementSibling?.setAttribute("selectedIndex", "1");
+    }
   }
 
   if (addon.data.workspace.tab.active) {
@@ -309,13 +297,12 @@ export function deActivateWorkspaceTab() {
   if (!isContextPaneInitialized()) {
     return;
   }
-  (
-    document.querySelector("#zotero-tab-toolbar") as XUL.Box
-  ).style.removeProperty("visibility");
+  const tabToolbar = document.querySelector("#zotero-tab-toolbar") as XUL.Box;
+  tabToolbar && tabToolbar.style.removeProperty("visibility");
   const toolbar = document.querySelector(
     "#zotero-context-toolbar-extension",
   ) as XUL.Box;
-  toolbar.style.removeProperty("visibility");
+  toolbar?.style.removeProperty("visibility");
 }
 
 function setWorkspaceTabStatus(status: boolean) {

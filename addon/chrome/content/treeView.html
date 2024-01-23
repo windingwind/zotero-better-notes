@@ -3,6 +3,16 @@
   <body>
     <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
     <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://zotero-platform/content/zotero.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://__addonRef__/content/lib/css/dx.light.compact.css"
+    />
     <style>
       html,
       body,
@@ -33,7 +43,7 @@
       }
 
       #treeview {
-        padding: 20px 0 0 20px;
+        padding: 20px;
       }
 
       .drive-header {
@@ -59,25 +69,22 @@
       }
 
       #outline-container {
-        color: -moz-DialogText;
+        color: var(--fill-primary);
       }
 
       .dx-treeview-toggle-item-visibility {
-        color: currentColor !important;
+        color: var(--fill-primary);
       }
 
-      @media (prefers-color-scheme: dark) {
-        :not(.dx-state-focused) > .dx-treeview-item.dx-state-hover {
-          background-color: #494949;
-          color: #fff;
-        }
+      :not(.dx-state-focused) > .dx-treeview-item.dx-state-hover {
+        color: var(--fill-primary);
+        background-color: var(--fill-quinary);
+      }
+
+      .dx-state-focused > .dx-treeview-item {
+        background-color: var(--color-accent) !important;
       }
     </style>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="chrome://__addonRef__/content/lib/css/dx.light.compact.css"
-    />
     <div
       class="dx-viewport"
       id="outline-container"

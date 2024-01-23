@@ -23,30 +23,18 @@ export function initWorkspace(container: XUL.Box | undefined) {
     callback: (ev: Event) => void,
   ) {
     return {
-      tag: "div",
       id,
-      classList: ["tooltip"],
-      children: [
+      tag: "button",
+      namespace: "html",
+      classList: ["tool-button"],
+      properties: {
+        innerHTML: content,
+        title,
+      },
+      listeners: [
         {
-          tag: "button",
-          namespace: "html",
-          classList: ["tool-button"],
-          properties: {
-            innerHTML: content,
-          },
-          listeners: [
-            {
-              type: "click",
-              listener: callback,
-            },
-          ],
-        },
-        {
-          tag: "span",
-          classList: ["tooltiptext"],
-          properties: {
-            innerHTML: title,
-          },
+          type: "click",
+          listener: callback,
         },
       ],
     };
@@ -79,7 +67,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
               tag: "link",
               properties: {
                 rel: "stylesheet",
-                href: `chrome://${config.addonRef}/content/tooltip.css`,
+                href: `chrome://${config.addonRef}/content/toolbutton.css`,
               },
             },
             {
@@ -158,6 +146,9 @@ export function initWorkspace(container: XUL.Box | undefined) {
             flex: "1",
             width: "700",
           },
+          styles: {
+            background: "var(--material-background50)",
+          },
         },
         {
           tag: "splitter",
@@ -203,6 +194,7 @@ export function initWorkspace(container: XUL.Box | undefined) {
   const outlineContainer = container.querySelector(
     `#${makeId("outline-container")}`,
   ) as XUL.Box;
+  outlineContainer.style.background = "var(--material-sidepane)";
   const outlineMut = new (ztoolkit.getGlobal("MutationObserver"))(
     (mutations) => {
       if (outlineContainer.getAttribute("collapsed") === "true") {
