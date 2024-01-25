@@ -4,7 +4,7 @@
       "updates": [
         {
           "version": "1.1.4-beta.52",
-          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi/download/v1.1.4-beta.52/zotero-better-notes.xpi",
+          "update_link": "https://github.com/windingwind/zotero-better-notes/releases//download/v1.1.4-beta.52/zotero-better-notes.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "7.0.0-beta.55"
