@@ -107,7 +107,7 @@ async function note2md(
     try {
       header = JSON.parse(
         await addon.api.template.runTemplate(
-          "[ExportMDFileHeader]",
+          "[ExportMDFileHeaderV2]",
           "noteItem",
           [noteItem],
         ),
