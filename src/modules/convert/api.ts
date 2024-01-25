@@ -105,16 +105,23 @@ async function note2md(
   if (options.withYAMLHeader) {
     let header = {} as Record<string, any>;
     try {
-      header = Object.assign(
-        JSON.parse(
-          await addon.api.template.runTemplate(
-            "[ExportMDFileHeaderV2]",
-            "noteItem",
-            [noteItem],
-          ),
+      header = JSON.parse(
+        await addon.api.template.runTemplate(
+          "[ExportMDFileHeader]",
+          "noteItem",
+          [noteItem],
         ),
-        options.cachedYAMLHeader || {},
       );
+      const cachedHeader = options.cachedYAMLHeader || {};
+      for (const key in cachedHeader) {
+        if (key.startsWith("$") && key in header) {
+          // generated header overwrites cached header
+          continue;
+        } else {
+          // otherwise do not overwrite
+          header[key] = cachedHeader[key];
+        }
+      }
     } catch (e) {
       ztoolkit.log(e);
     }
