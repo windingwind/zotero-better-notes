@@ -10,7 +10,7 @@
     "addonInstance": "BetterNotes",
     "dataSchemaVersion": "8",
     "releasePage": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi",
-    "updateJSON": "https://raw.githubusercontent.com/windingwind/zotero-addon-template/main/update.json"
+    "updateJSON": "https://raw.githubusercontent.com/windingwind/zotero-better-notes/master/update.json"
   },
   "main": "src/index.ts",
   "scripts": {
