@@ -15,7 +15,7 @@ export function registerWorkspaceTab(win: Window) {
   if (!spacer) {
     return;
   }
-  ztoolkit.UI.insertElementBefore(
+  const tabButton = ztoolkit.UI.insertElementBefore(
     {
       tag: "toolbarbutton",
       classList: ["zotero-tb-button"],
@@ -39,8 +39,25 @@ export function registerWorkspaceTab(win: Window) {
       ],
     },
     spacer,
+  ) as XUL.ToolBarButton;
+  win.addEventListener("message", messageHandler, false);
+  const collectionSearch = doc.querySelector("#zotero-collections-search")!;
+  const ob = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
+    tabButton.hidden = !!collectionSearch?.classList.contains("visible");
+  });
+  ob.observe(collectionSearch, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+
+  win.addEventListener(
+    "unload",
+    () => {
+      ob.disconnect();
+      win.removeEventListener("message", messageHandler);
+    },
+    { once: true },
   );
-  win.addEventListener("message", (e) => messageHandler(e), false);
 }
 
 export async function openWorkspaceTab() {
