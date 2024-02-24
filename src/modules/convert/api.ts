@@ -19,7 +19,7 @@ import { h } from "hastscript";
 import YAML = require("yamljs");
 
 import { Root as HRoot, RootContent } from "hast";
-import { Root as MRoot } from "mdast";
+import { ListContent, Root as MRoot } from "mdast";
 import { Nodes } from "hast-util-to-text/lib";
 import {
   fileExists,
@@ -371,6 +371,45 @@ async function rehype2remark(rehype: HRoot) {
           return defaultHandlers.table(h, node);
           // }
         },
+        /*
+         * See https://github.com/windingwind/zotero-better-notes/issues/820
+         * The text content separated by non-text content (e.g. inline math)
+         * inside `li`(rehype) will be converted to `paragraph`(remark),
+         * which will be turned to line with \n in MD:
+         * ```rehype
+         * li: [text, text, inline-math, text]
+         * ```
+         * to
+         * ```remark
+         * listitem: [paragraph, inline-math, paragraph]
+         * ```
+         * to
+         * ```md
+         *  * text text
+         *    inline-math
+         *    text
+         * ```
+         */
+        li: (h, node) => {
+          const mnode = defaultHandlers.li(h, node) as ListContent;
+          // If no more than 1 children, skip
+          if (!mnode || mnode.children.length < 2) {
+            return mnode;
+          }
+          const children: any[] = [];
+          // Merge none-list nodes inside li into the previous paragraph node to avoid line break
+          while (mnode.children.length > 0) {
+            const current = mnode.children.shift();
+            const cached = children[children.length - 1];
+            if (cached?.type === "paragraph" && current?.type !== "list") {
+              cached.children.push(current);
+            } else {
+              children.push(current);
+            }
+          }
+          mnode.children.push(...children);
+          return mnode;
+        },
         wrapper: (h, node) => {
           return h(node, "wrapper", toText(node));
         },
@@ -546,18 +585,18 @@ function rehype2note(rehype: HRoot) {
     },
   );
 
-  // Wrap lines in list with <p> (for diff)
+  // Wrap lines in list with <span> (for diff)
   visitParents(rehype, "text", (node: any, ancestors) => {
     const parent = ancestors.length
       ? ancestors[ancestors.length - 1]
       : undefined;
     if (
-      node.value.replace(/[\r\n]/g, "") &&
       parent?.type == "element" &&
-      ["li", "td"].includes(parent?.tagName)
+      ["li", "td"].includes(parent?.tagName) &&
+      node.value.replace(/[\r\n]/g, "")
     ) {
       node.type = "element";
-      node.tagName = "p";
+      node.tagName = "span";
       node.children = [
         { type: "text", value: node.value.replace(/[\r\n]/g, "") },
       ];
