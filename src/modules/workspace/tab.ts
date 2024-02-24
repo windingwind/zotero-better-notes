@@ -5,37 +5,49 @@ import { getString } from "../../utils/locale";
 import { getPref, setPref } from "../../utils/prefs";
 import { waitUtilAsync } from "../../utils/wait";
 // TODO: uncouple these imports
-import {} from "./content";
 import { messageHandler } from "./message";
 
 export const TAB_TYPE = "betternotes";
 
-export function registerWorkspaceTab() {
-  const tabContainer = document.querySelector("#tab-bar-container");
-  if (!tabContainer) {
+export function registerWorkspaceTab(win: Window) {
+  const doc = win.document;
+  const spacer = doc.querySelector("#zotero-collections-toolbar > spacer");
+  if (!spacer) {
     return;
   }
-  tabContainer.removeAttribute("hidden");
-  const mut = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
-    tabContainer.removeAttribute("hidden");
-  });
-  mut.observe(tabContainer, {
-    attributes: true,
-    attributeFilter: ["hidden"],
-  });
-  waitUtilAsync(() =>
-    Boolean(ztoolkit.getGlobal("ZoteroContextPane")._notifierID),
-  ).then(() => {
-    addWorkspaceTab();
-  });
-  window.addEventListener("message", (e) => messageHandler(e), false);
+  ztoolkit.UI.insertElementBefore(
+    {
+      tag: "toolbarbutton",
+      classList: ["zotero-tb-button"],
+      styles: {
+        listStyleImage: `url("chrome://${config.addonRef}/content/icons/icon-linear-20.svg")`,
+      },
+      attributes: {
+        tooltiptext: "Open workspace",
+      },
+      listeners: [
+        {
+          type: "command",
+          listener: (ev) => {
+            if ((ev as MouseEvent).shiftKey) {
+              addon.hooks.onOpenWorkspace("window");
+            } else {
+              addon.hooks.onOpenWorkspace("tab");
+            }
+          },
+        },
+      ],
+    },
+    spacer,
+  );
+  win.addEventListener("message", (e) => messageHandler(e), false);
 }
 
-export function unregisterWorkspaceTab() {
-  addon.data.workspace.tab.id && Zotero_Tabs.close(addon.data.workspace.tab.id);
-}
-
-async function addWorkspaceTab() {
+export async function openWorkspaceTab() {
+  if (addon.data.workspace.tab.active) {
+    Zotero_Tabs.select(addon.data.workspace.tab.id!);
+    return;
+  }
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: getString("tab.name"),
@@ -45,30 +57,15 @@ async function addWorkspaceTab() {
     },
     select: false,
     onClose: () => {
-      setWorkspaceTabStatus(false);
-      if (addon.data.alive) {
-        addWorkspaceTab();
-      }
+      deActivateWorkspaceTab();
     },
   });
-  await waitUtilAsync(() =>
-    Boolean(document.querySelector(`.tabs-wrapper .tab[data-id=${id}]`)),
-  );
-  const tabElem = document.querySelector(
-    `.tabs-wrapper .tab[data-id=${id}]`,
-  ) as HTMLDivElement;
-  tabElem.style.width = "30px";
-  tabElem.style.minWidth = "30px";
-  tabElem.style.maxWidth = "30px";
-  const content = tabElem.querySelector(".tab-name") as HTMLDivElement;
-  const close = tabElem.querySelector(".tab-close") as HTMLDivElement;
-  content.style.width = "20px";
-  content.style.height = "20px";
-  content.innerHTML = "";
-  close.style.visibility = "hidden";
   addon.data.workspace.tab.id = id;
   container.setAttribute("workspace-type", "tab");
   addon.data.workspace.tab.container = container;
+
+  await activateWorkspaceTab();
+  Zotero_Tabs.select(id);
 }
 
 function hoverWorkspaceTab(hovered: boolean) {
@@ -291,18 +288,17 @@ export async function activateWorkspaceTab() {
   initWorkspaceTabDragDrop(container, tabElem);
   addon.hooks.onInitWorkspace(container);
   registerWorkspaceTabPaneObserver();
+  setWorkspaceTabStatus(true);
 }
 
 export function deActivateWorkspaceTab() {
-  if (!isContextPaneInitialized()) {
-    return;
-  }
   const tabToolbar = document.querySelector("#zotero-tab-toolbar") as XUL.Box;
   tabToolbar && tabToolbar.style.removeProperty("visibility");
   const toolbar = document.querySelector(
     "#zotero-context-toolbar-extension",
   ) as XUL.Box;
   toolbar?.style.removeProperty("visibility");
+  setWorkspaceTabStatus(false);
 }
 
 function setWorkspaceTabStatus(status: boolean) {

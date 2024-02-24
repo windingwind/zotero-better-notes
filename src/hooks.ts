@@ -9,11 +9,8 @@ import {
 } from "./modules/template/controller";
 import { registerMenus } from "./modules/menu";
 import {
-  activateWorkspaceTab,
-  deActivateWorkspaceTab,
   registerWorkspaceTab,
-  TAB_TYPE,
-  unregisterWorkspaceTab,
+  openWorkspaceTab,
 } from "./modules/workspace/tab";
 import {
   initWorkspace,
@@ -24,7 +21,7 @@ import {
   updateOutline,
 } from "./modules/workspace/content";
 import { registerNotify } from "./modules/notify";
-import { showWorkspaceWindow } from "./modules/workspace/window";
+import { openWorkspaceWindow } from "./modules/workspace/window";
 import { registerReaderAnnotationButton } from "./modules/reader";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import {
@@ -84,7 +81,7 @@ async function onMainWindowLoad(win: Window): Promise<void> {
 
   registerMenus();
 
-  registerWorkspaceTab();
+  registerWorkspaceTab(win);
 
   initTemplates();
 }
@@ -97,7 +94,6 @@ function onShutdown(): void {
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;
-  unregisterWorkspaceTab();
   delete Zotero[config.addonInstance];
 }
 
@@ -113,14 +109,6 @@ function onNotify(
 ) {
   if (extraData.skipBN) {
     return;
-  }
-  // Workspace tab select/unselect callback
-  if (event === "select" && type === "tab") {
-    if (extraData[ids[0]].type == TAB_TYPE) {
-      activateWorkspaceTab();
-    } else {
-      deActivateWorkspaceTab();
-    }
   }
   // Workspace main note update
   if (event === "modify" && type === "item") {
@@ -257,16 +245,11 @@ function onSetWorkspaceNote(
 
 function onOpenWorkspace(type: "tab" | "window" = "tab") {
   if (type === "window") {
-    if (addon.data.workspace.window.active) {
-      addon.data.workspace.window.window?.focus();
-      return;
-    }
-    showWorkspaceWindow();
+    openWorkspaceWindow();
     return;
   }
   if (type === "tab") {
-    // selecting tab will auto load the workspace content
-    Zotero_Tabs.select(addon.data.workspace.tab.id!);
+    openWorkspaceTab();
     return;
   }
 }

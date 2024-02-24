@@ -2,7 +2,7 @@ import { config } from "../../../package.json";
 import { isWindowAlive } from "../../utils/window";
 import { messageHandler } from "./message";
 
-export async function showWorkspaceWindow() {
+export async function openWorkspaceWindow() {
   if (isWindowAlive(addon.data.workspace.window.window)) {
     addon.data.workspace.window.window?.focus();
     return;
