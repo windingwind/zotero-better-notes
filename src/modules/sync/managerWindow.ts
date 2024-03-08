@@ -4,6 +4,13 @@ import { getString } from "../../utils/locale";
 import { jointPath } from "../../utils/str";
 import { isWindowAlive } from "../../utils/window";
 
+export interface SyncDataType {
+  noteId: number;
+  noteName: string;
+  lastSync: string;
+  filePath: string;
+}
+
 export async function showSyncManager() {
   if (isWindowAlive(addon.data.sync.manager.window)) {
     addon.data.sync.manager.window?.focus();
@@ -92,6 +99,12 @@ export async function showSyncManager() {
         "getRowString",
         (index) => addon.data.prefs?.rows[index].title || "",
       )
+      // @ts-ignore TODO: Fix type in zotero-plugin-toolkit
+      .setProp("onColumnSort", (columnIndex, ascending) => {
+        addon.data.sync.manager.columnIndex = columnIndex;
+        addon.data.sync.manager.columnAscending = ascending > 0;
+        refresh();
+      })
       .render();
     const refreshButton = win.document.querySelector(
       "#refresh",
@@ -120,7 +133,12 @@ export async function showSyncManager() {
   }
 }
 
+const sortDataKeys = ["noteName", "lastSync", "filePath"] as Array<
+  keyof SyncDataType
+>;
+
 function updateData() {
+  const sortKey = sortDataKeys[addon.data.sync.manager.columnIndex];
   addon.data.sync.manager.data = addon.api.sync
     .getSyncNoteIds()
     .map((noteId) => {
@@ -131,6 +149,16 @@ function updateData() {
         lastSync: new Date(syncStatus.lastsync).toLocaleString(),
         filePath: jointPath(syncStatus.path, syncStatus.filename),
       };
+    })
+    .sort((a, b) => {
+      if (!a || !b) {
+        return 0;
+      }
+      const valueA = String(a[sortKey] || "");
+      const valueB = String(b[sortKey] || "");
+      return addon.data.sync.manager.columnAscending
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
     });
 }
 

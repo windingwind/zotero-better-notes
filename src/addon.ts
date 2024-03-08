@@ -8,6 +8,7 @@ import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 
 import { getPref, setPref } from "./utils/prefs";
 import { OutlineType } from "./utils/workspace";
+import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
 import { createZToolkit } from "./utils/ztoolkit";
@@ -36,12 +37,9 @@ class Addon {
       manager: {
         window?: Window;
         tableHelper?: VirtualizedTableHelper;
-        data: {
-          noteId: number;
-          noteName: string;
-          lastSync: string;
-          filePath: string;
-        }[];
+        data: SyncDataType[];
+        columnIndex: number;
+        columnAscending: boolean;
       };
       diff: {
         window?: Window;
@@ -101,6 +99,8 @@ class Addon {
       lock: false,
       manager: {
         data: [],
+        columnAscending: true,
+        columnIndex: 0,
       },
       diff: {},
     },
