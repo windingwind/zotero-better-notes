@@ -43,7 +43,7 @@ export function registerReaderAnnotationButton() {
               },
             },
           ],
-          enableElementRecord: true,
+          enableElementRecord: false,
         }),
       );
     },
