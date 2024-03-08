@@ -36,7 +36,7 @@
     "asciidoctor": "^3.0.2",
     "diff": "^5.1.0",
     "hast-util-to-html": "^9.0.0",
-    "hast-util-to-mdast": "^8.4.1",
+    "hast-util-to-mdast": "^10.1.0",
     "hast-util-to-text": "^4.0.0",
     "hastscript": "^8.0.0",
     "html-docx-js": "^0.3.1",
