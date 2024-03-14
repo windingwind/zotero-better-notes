@@ -4,17 +4,12 @@ import { getLineAtCursor, getSectionAtCursor } from "../../utils/editor";
 import { showHint } from "../../utils/hint";
 import { getNoteLink, getNoteLinkParams } from "../../utils/link";
 import { getString } from "../../utils/locale";
-import {
-  addLineToNote,
-  getNoteTreeFlattened,
-  getNoteType,
-} from "../../utils/note";
+import { addLineToNote, getNoteTreeFlattened } from "../../utils/note";
 import { getPref } from "../../utils/prefs";
 import { slice } from "../../utils/str";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
-  const noteType = getNoteType(noteItem.id);
   const toolbar = await registerEditorToolbar(editor, makeId("toolbar"));
 
   // Settings
@@ -56,22 +51,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         id: makeId("settings-openWorkspace"),
         text: getString("editor.toolbar.settings.openWorkspace"),
         callback: (e) => {
-          addon.hooks.onOpenWorkspace("tab");
-        },
-      },
-      {
-        id: makeId("settings-setWorkspace"),
-        text: getString("editor.toolbar.settings.setWorkspace"),
-        callback: (e) => {
-          addon.hooks.onSetWorkspaceNote(e.editor._item.id, "main");
-        },
-      },
-      {
-        id: makeId("settings-previewInWorkspace"),
-        text: getString("editor.toolbar.settings.previewInWorkspace"),
-        callback: (e) => {
-          addon.hooks.onOpenWorkspace("tab");
-          addon.hooks.onSetWorkspaceNote(e.editor._item.id, "preview");
+          addon.hooks.onOpenWorkspace(noteItem, "tab");
         },
       },
       {
@@ -221,103 +201,95 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   });
 
   // Center button
-  if (noteType === "main") {
-    registerEditorToolbarElement(
+
+  const onTriggerMenu = (ev: MouseEvent) => {
+    editor._iframeWindow.focus();
+    const linkMenu: PopupData[] = getLinkMenuData(editor);
+    editor._iframeWindow.document
+      .querySelector(`#${makeId("link")}`)!
+      .querySelector(".toolbar-button")!.innerHTML = ICONS.linkAfter;
+
+    const popup = registerEditorToolbarPopup(
       editor,
-      toolbar,
+      linkButton,
+      `${config.addonRef}-link-popup`,
       "middle",
-      ztoolkit.UI.createElement(editor._iframeWindow.document, "div", {
-        properties: { innerHTML: getString("editor.toolbar.main") },
-      }),
+      linkMenu,
     );
-  } else {
-    const onTriggerMenu = (ev: MouseEvent) => {
-      editor._iframeWindow.focus();
-      const linkMenu: PopupData[] = getLinkMenuData(editor);
-      editor._iframeWindow.document
-        .querySelector(`#${makeId("link")}`)!
-        .querySelector(".toolbar-button")!.innerHTML = ICONS.linkAfter;
+  };
 
-      const popup = registerEditorToolbarPopup(
-        editor,
-        linkButton,
-        `${config.addonRef}-link-popup`,
-        "middle",
-        linkMenu,
-      );
-    };
+  const onExitMenu = (ev: MouseEvent) => {
+    editor._iframeWindow.document
+      .querySelector(`#${makeId("link-popup")}`)
+      ?.remove();
+    editor._iframeWindow.document
+      .querySelector(`#${makeId("link")}`)!
+      .querySelector(".toolbar-button")!.innerHTML = ICONS.addon;
+  };
 
-    const onExitMenu = (ev: MouseEvent) => {
-      editor._iframeWindow.document
-        .querySelector(`#${makeId("link-popup")}`)
-        ?.remove();
-      editor._iframeWindow.document
-        .querySelector(`#${makeId("link")}`)!
-        .querySelector(".toolbar-button")!.innerHTML = ICONS.addon;
-    };
-
-    const onClickMenu = async (ev: MouseEvent) => {
-      const mainNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
-      if (!mainNote?.isNote()) {
-        return;
-      }
-      const lineIndex = parseInt(
-        (ev.target as HTMLDivElement).id.split("-").pop() || "-1",
-      );
-      const forwardLink = getNoteLink(noteItem);
-      const backLink = getNoteLink(mainNote, { ignore: true, lineIndex });
-      addLineToNote(
-        mainNote,
-        await addon.api.template.runTemplate(
-          "[QuickInsertV2]",
-          "link, linkText, subNoteItem, noteItem",
-          [
-            forwardLink,
-            noteItem.getNoteTitle().trim() || forwardLink,
-            noteItem,
-            mainNote,
-          ],
-        ),
-        lineIndex,
-      );
-      addLineToNote(
-        noteItem,
-        await addon.api.template.runTemplate(
-          "[QuickBackLinkV2]",
-          "link, linkText, subNoteItem, noteItem",
-          [
-            backLink,
-            mainNote.getNoteTitle().trim() || "Workspace Note",
-            noteItem,
-            mainNote,
-            "",
-          ],
-        ),
-      );
-      onExitMenu(ev);
-      ev.stopPropagation();
-    };
-
-    const linkButton = await registerEditorToolbarDropdown(
-      editor,
-      toolbar,
-      makeId("link"),
-      ICONS.addon,
-      getString("editor.toolbar.link.title"),
-      "middle",
-      onClickMenu,
+  const onClickMenu = async (ev: MouseEvent) => {
+    // TODO: fix link
+    return;
+    const mainNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
+    if (!mainNote?.isNote()) {
+      return;
+    }
+    const lineIndex = parseInt(
+      (ev.target as HTMLDivElement).id.split("-").pop() || "-1",
     );
+    const forwardLink = getNoteLink(noteItem);
+    const backLink = getNoteLink(mainNote, { ignore: true, lineIndex });
+    addLineToNote(
+      mainNote,
+      await addon.api.template.runTemplate(
+        "[QuickInsertV2]",
+        "link, linkText, subNoteItem, noteItem",
+        [
+          forwardLink,
+          noteItem.getNoteTitle().trim() || forwardLink,
+          noteItem,
+          mainNote,
+        ],
+      ),
+      lineIndex,
+    );
+    addLineToNote(
+      noteItem,
+      await addon.api.template.runTemplate(
+        "[QuickBackLinkV2]",
+        "link, linkText, subNoteItem, noteItem",
+        [
+          backLink,
+          mainNote.getNoteTitle().trim() || "Workspace Note",
+          noteItem,
+          mainNote,
+          "",
+        ],
+      ),
+    );
+    onExitMenu(ev);
+    ev.stopPropagation();
+  };
 
-    linkButton.addEventListener("mouseenter", onTriggerMenu);
-    linkButton.addEventListener("mouseleave", onExitMenu);
-    linkButton.addEventListener("mouseleave", onExitMenu);
-    linkButton.addEventListener("click", (ev) => {
-      if ((ev.target as HTMLElement).classList.contains("option")) {
-        onClickMenu(ev);
-      }
-    });
-    editor._iframeWindow.document.addEventListener("click", onExitMenu);
-  }
+  const linkButton = await registerEditorToolbarDropdown(
+    editor,
+    toolbar,
+    makeId("link"),
+    ICONS.addon,
+    getString("editor.toolbar.link.title"),
+    "middle",
+    onClickMenu,
+  );
+
+  linkButton.addEventListener("mouseenter", onTriggerMenu);
+  linkButton.addEventListener("mouseleave", onExitMenu);
+  linkButton.addEventListener("mouseleave", onExitMenu);
+  linkButton.addEventListener("click", (ev) => {
+    if ((ev.target as HTMLElement).classList.contains("option")) {
+      onClickMenu(ev);
+    }
+  });
+  editor._iframeWindow.document.addEventListener("click", onExitMenu);
 
   // Export
   // const exportButton = await registerEditorToolbarDropdown(

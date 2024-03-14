@@ -44,7 +44,6 @@ import {
   DEFAULT_TEMPLATES,
 } from "./modules/template/data";
 import { renderTemplatePreview } from "./modules/template/preview";
-import { getWorkspaceEditor } from "./modules/workspace/content";
 import { parseCitationHTML } from "./utils/citation";
 import {
   getEditorInstance,
@@ -65,11 +64,10 @@ import {
   addLineToNote,
   updateRelatedNotes,
   getRelatedNoteIds,
+  getNoteTreeFlattened,
 } from "./utils/note";
 
-const workspace = {
-  getWorkspaceEditor,
-};
+const workspace = {};
 
 const sync = {
   isSyncNote,
@@ -148,6 +146,7 @@ const note = {
   insert: addLineToNote,
   updateRelatedNotes,
   getRelatedNoteIds,
+  getNoteTreeFlattened,
 };
 
 export default {

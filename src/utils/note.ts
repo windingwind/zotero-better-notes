@@ -11,7 +11,6 @@ export {
   parseHTMLLines,
   getLinesInNote,
   addLineToNote,
-  getNoteType,
   getNoteTree,
   getNoteTreeFlattened,
   getNoteTreeNodeById,
@@ -197,7 +196,7 @@ async function renderNoteHTML(
     refNotes = [noteItem];
   }
 
-  const parser = ztoolkit.getDOMParser();
+  const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const imageAttachments = refNotes.reduce((acc, note) => {
     acc.push(...Zotero.Items.get(note.getAttachments()));
@@ -269,22 +268,12 @@ async function renderNoteHTML(
   return doc.body.innerHTML;
 }
 
-function getNoteType(id: number) {
-  if (id === addon.data.workspace.mainId) {
-    return "main";
-  } else if (id === addon.data.workspace.previewId) {
-    return "preview";
-  } else {
-    return "default";
-  }
-}
-
 function getNoteTree(
   note: Zotero.Item,
   parseLink: boolean = true,
 ): TreeModel.Node<NoteNodeData> {
   const noteLines = getLinesInNote(note);
-  const parser = ztoolkit.getDOMParser();
+  const parser = new DOMParser();
   const tree = new TreeModel();
   const root = tree.parse({
     id: -1,
@@ -422,7 +411,7 @@ async function copyEmbeddedImagesInHTML(
 
   ztoolkit.log(attachments);
 
-  const doc = ztoolkit.getDOMParser().parseFromString(html, "text/html");
+  const doc = new DOMParser().parseFromString(html, "text/html");
 
   // Copy note image attachments and replace keys in the new note
   for (const attachment of attachments) {

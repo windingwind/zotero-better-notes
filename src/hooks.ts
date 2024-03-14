@@ -11,15 +11,9 @@ import { registerMenus } from "./modules/menu";
 import {
   registerWorkspaceTab,
   openWorkspaceTab,
+  onTabSelect,
 } from "./modules/workspace/tab";
-import {
-  initWorkspace,
-  initWorkspaceEditor,
-  toggleNotesPane,
-  toggleOutlinePane,
-  togglePreviewPane,
-  updateOutline,
-} from "./modules/workspace/content";
+import { initWorkspace } from "./modules/workspace/content";
 import { registerNotify } from "./modules/notify";
 import { openWorkspaceWindow } from "./modules/workspace/window";
 import { registerReaderAnnotationButton } from "./modules/reader";
@@ -34,16 +28,12 @@ import { showSyncDiff } from "./modules/sync/diffWindow";
 import { showSyncInfo } from "./modules/sync/infoWindow";
 import { showSyncManager } from "./modules/sync/managerWindow";
 import { showTemplateEditor } from "./modules/template/editorWindow";
-import {
-  createNoteFromTemplate,
-  createWorkspaceNote,
-  createNoteFromMD,
-} from "./modules/createNote";
-import { annotationTagAction } from "./modules/annotationTagAction";
+import { createNoteFromTemplate, createNoteFromMD } from "./modules/createNote";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { getPref } from "./utils/prefs";
+import { patchViewItems } from "./modules/viewItems";
 
 async function onStartup() {
   await Promise.all([
@@ -74,6 +64,11 @@ async function onStartup() {
 
 async function onMainWindowLoad(win: Window): Promise<void> {
   await waitUtilAsync(() => document.readyState === "complete");
+
+  Services.scriptloader.loadSubScript(
+    `chrome://${config.addonRef}/content/scripts/workspace.js`,
+    win,
+  );
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
 
@@ -84,6 +79,8 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   registerWorkspaceTab(win);
 
   initTemplates();
+
+  patchViewItems(win);
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
@@ -102,25 +99,16 @@ function onShutdown(): void {
  * Any operations should be placed in a function to keep this funcion clear.
  */
 function onNotify(
-  event: string,
-  type: string,
-  ids: number[] | string[],
-  extraData: { [key: string]: any },
+  event: Parameters<_ZoteroTypes.Notifier.Notify>["0"],
+  type: Parameters<_ZoteroTypes.Notifier.Notify>["1"],
+  ids: Parameters<_ZoteroTypes.Notifier.Notify>["2"],
+  extraData: Parameters<_ZoteroTypes.Notifier.Notify>["3"],
 ) {
   if (extraData.skipBN) {
     return;
   }
-  // Workspace main note update
-  if (event === "modify" && type === "item") {
-    if ((ids as number[]).includes(addon.data.workspace.mainId)) {
-      addon.data.workspace.tab.active &&
-        updateOutline(addon.data.workspace.tab.container!);
-      addon.data.workspace.window.active &&
-        updateOutline(addon.data.workspace.window.container!);
-      if (getPref("workspace.autoUpdateRelatedNotes")) {
-        addon.api.note.updateRelatedNotes(addon.data.workspace.mainId);
-      }
-    }
+  if (event === "select" && type === "tab") {
+    onTabSelect(extraData[ids[0]].type);
   }
   if (event === "modify" && type === "item") {
     const modifiedNotes = Zotero.Items.get(ids).filter((item) => item.isNote());
@@ -131,10 +119,6 @@ function onNotify(
         reason: "item-modify",
       });
     }
-  }
-  // Insert annotation when assigning tag starts with @
-  if (event === "add" && type === "item-tag") {
-    annotationTagAction(ids as number[], extraData);
   } else {
     return;
   }
@@ -170,23 +154,14 @@ function onOpenNote(
     return;
   }
   if (mode === "auto") {
-    if (noteId === addon.data.workspace.mainId) {
-      mode = "workspace";
-    } else if (
-      addon.data.workspace.tab.active ||
-      addon.data.workspace.window.active
-    ) {
-      mode = "preview";
-    } else {
-      mode = "standalone";
-    }
+    mode = "workspace";
   }
   switch (mode) {
     case "preview":
-      addon.hooks.onSetWorkspaceNote(noteId, "preview", options);
+      // addon.hooks.onSetWorkspaceNote(noteId, "preview", options);
       break;
     case "workspace":
-      addon.hooks.onSetWorkspaceNote(noteId, "main", options);
+      // addon.hooks.onSetWorkspaceNote(noteId, "main", options);
       break;
     case "standalone":
       ZoteroPane.openNoteWindow(noteId);
@@ -196,60 +171,13 @@ function onOpenNote(
   }
 }
 
-function onSetWorkspaceNote(
-  noteId: number,
-  type: "main" | "preview" = "main",
-  options: {
-    lineIndex?: number;
-    sectionName?: string;
-  } = {},
-) {
-  if (type === "main") {
-    addon.data.workspace.mainId = noteId;
-    addon.data.workspace.tab.active &&
-      updateOutline(addon.data.workspace.tab.container!);
-    addon.data.workspace.window.active &&
-      updateOutline(addon.data.workspace.window.container!);
-  }
-  if (addon.data.workspace.window.active) {
-    initWorkspaceEditor(
-      addon.data.workspace.window.container!,
-      type,
-      noteId,
-      options,
-    );
-    type === "preview" &&
-      addon.hooks.onToggleWorkspacePane(
-        "preview",
-        true,
-        addon.data.workspace.window.container,
-      );
-    addon.data.workspace.window.window?.focus();
-  }
-  if (addon.data.workspace.tab.active) {
-    initWorkspaceEditor(
-      addon.data.workspace.tab.container!,
-      type,
-      noteId,
-      options,
-    );
-    type === "preview" &&
-      addon.hooks.onToggleWorkspacePane(
-        "preview",
-        true,
-        addon.data.workspace.tab.container,
-      );
-    Zotero_Tabs.select(addon.data.workspace.tab.id!);
-  }
-}
-
-function onOpenWorkspace(type: "tab" | "window" = "tab") {
+function onOpenWorkspace(item: Zotero.Item, type: "tab" | "window" = "tab") {
   if (type === "window") {
-    openWorkspaceWindow();
+    openWorkspaceWindow(item);
     return;
   }
   if (type === "tab") {
-    openWorkspaceTab();
+    openWorkspaceTab(item);
     return;
   }
 }
@@ -261,19 +189,19 @@ function onToggleWorkspacePane(
   visibility?: boolean,
   container?: XUL.Box,
 ) {
-  switch (type) {
-    case "outline":
-      toggleOutlinePane(visibility, container);
-      break;
-    case "preview":
-      togglePreviewPane(visibility, container);
-      break;
-    case "notes":
-      toggleNotesPane(visibility);
-      break;
-    default:
-      break;
-  }
+  // switch (type) {
+  //   case "outline":
+  //     toggleOutlinePane(visibility, container);
+  //     break;
+  //   case "preview":
+  //     togglePreviewPane(visibility, container);
+  //     break;
+  //   case "notes":
+  //     toggleNotesPane(visibility);
+  //     break;
+  //   default:
+  //     break;
+  // }
 }
 
 const onSyncing = callSyncing;
@@ -296,8 +224,6 @@ const onShowSyncDiff = showSyncDiff;
 
 const onShowTemplateEditor = showTemplateEditor;
 
-const onCreateWorkspaceNote = createWorkspaceNote;
-
 const onCreateNoteFromTemplate = createNoteFromTemplate;
 
 const onCreateNoteFromMD = createNoteFromMD;
@@ -315,7 +241,6 @@ export default {
   onPrefsEvent,
   onOpenNote,
   onInitWorkspace,
-  onSetWorkspaceNote,
   onOpenWorkspace,
   onToggleWorkspacePane,
   onSyncing,
@@ -328,7 +253,6 @@ export default {
   onShowSyncInfo,
   onShowSyncManager,
   onShowTemplateEditor,
-  onCreateWorkspaceNote,
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
 };

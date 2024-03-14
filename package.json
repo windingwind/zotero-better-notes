@@ -58,7 +58,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^2.3.23"
+    "zotero-plugin-toolkit": "^2.3.26"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

@@ -212,7 +212,7 @@ async function toFreeMind(noteItem: Zotero.Item) {
 }
 
 async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
-  const parser = ztoolkit.getDOMParser();
+  const parser = new DOMParser();
 
   const globalCitationData = getNoteCitationData(noteItem as Zotero.Item);
 

@@ -49,6 +49,7 @@ function replaceString(buildTime) {
       `${buildDir}/addon/**/*.xhtml`,
       `${buildDir}/addon/**/*.html`,
       `${buildDir}/addon/**/*.json`,
+      `${buildDir}/addon/**/*.css`,
       `${buildDir}/addon/prefs.js`,
       `${buildDir}/addon/manifest.json`,
       `${buildDir}/addon/bootstrap.js`,

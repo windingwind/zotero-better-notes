@@ -1,45 +1,7 @@
 import { getString } from "../utils/locale";
-import { config } from "../../package.json";
 import { formatPath } from "../utils/str";
 
-export { createWorkspaceNote, createNoteFromTemplate, createNoteFromMD };
-
-async function createWorkspaceNote() {
-  const currentCollection = ZoteroPane.getSelectedCollection();
-  if (!currentCollection) {
-    window.alert(getString("alert.notValidCollectionError"));
-    return;
-  }
-  const confirmOperation = window.confirm(
-    `${getString(
-      "menuAddNote.newMainNote.confirmHead",
-      // @ts-ignore
-    )} '${currentCollection.getName()}' ${getString(
-      "menuAddNote.newMainNote.confirmTail",
-    )}`,
-  );
-  if (!confirmOperation) {
-    return;
-  }
-  const header = window.prompt(
-    getString("menuAddNote.newMainNote.enterNoteTitle"),
-    `New Note ${new Date().toLocaleString()}`,
-  );
-  const noteID = await ZoteroPane.newNote();
-  const noteItem = Zotero.Items.get(noteID);
-  noteItem.setNote(
-    `<div data-schema-version="${config.dataSchemaVersion}"><h1>${header}</h1>\n</div>`,
-  );
-  await noteItem.saveTx();
-  addon.hooks.onSetWorkspaceNote(noteID, "main");
-  if (
-    !addon.data.workspace.tab.active &&
-    !addon.data.workspace.window.active &&
-    window.confirm(getString("menuAddNote.newMainNote.openWorkspaceTab"))
-  ) {
-    addon.hooks.onOpenWorkspace("tab");
-  }
-}
+export { createNoteFromTemplate, createNoteFromMD };
 
 function getLibraryParentId() {
   return ZoteroPane.getSelectedItems().filter((item) => item.isRegularItem())[0]
