@@ -52,26 +52,32 @@ export function registerWorkspaceTab(win: Window) {
   );
 }
 
-export async function openWorkspaceTab(item: Zotero.Item) {
+export async function openWorkspaceTab(
+  item: Zotero.Item,
+  options: { select?: boolean; index?: number } = {
+    select: true,
+  },
+) {
+  const { select, index } = options;
+  if (!item) return;
   const currentTab = Zotero_Tabs._tabs.find(
     (tab) => tab.data?.itemID == item.id,
   );
   if (currentTab) {
-    Zotero_Tabs.select(currentTab.id);
+    if (select) Zotero_Tabs.select(currentTab.id);
     return;
   }
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: item.getNoteTitle(),
-    index: 1,
+    index,
     data: {
       itemID: item.id,
     },
-    select: false,
+    select,
     onClose: () => {},
   });
   initWorkspace(container, item);
-  Zotero_Tabs.select(id);
 }
 
 let contextPaneOpen: boolean | undefined = undefined;
@@ -90,4 +96,17 @@ export function onTabSelect(tabType: string) {
     return;
   }
   ZoteroContextPane.update();
+}
+
+export function restoreNoteTabs() {
+  const tabsCache: _ZoteroTypes.TabInstance[] =
+    Zotero.Session.state.windows.find((x: any) => x.type == "pane")?.tabs;
+  for (const i in tabsCache) {
+    const tab = tabsCache[i];
+    if (tab.type !== TAB_TYPE) continue;
+    openWorkspaceTab(Zotero.Items.get(tab.data.itemID), {
+      select: tab.selected,
+      index: Number(i),
+    });
+  }
 }

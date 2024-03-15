@@ -12,6 +12,7 @@ import {
   registerWorkspaceTab,
   openWorkspaceTab,
   onTabSelect,
+  restoreNoteTabs,
 } from "./modules/workspace/tab";
 import { initWorkspace } from "./modules/workspace/content";
 import { registerNotify } from "./modules/notify";
@@ -81,6 +82,8 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   initTemplates();
 
   patchViewItems(win);
+
+  restoreNoteTabs();
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
@@ -255,4 +258,5 @@ export default {
   onShowTemplateEditor,
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
+  restoreNoteTabs,
 };
