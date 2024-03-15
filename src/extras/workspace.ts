@@ -6,7 +6,7 @@ import { Workspace } from "../elements/workspace";
 const elements = {
   "bn-context": ContextPane,
   "bn-outline": OutlinePane,
-  "bn-details": NoteDetails,
+  "bn-details": NoteDetails as unknown as CustomElementConstructor,
   "bn-workspace": Workspace,
 };
 

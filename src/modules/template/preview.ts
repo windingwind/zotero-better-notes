@@ -78,15 +78,16 @@ async function renderTemplatePreview(
       const link = getNoteLink(data);
       const linkText = data.getNoteTitle().trim() || link;
       const subNoteItem = data;
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
-      html = await addon.api.template.runTemplate(
-        templateName,
-        "link, linkText, subNoteItem, noteItem",
-        [link, linkText, subNoteItem, noteItem],
-        {
-          dryRun: true,
-        },
-      );
+      return "";
+      // const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      // html = await addon.api.template.runTemplate(
+      //   templateName,
+      //   "link, linkText, subNoteItem, noteItem",
+      //   [link, linkText, subNoteItem, noteItem],
+      //   {
+      //     dryRun: true,
+      //   },
+      // );
     }
   } else if (templateName.includes("QuickBackLink")) {
     // link, linkText, subNoteItem, noteItem
@@ -94,18 +95,19 @@ async function renderTemplatePreview(
     if (!data) {
       html = "<p>No note item selected</p>";
     } else {
-      const link = getNoteLink(data);
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
-      const linkText = noteItem.getNoteTitle().trim() || "Workspace Note";
-      const subNoteItem = data;
-      html = await addon.api.template.runTemplate(
-        templateName,
-        "link, linkText, subNoteItem, noteItem",
-        [link, linkText, subNoteItem, noteItem],
-        {
-          dryRun: true,
-        },
-      );
+      return "";
+      // const link = getNoteLink(data);
+      // const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      // const linkText = noteItem.getNoteTitle().trim() || "Workspace Note";
+      // const subNoteItem = data;
+      // html = await addon.api.template.runTemplate(
+      //   templateName,
+      //   "link, linkText, subNoteItem, noteItem",
+      //   [link, linkText, subNoteItem, noteItem],
+      //   {
+      //     dryRun: true,
+      //   },
+      // );
     }
   } else if (templateName.includes("QuickImport")) {
     // link, noteItem
@@ -113,16 +115,17 @@ async function renderTemplatePreview(
     if (!data) {
       html = "<p>No note item selected</p>";
     } else {
-      const link = getNoteLink(data);
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
-      html = await addon.api.template.runTemplate(
-        templateName,
-        "link, noteItem",
-        [link, noteItem],
-        {
-          dryRun: true,
-        },
-      );
+      return "";
+      // const link = getNoteLink(data);
+      // const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      // html = await addon.api.template.runTemplate(
+      //   templateName,
+      //   "link, noteItem",
+      //   [link, noteItem],
+      //   {
+      //     dryRun: true,
+      //   },
+      // );
     }
   } else if (templateName.includes("QuickNote")) {
     // annotationItem, topItem, noteItem

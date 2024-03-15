@@ -230,45 +230,45 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const onClickMenu = async (ev: MouseEvent) => {
     // TODO: fix link
     return;
-    const mainNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
-    if (!mainNote?.isNote()) {
-      return;
-    }
-    const lineIndex = parseInt(
-      (ev.target as HTMLDivElement).id.split("-").pop() || "-1",
-    );
-    const forwardLink = getNoteLink(noteItem);
-    const backLink = getNoteLink(mainNote, { ignore: true, lineIndex });
-    addLineToNote(
-      mainNote,
-      await addon.api.template.runTemplate(
-        "[QuickInsertV2]",
-        "link, linkText, subNoteItem, noteItem",
-        [
-          forwardLink,
-          noteItem.getNoteTitle().trim() || forwardLink,
-          noteItem,
-          mainNote,
-        ],
-      ),
-      lineIndex,
-    );
-    addLineToNote(
-      noteItem,
-      await addon.api.template.runTemplate(
-        "[QuickBackLinkV2]",
-        "link, linkText, subNoteItem, noteItem",
-        [
-          backLink,
-          mainNote.getNoteTitle().trim() || "Workspace Note",
-          noteItem,
-          mainNote,
-          "",
-        ],
-      ),
-    );
-    onExitMenu(ev);
-    ev.stopPropagation();
+    // const mainNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
+    // if (!mainNote?.isNote()) {
+    //   return;
+    // }
+    // const lineIndex = parseInt(
+    //   (ev.target as HTMLDivElement).id.split("-").pop() || "-1",
+    // );
+    // const forwardLink = getNoteLink(noteItem);
+    // const backLink = getNoteLink(mainNote, { ignore: true, lineIndex });
+    // addLineToNote(
+    //   mainNote,
+    //   await addon.api.template.runTemplate(
+    //     "[QuickInsertV2]",
+    //     "link, linkText, subNoteItem, noteItem",
+    //     [
+    //       forwardLink,
+    //       noteItem.getNoteTitle().trim() || forwardLink,
+    //       noteItem,
+    //       mainNote,
+    //     ],
+    //   ),
+    //   lineIndex,
+    // );
+    // addLineToNote(
+    //   noteItem,
+    //   await addon.api.template.runTemplate(
+    //     "[QuickBackLinkV2]",
+    //     "link, linkText, subNoteItem, noteItem",
+    //     [
+    //       backLink,
+    //       mainNote.getNoteTitle().trim() || "Workspace Note",
+    //       noteItem,
+    //       mainNote,
+    //       "",
+    //     ],
+    //   ),
+    // );
+    // onExitMenu(ev);
+    // ev.stopPropagation();
   };
 
   const linkButton = await registerEditorToolbarDropdown(
@@ -310,43 +310,44 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 }
 
 function getLinkMenuData(editor: Zotero.EditorInstance): PopupData[] {
-  const workspaceNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
-  const currentNote = editor._item;
-  if (!workspaceNote?.isNote()) {
-    return [
-      {
-        id: makeId("link-popup-nodata"),
-        text: getString("editor.toolbar.link.popup.nodata"),
-      },
-    ];
-  }
-  const nodes = getNoteTreeFlattened(workspaceNote, {
-    keepLink: true,
-  });
-  const menuData: PopupData[] = [];
-  for (const node of nodes) {
-    if (node.model.level === 7) {
-      const lastMenu =
-        menuData.length > 0 ? menuData[menuData.length - 1] : null;
-      const linkNote = getNoteLinkParams(node.model.link).noteItem;
-      if (linkNote && linkNote.id === currentNote.id && lastMenu) {
-        lastMenu.suffix = "🔗";
-      }
-      continue;
-    }
-    menuData.push({
-      id: makeId(
-        `link-popup-${
-          getPref("editor.link.insertPosition")
-            ? node.model.lineIndex - 1
-            : node.model.endIndex
-        }`,
-      ),
-      text: node.model.name,
-      prefix: "·".repeat(node.model.level - 1),
-    });
-  }
-  return menuData;
+  return [];
+  // const workspaceNote = Zotero.Items.get(addon.data.workspace.mainId) || null;
+  // const currentNote = editor._item;
+  // if (!workspaceNote?.isNote()) {
+  //   return [
+  //     {
+  //       id: makeId("link-popup-nodata"),
+  //       text: getString("editor.toolbar.link.popup.nodata"),
+  //     },
+  //   ];
+  // }
+  // const nodes = getNoteTreeFlattened(workspaceNote, {
+  //   keepLink: true,
+  // });
+  // const menuData: PopupData[] = [];
+  // for (const node of nodes) {
+  //   if (node.model.level === 7) {
+  //     const lastMenu =
+  //       menuData.length > 0 ? menuData[menuData.length - 1] : null;
+  //     const linkNote = getNoteLinkParams(node.model.link).noteItem;
+  //     if (linkNote && linkNote.id === currentNote.id && lastMenu) {
+  //       lastMenu.suffix = "🔗";
+  //     }
+  //     continue;
+  //   }
+  //   menuData.push({
+  //     id: makeId(
+  //       `link-popup-${
+  //         getPref("editor.link.insertPosition")
+  //           ? node.model.lineIndex - 1
+  //           : node.model.endIndex
+  //       }`,
+  //     ),
+  //     text: node.model.name,
+  //     prefix: "·".repeat(node.model.level - 1),
+  //   });
+  // }
+  // return menuData;
 }
 
 async function registerEditorToolbar(
