@@ -102,7 +102,7 @@ export async function showSyncManager() {
       // @ts-ignore TODO: Fix type in zotero-plugin-toolkit
       .setProp("onColumnSort", (columnIndex, ascending) => {
         addon.data.sync.manager.columnIndex = columnIndex;
-        addon.data.sync.manager.columnAscending = ascending;
+        addon.data.sync.manager.columnAscending = ascending > 0;
         refresh();
       })
       .render();
