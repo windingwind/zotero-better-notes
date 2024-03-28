@@ -84,7 +84,7 @@ let contextPaneOpen: boolean | undefined = undefined;
 
 export function onTabSelect(tabType: string) {
   const ZoteroContextPane = ztoolkit.getGlobal("ZoteroContextPane");
-  const splitter = ZoteroContextPane.getSplitter();
+  const splitter = ZoteroContextPane.splitter;
 
   if (tabType === TAB_TYPE) {
     contextPaneOpen = splitter.getAttribute("state") != "collapsed";
