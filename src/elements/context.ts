@@ -37,7 +37,7 @@ export class ContextPane extends PluginCEBase {
 
   render() {
     if (!this.item) return;
-    this._details.mode = this.item.isEditable() ? null : "view";
+    this._details.editable = this.item.isEditable();
     this._details.item = this.item;
     this._details.parentID = this.item.parentID;
     this._details.sidenav = this._sidenav;
