@@ -67,10 +67,17 @@ async function getMenuData(editor: Zotero.EditorInstance) {
   const currentSection = slice(getSectionAtCursor(editor) || "", 10);
   const settingsMenuData: PopupData[] = [
     {
-      id: makeId("settings-openWorkspace"),
-      text: getString("editor.toolbar.settings.openWorkspace"),
+      id: makeId("settings-openAsTab"),
+      text: getString("editor.toolbar.settings.openAsTab"),
       callback: (e) => {
         addon.hooks.onOpenWorkspace(noteItem, "tab");
+      },
+    },
+    {
+      id: makeId("settings-openAsWindow"),
+      text: getString("editor.toolbar.settings.openAsWindow"),
+      callback: (e) => {
+        addon.hooks.onOpenWorkspace(noteItem, "window");
       },
     },
     {

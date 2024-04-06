@@ -15,7 +15,7 @@ export class NoteDetails extends ItemDetails {
     <html:div id="zotero-view-item" class="zotero-view-item" tabindex="0">
       <tags-box id="zotero-editpane-tags" class="zotero-editpane-tags" data-pane="tags" />
 
-      <related-box id="zotero-editpane-related" class="zotero-editpane-related"
+      <bn-related-box id="zotero-editpane-related" class="zotero-editpane-related"
         data-pane="related" />
     </html:div>
   </html:div>

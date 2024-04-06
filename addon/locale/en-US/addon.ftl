@@ -74,7 +74,8 @@ workspace-emptyWorkspaceGuideCreate = Create a new note
 
 editor-toolbar-main = Workspace Note
 editor-toolbar-settings-title = Workspace Settings
-editor-toolbar-settings-openWorkspace = Open Note Workspace
+editor-toolbar-settings-openAsTab = Open as tab
+editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-setWorkspace = Set as Workspace Note
 editor-toolbar-settings-previewInWorkspace = Preview in Workspace
 editor-toolbar-settings-showInLibrary = Show in Library

@@ -70,7 +70,8 @@ workspace-emptyWorkspaceGuideCreate = Crea una nuova nota
 
 editor-toolbar-main = Nota di lavoro
 editor-toolbar-settings-title = Impostazioni dello spazio di lavoro
-editor-toolbar-settings-openWorkspace = Apri nota di lavoro
+editor-toolbar-settings-openAsTab = Open as tab
+editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-setWorkspace = Imposta come nota di lavoro
 editor-toolbar-settings-previewInWorkspace = Anteprima nello spazio di lavoro
 editor-toolbar-settings-showInLibrary = Show in Library

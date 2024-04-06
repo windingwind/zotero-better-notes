@@ -16,4 +16,8 @@ export async function openWorkspaceWindow(item: Zotero.Item) {
     "#workspace-container",
   ) as XUL.Box;
   addon.hooks.onInitWorkspace(container, item);
+
+  win.focus();
+  // @ts-ignore
+  win.updateTitle();
 }

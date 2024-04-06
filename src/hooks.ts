@@ -146,7 +146,7 @@ async function onPrefsEvent(type: string, data: { [key: string]: any }) {
 
 function onOpenNote(
   noteId: number,
-  mode: "auto" | "preview" | "workspace" | "standalone" = "auto",
+  mode: "auto" | "preview" | "workspace" | "standalone" | "window" = "auto",
   options: {
     lineIndex?: number;
     sectionName?: string;
@@ -166,6 +166,9 @@ function onOpenNote(
       break;
     case "workspace":
       addon.hooks.onOpenWorkspace(noteItem, "tab");
+      break;
+    case "window":
+      addon.hooks.onOpenWorkspace(noteItem, "window");
       break;
     case "standalone":
       ZoteroPane.openNoteWindow(noteId);

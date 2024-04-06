@@ -74,7 +74,8 @@ workspace-emptyWorkspaceGuideCreate = Yeni bir not oluşturun
 
 editor-toolbar-main = Çalışma Alanı Notu
 editor-toolbar-settings-title = Çalışma Alanı Ayarları
-editor-toolbar-settings-openWorkspace = Not Çalışma Alanı Açın
+editor-toolbar-settings-openAsTab = Open as tab
+editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-setWorkspace = Çalışma Alanı Notu Olarak Ayarla
 editor-toolbar-settings-previewInWorkspace = Çalışma Alanında Ön İzle Preview in Workspace
 editor-toolbar-settings-showInLibrary = Show in Library

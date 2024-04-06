@@ -74,7 +74,8 @@ workspace-emptyWorkspaceGuideCreate = Create a new note
 
 editor-toolbar-main=Заметка рабочего пространства
 editor-toolbar-settings-title=Настройки рабочего пространства
-editor-toolbar-settings-openWorkspace=Открыть пространство заметок
+editor-toolbar-settings-openAsTab = Open as tab
+editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-setWorkspace=Установить как Заметку раб. пространства
 editor-toolbar-settings-previewInWorkspace=Предпросмотр в рабочем пространстве
 editor-toolbar-settings-showInLibrary = Show in Library

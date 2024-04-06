@@ -74,7 +74,8 @@ workspace-emptyWorkspaceGuideCreate = 创建新笔记
 
 editor-toolbar-main=工作区笔记
 editor-toolbar-settings-title=工作区选项
-editor-toolbar-settings-openWorkspace=打开笔记工作区
+editor-toolbar-settings-openAsTab = 在标签页中打开
+editor-toolbar-settings-openAsWindow = 在窗口中打开
 editor-toolbar-settings-setWorkspace=设为工作区笔记
 editor-toolbar-settings-previewInWorkspace=在工作区预览
 editor-toolbar-settings-showInLibrary = 在文库中显示

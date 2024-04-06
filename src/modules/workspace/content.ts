@@ -1,5 +1,3 @@
-import { saveFreeMind as _saveFreeMind } from "../export/freemind";
-
 export function initWorkspace(container: XUL.Box, item: Zotero.Item) {
   if (!container) {
     return;
