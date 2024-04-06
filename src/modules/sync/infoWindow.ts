@@ -44,11 +44,12 @@ export async function showSyncInfo(noteId: number) {
     })
     .addButton(getString("syncInfo.unSync"), "unSync", {
       callback: async (ev) => {
-        const allNoteIds = await addon.api.note.getRelatedNoteIds(noteId);
-        for (const itemId of allNoteIds) {
+        const { detectedIDSet } =
+          await addon.api.note.getRelatedNoteIds(noteId);
+        for (const itemId of Array.from(detectedIDSet)) {
           addon.api.sync.removeSyncNote(itemId);
         }
-        showHint(`Cancel sync of ${allNoteIds.length} notes.`);
+        showHint(`Cancel sync of ${detectedIDSet.size} notes.`);
       },
     })
     .addButton(getString("syncInfo.reveal"), "reveal", {

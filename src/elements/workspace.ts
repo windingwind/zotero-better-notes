@@ -85,32 +85,30 @@ export class Workspace extends PluginCEBase {
   }
 
   async updateEditor() {
-    const editorElem = this._queryID("editor-main") as EditorElement;
-    await waitUtilAsync(() => Boolean(editorElem._initialized));
-    if (!editorElem._initialized) {
+    await waitUtilAsync(() => Boolean(this._editorElement._initialized));
+    if (!this._editorElement._initialized) {
       throw new Error("initNoteEditor: waiting initialization failed");
     }
-    editorElem.mode = "edit";
-    editorElem.viewMode = "library";
-    editorElem.parent = this.item?.parentItem;
-    editorElem.item = this.item;
-    await waitUtilAsync(() => Boolean(editorElem._editorInstance));
-    await editorElem._editorInstance._initPromise;
+    this._editorElement.mode = "edit";
+    this._editorElement.viewMode = "library";
+    this._editorElement.parent = this.item?.parentItem;
+    this._editorElement.item = this.item;
+    await waitUtilAsync(() => Boolean(this._editorElement._editorInstance));
+    await this._editorElement._editorInstance._initPromise;
     // Hide BN toolbar
-    editorElem._editorInstance._iframeWindow.document.body.setAttribute(
+    this._editorElement._editorInstance._iframeWindow.document.body.setAttribute(
       "no-bn-toolbar",
       "true",
     );
-    // TODO: implement jump to
-    // if (typeof options.lineIndex === "number") {
-    //   addon.api.editor.scroll(editorElem._editorInstance, options.lineIndex);
-    // }
-    // if (typeof options.sectionName === "string") {
-    //   addon.api.editor.scrollToSection(
-    //     editorElem._editorInstance,
-    //     options.sectionName,
-    //   );
-    // }
     return;
+  }
+
+  scrollEditorTo(options: { lineIndex?: number; sectionName?: string } = {}) {
+    if (typeof options.lineIndex === "number") {
+      this._addon.api.editor.scroll(this.editor, options.lineIndex);
+    }
+    if (typeof options.sectionName === "string") {
+      this._addon.api.editor.scrollToSection(this.editor, options.sectionName);
+    }
   }
 }

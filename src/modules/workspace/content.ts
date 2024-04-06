@@ -1,4 +1,4 @@
-export function initWorkspace(container: XUL.Box, item: Zotero.Item) {
+export async function initWorkspace(container: XUL.Box, item: Zotero.Item) {
   if (!container) {
     return;
   }
@@ -14,5 +14,6 @@ export function initWorkspace(container: XUL.Box, item: Zotero.Item) {
   container.append(workspace);
   workspace.item = item;
   workspace.containerType = "tab";
-  workspace.render();
+  await workspace.render();
+  return workspace;
 }

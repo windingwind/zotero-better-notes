@@ -137,7 +137,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
         {
           type: "click",
           listener: async (e) => {
-            ZoteroPane.openNoteWindow(linkNote.id);
+            addon.hooks.onOpenNote(linkNote.id, "window", linkParams);
           },
         },
       ],

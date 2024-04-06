@@ -15,7 +15,7 @@ export function patchViewItems(win: Window) {
         const otherItems = [];
         for (const item of items) {
           if (item.isNote()) {
-            addon.hooks.onOpenWorkspace(item, "tab");
+            addon.hooks.onOpenNote(item.id, "tab");
             continue;
           }
           otherItems.push(item);

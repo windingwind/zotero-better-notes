@@ -1,6 +1,9 @@
 import { config } from "../../../package.json";
 
-export async function openWorkspaceWindow(item: Zotero.Item) {
+export async function openWorkspaceWindow(
+  item: Zotero.Item,
+  options: { lineIndex?: number; sectionName?: string } = {},
+) {
   const windowArgs = {
     _initPromise: Zotero.Promise.defer(),
   };
@@ -15,9 +18,11 @@ export async function openWorkspaceWindow(item: Zotero.Item) {
   const container = win.document.querySelector(
     "#workspace-container",
   ) as XUL.Box;
-  addon.hooks.onInitWorkspace(container, item);
+  const workspace = await addon.hooks.onInitWorkspace(container, item);
+  workspace.scrollEditorTo(options);
 
   win.focus();
   // @ts-ignore
   win.updateTitle();
+  return workspace;
 }

@@ -1,34 +1,37 @@
-import { config } from "../../../package.json";
 import { initWorkspace } from "./content";
 
 export const TAB_TYPE = "note";
 
 export async function openWorkspaceTab(
   item: Zotero.Item,
-  options: { select?: boolean; index?: number } = {
+  options: { select?: boolean; lineIndex?: number; sectionName?: string } = {
     select: true,
   },
 ) {
-  const { select, index } = options;
+  const { select, lineIndex, sectionName } = options;
   if (!item) return;
   const currentTab = Zotero_Tabs._tabs.find(
     (tab) => tab.data?.itemID == item.id,
   );
   if (currentTab) {
-    if (select) Zotero_Tabs.select(currentTab.id);
+    if (select ?? true) Zotero_Tabs.select(currentTab.id);
+    onScrollTabEditorTo(item, options);
     return;
   }
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: item.getNoteTitle(),
-    index,
     data: {
       itemID: item.id,
     },
-    select,
+    select: select ?? true,
     onClose: () => {},
   });
-  initWorkspace(container, item);
+  const workspace = await initWorkspace(container, item);
+  workspace.scrollEditorTo({
+    lineIndex,
+    sectionName,
+  });
 }
 
 let contextPaneOpen: boolean | undefined = undefined;
@@ -57,7 +60,6 @@ export function restoreNoteTabs() {
     if (tab.type !== TAB_TYPE) continue;
     openWorkspaceTab(Zotero.Items.get(tab.data.itemID), {
       select: tab.selected,
-      index: Number(i),
     });
   }
 }
@@ -74,4 +76,19 @@ export function onUpdateNoteTabsTitle(noteItems: Zotero.Item[]) {
       Zotero_Tabs.rename(tab.id, newTitle);
     }
   }
+}
+
+function onScrollTabEditorTo(
+  item: Zotero.Item,
+  options: {
+    lineIndex?: number;
+    sectionName?: string;
+  } = {},
+) {
+  const tab = Zotero_Tabs._tabs.find((tab) => tab.data?.itemID == item.id);
+  if (!tab || tab.type !== TAB_TYPE) return;
+  const workspace = document.querySelector(`#${tab.id} > bn-workspace`);
+  if (!workspace) return;
+  // @ts-ignore
+  workspace.scrollEditorTo(options);
 }

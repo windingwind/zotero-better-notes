@@ -70,14 +70,14 @@ async function getMenuData(editor: Zotero.EditorInstance) {
       id: makeId("settings-openAsTab"),
       text: getString("editor.toolbar.settings.openAsTab"),
       callback: (e) => {
-        addon.hooks.onOpenWorkspace(noteItem, "tab");
+        addon.hooks.onOpenNote(noteItem.id, "tab");
       },
     },
     {
       id: makeId("settings-openAsWindow"),
       text: getString("editor.toolbar.settings.openAsWindow"),
       callback: (e) => {
-        addon.hooks.onOpenWorkspace(noteItem, "window");
+        addon.hooks.onOpenNote(noteItem.id, "window");
       },
     },
     {

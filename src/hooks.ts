@@ -33,7 +33,6 @@ import { createNoteFromTemplate, createNoteFromMD } from "./modules/createNote";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
-import { getPref } from "./utils/prefs";
 import { patchViewItems } from "./modules/viewItems";
 import { onUpdateRelated } from "./modules/relatedNotes";
 
@@ -146,7 +145,7 @@ async function onPrefsEvent(type: string, data: { [key: string]: any }) {
 
 function onOpenNote(
   noteId: number,
-  mode: "auto" | "preview" | "workspace" | "standalone" | "window" = "auto",
+  mode: "auto" | "preview" | "tab" | "window" | "builtin" = "auto",
   options: {
     lineIndex?: number;
     sectionName?: string;
@@ -158,19 +157,19 @@ function onOpenNote(
     return;
   }
   if (mode === "auto") {
-    mode = "workspace";
+    mode = "tab";
   }
   switch (mode) {
     case "preview":
       // addon.hooks.onSetWorkspaceNote(noteId, "preview", options);
       break;
-    case "workspace":
-      addon.hooks.onOpenWorkspace(noteItem, "tab");
+    case "tab":
+      openWorkspaceTab(noteItem, options);
       break;
     case "window":
-      addon.hooks.onOpenWorkspace(noteItem, "window");
+      openWorkspaceWindow(noteItem, options);
       break;
-    case "standalone":
+    case "builtin":
       ZoteroPane.openNoteWindow(noteId);
       break;
     default:
@@ -178,38 +177,7 @@ function onOpenNote(
   }
 }
 
-function onOpenWorkspace(item: Zotero.Item, type: "tab" | "window" = "tab") {
-  if (type === "window") {
-    openWorkspaceWindow(item);
-    return;
-  }
-  if (type === "tab") {
-    openWorkspaceTab(item);
-    return;
-  }
-}
-
 const onInitWorkspace = initWorkspace;
-
-function onToggleWorkspacePane(
-  type: "outline" | "preview" | "notes",
-  visibility?: boolean,
-  container?: XUL.Box,
-) {
-  // switch (type) {
-  //   case "outline":
-  //     toggleOutlinePane(visibility, container);
-  //     break;
-  //   case "preview":
-  //     togglePreviewPane(visibility, container);
-  //     break;
-  //   case "notes":
-  //     toggleNotesPane(visibility);
-  //     break;
-  //   default:
-  //     break;
-  // }
-}
 
 const onSyncing = callSyncing;
 
@@ -248,8 +216,6 @@ export default {
   onPrefsEvent,
   onOpenNote,
   onInitWorkspace,
-  onOpenWorkspace,
-  onToggleWorkspacePane,
   onSyncing,
   onUpdateRelated,
   onShowTemplatePicker,

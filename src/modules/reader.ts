@@ -23,7 +23,7 @@ export function registerReaderAnnotationButton() {
                 createNoteFromAnnotation(
                   reader._item.libraryID,
                   annotationData.id,
-                  (e as MouseEvent).shiftKey ? "standalone" : "auto",
+                  (e as MouseEvent).shiftKey ? "builtin" : "auto",
                 );
                 e.preventDefault();
               },
@@ -54,7 +54,7 @@ export function registerReaderAnnotationButton() {
 async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
-  openMode: "standalone" | "auto" = "auto",
+  openMode: "builtin" | "auto" = "auto",
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
     libraryID,
