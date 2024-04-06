@@ -9,10 +9,10 @@ import {
 } from "./modules/template/controller";
 import { registerMenus } from "./modules/menu";
 import {
-  registerWorkspaceTab,
   openWorkspaceTab,
   onTabSelect,
   restoreNoteTabs,
+  onUpdateNoteTabsTitle,
 } from "./modules/workspace/tab";
 import { initWorkspace } from "./modules/workspace/content";
 import { registerNotify } from "./modules/notify";
@@ -78,8 +78,6 @@ async function onMainWindowLoad(win: Window): Promise<void> {
 
   registerMenus();
 
-  registerWorkspaceTab(win);
-
   initTemplates();
 
   patchViewItems(win);
@@ -123,6 +121,7 @@ function onNotify(
         reason: "item-modify",
       });
       addon.hooks.onUpdateRelated(modifiedNotes, { skipActive: true });
+      onUpdateNoteTabsTitle(modifiedNotes);
     }
   } else {
     return;

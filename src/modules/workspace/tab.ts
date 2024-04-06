@@ -3,55 +3,6 @@ import { initWorkspace } from "./content";
 
 export const TAB_TYPE = "note";
 
-export function registerWorkspaceTab(win: Window) {
-  const doc = win.document;
-  const spacer = doc.querySelector("#zotero-collections-toolbar > spacer");
-  if (!spacer) {
-    return;
-  }
-  const tabButton = ztoolkit.UI.insertElementBefore(
-    {
-      tag: "toolbarbutton",
-      classList: ["zotero-tb-button"],
-      styles: {
-        listStyleImage: `url("chrome://${config.addonRef}/content/icons/icon-linear-20.svg")`,
-      },
-      attributes: {
-        tooltiptext: "Open workspace",
-      },
-      listeners: [
-        {
-          type: "command",
-          listener: (ev) => {
-            // if ((ev as MouseEvent).shiftKey) {
-            //   addon.hooks.onOpenWorkspace("window");
-            // } else {
-            //   addon.hooks.onOpenWorkspace("tab");
-            // }
-          },
-        },
-      ],
-    },
-    spacer,
-  ) as XUL.ToolBarButton;
-  const collectionSearch = doc.querySelector("#zotero-collections-search")!;
-  const ob = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
-    tabButton.hidden = !!collectionSearch?.classList.contains("visible");
-  });
-  ob.observe(collectionSearch, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
-
-  win.addEventListener(
-    "unload",
-    () => {
-      ob.disconnect();
-    },
-    { once: true },
-  );
-}
-
 export async function openWorkspaceTab(
   item: Zotero.Item,
   options: { select?: boolean; index?: number } = {
@@ -108,5 +59,19 @@ export function restoreNoteTabs() {
       select: tab.selected,
       index: Number(i),
     });
+  }
+}
+
+export function onUpdateNoteTabsTitle(noteItems: Zotero.Item[]) {
+  const ids = noteItems.map((item) => item.id);
+  for (const tab of Zotero_Tabs._tabs) {
+    if (tab.type !== TAB_TYPE) continue;
+    if (ids.includes(tab.data.itemID)) {
+      const newTitle = Zotero.Items.get(tab.data.itemID).getNoteTitle();
+      if (tab.title === newTitle) {
+        continue;
+      }
+      Zotero_Tabs.rename(tab.id, newTitle);
+    }
   }
 }
