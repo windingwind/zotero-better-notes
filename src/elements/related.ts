@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { config } from "../../package.json";
 import { getPref } from "../utils/prefs";
+import { slice } from "../utils/str";
 import { waitUtilAsync } from "../utils/wait";
 
 const RelatedBox = customElements.get("related-box")! as typeof XULElementBase;
@@ -115,7 +116,6 @@ function openNotePreview(noteItem: Zotero.Item, workspaceUID: string) {
     header: {
       icon: "chrome://zotero/skin/16/universal/note.svg",
       l10nID: `${config.addonRef}-note-preview-header`,
-      l10nArgs: JSON.stringify({ title: noteItem.getNoteTitle() }),
     },
     sidenav: {
       icon: "chrome://zotero/skin/20/universal/note.svg",
@@ -149,7 +149,9 @@ function openNotePreview(noteItem: Zotero.Item, workspaceUID: string) {
       }
       setEnabled(true);
     },
-    onRender: () => {},
+    onRender: ({ setSectionSummary }) => {
+      setSectionSummary(noteItem.getNoteTitle());
+    },
     onAsyncRender: async ({ body }) => {
       const editorElement = body.querySelector("note-editor")! as EditorElement;
       await waitUtilAsync(() => Boolean(editorElement._initialized));

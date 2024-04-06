@@ -1,5 +1,5 @@
 note-preview-header =
-    .label = Preview: {$title}
+    .label = Note Preview
 note-preview-sidenav =
     .tooltiptext = {$title}
 note-preview-open =

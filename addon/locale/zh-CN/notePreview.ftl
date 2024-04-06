@@ -1,5 +1,5 @@
 note-preview-header =
-    .label = 预览: {$title}
+    .label = 笔记预览
 note-preview-sidenav =
     .tooltiptext = {$title}
 note-preview-open =
