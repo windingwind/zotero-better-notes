@@ -3,6 +3,7 @@ bn-note-picker {
 }
 
 .container {
+  min-height: 0;
   height: 100%;
   margin: 0;
 }
