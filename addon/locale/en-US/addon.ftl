@@ -1,12 +1,6 @@
 pref-title = BNotes
 
-menuItem-setMainNote = As Workspace Note
 menuItem-exportNote = Export Note
-
-menuFile-openMainNote = Choose and Open Workspace Note
-menuFile-openMainNote-error = Choosen item is not a valid note item
-menuFile-openRecent = Open Recent Workspace Note
-menuFile-openRecent-empty = No Recent Workspace Note
 
 menuEdit-insertTemplate = Insert Template to Workspace Note
 menuEdit-exportTemplate = Export Template to File...
@@ -15,11 +9,6 @@ menuEdit-importTemplate = New Template from Clipboard
 
 menuTools-syncManager = Sync Manager
 
-menuAddNote-newMainNote = New Workspace Note
-menuAddNote-newMainNote-confirmHead = Will create a new note in collection
-menuAddNote-newMainNote-confirmTail = and set it the workspace note. Continue?
-menuAddNote-newMainNote-enterNoteTitle = Enter new note title:
-menuAddNote-newMainNote-openWorkspaceTab = Open note workspace now?
 menuAddNote-newTemplateStandaloneNote = New Standalone Note from Template
 menuAddNote-newTemplateItemNote = New Item Note from Template
 menuAddNote-importMD = Import MarkDown File as Note
@@ -33,9 +22,6 @@ templateEditor-templateName = Template Name
 editor-resizeImage-title = Resize Image
 editor-resizeImage-prompt = Resize image width to:
 editor-previewImage-title = Preview Image
-
-tab-name = Note Workspace
-tab-openInWindow = Drag and drop here to open workspace in new window
 
 syncManager-noteName = Note Name
 syncManager-lastSync = Last Sync
@@ -63,7 +49,6 @@ sync-running-hint-finish = Finish
 sync-running-hint-synced = Synced
 sync-running-hint-upToDate = Up To Date
 
-workspace-notesPane-hint = PDF NotePane is not accesible if no PDF files are opened.
 workspace-switchOutline = Swith Outline Mode
 workspace-saveOutlineImage = Save Image
 workspace-saveOutlineFreeMind = Save MindMap
@@ -72,12 +57,8 @@ workspace-emptyWorkspaceGuideOpen = Choose a note to open
 workspace-emptyWorkspaceGuideOr = or
 workspace-emptyWorkspaceGuideCreate = Create a new note
 
-editor-toolbar-main = Workspace Note
-editor-toolbar-settings-title = Workspace Settings
 editor-toolbar-settings-openAsTab = Open as tab
 editor-toolbar-settings-openAsWindow = Open as window
-editor-toolbar-settings-setWorkspace = Set as Workspace Note
-editor-toolbar-settings-previewInWorkspace = Preview in Workspace
 editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate = Insert template
 editor-toolbar-settings-copyLink = Copy link (L{ $line })
@@ -86,8 +67,6 @@ editor-toolbar-settings-openParent = Open Attachment
 editor-toolbar-settings-export = Export Current Note...
 editor-toolbar-settings-refreshSyncing = Sync Now
 editor-toolbar-settings-updateRelatedNotes = Update Related Notes
-editor-toolbar-link-title = Link current note to workspace
-editor-toolbar-link-popup-nodata = Workspace note is invalid
 
 templatePicker-itemData-info = are selected in library. Please choose the data source:
 templatePicker-itemData-useLibrary = Use selected items in library
@@ -96,5 +75,4 @@ templatePicker-itemData-title = Choose Item Template Data Source
 
 alert-notValidCollectionError = Please select a valid collection.
 alert-notValidParentItemError = No valid parent item.
-alert-notValidWorkspaceNote = Workspace note is not set. Create one?
 alert-syncImportedNotes = Keep imported notes in sync with MarkDown files?
