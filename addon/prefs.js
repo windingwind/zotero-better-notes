@@ -1,5 +1,3 @@
-pref("__prefsPrefix__.recentMainNoteIds", "");
-
 pref("__prefsPrefix__.syncNoteIds", "");
 pref("__prefsPrefix__.syncPeriodSeconds", 30);
 pref("__prefsPrefix__.syncAttachmentFolder", "attachments");

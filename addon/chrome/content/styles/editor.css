@@ -43,7 +43,3 @@
 .primary-editor hr {
   max-width: unset;
 }
-
-body[no-bn-toolbar] #BetterNotes-toolbar {
-  display: none;
-}

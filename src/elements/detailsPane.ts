@@ -21,6 +21,11 @@ export class NoteDetails extends ItemDetails {
   </html:div>
 </hbox>`);
 
+  init() {
+    MozXULElement.insertFTLIfNeeded(`${config.addonRef}-notePreview.ftl`);
+    super.init();
+  }
+
   forceUpdateSideNav() {
     this._sidenav
       .querySelectorAll("toolbarbutton")

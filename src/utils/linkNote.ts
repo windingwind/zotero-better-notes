@@ -6,7 +6,7 @@ async function openLinkNoteDialog(currentNote: Zotero.Item) {
   const io = {
     openedNoteIDs: Zotero_Tabs._tabs
       .map((tab) => tab.data?.itemID)
-      .filter((id) => id),
+      .filter((id) => id && id != currentNote.id),
     currentNoteID: currentNote.id,
     deferred: Zotero.Promise.defer(),
   } as any;

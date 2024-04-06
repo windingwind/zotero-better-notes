@@ -67,6 +67,9 @@ export class Workspace extends PluginCEBase {
   init(): void {
     // MozXULElement.insertFTLIfNeeded(`${config.addonRef}-workspace.ftl`);
 
+    // For note preview section enabled decision
+    this.dataset.uid = Zotero.Utilities.randomString(8);
+
     this._outline = this._queryID("left-container") as unknown as OutlinePane;
     this._editorElement = this._queryID("editor-main") as EditorElement;
     this._outline._editorElement = this._editorElement;
@@ -95,11 +98,6 @@ export class Workspace extends PluginCEBase {
     this._editorElement.item = this.item;
     await waitUtilAsync(() => Boolean(this._editorElement._editorInstance));
     await this._editorElement._editorInstance._initPromise;
-    // Hide BN toolbar
-    this._editorElement._editorInstance._iframeWindow.document.body.setAttribute(
-      "no-bn-toolbar",
-      "true",
-    );
     return;
   }
 

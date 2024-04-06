@@ -6,6 +6,11 @@ bn-workspace,
   flex-grow: 1;
 }
 
-bn-workspace #__addonRef__-editor-main #links-container {
+bn-workspace #__addonRef__-editor-main #links-container,
+.bn-note-preview #links-container {
   display: none;
+}
+
+.bn-note-preview {
+  height: 300px;
 }
