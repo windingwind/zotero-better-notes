@@ -1,0 +1,40 @@
+bn-note-picker {
+  flex-direction: column;
+}
+
+.container {
+  height: 100%;
+  margin: 0;
+}
+
+#select-items-dialog #zotero-select-items-container {
+  gap: 0;
+}
+
+#collections-items-container {
+  display: flex;
+  height: 100%;
+  border-bottom: var(--material-border);
+  user-select: none;
+}
+
+#zotero-collections-tree-container {
+  border-right: var(--material-border);
+}
+
+#zotero-collections-tree {
+  background: var(--material-sidepane);
+}
+
+#select-items-dialog {
+  display: flex;
+  padding: 0;
+}
+
+#select-items-dialog #collections-items-container {
+  margin-bottom: 0;
+}
+
+#bn-select-opened-notes-container {
+  min-width: 200px;
+}

@@ -1,5 +1,6 @@
 import { ContextPane } from "../elements/context";
 import { NoteDetails } from "../elements/detailsPane";
+import { NotePicker } from "../elements/notePicker";
 import { OutlinePane } from "../elements/outlinePane";
 import { Workspace } from "../elements/workspace";
 
@@ -8,6 +9,7 @@ const elements = {
   "bn-outline": OutlinePane,
   "bn-details": NoteDetails as unknown as CustomElementConstructor,
   "bn-workspace": Workspace,
+  "bn-note-picker": NotePicker,
 };
 
 for (const [key, constructor] of Object.entries(elements)) {

@@ -11,14 +11,14 @@ export class PluginCEBase extends XULElementBase {
 
   _wrapID(key: string) {
     if (key.startsWith(config.addonRef)) {
-        return key;
+      return key;
     }
     return `${config.addonRef}-${key}`;
   }
 
   _unwrapID(id: string) {
     if (id.startsWith(config.addonRef)) {
-        return id.slice(config.addonRef.length + 1);
+      return id.slice(config.addonRef.length + 1);
     }
     return id;
   }
@@ -28,9 +28,9 @@ export class PluginCEBase extends XULElementBase {
   }
 
   _parseContentID(dom: DocumentFragment) {
-    dom.querySelectorAll("*[id]").forEach(elem => {
-        elem.id = this._wrapID(elem.id);
-    })
+    dom.querySelectorAll("*[id]").forEach((elem) => {
+      elem.id = this._wrapID(elem.id);
+    });
     return dom;
   }
 

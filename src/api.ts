@@ -65,6 +65,7 @@ import {
   updateRelatedNotes,
   getRelatedNoteIds,
   getNoteTreeFlattened,
+  getLinesInNote,
 } from "./utils/note";
 
 const workspace = {};
@@ -144,6 +145,7 @@ const editor = {
 
 const note = {
   insert: addLineToNote,
+  getLinesInNote,
   updateRelatedNotes,
   getRelatedNoteIds,
   getNoteTreeFlattened,

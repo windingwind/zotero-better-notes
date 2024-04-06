@@ -8,7 +8,7 @@ export async function saveMD(
   options: {
     keepNoteLink?: boolean;
     withYAMLHeader?: boolean;
-  },
+  } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
   const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));

@@ -6,6 +6,8 @@ pref("__prefsPrefix__.syncAttachmentFolder", "attachments");
 
 pref("__prefsPrefix__.autoAnnotation", false);
 
+pref("__prefsPrefix__.insertLinkPosition", "end");
+
 pref("__prefsPrefix__.embedLink", true);
 pref("__prefsPrefix__.standaloneLink", false);
 pref("__prefsPrefix__.keepLink", true);

@@ -109,7 +109,7 @@ async function runTextTemplate(
   options: {
     targetNoteId?: number;
     dryRun?: boolean;
-  },
+  } = {},
 ) {
   const { targetNoteId, dryRun } = options;
   const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
@@ -130,7 +130,7 @@ async function runItemTemplate(
     itemIds?: number[];
     targetNoteId?: number;
     dryRun?: boolean;
-  },
+  } = {},
 ): Promise<string> {
   /**
    * args:

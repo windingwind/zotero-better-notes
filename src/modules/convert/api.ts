@@ -175,7 +175,7 @@ async function note2noteDiff(noteItem: Zotero.Item) {
 
 function note2link(
   noteItem: Zotero.Item,
-  options: Parameters<typeof getNoteLink>[1],
+  options: Parameters<typeof getNoteLink>[1] = {},
 ) {
   return getNoteLink(noteItem, options);
 }
@@ -236,7 +236,7 @@ function annotations2html(
 
 async function note2html(
   noteItems: Zotero.Item | Zotero.Item[],
-  options: { targetNoteItem?: Zotero.Item; html?: string },
+  options: { targetNoteItem?: Zotero.Item; html?: string } = {},
 ) {
   if (!Array.isArray(noteItems)) {
     noteItems = [noteItems];

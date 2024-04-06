@@ -35,6 +35,7 @@ import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { getPref } from "./utils/prefs";
 import { patchViewItems } from "./modules/viewItems";
+import { onUpdateRelated } from "./modules/relatedNotes";
 
 async function onStartup() {
   await Promise.all([
@@ -67,7 +68,7 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   await waitUtilAsync(() => document.readyState === "complete");
 
   Services.scriptloader.loadSubScript(
-    `chrome://${config.addonRef}/content/scripts/workspace.js`,
+    `chrome://${config.addonRef}/content/scripts/customElements.js`,
     win,
   );
   // Create ztoolkit for every window
@@ -121,6 +122,7 @@ function onNotify(
         skipActive: true,
         reason: "item-modify",
       });
+      addon.hooks.onUpdateRelated(modifiedNotes, { skipActive: true });
     }
   } else {
     return;
@@ -164,7 +166,7 @@ function onOpenNote(
       // addon.hooks.onSetWorkspaceNote(noteId, "preview", options);
       break;
     case "workspace":
-      // addon.hooks.onSetWorkspaceNote(noteId, "main", options);
+      addon.hooks.onOpenWorkspace(noteItem, "tab");
       break;
     case "standalone":
       ZoteroPane.openNoteWindow(noteId);
@@ -247,6 +249,7 @@ export default {
   onOpenWorkspace,
   onToggleWorkspacePane,
   onSyncing,
+  onUpdateRelated,
   onShowTemplatePicker,
   onUpdateTemplatePicker,
   onImportTemplateFromClipboard,

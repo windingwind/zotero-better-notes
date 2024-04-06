@@ -1,0 +1,33 @@
+.container {
+  height: 100%;
+  margin: 0;
+}
+
+#top-container {
+  gap: 16px;
+  overflow: auto;
+  width: 800px;
+  padding: 2em;
+}
+
+bn-note-picker {
+  border: var(--material-border);
+  min-width: 600px;
+  height: 500px;
+}
+
+#bn-select-note-outline-container {
+  border: var(--material-border);
+  min-width: 300px;
+  height: 500px;
+}
+
+#bn-note-preview-container {
+  border: var(--material-border);
+  min-width: 450px;
+  height: 500px;
+}
+
+#bn-link-insert-position-container {
+  align-items: center;
+}

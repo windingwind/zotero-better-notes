@@ -4,7 +4,7 @@ import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { formatPath, getItemDataURL } from "./str";
 import { showHint } from "./hint";
 import { config } from "../../package.json";
-import { getNoteLinkParams } from "./link";
+import { getNoteLink, getNoteLinkParams } from "./link";
 
 export {
   renderNoteHTML,
@@ -111,11 +111,32 @@ function parseHTMLLines(html: string): string[] {
   return parsedLines;
 }
 
-function getLinesInNote(note: Zotero.Item): string[] {
+function getLinesInNote(note: Zotero.Item): string[];
+
+async function getLinesInNote(
+  note: Zotero.Item,
+  options: {
+    convertToHTML?: true;
+  },
+): Promise<string[]>;
+
+function getLinesInNote(
+  note: Zotero.Item,
+  options?: {
+    convertToHTML?: boolean;
+  },
+): string[] | Promise<string[]> {
   if (!note) {
     return [];
   }
   const noteText: string = note.getNote();
+  if (options?.convertToHTML) {
+    return new Promise((resolve) => {
+      addon.api.convert.note2html(note).then((html) => {
+        resolve(parseHTMLLines(html));
+      });
+    });
+  }
   return parseHTMLLines(noteText);
 }
 
@@ -162,7 +183,7 @@ async function addLineToNote(
   const editor = getEditorInstance(note.id);
   if (editor && !forceMetadata) {
     // The note is opened. Add line via note editor
-    const pos = getPositionAtLine(editor, lineIndex, "end");
+    const pos = getPositionAtLine(editor, lineIndex, "start");
     ztoolkit.log("Add note line via note editor", pos);
     insert(editor, html, pos);
     // The selection is automatically moved to the next line
@@ -524,24 +545,8 @@ async function updateRelatedNotes(noteID: number) {
     ztoolkit.log(`updateRelatedNotes: ${noteID} is not a note.`);
     return;
   }
-  const relatedNoteIDs = await getRelatedNoteIds(noteID);
-  const relatedNotes = Zotero.Items.get(relatedNoteIDs);
-  const currentRelatedNotes = {} as Record<number, Zotero.Item>;
+  const { detectedIDSet, currentIDSet } = await getRelatedNoteIds(noteID);
 
-  // Get current related items
-  for (const relItemKey of noteItem.relatedItems) {
-    try {
-      const relItem = (await Zotero.Items.getByLibraryAndKeyAsync(
-        noteItem.libraryID,
-        relItemKey,
-      )) as Zotero.Item;
-      if (relItem.isNote()) {
-        currentRelatedNotes[relItem.id] = relItem;
-      }
-    } catch (e) {
-      ztoolkit.log(e);
-    }
-  }
   await Zotero.DB.executeTransaction(async () => {
     const saveParams = {
       skipDateModifiedUpdate: true,
@@ -550,18 +555,18 @@ async function updateRelatedNotes(noteID: number) {
         skipBN: true,
       },
     };
-    for (const toAddNote of relatedNotes) {
-      if (toAddNote.id in currentRelatedNotes) {
+    for (const toAddNote of Zotero.Items.get(Array.from(detectedIDSet))) {
+      if (currentIDSet.has(toAddNote.id)) {
         // Remove existing notes from current dict for later process
-        delete currentRelatedNotes[toAddNote.id];
+        currentIDSet.delete(toAddNote.id);
         continue;
       }
       toAddNote.addRelatedItem(noteItem);
       noteItem.addRelatedItem(toAddNote);
       toAddNote.save(saveParams);
-      delete currentRelatedNotes[toAddNote.id];
+      currentIDSet.delete(toAddNote.id);
     }
-    for (const toRemoveNote of Object.values(currentRelatedNotes)) {
+    for (const toRemoveNote of Zotero.Items.get(Array.from(currentIDSet))) {
       // Remove related notes that are not in the new list
       toRemoveNote.removeRelatedItem(noteItem);
       noteItem.removeRelatedItem(toRemoveNote);
@@ -571,21 +576,49 @@ async function updateRelatedNotes(noteID: number) {
   });
 }
 
-async function getRelatedNoteIds(noteId: number): Promise<number[]> {
-  let allNoteIds: number[] = [noteId];
+async function getRelatedNoteIds(noteId: number) {
+  let detectedIDs: number[] = [];
   const note = Zotero.Items.get(noteId);
   const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
-  if (!linkMatches) {
-    return allNoteIds;
-  }
-  const subNoteIds = (
-    await Promise.all(
-      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
+  const currentIDs: number[] = [];
+
+  if (linkMatches) {
+    const subNoteIds = (
+      await Promise.all(
+        linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
+      )
     )
-  )
-    .filter((item) => item && item.isNote())
-    .map((item) => (item as Zotero.Item).id);
-  allNoteIds = allNoteIds.concat(subNoteIds);
-  allNoteIds = new Array(...new Set(allNoteIds));
-  return allNoteIds;
+      .filter((item) => item && item.isNote())
+      .map((item) => (item as Zotero.Item).id);
+    detectedIDs = detectedIDs.concat(subNoteIds);
+  }
+
+  const currentNoteLink = getNoteLink(note);
+  if (currentNoteLink) {
+    // Get current related items
+    for (const relItemKey of note.relatedItems) {
+      try {
+        const relItem = (await Zotero.Items.getByLibraryAndKeyAsync(
+          note.libraryID,
+          relItemKey,
+        )) as Zotero.Item;
+
+        // If the related item is a note and contains the current note link
+        // Add it to the related note list
+        if (relItem.isNote()) {
+          if (relItem.getNote().includes(currentNoteLink)) {
+            detectedIDs.push(relItem.id);
+          }
+          currentIDs.push(relItem.id);
+        }
+      } catch (e) {
+        ztoolkit.log(e);
+      }
+    }
+  }
+
+  const detectedIDSet = new Set(detectedIDs);
+  detectedIDSet.delete(noteId);
+  const currentIDSet = new Set(currentIDs);
+  return { detectedIDSet, currentIDSet };
 }

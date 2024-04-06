@@ -132,7 +132,9 @@ export class OutlinePane extends PluginCEBase {
   init(): void {
     MozXULElement.insertFTLIfNeeded(`${config.addonRef}-outline.ftl`);
 
-    this._outlineContainer = this._queryID("outline") as unknown as HTMLIFrameElement;
+    this._outlineContainer = this._queryID(
+      "outline",
+    ) as unknown as HTMLIFrameElement;
 
     this._queryID("left-toolbar")?.addEventListener(
       "command",
@@ -163,6 +165,7 @@ export class OutlinePane extends PluginCEBase {
     extraData: { [key: string]: any },
   ) {
     if (!this.item) return;
+    if (extraData.skipBN) return;
     if (event === "modify" && type === "item") {
       if ((ids as number[]).includes(this.item.id)) {
         this.updateOutline();
@@ -188,10 +191,15 @@ export class OutlinePane extends PluginCEBase {
       this.messageHandler,
     );
 
-    this._outlineContainer.setAttribute("src", OutlinePane.outlineSources[this.outlineType]);
+    this._outlineContainer.setAttribute(
+      "src",
+      OutlinePane.outlineSources[this.outlineType],
+    );
 
     await waitUtilAsync(
-      () => this._outlineContainer.contentWindow?.document.readyState === "complete",
+      () =>
+        this._outlineContainer.contentWindow?.document.readyState ===
+        "complete",
     );
     this._outlineContainer.contentWindow?.addEventListener(
       "message",
