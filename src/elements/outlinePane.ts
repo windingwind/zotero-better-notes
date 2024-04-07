@@ -170,7 +170,7 @@ export class OutlinePane extends PluginCEBase {
       if ((ids as number[]).includes(this.item.id)) {
         this.updateOutline();
         if (getPref("workspace.autoUpdateRelatedNotes")) {
-          this._addon.api.note.updateRelatedNotes(this.item.id);
+          this._addon.api.related.updateRelatedNotes(this.item.id);
         }
       }
     }

@@ -45,7 +45,7 @@ export async function showSyncInfo(noteId: number) {
     .addButton(getString("syncInfo.unSync"), "unSync", {
       callback: async (ev) => {
         const { detectedIDSet } =
-          await addon.api.note.getRelatedNoteIds(noteId);
+          await addon.api.related.getRelatedNoteIds(noteId);
         for (const itemId of Array.from(detectedIDSet)) {
           addon.api.sync.removeSyncNote(itemId);
         }

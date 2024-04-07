@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { config } from "../../package.json";
 import { getPref } from "../utils/prefs";
-import { slice } from "../utils/str";
-import { waitUtilAsync } from "../utils/wait";
 
 const RelatedBox = customElements.get("related-box")! as typeof XULElementBase;
 
@@ -105,65 +103,8 @@ export class NoteRelatedBox extends RelatedBox {
       // @ts-ignore
       return super._handleShowItem(id);
     }
-    openNotePreview(item, this.closest("bn-workspace")?.dataset.uid);
+    Zotero[config.addonRef].hooks.onOpenNote(item.id, "preview", {
+      workspaceUID: this.closest("bn-workspace")?.dataset.uid,
+    });
   }
-}
-
-function openNotePreview(noteItem: Zotero.Item, workspaceUID: string) {
-  const key = Zotero.ItemPaneManager.registerSection({
-    paneID: `bn-note-preview-${workspaceUID}-${noteItem.id}`,
-    pluginID: config.addonID,
-    header: {
-      icon: "chrome://zotero/skin/16/universal/note.svg",
-      l10nID: `${config.addonRef}-note-preview-header`,
-    },
-    sidenav: {
-      icon: "chrome://zotero/skin/20/universal/note.svg",
-      l10nID: `${config.addonRef}-note-preview-sidenav`,
-      l10nArgs: JSON.stringify({ title: noteItem.getNoteTitle() }),
-    },
-    bodyXHTML: `<note-editor class="bn-note-preview"></note-editor>`,
-    sectionButtons: [
-      {
-        type: "openNote",
-        icon: "chrome://zotero/skin/16/universal/open-link.svg",
-        l10nID: `${config.addonRef}-note-preview-open`,
-        onClick: ({ event }) => {
-          const position = event.shiftKey ? "window" : "tab";
-          Zotero[config.addonRef].hooks.onOpenNote(noteItem.id, position);
-        },
-      },
-      {
-        type: "closePreview",
-        icon: "chrome://zotero/skin/16/universal/minus.svg",
-        l10nID: `${config.addonRef}-note-preview-close`,
-        onClick: () => {
-          Zotero.ItemPaneManager.unregisterSection(key);
-        },
-      },
-    ],
-    onItemChange: ({ body, tabType, setEnabled }) => {
-      if (body.closest("bn-workspace")?.dataset.uid !== workspaceUID) {
-        setEnabled(false);
-        return;
-      }
-      setEnabled(true);
-    },
-    onRender: ({ setSectionSummary }) => {
-      setSectionSummary(noteItem.getNoteTitle());
-    },
-    onAsyncRender: async ({ body }) => {
-      const editorElement = body.querySelector("note-editor")! as EditorElement;
-      await waitUtilAsync(() => Boolean(editorElement._initialized));
-      if (!editorElement._initialized) {
-        throw new Error("initNoteEditor: waiting initialization failed");
-      }
-      editorElement.mode = "edit";
-      editorElement.viewMode = "library";
-      editorElement.parent = noteItem?.parentItem;
-      editorElement.item = noteItem;
-      await waitUtilAsync(() => Boolean(editorElement._editorInstance));
-      await editorElement._editorInstance._initPromise;
-    },
-  });
 }

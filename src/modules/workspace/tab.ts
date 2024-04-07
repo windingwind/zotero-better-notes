@@ -15,7 +15,7 @@ export async function openWorkspaceTab(
   );
   if (currentTab) {
     if (select ?? true) Zotero_Tabs.select(currentTab.id);
-    onScrollTabEditorTo(item, options);
+    scrollTabEditorTo(item, options);
     return;
   }
   const { id, container } = Zotero_Tabs.add({
@@ -78,7 +78,7 @@ export function onUpdateNoteTabsTitle(noteItems: Zotero.Item[]) {
   }
 }
 
-function onScrollTabEditorTo(
+function scrollTabEditorTo(
   item: Zotero.Item,
   options: {
     lineIndex?: number;

@@ -8,15 +8,16 @@ import {
   initTemplates,
 } from "./modules/template/controller";
 import { registerMenus } from "./modules/menu";
+import { initWorkspace } from "./modules/workspace/content";
 import {
   openWorkspaceTab,
   onTabSelect,
   restoreNoteTabs,
   onUpdateNoteTabsTitle,
 } from "./modules/workspace/tab";
-import { initWorkspace } from "./modules/workspace/content";
-import { registerNotify } from "./modules/notify";
 import { openWorkspaceWindow } from "./modules/workspace/window";
+import { openNotePreview } from "./modules/workspace/preview";
+import { registerNotify } from "./modules/notify";
 import { registerReaderAnnotationButton } from "./modules/reader";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import {
@@ -35,6 +36,7 @@ import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { patchViewItems } from "./modules/viewItems";
 import { onUpdateRelated } from "./modules/relatedNotes";
+import { getFocusedWindow } from "./utils/window";
 
 async function onStartup() {
   await Promise.all([
@@ -147,21 +149,46 @@ function onOpenNote(
   noteId: number,
   mode: "auto" | "preview" | "tab" | "window" | "builtin" = "auto",
   options: {
+    workspaceUID?: string;
     lineIndex?: number;
     sectionName?: string;
   } = {},
 ) {
+  let { workspaceUID } = options;
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem?.isNote()) {
     ztoolkit.log(`onOpenNote: ${noteId} is not a note.`);
     return;
   }
   if (mode === "auto") {
-    mode = "tab";
+    const currentWindow = getFocusedWindow();
+
+    if ((currentWindow as any)?.Zotero_Tabs?.selectedType === "note") {
+      mode = "preview";
+      workspaceUID = (
+        document.querySelector(`#${Zotero_Tabs.selectedID} bn-workspace`) as
+          | HTMLElement
+          | undefined
+      )?.dataset.uid;
+    } else if (currentWindow?.document.querySelector("bn-workspace")) {
+      mode = "preview";
+      workspaceUID = (
+        currentWindow.document.querySelector("bn-workspace") as
+          | HTMLElement
+          | undefined
+      )?.dataset.uid;
+    } else {
+      mode = "tab";
+    }
   }
   switch (mode) {
     case "preview":
-      // addon.hooks.onSetWorkspaceNote(noteId, "preview", options);
+      if (!workspaceUID) {
+        throw new Error(
+          "Better Notes onOpenNote mode=preview must have workspaceUID provided.",
+        );
+      }
+      openNotePreview(noteItem, workspaceUID, options);
       break;
     case "tab":
       openWorkspaceTab(noteItem, options);

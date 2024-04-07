@@ -26,6 +26,6 @@ function onUpdateRelated(
     items = filteredItems;
   }
   for (const item of items) {
-    addon.api.note.updateRelatedNotes(item.id);
+    addon.api.related.updateRelatedNotes(item.id);
   }
 }

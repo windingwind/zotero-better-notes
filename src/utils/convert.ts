@@ -26,19 +26,19 @@ import {
   formatPath,
   jointPath,
   randomString,
-} from "../../utils/str";
+} from "./str";
 import {
   copyEmbeddedImagesInHTML,
   importImageToNote,
   renderNoteHTML,
-} from "../../utils/note";
+} from "./note";
 import {
   getLinkedNotesRecursively,
   getNoteLink,
   getNoteLinkParams,
-} from "../../utils/link";
-import { parseAnnotationHTML } from "../../utils/annotation";
-import { getPref } from "../../utils/prefs";
+} from "./link";
+import { parseAnnotationHTML } from "./annotation";
+import { getPref } from "./prefs";
 
 export {
   md2note,

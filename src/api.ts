@@ -9,7 +9,7 @@ import {
   html2md,
   annotations2html,
   note2html,
-} from "./modules/convert/api";
+} from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
 import { saveFreeMind } from "./modules/export/freemind";
@@ -62,11 +62,10 @@ import {
 } from "./utils/editor";
 import {
   addLineToNote,
-  updateRelatedNotes,
-  getRelatedNoteIds,
   getNoteTreeFlattened,
   getLinesInNote,
 } from "./utils/note";
+import { updateRelatedNotes, getRelatedNoteIds } from "./utils/related";
 
 const workspace = {};
 
@@ -81,10 +80,6 @@ const sync = {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
-  /**
-   * @deprecated Use `api.note.getRelatedNoteIds` instead
-   */
-  getRelatedNoteIds,
 };
 
 const convert = {
@@ -146,9 +141,12 @@ const editor = {
 const note = {
   insert: addLineToNote,
   getLinesInNote,
+  getNoteTreeFlattened,
+};
+
+const related = {
   updateRelatedNotes,
   getRelatedNoteIds,
-  getNoteTreeFlattened,
 };
 
 export default {
@@ -160,4 +158,5 @@ export default {
   $import,
   editor,
   note,
+  related,
 };

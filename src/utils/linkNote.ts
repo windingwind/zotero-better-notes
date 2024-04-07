@@ -1,4 +1,5 @@
 import { config } from "../../package.json";
+import { addLineToNote } from "./note";
 
 export { openLinkNoteDialog };
 
@@ -24,7 +25,7 @@ async function openLinkNoteDialog(currentNote: Zotero.Item) {
 
   if (!targetNote || !content) return;
 
-  await addon.api.note.insert(targetNote, content, lineIndex);
+  await addLineToNote(targetNote, content, lineIndex);
 
   await Zotero.DB.executeTransaction(async () => {
     const saveParams = {

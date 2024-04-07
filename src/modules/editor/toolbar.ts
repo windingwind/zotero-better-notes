@@ -64,7 +64,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
 
   const currentLine = getLineAtCursor(editor);
-  const currentSection = slice(getSectionAtCursor(editor) || "", 10);
+  const currentSection = getSectionAtCursor(editor) || "";
   const settingsMenuData: PopupData[] = [
     {
       id: makeId("settings-openAsTab"),
@@ -150,7 +150,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
           id: makeId("settings-copyLinkAtSection"),
           text: getString("editor.toolbar.settings.copyLinkAtSection", {
             args: {
-              section: currentSection,
+              section: slice(currentSection, 10),
             },
           }),
           callback: (e) => {
@@ -174,7 +174,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
           id: makeId("settings-updateRelatedNotes"),
           text: getString("editor-toolbar-settings-updateRelatedNotes"),
           callback: (e) => {
-            addon.api.note.updateRelatedNotes(e.editor._item.id);
+            addon.api.related.updateRelatedNotes(e.editor._item.id);
           },
         },
       ]),
