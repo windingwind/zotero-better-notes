@@ -8,7 +8,7 @@ function onUpdateRelated(
     skipActive: true,
   },
 ) {
-  if (!getPref("workspace.autoUpdateRelatedNotes")) {
+  if (!getPref("related.takeover")) {
     return;
   }
   if (skipActive) {

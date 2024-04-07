@@ -1,4 +1,4 @@
-pref-title=BNotes
+pref-title=Better Notes
 
 menuItem-exportNote=导出笔记
 
@@ -60,9 +60,9 @@ workspace-emptyWorkspaceGuideCreate = 创建新笔记
 editor-toolbar-settings-openAsTab = 在标签页中打开
 editor-toolbar-settings-openAsWindow = 在窗口中打开
 editor-toolbar-settings-showInLibrary = 在文库中显示
-editor-toolbar-settings-insertTemplate=插入模板到光标行
-editor-toolbar-settings-copyLink=复制当前行({ $line })笔记链接
-editor-toolbar-settings-copyLinkAtSection=复制当前节({ $section })笔记链接
+editor-toolbar-settings-insertTemplate=插入模板
+editor-toolbar-settings-copyLink=复制行(L{ $line })
+editor-toolbar-settings-copyLinkAtSection=复制节(Sec. { $section })
 editor-toolbar-settings-openParent=打开附件
 editor-toolbar-settings-export=导出当前笔记...
 editor-toolbar-settings-refreshSyncing=立即同步

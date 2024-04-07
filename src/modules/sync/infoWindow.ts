@@ -69,7 +69,7 @@ export async function showSyncInfo(noteId: number) {
         addon.hooks.onShowExportNoteOptions([noteId]);
       },
     })
-    .addButton(getString("export.cancel"), "cancel")
+    .addButton(getString("syncInfo.cancel"), "cancel")
     .open(getString("export.title"), {
       resizable: true,
       centerscreen: true,

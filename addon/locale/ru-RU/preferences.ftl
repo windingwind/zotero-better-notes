@@ -1,9 +1,14 @@
-workspace-title = Рабочее пространство
-workspace-expandLevel-label = Outline расширить до уровня заголовка
-workspace-keepLinks = 
+basic-title = Basic
+basic-openNote-takeover =
+    .label = Take over opening note
+basic-related-takeover =
+    .label = Take over note relation
+
+editor-title = Note Editor
+editor-expandLevel-label = Outline расширить до уровня заголовка
+editor-keepLinks = 
     .label = Сохранить ссылки
-workspace-autoUpdateRelatedNotes =
-    .label = Автообновление связанных заметок
+
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)
 sync-attachmentFolder-label = Attachment folder

@@ -1,4 +1,4 @@
-pref-title = BNotes
+pref-title = Better Notes
 
 menuItem-exportNote = Esporta nota
 

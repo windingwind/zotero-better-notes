@@ -38,6 +38,7 @@ import { patchViewItems } from "./modules/viewItems";
 import { onUpdateRelated } from "./modules/relatedNotes";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
+import { getPref } from "./utils/prefs";
 
 async function onStartup() {
   await Promise.all([
@@ -157,6 +158,10 @@ function onOpenNote(
     sectionName?: string;
   } = {},
 ) {
+  if (!getPref("openNote.takeover")) {
+    ZoteroPane.openNoteWindow(noteId);
+    return;
+  }
   let { workspaceUID } = options;
   const noteItem = Zotero.Items.get(noteId);
   if (!noteItem?.isNote()) {

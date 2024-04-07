@@ -81,7 +81,7 @@ export class NoteRelatedBox extends RelatedBox {
         if (
           this.editable &&
           (!relatedItem.isNote() ||
-            !getPref("workspace.autoUpdateRelatedNotes"))
+            !getPref("related.takeover"))
         ) {
           const remove = document.createXULElement("toolbarbutton");
           remove.addEventListener("command", () => this._handleRemove(id));

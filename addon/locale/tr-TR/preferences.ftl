@@ -1,9 +1,14 @@
-workspace-title = Çalışma Alanı
-workspace-expandLevel-label = Anahat başlık seviyesine genişletildi
-workspace-keepLinks = 
+basic-title = Basic
+basic-openNote-takeover =
+    .label = Take over opening note
+basic-related-takeover =
+    .label = Take over note relation
+
+editor-title = Note Editor
+editor-expandLevel-label = Anahat başlık seviyesine genişletildi
+editor-keepLinks = 
     .label = Not linklerini anahatta göster
-workspace-autoUpdateRelatedNotes =
-    .label = Alakalı olanları otomatik güncelle
+
 sync-title = Senkronize Et
 sync-period-label = Oto-Senkronize aralığı (saniye)
 sync-attachmentFolder-label = Ek Klasörü
