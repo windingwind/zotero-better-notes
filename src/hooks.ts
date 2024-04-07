@@ -37,6 +37,7 @@ import { initSyncList } from "./modules/sync/api";
 import { patchViewItems } from "./modules/viewItems";
 import { onUpdateRelated } from "./modules/relatedNotes";
 import { getFocusedWindow } from "./utils/window";
+import { registerNoteRelation } from "./modules/workspace/relation";
 
 async function onStartup() {
   await Promise.all([
@@ -57,6 +58,8 @@ async function onStartup() {
   registerPrefsWindow();
 
   registerReaderAnnotationButton();
+
+  registerNoteRelation();
 
   initSyncList();
 

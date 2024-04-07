@@ -23,6 +23,7 @@ export class NoteDetails extends ItemDetails {
 
   init() {
     MozXULElement.insertFTLIfNeeded(`${config.addonRef}-notePreview.ftl`);
+    MozXULElement.insertFTLIfNeeded(`${config.addonRef}-noteRelation.ftl`);
     super.init();
   }
 
