@@ -14,3 +14,7 @@ bn-workspace #__addonRef__-editor-main #links-container,
 .bn-note-preview {
   height: 450px;
 }
+
+.bn-note-preview iframe {
+  border-radius: 8px;
+}
