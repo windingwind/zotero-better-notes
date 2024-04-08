@@ -6,3 +6,5 @@ note-preview-open =
     .tooltiptext = 打开笔记
 note-preview-close =
     .tooltiptext = 关闭
+note-preview-full =
+    .tooltiptext = 切换全屏高度

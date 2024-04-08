@@ -70,6 +70,8 @@ export class Workspace extends PluginCEBase {
     // For note preview section enabled decision
     this.dataset.uid = Zotero.Utilities.randomString(8);
 
+    this._addon.data.workspace.instances[this.dataset.uid] = new WeakRef(this);
+
     this._outline = this._queryID("left-container") as unknown as OutlinePane;
     this._editorElement = this._queryID("editor-main") as EditorElement;
     this._outline._editorElement = this._editorElement;

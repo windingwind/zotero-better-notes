@@ -11,10 +11,7 @@ bn-workspace #__addonRef__-editor-main #links-container,
   display: none;
 }
 
-.bn-note-preview {
-  height: 450px;
-}
-
 .bn-note-preview iframe {
+  height: var(--details-height, 450px);
   border-radius: 8px;
 }

@@ -1,5 +1,6 @@
 import { config } from "../../../package.json";
 import { waitUtilAsync } from "../../utils/wait";
+import { getWorkspaceByUID } from "../../utils/workspace";
 
 export function openNotePreview(
   noteItem: Zotero.Item,
@@ -38,6 +39,36 @@ export function openNotePreview(
         l10nID: `${config.addonRef}-note-preview-close`,
         onClick: () => {
           Zotero.ItemPaneManager.unregisterSection(key || "");
+        },
+      },
+      {
+        type: "fullHeight",
+        icon: `chrome://${config.addonRef}/content/icons/full-16.svg`,
+        l10nID: `${config.addonRef}-note-preview-full`,
+        onClick: ({ body }) => {
+          const iframe = body.querySelector("iframe");
+          const details = body.closest("bn-details");
+          const head = body
+            .closest("item-pane-custom-section")
+            ?.querySelector(".head");
+          const heightKey = "--details-height";
+          if (iframe?.style.getPropertyValue(heightKey)) {
+            iframe.style.removeProperty(heightKey);
+            // @ts-ignore
+            if (details.pinnedPane === key) {
+              // @ts-ignore
+              details.pinnedPane = "";
+            }
+          } else {
+            iframe?.style.setProperty(
+              heightKey,
+              `${details!.clientHeight - head!.clientHeight - 8}px`,
+            );
+            // @ts-ignore
+            details.pinnedPane = key;
+            // @ts-ignore
+            details.scrollToPane(key);
+          }
         },
       },
     ],
@@ -82,6 +113,14 @@ export function openNotePreview(
     },
   });
 
+  const workspace = getWorkspaceByUID(workspaceUID);
+  setTimeout(
+    () =>
+      // @ts-ignore
+      workspace?.querySelector("bn-details")?.scrollToPane(key),
+    500,
+  );
+
   if (!key) {
     scrollPreviewEditorTo(noteItem, workspaceUID, options);
   }
@@ -95,8 +134,10 @@ function scrollPreviewEditorTo(
     sectionName?: string;
   } = {},
 ) {
-  const editor = document.querySelector(
-    `bn-workspace[data-uid="${workspaceUID}"] note-editor[data-id="${item.id}"]`,
+  const workspace = getWorkspaceByUID(workspaceUID);
+  if (!workspace) return;
+  const editor = workspace.querySelector(
+    `note-editor[data-id="${item.id}"]`,
   ) as EditorElement;
   if (!editor) return;
   if (typeof options.lineIndex === "number") {

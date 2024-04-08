@@ -45,6 +45,9 @@ class Addon {
       };
     };
     notify: Array<Parameters<_ZoteroTypes.Notifier.Notify>>;
+    workspace: {
+      instances: Record<string, WeakRef<HTMLElement>>;
+    };
     imageViewer: {
       window?: Window;
       srcList: string[];
@@ -89,6 +92,9 @@ class Addon {
       diff: {},
     },
     notify: [],
+    workspace: {
+      instances: {},
+    },
     imageViewer: {
       window: undefined,
       srcList: [],
