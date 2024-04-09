@@ -205,7 +205,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
       id: makeId("settings-refreshSyncing"),
       text: getString("editor.toolbar.settings.refreshSyncing"),
       callback: (e) => {
-        addon.hooks.onSyncing(undefined, {
+        addon.hooks.onSyncing([noteItem], {
           quiet: false,
           skipActive: false,
           reason: "manual-editor",
