@@ -35,7 +35,10 @@ import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { patchViewItems } from "./modules/viewItems";
-import { onUpdateRelated } from "./modules/relatedNotes";
+import {
+  onUpdateRelated,
+  promptRelatedPermission,
+} from "./modules/relatedNotes";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref } from "./utils/prefs";
@@ -65,6 +68,8 @@ async function onStartup() {
   initSyncList();
 
   setSyncing();
+
+  promptRelatedPermission();
 
   await onMainWindowLoad(window);
 }

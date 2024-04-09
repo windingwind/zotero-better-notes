@@ -1,6 +1,6 @@
-import { getPref } from "../utils/prefs";
+import { getPref, setPref } from "../utils/prefs";
 
-export { onUpdateRelated };
+export { onUpdateRelated, promptRelatedPermission };
 
 function onUpdateRelated(
   items: Zotero.Item[] = [],
@@ -27,5 +27,23 @@ function onUpdateRelated(
   }
   for (const item of items) {
     addon.api.related.updateRelatedNotes(item.id);
+  }
+}
+
+function promptRelatedPermission() {
+  if (getPref("related.takeover")) {
+    return;
+  }
+  const result = Zotero.Prompt.confirm({
+    title: "Permission Request",
+    text: `Better Notes want to take over (add and remove) related field of your notes.
+If you refuse, you can still use Better Notes, but most of the linking features will not work.
+You can change this permission in settings later.`,
+    button0: "Allow",
+    button1: "Refuse",
+  });
+
+  if (result === 0) {
+    setPref("related.takeover", true);
   }
 }
