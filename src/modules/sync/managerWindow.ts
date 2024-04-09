@@ -90,9 +90,7 @@ export async function showSyncManager() {
       })
       .setProp("onActivate", (ev) => {
         const noteIds = getSelectedNoteIds();
-        noteIds.forEach((noteId) =>
-          addon.hooks.onOpenNote(noteId, "builtin"),
-        );
+        noteIds.forEach((noteId) => addon.hooks.onOpenNote(noteId, "builtin"));
         return true;
       })
       .setProp(

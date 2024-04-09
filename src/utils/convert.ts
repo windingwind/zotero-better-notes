@@ -21,12 +21,7 @@ import YAML = require("yamljs");
 import { Root as HRoot, RootContent } from "hast";
 import { ListContent, Root as MRoot } from "mdast";
 import { Nodes } from "hast-util-to-text/lib";
-import {
-  fileExists,
-  formatPath,
-  jointPath,
-  randomString,
-} from "./str";
+import { fileExists, formatPath, jointPath, randomString } from "./str";
 import {
   copyEmbeddedImagesInHTML,
   importImageToNote,

@@ -31,8 +31,8 @@ bn-outline .zotero-tb-button {
   -moz-context-properties: fill, fill-opacity;
 }
 
-bn-outline .zotero-tb-button[type=menu] {
-    width: 40px;
+bn-outline .zotero-tb-button[type="menu"] {
+  width: 40px;
 }
 
 #__addonRef__-setOutline {

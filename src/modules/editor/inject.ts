@@ -22,7 +22,9 @@ export async function injectEditorCSS(win: Window) {
       tag: "style",
       id: "betternotes-style",
       properties: {
-        innerHTML: await getFileContent(rootURI + "chrome/content/styles/editor.css"),
+        innerHTML: await getFileContent(
+          rootURI + "chrome/content/styles/editor.css",
+        ),
       },
       ignoreIfExists: true,
     },
