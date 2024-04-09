@@ -1,0 +1,61 @@
+bn-related-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+bn-related-box[hidden] {
+  display: none;
+}
+bn-related-box[readonly] .add {
+  display: none;
+}
+bn-related-box .body {
+  display: flex;
+  flex-direction: column;
+  padding-inline-start: 12px;
+}
+bn-related-box .body .row {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+[zoteroUIDensity="comfortable"] bn-related-box .body .row {
+  padding-block: 2px;
+}
+bn-related-box .body .row .box {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding-inline-start: 4px;
+  overflow: hidden;
+  border-radius: 5px;
+  flex: 1;
+}
+bn-related-box .body .row .box:not([disabled]):hover {
+  background-color: var(--fill-quinary);
+}
+bn-related-box .body .row .box:not([disabled]):active {
+  background-color: var(--fill-quarternary);
+}
+bn-related-box .body .row .box .icon {
+  height: calc(1.3333333333 * var(--zotero-font-size));
+}
+bn-related-box .body .row .box .label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 10;
+  width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+bn-related-box .body .row .box .icon,
+bn-related-box .body .row .box .label {
+  padding-block: 2px;
+}
+bn-related-box .body .row toolbarbutton {
+  margin-inline-start: auto;
+  visibility: hidden;
+}
+bn-related-box .body .row:is(:hover, :focus-within) toolbarbutton {
+  visibility: visible;
+}

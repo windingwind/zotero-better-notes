@@ -5,12 +5,12 @@ export function waitUntil(
   timeout = 10000,
 ) {
   const start = Date.now();
-  const intervalId = ztoolkit.getGlobal("setInterval")(() => {
+  const intervalId = setInterval(() => {
     if (condition()) {
-      ztoolkit.getGlobal("clearInterval")(intervalId);
+      clearInterval(intervalId);
       callback();
     } else if (Date.now() - start > timeout) {
-      ztoolkit.getGlobal("clearInterval")(intervalId);
+      clearInterval(intervalId);
     }
   }, interval);
 }
@@ -22,12 +22,12 @@ export function waitUtilAsync(
 ) {
   return new Promise<void>((resolve, reject) => {
     const start = Date.now();
-    const intervalId = ztoolkit.getGlobal("setInterval")(() => {
+    const intervalId = setInterval(() => {
       if (condition()) {
-        ztoolkit.getGlobal("clearInterval")(intervalId);
+        clearInterval(intervalId);
         resolve();
       } else if (Date.now() - start > timeout) {
-        ztoolkit.getGlobal("clearInterval")(intervalId);
+        clearInterval(intervalId);
         reject();
       }
     }, interval);

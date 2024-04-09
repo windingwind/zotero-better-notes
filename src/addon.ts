@@ -7,7 +7,6 @@ import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 
 import { getPref, setPref } from "./utils/prefs";
-import { OutlineType } from "./utils/workspace";
 import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
@@ -47,19 +46,7 @@ class Addon {
     };
     notify: Array<Parameters<_ZoteroTypes.Notifier.Notify>>;
     workspace: {
-      mainId: number;
-      previewId: number;
-      tab: {
-        active: boolean;
-        id?: string;
-        container?: XUL.Box;
-      };
-      window: {
-        active: boolean;
-        window?: Window;
-        container?: XUL.Box;
-      };
-      outline: OutlineType;
+      instances: Record<string, WeakRef<HTMLElement>>;
     };
     imageViewer: {
       window?: Window;
@@ -106,36 +93,7 @@ class Addon {
     },
     notify: [],
     workspace: {
-      get mainId(): number {
-        return parseInt(getPref("mainKnowledgeID") as string);
-      },
-      set mainId(id: number) {
-        setPref("mainKnowledgeID", id);
-        const recentMainNoteIds = getPref("recentMainNoteIds") as string;
-        const recentMainNoteIdsArr = recentMainNoteIds
-          ? recentMainNoteIds.split(",").map((id) => parseInt(id))
-          : [];
-        const idx = recentMainNoteIdsArr.indexOf(id);
-        if (idx !== -1) {
-          recentMainNoteIdsArr.splice(idx, 1);
-        }
-        recentMainNoteIdsArr.unshift(id);
-        setPref(
-          "recentMainNoteIds",
-          recentMainNoteIdsArr
-            .slice(0, 10)
-            .filter((id) => Zotero.Items.get(id).isNote())
-            .join(","),
-        );
-      },
-      previewId: -1,
-      tab: {
-        active: false,
-      },
-      window: {
-        active: false,
-      },
-      outline: OutlineType.treeView,
+      instances: {},
     },
     imageViewer: {
       window: undefined,

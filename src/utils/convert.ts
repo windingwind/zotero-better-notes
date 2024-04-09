@@ -26,19 +26,19 @@ import {
   formatPath,
   jointPath,
   randomString,
-} from "../../utils/str";
+} from "./str";
 import {
   copyEmbeddedImagesInHTML,
   importImageToNote,
   renderNoteHTML,
-} from "../../utils/note";
+} from "./note";
 import {
   getLinkedNotesRecursively,
   getNoteLink,
   getNoteLinkParams,
-} from "../../utils/link";
-import { parseAnnotationHTML } from "../../utils/annotation";
-import { getPref } from "../../utils/prefs";
+} from "./link";
+import { parseAnnotationHTML } from "./annotation";
+import { getPref } from "./prefs";
 
 export {
   md2note,
@@ -175,7 +175,7 @@ async function note2noteDiff(noteItem: Zotero.Item) {
 
 function note2link(
   noteItem: Zotero.Item,
-  options: Parameters<typeof getNoteLink>[1],
+  options: Parameters<typeof getNoteLink>[1] = {},
 ) {
   return getNoteLink(noteItem, options);
 }
@@ -236,7 +236,7 @@ function annotations2html(
 
 async function note2html(
   noteItems: Zotero.Item | Zotero.Item[],
-  options: { targetNoteItem?: Zotero.Item; html?: string },
+  options: { targetNoteItem?: Zotero.Item; html?: string } = {},
 ) {
   if (!Array.isArray(noteItems)) {
     noteItems = [noteItems];

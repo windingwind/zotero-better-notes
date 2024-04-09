@@ -91,7 +91,7 @@ export async function showSyncManager() {
       .setProp("onActivate", (ev) => {
         const noteIds = getSelectedNoteIds();
         noteIds.forEach((noteId) =>
-          addon.hooks.onOpenNote(noteId, "standalone"),
+          addon.hooks.onOpenNote(noteId, "builtin"),
         );
         return true;
       })
@@ -99,7 +99,6 @@ export async function showSyncManager() {
         "getRowString",
         (index) => addon.data.prefs?.rows[index].title || "",
       )
-      // @ts-ignore TODO: Fix type in zotero-plugin-toolkit
       .setProp("onColumnSort", (columnIndex, ascending) => {
         addon.data.sync.manager.columnIndex = columnIndex;
         addon.data.sync.manager.columnAscending = ascending > 0;

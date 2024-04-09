@@ -9,7 +9,7 @@ import {
   html2md,
   annotations2html,
   note2html,
-} from "./modules/convert/api";
+} from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
 import { saveFreeMind } from "./modules/export/freemind";
@@ -44,7 +44,6 @@ import {
   DEFAULT_TEMPLATES,
 } from "./modules/template/data";
 import { renderTemplatePreview } from "./modules/template/preview";
-import { getWorkspaceEditor } from "./modules/workspace/content";
 import { parseCitationHTML } from "./utils/citation";
 import {
   getEditorInstance,
@@ -63,13 +62,12 @@ import {
 } from "./utils/editor";
 import {
   addLineToNote,
-  updateRelatedNotes,
-  getRelatedNoteIds,
+  getNoteTreeFlattened,
+  getLinesInNote,
 } from "./utils/note";
+import { updateRelatedNotes, getRelatedNoteIds } from "./utils/related";
 
-const workspace = {
-  getWorkspaceEditor,
-};
+const workspace = {};
 
 const sync = {
   isSyncNote,
@@ -82,10 +80,6 @@ const sync = {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
-  /**
-   * @deprecated Use `api.note.getRelatedNoteIds` instead
-   */
-  getRelatedNoteIds,
 };
 
 const convert = {
@@ -146,6 +140,11 @@ const editor = {
 
 const note = {
   insert: addLineToNote,
+  getLinesInNote,
+  getNoteTreeFlattened,
+};
+
+const related = {
   updateRelatedNotes,
   getRelatedNoteIds,
 };
@@ -159,4 +158,5 @@ export default {
   $import,
   editor,
   note,
+  related,
 };

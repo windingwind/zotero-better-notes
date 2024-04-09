@@ -23,7 +23,6 @@ export async function savePDF(noteId: number) {
 }
 
 function disablePrintFooterHeader() {
-  // @ts-ignore
   Zotero.Prefs.resetBranch([], "print");
   Zotero.Prefs.set("print.print_footercenter", "", true);
   Zotero.Prefs.set("print.print_footerleft", "", true);

@@ -6,35 +6,43 @@
   onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', {window})"
 >
   <groupbox>
-    <label><html:h2 data-l10n-id="workspace-title"></html:h2></label>
-    <hbox>
+    <label><html:h2 data-l10n-id="basic-title"></html:h2></label>
+    <checkbox
+      data-l10n-id="basic-openNote-takeover"
+      native="true"
+      preference="__prefsPrefix__.openNote.takeover"
+    />
+    <checkbox
+      data-l10n-id="basic-related-takeover"
+      native="true"
+      preference="__prefsPrefix__.related.takeover"
+    />
+  </groupbox>
+  <groupbox>
+    <label><html:h2 data-l10n-id="editor-title"></html:h2></label>
+    <hbox align="center">
       <html:label
-        for="__addonRef__-workspace-expandLevel"
-        data-l10n-id="workspace-expandLevel-label"
+        for="__addonRef__-editor-expandLevel"
+        data-l10n-id="editor-expandLevel-label"
       ></html:label>
       <html:input
         type="number"
         min="1"
         max="6"
         step="1"
-        id="__addonRef__-workspace-expandLevel"
+        id="__addonRef__-editor-expandLevel"
         preference="__prefsPrefix__.workspace.outline.expandLevel"
       ></html:input>
     </hbox>
     <checkbox
-      data-l10n-id="workspace-keepLinks"
+      data-l10n-id="editor-keepLinks"
       native="true"
       preference="__prefsPrefix__.workspace.outline.keepLinks"
-    />
-    <checkbox
-      data-l10n-id="workspace-autoUpdateRelatedNotes"
-      native="true"
-      preference="__prefsPrefix__.workspace.autoUpdateRelatedNotes"
     />
   </groupbox>
   <groupbox>
     <label><html:h2 data-l10n-id="sync-title"></html:h2></label>
-    <hbox>
+    <hbox align="center">
       <html:label
         for="__addonRef__-sync-period"
         data-l10n-id="sync-period-label"
@@ -49,7 +57,7 @@
         preference="__prefsPrefix__.syncPeriodSeconds"
       ></html:input>
     </hbox>
-    <hbox>
+    <hbox align="center">
       <html:label
         for="__addonRef__-sync-attachmentFolder"
         data-l10n-id="sync-attachmentFolder-label"
@@ -59,7 +67,7 @@
         preference="__prefsPrefix__.syncAttachmentFolder"
       ></html:input>
     </hbox>
-    <hbox>
+    <hbox align="center">
       <button
         onclick="Zotero.__addonInstance__.hooks.onShowSyncManager()"
         data-l10n-id="sync-manager"
@@ -68,7 +76,7 @@
   </groupbox>
   <groupbox>
     <label><html:h2 data-l10n-id="template-title"></html:h2></label>
-    <hbox>
+    <hbox align="center">
       <button
         onclick="Zotero.__addonInstance__.hooks.onShowTemplateEditor()"
         data-l10n-id="template-editor"

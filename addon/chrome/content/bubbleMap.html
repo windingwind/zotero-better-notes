@@ -172,12 +172,12 @@
             ),
             $(go.Panel, "Auto"),
           );
-          window.parent.postMessage({ type: "ready" }, "*");
+          window.postMessage({ type: "ready" }, "*");
           getData();
         }
 
         function getData() {
-          window.parent.postMessage({ type: "getMindMapData" }, "*");
+          window.postMessage({ type: "getMindMapData" }, "*");
         }
 
         function setData(nodes) {
@@ -219,17 +219,16 @@
           var oldnode = adorn.adornedPart;
           var olddata = oldnode.data;
           if (olddata.noteLink) {
-            window.parent.postMessage(
+            window.postMessage(
               { type: "openNote", link: olddata.noteLink, id: olddata.key },
               "*",
             );
           } else {
-            window.parent.postMessage(
+            window.postMessage(
               {
                 type: "jumpNode",
                 lineIndex: olddata.lineIndex,
                 id: olddata.key,
-                workspaceType: window.workspaceType || "tab",
               },
               "*",
             );
@@ -243,12 +242,11 @@
             alert("Link cannot be edited in mind map");
             return false;
           }
-          window.parent.postMessage(
+          window.postMessage(
             {
               type: "editNode",
               lineIndex: data.lineIndex,
               text: data.text,
-              workspaceType: window.workspaceType || "tab",
             },
             "*",
           );
@@ -259,30 +257,31 @@
           switch (e.data.type) {
             case "setMindMapData":
               setData(e.data.nodes);
-              window.workspaceType = e.data.workspaceType;
               break;
             case "saveImage":
               const imgString = Diagram.makeImageData({
                 scale: 1,
               });
-              window.parent.postMessage(
+              window.postMessage(
                 {
                   type: "saveImageReturn",
                   image: imgString,
                 },
                 "*",
               );
+              break;
             case "saveSVG":
               const svgElement = Diagram.makeSvg({
                 scale: 1,
               });
-              window.parent.postMessage(
+              window.postMessage(
                 {
                   type: "saveSVGReturn",
                   image: svgElement.outerHTML,
                 },
                 "*",
               );
+              break;
             default:
               break;
           }

@@ -1,9 +1,14 @@
-workspace-title = Workspace
-workspace-expandLevel-label = Outline expand to heading level
-workspace-keepLinks = 
+basic-title = Basic
+basic-openNote-takeover =
+    .label = Take over opening note
+basic-related-takeover =
+    .label = Take over note relation
+
+editor-title = Note Editor
+editor-expandLevel-label = Outline expand to heading level
+editor-keepLinks = 
     .label = Show note links in outline
-workspace-autoUpdateRelatedNotes =
-    .label = Automatically update related
+
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)
 sync-attachmentFolder-label = Attachment folder

@@ -49,6 +49,7 @@ function replaceString(buildTime) {
       `${buildDir}/addon/**/*.xhtml`,
       `${buildDir}/addon/**/*.html`,
       `${buildDir}/addon/**/*.json`,
+      `${buildDir}/addon/**/*.css`,
       `${buildDir}/addon/prefs.js`,
       `${buildDir}/addon/manifest.json`,
       `${buildDir}/addon/bootstrap.js`,
@@ -193,7 +194,7 @@ export const esbuildOptions = {
     __env__: `"${env.NODE_ENV}"`,
   },
   bundle: true,
-  target: "firefox102",
+  target: "firefox115",
   outfile: path.join(
     buildDir,
     `addon/chrome/content/scripts/${config.addonRef}.js`,

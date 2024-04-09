@@ -1,10 +1,10 @@
-pref("__prefsPrefix__.recentMainNoteIds", "");
-
 pref("__prefsPrefix__.syncNoteIds", "");
 pref("__prefsPrefix__.syncPeriodSeconds", 30);
 pref("__prefsPrefix__.syncAttachmentFolder", "attachments");
 
 pref("__prefsPrefix__.autoAnnotation", false);
+
+pref("__prefsPrefix__.insertLinkPosition", "end");
 
 pref("__prefsPrefix__.embedLink", true);
 pref("__prefsPrefix__.standaloneLink", false);
@@ -27,4 +27,6 @@ pref("__prefsPrefix__.OCRMathpix.APIKey", "");
 
 pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
-pref("__prefsPrefix__.workspace.autoUpdateRelatedNotes", false);
+
+pref("__prefsPrefix__.openNote.takeover", true);
+pref("__prefsPrefix__.related.takeover", true);

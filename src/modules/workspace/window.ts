@@ -1,12 +1,9 @@
 import { config } from "../../../package.json";
-import { isWindowAlive } from "../../utils/window";
-import { messageHandler } from "./message";
 
-export async function openWorkspaceWindow() {
-  if (isWindowAlive(addon.data.workspace.window.window)) {
-    addon.data.workspace.window.window?.focus();
-    return;
-  }
+export async function openWorkspaceWindow(
+  item: Zotero.Item,
+  options: { lineIndex?: number; sectionName?: string } = {},
+) {
   const windowArgs = {
     _initPromise: Zotero.Promise.defer(),
   };
@@ -17,16 +14,15 @@ export async function openWorkspaceWindow() {
     windowArgs,
   )!;
   await windowArgs._initPromise.promise;
-  addon.data.workspace.window.active = true;
-  addon.data.workspace.window.window = win;
-  addon.data.workspace.window.container = win.document.querySelector(
+
+  const container = win.document.querySelector(
     "#workspace-container",
   ) as XUL.Box;
-  addon.hooks.onInitWorkspace(addon.data.workspace.window.container);
-  win.addEventListener("message", messageHandler, false);
-  win.addEventListener("unload", function onWindowUnload(ev) {
-    addon.data.workspace.window.active = false;
-    this.window.removeEventListener("unload", onWindowUnload, false);
-    this.window.removeEventListener("message", messageHandler, false);
-  });
+  const workspace = await addon.hooks.onInitWorkspace(container, item);
+  workspace.scrollEditorTo(options);
+
+  win.focus();
+  // @ts-ignore
+  win.updateTitle();
+  return workspace;
 }

@@ -1,0 +1,44 @@
+bn-outline,
+.container {
+  width: 100%;
+  height: 100%;
+  background: var(--material-sidepane);
+}
+
+bn-outline {
+  min-width: 100px;
+  flex-direction: column;
+}
+
+@media (-moz-platform: macos) {
+  #__addonRef__-left-toolbar {
+    -moz-window-dragging: drag;
+  }
+}
+
+#__addonRef__-left-toolbar {
+  background: var(--material-toolbar);
+  border-bottom: var(--material-panedivider);
+  padding: 6px 8px;
+}
+
+bn-outline .zotero-tb-button {
+  width: 28px;
+  height: 28px;
+  margin: 0px 4px 0px 4px;
+  padding: 0px 4px 0px 4px;
+  fill: currentColor;
+  -moz-context-properties: fill, fill-opacity;
+}
+
+bn-outline .zotero-tb-button[type=menu] {
+    width: 40px;
+}
+
+#__addonRef__-setOutline {
+  list-style-image: url("chrome://__addonRef__/content/icons/outline-20.svg");
+}
+
+#__addonRef__-saveOutline {
+  list-style-image: url("chrome://__addonRef__/content/icons/save-20.svg");
+}

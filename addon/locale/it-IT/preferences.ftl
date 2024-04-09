@@ -1,9 +1,14 @@
-workspace-title = Spazio di lavoro
-workspace-expandLevel-label = Espansione dello schema al livello delle intestazioni
-workspace-keepLinks = 
+basic-title = Basic
+basic-openNote-takeover =
+    .label = Take over opening note
+basic-related-takeover =
+    .label = Take over note relation
+
+editor-title = Note Editor
+editor-expandLevel-label = Espansione dello schema al livello delle intestazioni
+editor-keepLinks = 
     .label = Mostra i collegamenti delle note nello schema
-workspace-autoUpdateRelatedNotes =
-    .label = Aggiorna automaticamente le note correlate
+
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)
 sync-attachmentFolder-label = Cartella degli allegati
