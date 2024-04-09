@@ -5,11 +5,14 @@ import { ContextPane } from "./context";
 import { OutlinePane } from "./outlinePane";
 
 export class Workspace extends PluginCEBase {
+  uid: string = Zotero.Utilities.randomString(8);
   _item?: Zotero.Item;
 
   _editorElement!: EditorElement;
   _outline!: OutlinePane;
   _context!: ContextPane;
+
+  resizeOb!: ResizeObserver;
 
   get content() {
     return this._parseContentID(
@@ -68,9 +71,8 @@ export class Workspace extends PluginCEBase {
     // MozXULElement.insertFTLIfNeeded(`${config.addonRef}-workspace.ftl`);
 
     // For note preview section enabled decision
-    this.dataset.uid = Zotero.Utilities.randomString(8);
-
-    this._addon.data.workspace.instances[this.dataset.uid] = new WeakRef(this);
+    this.dataset.uid = this.uid;
+    this._addon.data.workspace.instances[this.uid] = new WeakRef(this);
 
     this._outline = this._queryID("left-container") as unknown as OutlinePane;
     this._editorElement = this._queryID("editor-main") as EditorElement;
@@ -79,9 +81,20 @@ export class Workspace extends PluginCEBase {
     this._context = this._queryID("right-container") as unknown as ContextPane;
 
     this._loadPersist();
+
+    this.resizeOb = new ResizeObserver(() => {
+      this._addon.api.editor.scroll(
+        this.editor,
+        this._addon.api.editor.getLineAtCursor(this.editor),
+      );
+    });
+    this.resizeOb.observe(this._editorElement);
   }
 
-  destroy(): void {}
+  destroy(): void {
+    this.resizeOb.disconnect();
+    delete this._addon.data.workspace.instances[this.uid];
+  }
 
   async render() {
     await this._outline.render();
