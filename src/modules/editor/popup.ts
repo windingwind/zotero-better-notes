@@ -11,6 +11,7 @@ import {
 } from "../../utils/editor";
 import { getNoteLink, getNoteLinkParams } from "../../utils/link";
 import { getString } from "../../utils/locale";
+import { waitUtilAsync } from "../../utils/wait";
 
 export function initEditorPopup(editor: Zotero.EditorInstance) {
   const ob = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
@@ -143,9 +144,13 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
       ],
     });
 
-    _window.document
-      .querySelector(".link-popup")
-      ?.append(insertButton, updateButton, openButton);
+    const linkPopup = _window.document.querySelector(".link-popup");
+    if (!linkPopup) {
+      return;
+    }
+    // Ensure the builtin buttons are appended
+    await waitUtilAsync(() => linkPopup.querySelectorAll("button").length >= 2);
+    linkPopup?.append(insertButton, updateButton, openButton);
   } else {
     Array.from(_window.document.querySelectorAll(".link-popup-extra")).forEach(
       (elem) => elem.remove(),
