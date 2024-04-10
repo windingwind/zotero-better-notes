@@ -43,6 +43,8 @@ export function onTabSelect(tabType: string) {
   if (tabType === TAB_TYPE) {
     contextPaneOpen = splitter.getAttribute("state") != "collapsed";
     splitter.setAttribute("state", "collapsed");
+  } else if (tabType === "library") {
+    return;
   } else if (typeof contextPaneOpen !== "undefined") {
     splitter.setAttribute("state", contextPaneOpen ? "open" : "collapsed");
     contextPaneOpen = undefined;
