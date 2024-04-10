@@ -135,7 +135,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
                 lineIndex: currentLine,
               }) || "";
             new ztoolkit.Clipboard()
-              .addText(link, "text/unicode")
+              .addText(link, "text/plain")
               .addText(
                 `<a href="${link}">${
                   e.editor._item.getNoteTitle().trim() || link
@@ -159,7 +159,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
                 sectionName: currentSection,
               }) || "";
             new ztoolkit.Clipboard()
-              .addText(link, "text/unicode")
+              .addText(link, "text/plain")
               .addText(
                 `<a href="${link}#${currentSection}">${
                   e.editor._item.getNoteTitle().trim() || link

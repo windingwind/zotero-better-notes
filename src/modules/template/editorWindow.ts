@@ -324,7 +324,7 @@ ${content
   .map((line) => `  ${line}`)
   .join("\n")}
 `;
-  new ztoolkit.Clipboard().addText(yaml, "text/unicode").copy();
+  new ztoolkit.Clipboard().addText(yaml, "text/plain").copy();
   showHint(
     `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `,
   );

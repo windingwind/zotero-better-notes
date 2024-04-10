@@ -76,7 +76,7 @@ function removeTemplate(
 }
 
 function importTemplateFromClipboard() {
-  const templateText = Zotero.Utilities.Internal.getClipboard("text/unicode");
+  const templateText = Zotero.Utilities.Internal.getClipboard("text/plain");
   if (!templateText) {
     return;
   }
