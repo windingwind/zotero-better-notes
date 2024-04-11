@@ -78,48 +78,53 @@ async function refresh(body: HTMLElement, item: Zotero.Item) {
 
 async function getRelationData(note: Zotero.Item) {
   if (!note) return;
-  const currentContent = note.getNote();
-  const currentLink = addon.api.convert.note2link(note);
-  const currentTitle = slice(note.getNoteTitle(), 15);
-  const { detectedIDSet, currentIDSet } =
-    await addon.api.related.getRelatedNoteIds(note.id);
-  if (!areSetsEqual(detectedIDSet, currentIDSet)) {
-    await addon.api.related.updateRelatedNotes(note.id);
-  }
-  const items = Zotero.Items.get(Array.from(detectedIDSet));
+  const inLink = await addon.api.related.getNoteLinkInboundRelation(note.id);
+  const outLink = await addon.api.related.getNoteLinkOutboundRelation(note.id);
 
-  const nodes = [];
   const links = [];
-  for (const item of items) {
-    const compareContent = item.getNote();
-    const compareLink = addon.api.convert.note2link(item);
-    const compareTitle = slice(item.getNoteTitle(), 15);
+  const noteSet: Set<number> = new Set();
 
-    if (currentLink && compareContent.includes(currentLink)) {
-      links.push({
-        source: item.id,
-        target: note.id,
-        value: 1,
-      });
-    }
-    if (compareLink && currentContent.includes(compareLink)) {
-      links.push({
-        source: note.id,
-        target: item.id,
-        value: 1,
-      });
-    }
-
-    nodes.push({
-      id: item.id,
-      title: compareTitle,
-      group: 2,
+  for (const linkData of inLink) {
+    const noteItem = await Zotero.Items.getByLibraryAndKeyAsync(
+      linkData.fromLibID,
+      linkData.fromKey,
+    );
+    if (!noteItem) continue;
+    noteSet.add(noteItem.id);
+    links.push({
+      source: noteItem.id,
+      target: note.id,
+      value: 1,
     });
   }
 
+  for (const linkData of outLink) {
+    const noteItem = await Zotero.Items.getByLibraryAndKeyAsync(
+      linkData.toLibID,
+      linkData.toKey,
+    );
+    if (!noteItem) continue;
+    noteSet.add(noteItem.id);
+    links.push({
+      source: note.id,
+      target: noteItem.id,
+      value: 1,
+    });
+  }
+
+  noteSet.delete(note.id);
+  const nodes = Array.from(noteSet).map((id) => {
+    const item = Zotero.Items.get(id);
+    return {
+      id: item.id,
+      title: slice(item.getNoteTitle(), 15),
+      group: 2,
+    };
+  });
+
   nodes.push({
     id: note.id,
-    title: currentTitle,
+    title: slice(note.getNoteTitle(), 15),
     group: 1,
   });
 

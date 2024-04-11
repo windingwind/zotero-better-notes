@@ -58,6 +58,8 @@ export class Workspace extends PluginCEBase {
   }
 
   set item(val) {
+    if (!val) return;
+    this._addon.api.related.updateNoteLinkRelation(val.id);
     this._item = val;
     this._outline.item = val;
     this._context.item = val;
@@ -83,6 +85,7 @@ export class Workspace extends PluginCEBase {
     this._loadPersist();
 
     this.resizeOb = new ResizeObserver(() => {
+      if (!this.editor) return;
       this._addon.api.editor.scroll(
         this.editor,
         this._addon.api.editor.getLineAtCursor(this.editor),

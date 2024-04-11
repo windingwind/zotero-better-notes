@@ -73,6 +73,9 @@ class Addon {
         data: Record<string, any>;
       };
     };
+    relation: {
+      worker?: Worker;
+    };
     readonly prompt?: Prompt;
   } = {
     alive: true,
@@ -115,6 +118,7 @@ class Addon {
         data: {},
       },
     },
+    relation: {},
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;
     },

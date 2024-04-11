@@ -78,10 +78,7 @@ export class NoteRelatedBox extends RelatedBox {
           row.append(note);
         }
 
-        if (
-          this.editable &&
-          (!relatedItem.isNote() || !getPref("related.takeover"))
-        ) {
+        if (this.editable) {
           const remove = document.createXULElement("toolbarbutton");
           remove.addEventListener("command", () => this._handleRemove(id));
           remove.className = "zotero-clicky zotero-clicky-minus";

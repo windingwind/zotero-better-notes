@@ -169,9 +169,7 @@ export class OutlinePane extends PluginCEBase {
     if (event === "modify" && type === "item") {
       if ((ids as number[]).includes(this.item.id)) {
         this.updateOutline();
-        if (getPref("related.takeover")) {
-          this._addon.api.related.updateRelatedNotes(this.item.id);
-        }
+        this._addon.api.related.updateNoteLinkRelation(this.item.id);
       }
     }
   }

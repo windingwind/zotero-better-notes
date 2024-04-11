@@ -29,4 +29,3 @@ pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
 
 pref("__prefsPrefix__.openNote.takeover", true);
-pref("__prefsPrefix__.related.takeover", false);

@@ -44,12 +44,17 @@ export async function showSyncInfo(noteId: number) {
     })
     .addButton(getString("syncInfo.unSync"), "unSync", {
       callback: async (ev) => {
-        const { detectedIDSet } =
-          await addon.api.related.getRelatedNoteIds(noteId);
-        for (const itemId of Array.from(detectedIDSet)) {
-          addon.api.sync.removeSyncNote(itemId);
+        const outLink =
+          await addon.api.related.getNoteLinkOutboundRelation(noteId);
+        for (const linkData of outLink) {
+          const noteItem = await Zotero.Items.getByLibraryAndKeyAsync(
+            linkData.toLibID,
+            linkData.toKey,
+          );
+          if (!noteItem) continue;
+          addon.api.sync.removeSyncNote(noteItem.id);
         }
-        showHint(`Cancel sync of ${detectedIDSet.size} notes.`);
+        showHint(`Cancel sync of ${outLink.length} notes.`);
       },
     })
     .addButton(getString("syncInfo.reveal"), "reveal", {

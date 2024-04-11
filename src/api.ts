@@ -65,7 +65,11 @@ import {
   getNoteTreeFlattened,
   getLinesInNote,
 } from "./utils/note";
-import { updateRelatedNotes, getRelatedNoteIds } from "./utils/related";
+import {
+  getNoteLinkInboundRelation,
+  getNoteLinkOutboundRelation,
+  updateNoteLinkRelation,
+} from "./utils/relation";
 
 const workspace = {};
 
@@ -145,8 +149,9 @@ const note = {
 };
 
 const related = {
-  updateRelatedNotes,
-  getRelatedNoteIds,
+  getNoteLinkInboundRelation,
+  getNoteLinkOutboundRelation,
+  updateNoteLinkRelation,
 };
 
 export default {

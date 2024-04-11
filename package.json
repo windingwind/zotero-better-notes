@@ -34,6 +34,7 @@
   "homepage": "https://github.com/windingwind/zotero-better-notes#readme",
   "dependencies": {
     "asciidoctor": "^3.0.2",
+    "dexie": "^4.0.4",
     "diff": "^5.1.0",
     "hast-util-to-html": "^9.0.0",
     "hast-util-to-mdast": "^8.4.1",
