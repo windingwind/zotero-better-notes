@@ -31,11 +31,11 @@ export function registerNoteRelation() {
         icon: "chrome://zotero/skin/16/universal/sync.svg",
         l10nID: `${config.addonRef}-note-relation-refresh`,
         onClick: ({ body, item }) => {
-          refresh(body, item);
+          renderGraph(body, item);
         },
       },
     ],
-    onInit({ body }) {
+    onInit({ body, refresh, getData }) {
       body
         .querySelector("iframe")!
         .contentWindow?.addEventListener("message", (ev) => {
@@ -46,6 +46,31 @@ export function registerNoteRelation() {
             );
           }
         });
+
+      const notifierKey = Zotero.Notifier.registerObserver(
+        {
+          notify: (event, type, ids, extraData) => {
+            const item = getData().item;
+            if (
+              // @ts-ignore
+              event === "updateBNRelation" &&
+              type === "item" &&
+              (ids as number[]).includes(item.id)
+            ) {
+              ztoolkit.log("relation notify refresh", item.id);
+              refresh();
+            }
+          },
+        },
+        ["item"],
+      );
+      body.dataset.notifierKey = notifierKey;
+    },
+    onDestroy({ body }) {
+      const notifierKey = body.dataset.notifierKey;
+      if (notifierKey) {
+        Zotero.Notifier.unregisterObserver(notifierKey);
+      }
     },
     onItemChange: ({ body, setEnabled }) => {
       if (body.closest("bn-workspace") as HTMLElement | undefined) {
@@ -56,12 +81,12 @@ export function registerNoteRelation() {
     },
     onRender: () => {},
     onAsyncRender: async ({ body, item }) => {
-      await refresh(body, item);
+      await renderGraph(body, item);
     },
   });
 }
 
-async function refresh(body: HTMLElement, item: Zotero.Item) {
+async function renderGraph(body: HTMLElement, item: Zotero.Item) {
   const data = await getRelationData(item);
   await waitUtilAsync(
     () =>
@@ -129,16 +154,4 @@ async function getRelationData(note: Zotero.Item) {
   });
 
   return { nodes, links };
-}
-
-function areSetsEqual(set1: Set<any>, set2: Set<any>): boolean {
-  if (set1.size !== set2.size) {
-    return false;
-  }
-  for (const item of set1) {
-    if (!set2.has(item)) {
-      return false;
-    }
-  }
-  return true;
 }

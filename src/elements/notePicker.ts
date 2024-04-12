@@ -210,9 +210,9 @@ export class NotePicker extends PluginCEBase {
       });
     await renderLock.promise;
 
-    if (this.openedNotes.length === 1) {
-      this.openedNotesView.treeInstance.selection.select(0);
-    }
+    // if (this.openedNotes.length === 1) {
+    //   this.openedNotesView.treeInstance.selection.select(0);
+    // }
   }
 
   onSearch() {

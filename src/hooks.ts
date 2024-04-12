@@ -35,7 +35,6 @@ import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { patchViewItems } from "./modules/viewItems";
-import { onUpdateRelated } from "./modules/relatedNotes";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref } from "./utils/prefs";
@@ -107,7 +106,7 @@ function onShutdown(): void {
  * This function is just an example of dispatcher for Notify events.
  * Any operations should be placed in a function to keep this funcion clear.
  */
-function onNotify(
+async function onNotify(
   event: Parameters<_ZoteroTypes.Notifier.Notify>["0"],
   type: Parameters<_ZoteroTypes.Notifier.Notify>["1"],
   ids: Parameters<_ZoteroTypes.Notifier.Notify>["2"],
@@ -127,7 +126,9 @@ function onNotify(
         skipActive: true,
         reason: "item-modify",
       });
-      addon.hooks.onUpdateRelated(modifiedNotes);
+      for (const item of modifiedNotes) {
+        await addon.api.relation.updateNoteLinkRelation(item.id);
+      }
       onUpdateNoteTabsTitle(modifiedNotes);
     }
   } else {
@@ -254,7 +255,6 @@ export default {
   onOpenNote,
   onInitWorkspace,
   onSyncing,
-  onUpdateRelated,
   onShowTemplatePicker,
   onUpdateTemplatePicker,
   onImportTemplateFromClipboard,

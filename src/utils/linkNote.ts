@@ -27,17 +27,5 @@ async function openLinkNoteDialog(currentNote: Zotero.Item) {
 
   await addLineToNote(targetNote, content, lineIndex);
 
-  await Zotero.DB.executeTransaction(async () => {
-    const saveParams = {
-      skipDateModifiedUpdate: true,
-      skipSelect: true,
-      notifierData: {
-        skipBN: true,
-      },
-    };
-    targetNote.addRelatedItem(currentNote);
-    currentNote.addRelatedItem(targetNote);
-    targetNote.save(saveParams);
-    currentNote.save(saveParams);
-  });
+  await addon.api.relation.updateNoteLinkRelation(targetNote.id);
 }

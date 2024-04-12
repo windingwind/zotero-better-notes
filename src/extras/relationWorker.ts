@@ -28,13 +28,16 @@ async function rebuildLinkForNote(
   links: LinkModel[],
 ) {
   console.log("rebuildLinkForNote", fromLibID, fromKey, links);
-  await db.link
-    .where({ fromLibID, fromKey })
-    .delete()
-    .then((deleteCount) => {
-      console.log("Deleted " + deleteCount + " objects");
-      bulkAddLink(links);
-    });
+    
+  const collection = db.link.where({ fromLibID, fromKey });
+  const oldOutboundLinks = await collection.toArray();
+  collection.delete().then((deleteCount) => {
+    console.log("Deleted " + deleteCount + " objects");
+    bulkAddLink(links);
+  });
+  return {
+    oldOutboundLinks,
+  };
 }
 
 async function getOutboundLinks(fromLibID: number, fromKey: string) {

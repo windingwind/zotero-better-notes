@@ -47,19 +47,18 @@ async function executeRelationWorker(data: {
   const jobID = Zotero.Utilities.randomString(8);
   let retData;
   ztoolkit.log("executeRelationWorker", data, jobID);
-  worker.addEventListener(
-    "message",
-    (e) => {
-      if (e.data.jobID === jobID) {
-        retData = e.data;
-        deferred.resolve();
-      }
-    },
-    { once: true },
-  );
+  const callback = (e: MessageEvent) => {
+    if (e.data.jobID === jobID) {
+      retData = e.data;
+      worker.removeEventListener("message", callback);
+      deferred.resolve();
+    }
+  };
+  worker.addEventListener("message", callback);
   worker.postMessage({ ...data, jobID });
   await Promise.race([deferred.promise, Zotero.Promise.delay(5000)]);
   if (!retData) {
+    worker.removeEventListener("message", callback);
     throw new Error(`Worker timeout: ${data.type}, ${jobID}`);
   }
   ztoolkit.log("executeRelationWorker return", retData);
@@ -68,6 +67,7 @@ async function executeRelationWorker(data: {
 
 async function updateNoteLinkRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
+  const affectedNoteIDs = new Set([noteID]);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
   const lines = addon.api.note.getLinesInNote(note);
@@ -81,6 +81,7 @@ async function updateNoteLinkRelation(noteID: number) {
       const { noteItem, libraryID, noteKey, lineIndex, sectionName } =
         getNoteLinkParams(link);
       if (noteItem && noteItem.isNote()) {
+        affectedNoteIDs.add(noteItem.id);
         linkToData.push({
           fromLibID,
           fromKey,
@@ -94,10 +95,25 @@ async function updateNoteLinkRelation(noteID: number) {
       }
     }
   }
-  await executeRelationWorker({
+  const result = await executeRelationWorker({
     type: "rebuildLinkForNote",
     data: { fromLibID, fromKey, links: linkToData },
   });
+  for (const link of result.oldOutboundLinks as LinkModel[]) {
+    const item = Zotero.Items.getByLibraryAndKey(link.toLibID, link.toKey);
+    if (!item) {
+      continue;
+    }
+    affectedNoteIDs.add(item.id);
+  }
+  Zotero.Notifier.trigger(
+    // @ts-ignore
+    "updateBNRelation",
+    "item",
+    Array.from(affectedNoteIDs),
+    {},
+    true,
+  );
 }
 
 async function getNoteLinkOutboundRelation(
