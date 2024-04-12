@@ -148,7 +148,7 @@ const note = {
   getNoteTreeFlattened,
 };
 
-const related = {
+const relation = {
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
   updateNoteLinkRelation,
@@ -163,5 +163,5 @@ export default {
   $import,
   editor,
   note,
-  related,
+  relation,
 };

@@ -174,7 +174,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
           id: makeId("settings-updateRelatedNotes"),
           text: getString("editor-toolbar-settings-updateRelatedNotes"),
           callback: (e) => {
-            addon.api.related.updateNoteLinkRelation(e.editor._item.id);
+            addon.api.relation.updateNoteLinkRelation(e.editor._item.id);
           },
         },
       ]),

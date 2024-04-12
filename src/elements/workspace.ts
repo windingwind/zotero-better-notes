@@ -59,7 +59,7 @@ export class Workspace extends PluginCEBase {
 
   set item(val) {
     if (!val) return;
-    this._addon.api.related.updateNoteLinkRelation(val.id);
+    this._addon.api.relation.updateNoteLinkRelation(val.id);
     this._item = val;
     this._outline.item = val;
     this._context.item = val;

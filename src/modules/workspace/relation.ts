@@ -78,8 +78,8 @@ async function refresh(body: HTMLElement, item: Zotero.Item) {
 
 async function getRelationData(note: Zotero.Item) {
   if (!note) return;
-  const inLink = await addon.api.related.getNoteLinkInboundRelation(note.id);
-  const outLink = await addon.api.related.getNoteLinkOutboundRelation(note.id);
+  const inLink = await addon.api.relation.getNoteLinkInboundRelation(note.id);
+  const outLink = await addon.api.relation.getNoteLinkOutboundRelation(note.id);
 
   const links = [];
   const noteSet: Set<number> = new Set();

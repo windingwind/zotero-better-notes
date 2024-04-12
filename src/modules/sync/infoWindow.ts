@@ -45,7 +45,7 @@ export async function showSyncInfo(noteId: number) {
     .addButton(getString("syncInfo.unSync"), "unSync", {
       callback: async (ev) => {
         const outLink =
-          await addon.api.related.getNoteLinkOutboundRelation(noteId);
+          await addon.api.relation.getNoteLinkOutboundRelation(noteId);
         for (const linkData of outLink) {
           const noteItem = await Zotero.Items.getByLibraryAndKeyAsync(
             linkData.toLibID,
