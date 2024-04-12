@@ -138,7 +138,7 @@ export class NotePicker extends PluginCEBase {
     searchBox.id = "zotero-tb-search";
     searchBox.setAttribute("timeout", "250");
     searchBox.setAttribute("dir", "reverse");
-    searchBox.addEventListener("command", this.onSearch);
+    searchBox.addEventListener("command", () => this.onSearch());
     this.querySelector("#search-toolbar > .toolbar-end")?.appendChild(
       searchBox,
     );
