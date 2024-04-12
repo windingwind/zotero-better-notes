@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { config } from "../../package.json";
-import { getPref } from "../utils/prefs";
 
 const RelatedBox = customElements.get("related-box")! as typeof XULElementBase;
 
@@ -68,14 +67,14 @@ export class NoteRelatedBox extends RelatedBox {
 
         // Extra button to open note
         if (relatedItem.isNote()) {
-          const note = document.createXULElement("toolbarbutton");
-          note.addEventListener("command", (event) => {
+          const openNote = document.createXULElement("toolbarbutton");
+          openNote.addEventListener("command", (event) => {
             const position = event.shiftKey ? "window" : "tab";
             Zotero[config.addonRef].hooks.onOpenNote(id, position);
           });
-          note.className = "zotero-clicky zotero-clicky-open-link";
-          note.setAttribute("tabindex", "0");
-          row.append(note);
+          openNote.className = "zotero-clicky zotero-clicky-open-link";
+          openNote.setAttribute("tabindex", "0");
+          row.append(openNote);
         }
 
         if (this.editable) {

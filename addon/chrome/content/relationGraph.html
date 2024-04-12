@@ -12,13 +12,6 @@
         background: var(--material-background);
       }
 
-      .tooltip {
-        position: absolute;
-        left: 0;
-        top: 0;
-        margin: 10px;
-      }
-
       .node:hover {
         cursor: pointer;
       }
@@ -54,13 +47,13 @@
         }
 
         // Specify the color scale.
-        const color = d3.scaleOrdinal([1, 2], ["grey", "#e8af59"]);
+        const color = d3.scaleOrdinal([1, 2], ["grey", "#A88F6A"]);
 
         // The force simulation mutates links and nodes, so create a copy
         // so that re-evaluating this cell produces the same result.
         const links = data.links.map((d) => ({ ...d }));
         const nodes = data.nodes.map((d) => ({ ...d }));
-
+        const linkColor = "#e8af59";
         // Create a simulation with several forces.
         const simulation = d3
           .forceSimulation(nodes)
@@ -83,15 +76,34 @@
           .attr("viewBox", [-width / 2, -height / 2, width, height])
           .attr("style", "max-width: 100%; height: auto;");
 
-        // Add a line for each link, and a circle for each node.
+        svg
+          .append("defs")
+          .append("marker")
+          .attr("id", "arrowhead")
+          .attr("refX", 25)
+          .attr("refY", 6)
+          .attr("orient", "auto-start-reverse")
+          .attr("markerWidth", 20)
+          .attr("markerHeight", 12)
+          .attr("markerUnits", "userSpaceOnUse")
+          .append("path")
+          .attr("d", "M 1 1 L 18 6 L 1 11 Z")
+          .attr("fill", linkColor)
+          .attr("stroke", linkColor)
+          .attr("class", "arrow-head");
+
         const link = svg
           .append("g")
-          .attr("stroke", "#999")
-          .attr("stroke-opacity", 0.6)
-          .selectAll("line")
+          .attr("fill", "none")
+          .selectAll("path")
           .data(links)
           .join("line")
-          .attr("stroke-width", (d) => Math.sqrt(d.value));
+          .attr("stroke-width", (d) => Math.sqrt(d.value))
+          .attr("stroke", linkColor)
+          .attr("marker-start", (d) =>
+            d.type === "both" ? "url(#arrowhead)" : "",
+          )
+          .attr("marker-end", "url(#arrowhead)");
 
         const node = svg
           .append("g")
@@ -114,7 +126,7 @@
           .attr("text-anchor", "middle") // Ensure the text is centered
           .attr("fill", "var(--text-color)")
           .attr("stroke", "none")
-          .text((d) => d.title);
+          .text((d) => (d.group === 1 ? "" : d.shortTitle));
 
         node.append("title").text((d) => d.title);
 
@@ -168,7 +180,9 @@
               .transition()
               .duration(200)
               .attr("r", 10); // New, larger radius
-            d3.select(".tooltip").style("display", "").html(d.title);
+            d3.select(this)
+              .select("text")
+              .text((d) => d.title);
           })
           .on("mouseout", function (event, d) {
             // Shrink the node circle back to original size
@@ -177,7 +191,9 @@
               .transition()
               .duration(500)
               .attr("r", 7); // Original radius
-            d3.select(".tooltip").style("display", "none");
+            d3.select(this)
+              .select("text")
+              .text((d) => (d.group === 1 ? "" : d.shortTitle));
           })
           .on("click", function (event, d) {
             window.postMessage(
@@ -186,14 +202,7 @@
             );
           });
 
-        document.body.replaceChildren(
-          svg.node(),
-          d3
-            .create("div")
-            .attr("class", "tooltip")
-            .style("display", "none")
-            .node(),
-        );
+        document.body.replaceChildren(svg.node());
       }
 
       d3.select(window).on("resize", function () {

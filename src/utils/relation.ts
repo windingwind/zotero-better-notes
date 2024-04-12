@@ -80,7 +80,7 @@ async function updateNoteLinkRelation(noteID: number) {
     for (const link of linkMatches) {
       const { noteItem, libraryID, noteKey, lineIndex, sectionName } =
         getNoteLinkParams(link);
-      if (noteItem && noteItem.isNote()) {
+      if (noteItem && noteItem.isNote() && noteItem.id !== note.id) {
         affectedNoteIDs.add(noteItem.id);
         linkToData.push({
           fromLibID,

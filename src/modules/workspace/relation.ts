@@ -106,8 +106,9 @@ async function getRelationData(note: Zotero.Item) {
   const inLink = await addon.api.relation.getNoteLinkInboundRelation(note.id);
   const outLink = await addon.api.relation.getNoteLinkOutboundRelation(note.id);
 
-  const links = [];
   const noteSet: Set<number> = new Set();
+
+  const linkModels: Record<number, NoteLinkModal> = {};
 
   for (const linkData of inLink) {
     const noteItem = await Zotero.Items.getByLibraryAndKeyAsync(
@@ -116,11 +117,18 @@ async function getRelationData(note: Zotero.Item) {
     );
     if (!noteItem) continue;
     noteSet.add(noteItem.id);
-    links.push({
-      source: noteItem.id,
-      target: note.id,
-      value: 1,
-    });
+    let noteLinks = linkModels[noteItem.id];
+    if (!noteLinks) {
+      noteLinks = {
+        source: noteItem.id,
+        target: note.id,
+        value: 1,
+        type: "in",
+      };
+      linkModels[noteItem.id] = noteLinks;
+    } else {
+      noteLinks.value++;
+    }
   }
 
   for (const linkData of outLink) {
@@ -130,28 +138,52 @@ async function getRelationData(note: Zotero.Item) {
     );
     if (!noteItem) continue;
     noteSet.add(noteItem.id);
-    links.push({
-      source: note.id,
-      target: noteItem.id,
-      value: 1,
-    });
+    let noteLinks = linkModels[noteItem.id];
+    if (!noteLinks) {
+      noteLinks = {
+        source: note.id,
+        target: noteItem.id,
+        value: 1,
+        type: "out",
+      };
+      linkModels[noteItem.id] = noteLinks;
+    } else {
+      noteLinks.value++;
+      if (noteLinks.type === "in") {
+        noteLinks.type = "both";
+      }
+    }
   }
 
   noteSet.delete(note.id);
   const nodes = Array.from(noteSet).map((id) => {
     const item = Zotero.Items.get(id);
+    const title = item.getNoteTitle();
     return {
       id: item.id,
-      title: slice(item.getNoteTitle(), 15),
+      title,
+      shortTitle: slice(title, 15),
       group: 2,
     };
   });
 
+  const title = note.getNoteTitle();
   nodes.push({
     id: note.id,
-    title: slice(note.getNoteTitle(), 15),
+    title,
+    shortTitle: slice(title, 15),
     group: 1,
   });
 
-  return { nodes, links };
+  return {
+    nodes,
+    links: Object.values(linkModels),
+  };
+}
+
+interface NoteLinkModal {
+  source: number;
+  target: number;
+  value: number;
+  type: "in" | "out" | "both";
 }

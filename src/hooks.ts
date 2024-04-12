@@ -37,8 +37,10 @@ import { initSyncList } from "./modules/sync/api";
 import { patchViewItems } from "./modules/viewItems";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
-import { getPref } from "./utils/prefs";
+import { getPref, setPref } from "./utils/prefs";
 import { closeRelationWorker } from "./utils/relation";
+import { registerNoteInboundLink } from "./modules/workspace/inLink";
+import { registerNoteOutboundLink } from "./modules/workspace/outLink";
 
 async function onStartup() {
   await Promise.all([
@@ -46,6 +48,7 @@ async function onStartup() {
     Zotero.unlockPromise,
     Zotero.uiReadyPromise,
   ]);
+  Zotero.Prefs.set("layout.css.nesting.enabled", true, true);
   initLocale();
   ztoolkit.ProgressWindow.setIconURI(
     "default",
@@ -61,6 +64,10 @@ async function onStartup() {
   registerReaderAnnotationButton();
 
   registerNoteRelation();
+
+  registerNoteOutboundLink();
+
+  registerNoteInboundLink();
 
   initSyncList();
 
