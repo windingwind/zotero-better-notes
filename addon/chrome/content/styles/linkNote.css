@@ -7,7 +7,6 @@
 #top-container {
   gap: 16px;
   overflow: auto;
-  width: 800px;
   padding: 2em;
 }
 
