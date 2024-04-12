@@ -28,7 +28,7 @@ async function rebuildLinkForNote(
   links: LinkModel[],
 ) {
   console.log("rebuildLinkForNote", fromLibID, fromKey, links);
-    
+
   const collection = db.link.where({ fromLibID, fromKey });
   const oldOutboundLinks = await collection.toArray();
   collection.delete().then((deleteCount) => {

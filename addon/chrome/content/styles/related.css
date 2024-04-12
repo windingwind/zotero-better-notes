@@ -56,6 +56,10 @@ item-pane-custom-section .bn-link-body {
         width: 0;
         flex: 1;
         overflow: hidden;
+
+        .position-label {
+          color: var(--fill-secondary);
+        }
       }
 
       .icon,

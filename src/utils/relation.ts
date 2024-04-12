@@ -73,11 +73,12 @@ async function updateNoteLinkRelation(noteID: number) {
   const lines = addon.api.note.getLinesInNote(note);
   const linkToData: LinkModel[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const linkMatches = lines[i].match(/zotero:\/\/note\/\w+\/\w+\//g);
+    const linkMatches = lines[i].match(/href="zotero:\/\/note\/[^"]+"/g);
     if (!linkMatches) {
       continue;
     }
-    for (const link of linkMatches) {
+    for (const match of linkMatches) {
+      const link = decodeHTMLEntities(match.slice(6, -1));
       const { noteItem, libraryID, noteKey, lineIndex, sectionName } =
         getNoteLinkParams(link);
       if (noteItem && noteItem.isNote() && noteItem.id !== note.id) {
@@ -138,6 +139,13 @@ async function getNoteLinkInboundRelation(
     type: "getInboundLinks",
     data: { toLibID, toKey },
   });
+}
+
+function decodeHTMLEntities(text: string) {
+  return text
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
 }
 
 interface LinkModel {

@@ -122,16 +122,20 @@ async function renderSection(
       .getGlobal("require")("components/icons")
       .getCSSItemTypeIcon("note");
 
-    const label = doc.createElement("span");
+    const label = doc.createElement("div");
     label.className = "label";
-    let content = targetItem.getNoteTitle();
+    const title = doc.createElement("span");
+    title.textContent = targetItem.getNoteTitle();
+    const position = doc.createElement("span");
+    position.className = "position-label";
     if (typeof linkData.toLine === "number") {
-      content += ` > Line ${linkData.toLine}`;
+      position.textContent = `>Line ${linkData.toLine}`;
     }
     if (typeof linkData.toSection === "string") {
-      content += `#${linkData.toSection}`;
+      position.textContent = `#${linkData.toSection}`;
     }
-    label.append(content);
+    label.append(title, position);
+    label.title = linkData.url;
 
     const box = doc.createElement("div");
     box.addEventListener("click", () =>
@@ -157,10 +161,6 @@ async function renderSection(
 
   const count = inLinks.length;
   setCount(count);
-}
-
-function handleShowItem(id: number) {
-  ZoteroPane.selectItem(id);
 }
 
 function makeSetCount(setL10nArgs: (str: string) => void) {
