@@ -169,7 +169,6 @@ export class OutlinePane extends PluginCEBase {
     if (event === "modify" && type === "item") {
       if ((ids as number[]).includes(this.item.id)) {
         this.updateOutline();
-        this._addon.api.relation.updateNoteLinkRelation(this.item.id);
       }
     }
   }

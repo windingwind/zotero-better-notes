@@ -1,4 +1,5 @@
 import { config } from "../../../package.json";
+import { Workspace } from "../../elements/workspace";
 
 export function registerNoteLinkSection(type: "inbound" | "outbound") {
   const key = Zotero.ItemPaneManager.registerSection({
@@ -38,7 +39,11 @@ export function registerNoteLinkSection(type: "inbound" | "outbound") {
               type === "item" &&
               (ids as number[]).includes(item.id)
             ) {
-              ztoolkit.log("relation notify refresh", item.id);
+              ztoolkit.log(
+                `relation notify refresh link ${type}`,
+                ids,
+                item.id,
+              );
               refresh();
             }
           },
@@ -93,7 +98,7 @@ async function renderSection(
   };
   const inLinks = await api[type](item.id);
   for (const linkData of inLinks) {
-    const fromItem = (await Zotero.Items.getByLibraryAndKeyAsync(
+    const targetItem = (await Zotero.Items.getByLibraryAndKeyAsync(
       linkData[
         { inbound: "fromLibID", outbound: "toLibID" }[type] as
           | "fromLibID"
@@ -104,6 +109,12 @@ async function renderSection(
       ],
     )) as Zotero.Item;
 
+    const linkParams = {
+      workspaceUID: (body.closest("bn-workspace") as Workspace)?.dataset.uid,
+      lineIndex: linkData.toLine ?? undefined,
+      sectionName: linkData.toSection ?? undefined,
+    };
+
     const row = doc.createElement("div");
     row.className = "row";
 
@@ -113,10 +124,19 @@ async function renderSection(
 
     const label = doc.createElement("span");
     label.className = "label";
-    label.append(fromItem.getNoteTitle());
+    let content = targetItem.getNoteTitle();
+    if (typeof linkData.toLine === "number") {
+      content += ` > Line ${linkData.toLine}`;
+    }
+    if (typeof linkData.toSection === "string") {
+      content += `#${linkData.toSection}`;
+    }
+    label.append(content);
 
     const box = doc.createElement("div");
-    box.addEventListener("click", () => handleShowItem(fromItem.id));
+    box.addEventListener("click", () =>
+      addon.hooks.onOpenNote(targetItem.id, "preview", linkParams),
+    );
     box.className = "box keyboard-clickable";
     box.setAttribute("tabindex", "0");
     box.append(icon, label);
@@ -126,7 +146,7 @@ async function renderSection(
     const note = (doc as any).createXULElement("toolbarbutton");
     note.addEventListener("command", (event: MouseEvent) => {
       const position = event.shiftKey ? "window" : "tab";
-      addon.hooks.onOpenNote(fromItem.id, position);
+      addon.hooks.onOpenNote(targetItem.id, position, linkParams);
     });
     note.className = "zotero-clicky zotero-clicky-open-link";
     note.setAttribute("tabindex", "0");
