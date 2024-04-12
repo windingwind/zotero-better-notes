@@ -35,7 +35,7 @@ export function registerNoteRelation() {
         },
       },
     ],
-    onInit({ body, refresh, getData }) {
+    onInit({ body, refresh }) {
       body
         .querySelector("iframe")!
         .contentWindow?.addEventListener("message", (ev) => {
@@ -50,14 +50,15 @@ export function registerNoteRelation() {
       const notifierKey = Zotero.Notifier.registerObserver(
         {
           notify: (event, type, ids, extraData) => {
-            const item = getData().item;
+            const item = Zotero.Items.get(body.dataset.itemID || "");
             if (
+              item &&
               // @ts-ignore
               event === "updateBNRelation" &&
               type === "item" &&
               (ids as number[]).includes(item.id)
             ) {
-              ztoolkit.log("relation notify refresh", item.id);
+              ztoolkit.log("relation notify refresh graph", item.id);
               refresh();
             }
           },
@@ -72,9 +73,10 @@ export function registerNoteRelation() {
         Zotero.Notifier.unregisterObserver(notifierKey);
       }
     },
-    onItemChange: ({ body, setEnabled }) => {
+    onItemChange: ({ body, item, setEnabled }) => {
       if (body.closest("bn-workspace") as HTMLElement | undefined) {
         setEnabled(true);
+        body.dataset.itemID = String(item.id);
         return;
       }
       setEnabled(false);
