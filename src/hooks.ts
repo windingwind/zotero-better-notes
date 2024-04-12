@@ -39,6 +39,7 @@ import { onUpdateRelated } from "./modules/relatedNotes";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref } from "./utils/prefs";
+import { closeRelationWorker } from "./utils/relation";
 
 async function onStartup() {
   await Promise.all([
@@ -95,6 +96,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 }
 
 function onShutdown(): void {
+  closeRelationWorker();
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;

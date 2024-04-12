@@ -5,7 +5,15 @@ export {
   updateNoteLinkRelation,
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
+  closeRelationWorker,
 };
+
+function closeRelationWorker() {
+  if (addon.data.relation.worker) {
+    addon.data.relation.worker.terminate();
+    addon.data.relation.worker = undefined;
+  }
+}
 
 async function getRelationWorker() {
   if (addon.data.relation.worker) {
