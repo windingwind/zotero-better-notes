@@ -5,24 +5,24 @@ note-relation-sidenav =
 note-relation-refresh =
     .tooltiptext = 刷新
 
-note-inlink-header =
+note-inbound-header =
     .label =
         { $count ->
             [one] { $count }条入链
             *[other] { $count }条入链
         }
-note-inlink-sidenav =
+note-inbound-sidenav =
     .tooltiptext = 入链
-note-inlink-refresh =
+note-inbound-refresh =
     .tooltiptext = 刷新
 
-note-outlink-header =
+note-outbound-header =
     .label =
         { $count ->
             [one] { $count }条出链
             *[other] { $count }条出链
         }
-note-outlink-sidenav =
+note-outbound-sidenav =
     .tooltiptext = 出链
-note-outlink-refresh =
+note-outbound-refresh =
     .tooltiptext = 刷新

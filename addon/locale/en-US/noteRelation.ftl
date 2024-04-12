@@ -5,24 +5,24 @@ note-relation-sidenav =
 note-relation-refresh =
     .tooltiptext = Refresh
 
-note-inlink-header =
+note-inbound-header =
     .label =
         { $count ->
             [one] { $count } Inbound Link
             *[other] { $count } Inbound Links
         }
-note-inlink-sidenav =
+note-inbound-sidenav =
     .tooltiptext = Inbound Links
-note-inlink-refresh =
+note-inbound-refresh =
     .tooltiptext = Refresh
 
-note-outlink-header =
+note-outbound-header =
     .label =
         { $count ->
             [one] { $count } Outbound Link
             *[other] { $count } Outbound Links
         }
-note-outlink-sidenav =
+note-outbound-sidenav =
     .tooltiptext = Outbound Links
-note-outlink-refresh =
+note-outbound-refresh =
     .tooltiptext = Refresh

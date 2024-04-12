@@ -39,8 +39,7 @@ import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref, setPref } from "./utils/prefs";
 import { closeRelationWorker } from "./utils/relation";
-import { registerNoteInboundLink } from "./modules/workspace/inLink";
-import { registerNoteOutboundLink } from "./modules/workspace/outLink";
+import { registerNoteLinkSection } from "./modules/workspace/link";
 
 async function onStartup() {
   await Promise.all([
@@ -65,9 +64,8 @@ async function onStartup() {
 
   registerNoteRelation();
 
-  registerNoteOutboundLink();
-
-  registerNoteInboundLink();
+  registerNoteLinkSection("inbound");
+  registerNoteLinkSection("outbound");
 
   initSyncList();
 

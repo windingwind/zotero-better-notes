@@ -1,28 +1,32 @@
 import { config } from "../../../package.json";
 
-export function registerNoteOutboundLink() {
+export function registerNoteLinkSection(type: "inbound" | "outbound") {
   const key = Zotero.ItemPaneManager.registerSection({
-    paneID: `bn-note-outbound-link`,
+    paneID: `bn-note-${type}-link`,
     pluginID: config.addonID,
     header: {
-      icon: `chrome://${config.addonRef}/content/icons/out-link-16.svg`,
-      l10nID: `${config.addonRef}-note-outlink-header`,
+      icon: `chrome://${config.addonRef}/content/icons/${type}-link-16.svg`,
+      l10nID: `${config.addonRef}-note-${type}-header`,
     },
     sidenav: {
-      icon: `chrome://${config.addonRef}/content/icons/out-link-20.svg`,
-      l10nID: `${config.addonRef}-note-outlink-sidenav`,
+      icon: `chrome://${config.addonRef}/content/icons/${type}-link-20.svg`,
+      l10nID: `${config.addonRef}-note-${type}-sidenav`,
     },
     sectionButtons: [
       {
         type: "refreshGraph",
         icon: "chrome://zotero/skin/16/universal/sync.svg",
-        l10nID: `${config.addonRef}-note-outlink-refresh`,
+        l10nID: `${config.addonRef}-note-${type}-refresh`,
         onClick: ({ body, item, setL10nArgs }) => {
-          renderSection(body, item, makeSetCount(setL10nArgs));
+          renderSection(type, {
+            body,
+            item,
+            setCount: makeSetCount(setL10nArgs),
+          });
         },
       },
     ],
-    onInit({ body, refresh, getData }) {
+    onInit({ body, refresh }) {
       const notifierKey = Zotero.Notifier.registerObserver(
         {
           notify: (event, type, ids, extraData) => {
@@ -60,23 +64,44 @@ export function registerNoteOutboundLink() {
     },
     onRender: () => {},
     onAsyncRender: async ({ body, item, setL10nArgs }) => {
-      await renderSection(body, item, makeSetCount(setL10nArgs));
+      await renderSection(type, {
+        body,
+        item,
+        setCount: makeSetCount(setL10nArgs),
+      });
     },
   });
 }
 
 async function renderSection(
-  body: HTMLElement,
-  item: Zotero.Item,
-  setCount: (count: number) => void,
+  type: "inbound" | "outbound",
+  {
+    body,
+    item,
+    setCount,
+  }: {
+    body: HTMLElement;
+    item: Zotero.Item;
+    setCount: (count: number) => void;
+  },
 ) {
   body.replaceChildren();
   const doc = body.ownerDocument;
-  const inLinks = await addon.api.relation.getNoteLinkOutboundRelation(item.id);
+  const api = {
+    inbound: addon.api.relation.getNoteLinkInboundRelation,
+    outbound: addon.api.relation.getNoteLinkOutboundRelation,
+  };
+  const inLinks = await api[type](item.id);
   for (const linkData of inLinks) {
-    const toItem = (await Zotero.Items.getByLibraryAndKeyAsync(
-      linkData.toLibID,
-      linkData.toKey,
+    const fromItem = (await Zotero.Items.getByLibraryAndKeyAsync(
+      linkData[
+        { inbound: "fromLibID", outbound: "toLibID" }[type] as
+          | "fromLibID"
+          | "toLibID"
+      ],
+      linkData[
+        { inbound: "fromKey", outbound: "toKey" }[type] as "fromKey" | "toKey"
+      ],
     )) as Zotero.Item;
 
     const row = doc.createElement("div");
@@ -88,10 +113,10 @@ async function renderSection(
 
     const label = doc.createElement("span");
     label.className = "label";
-    label.append(toItem.getNoteTitle());
+    label.append(fromItem.getNoteTitle());
 
     const box = doc.createElement("div");
-    box.addEventListener("click", () => handleShowItem(toItem.id));
+    box.addEventListener("click", () => handleShowItem(fromItem.id));
     box.className = "box keyboard-clickable";
     box.setAttribute("tabindex", "0");
     box.append(icon, label);
@@ -101,7 +126,7 @@ async function renderSection(
     const note = (doc as any).createXULElement("toolbarbutton");
     note.addEventListener("command", (event: MouseEvent) => {
       const position = event.shiftKey ? "window" : "tab";
-      addon.hooks.onOpenNote(toItem.id, position);
+      addon.hooks.onOpenNote(fromItem.id, position);
     });
     note.className = "zotero-clicky zotero-clicky-open-link";
     note.setAttribute("tabindex", "0");
