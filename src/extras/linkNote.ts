@@ -34,6 +34,14 @@ window.onload = async function () {
   const sbc = document.getElementById("top-container");
   Zotero.UIProperties.registerRoot(sbc);
 
+  setTimeout(() => {
+    const size = ((getPref("windows.linkNote.size") as string) || "").split(
+      ",",
+    );
+    window.resizeTo(Number(size[0] || "800"), Number(size[1] || "600"));
+    console.log(size);
+  }, 300);
+
   // @ts-ignore
   io = window.arguments[0];
 
@@ -54,6 +62,12 @@ window.onload = async function () {
 
 window.onunload = function () {
   io.deferred && io.deferred.resolve();
+  setPref(
+    "windows.linkNote.size",
+    `${document.documentElement.getAttribute(
+      "width",
+    )},${document.documentElement.getAttribute("height")}`,
+  );
 };
 
 function loadNotePicker() {

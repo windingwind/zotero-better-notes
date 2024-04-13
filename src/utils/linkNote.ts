@@ -14,7 +14,7 @@ async function openLinkNoteDialog(currentNote: Zotero.Item) {
   window.openDialog(
     `chrome://${config.addonRef}/content/linkNote.xhtml`,
     "_blank",
-    "chrome,modal,centerscreen",
+    "chrome,modal,centerscreen,resizable=yes",
     io,
   );
   await io.deferred.promise;

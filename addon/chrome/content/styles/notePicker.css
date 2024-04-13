@@ -15,6 +15,7 @@ bn-note-picker {
 #collections-items-container {
   display: flex;
   height: 100%;
+  max-height: 50%;
   border-bottom: var(--material-border);
   user-select: none;
 }
@@ -38,4 +39,5 @@ bn-note-picker {
 
 #bn-select-opened-notes-container {
   min-width: 200px;
+  max-height: 50%;
 }
