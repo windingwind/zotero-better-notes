@@ -41,7 +41,7 @@ export class NotePicker extends PluginCEBase {
         </vbox>
         <hbox
           id="zotero-items-pane-content"
-          class="container virtualized-table-container"
+          class="virtualized-table-container"
           flex="1"
         >
           <html:div id="zotero-items-tree"></html:div>
