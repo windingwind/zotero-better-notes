@@ -1,0 +1,14 @@
+.container {
+  min-height: 0;
+  height: 100%;
+  margin: 0;
+}
+
+.content-container {
+  overflow: auto;
+}
+
+/* TODO: remove fx115 workaround */
+tab {
+  color: unset !important;
+}

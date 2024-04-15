@@ -1,18 +1,24 @@
 import { config } from "../../package.json";
 import { addLineToNote } from "./note";
 
-export { openLinkNoteDialog };
+export { openLinkCreator };
 
-async function openLinkNoteDialog(currentNote: Zotero.Item) {
+async function openLinkCreator(
+  currentNote: Zotero.Item,
+  options?: {
+    lineIndex: number;
+  },
+) {
   const io = {
     openedNoteIDs: Zotero_Tabs._tabs
       .map((tab) => tab.data?.itemID)
       .filter((id) => id && id != currentNote.id),
     currentNoteID: currentNote.id,
+    currentLineIndex: options?.lineIndex,
     deferred: Zotero.Promise.defer(),
   } as any;
   window.openDialog(
-    `chrome://${config.addonRef}/content/linkNote.xhtml`,
+    `chrome://${config.addonRef}/content/linkCreator.xhtml`,
     "_blank",
     "chrome,modal,centerscreen,resizable=yes",
     io,

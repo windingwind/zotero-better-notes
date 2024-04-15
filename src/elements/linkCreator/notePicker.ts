@@ -1,6 +1,6 @@
-import { config } from "../../package.json";
+import { config } from "../../../package.json";
 import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
-import { PluginCEBase } from "./base";
+import { PluginCEBase } from "../base";
 
 const _require = window.require;
 const CollectionTree = _require("chrome://zotero/content/collectionTree.js");
@@ -16,12 +16,14 @@ export class NotePicker extends PluginCEBase {
 
   activeSelectionType: "library" | "tabs" | "none" = "none";
 
+  uid = Zotero.Utilities.randomString(8);
+
   get content() {
     return MozXULElement.parseXULToFragment(`
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/notePicker.css"
+    href="chrome://${config.addonRef}/content/styles/linkCreator/notePicker.css"
   ></html:link>
 </linkset>
 <vbox id="select-items-dialog" class="container">
@@ -52,7 +54,7 @@ export class NotePicker extends PluginCEBase {
           id="bn-select-opened-notes-content"
           class="container virtualized-table-container"
         >
-          <html:div id="bn-select-opened-notes-tree"></html:div>
+          <html:div id="bn-select-opened-notes-tree-${this.uid}"></html:div>
         </vbox>
       </vbox>
     </vbox>
@@ -67,14 +69,9 @@ export class NotePicker extends PluginCEBase {
       this.openedNotesView.render();
       return;
     }
-    this.loadOpenedNotes();
   }
 
   async init() {
-    await this.loadLibraryNotes();
-    this.loadQuickSearch();
-    await this.loadOpenedNotes();
-
     window.addEventListener("unload", () => {
       this.destroy();
     });
@@ -83,6 +80,12 @@ export class NotePicker extends PluginCEBase {
   destroy(): void {
     this.collectionsView.unregister();
     if (this.itemsView) this.itemsView.unregister();
+  }
+
+  async load() {
+    await this.loadLibraryNotes();
+    this.loadQuickSearch();
+    await this.loadOpenedNotes();
   }
 
   async loadLibraryNotes() {
@@ -143,15 +146,15 @@ export class NotePicker extends PluginCEBase {
       searchBox,
     );
 
-    Zotero.updateQuickSearchBox(document);
+    searchBox.updateMode();
   }
 
   async loadOpenedNotes() {
     const renderLock = Zotero.Promise.defer();
     this.openedNotesView = new VirtualizedTableHelper(window)
-      .setContainerId("bn-select-opened-notes-tree")
+      .setContainerId(`bn-select-opened-notes-tree-${this.uid}`)
       .setProp({
-        id: `bn-select-opened-notes-table`,
+        id: `bn-select-opened-notes-table-${this.uid}`,
         columns: [
           {
             dataKey: "title",
@@ -172,7 +175,7 @@ export class NotePicker extends PluginCEBase {
         };
       })
       .setProp("onSelectionChange", (selection) => {
-        this.onOpenedNoteSelected();
+        this.onOpenedNoteSelected(selection);
       })
       // For find-as-you-type
       .setProp(
@@ -276,29 +279,29 @@ export class NotePicker extends PluginCEBase {
     this.dispatchSelectionChange();
   }
 
-  onOpenedNoteSelected() {
+  onOpenedNoteSelected(selection: { selected: Set<number> }) {
     this.activeSelectionType = "tabs";
-    this.dispatchSelectionChange();
+    this.dispatchSelectionChange(selection);
   }
 
-  dispatchSelectionChange() {
+  dispatchSelectionChange(selection?: { selected: Set<number> }) {
     this.dispatchEvent(
-      new CustomEvent("selectionChange", {
+      new CustomEvent("selectionchange", {
         detail: {
-          selectedNote: this.getSelectedNotes()[0],
+          selectedNote: this.getSelectedNotes(selection)[0],
         },
       }),
     );
   }
 
-  getSelectedNotes(): Zotero.Item[] {
+  getSelectedNotes(selection?: { selected: Set<number> }): Zotero.Item[] {
     if (this.activeSelectionType == "none") {
       return [];
     } else if (this.activeSelectionType == "library") {
       return this.itemsView.getSelectedItems();
     }
-    return Array.from(this.openedNotesView.treeInstance.selection.selected).map(
-      (index) => this.openedNotes[index],
-    );
+    return Array.from(
+      (selection || this.openedNotesView.treeInstance.selection).selected,
+    ).map((index) => this.openedNotes[index]);
   }
 }

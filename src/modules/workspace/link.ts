@@ -1,5 +1,5 @@
 import { config } from "../../../package.json";
-import { Workspace } from "../../elements/workspace";
+import { Workspace } from "../../elements/workspace/workspace";
 
 export function registerNoteLinkSection(type: "inbound" | "outbound") {
   const key = Zotero.ItemPaneManager.registerSection({

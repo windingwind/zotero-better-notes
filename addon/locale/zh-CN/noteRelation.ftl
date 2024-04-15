@@ -1,7 +1,7 @@
 note-relation-header =
     .label = 关系图
 note-relation-sidenav =
-    .tooltiptext = 关系图
+    .tooltiptext = 关系网
 note-relation-refresh =
     .tooltiptext = 刷新
 

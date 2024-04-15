@@ -8,6 +8,19 @@ bn-outline,
 bn-outline {
   min-width: 100px;
   flex-direction: column;
+
+  .zotero-tb-button {
+    width: 28px;
+    height: 28px;
+    margin: 0px 4px 0px 4px;
+    padding: 0px 4px 0px 4px;
+    fill: currentColor;
+    -moz-context-properties: fill, fill-opacity;
+  }
+
+  .zotero-tb-button[type="menu"] {
+    width: 40px;
+  }
 }
 
 @media (-moz-platform: macos) {
@@ -20,19 +33,6 @@ bn-outline {
   background: var(--material-toolbar);
   border-bottom: var(--material-panedivider);
   padding: 6px 8px;
-}
-
-bn-outline .zotero-tb-button {
-  width: 28px;
-  height: 28px;
-  margin: 0px 4px 0px 4px;
-  padding: 0px 4px 0px 4px;
-  fill: currentColor;
-  -moz-context-properties: fill, fill-opacity;
-}
-
-bn-outline .zotero-tb-button[type="menu"] {
-  width: 40px;
 }
 
 #__addonRef__-setOutline {

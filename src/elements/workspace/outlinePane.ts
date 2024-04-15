@@ -1,18 +1,18 @@
 import { FilePickerHelper } from "zotero-plugin-toolkit/dist/helpers/filePicker";
-import { config } from "../../package.json";
-import { showHintWithLink } from "../utils/hint";
-import { formatPath } from "../utils/str";
-import { waitUtilAsync } from "../utils/wait";
-import { OutlineType } from "../utils/workspace";
-import { PluginCEBase } from "./base";
+import { config } from "../../../package.json";
+import { showHintWithLink } from "../../utils/hint";
+import { formatPath } from "../../utils/str";
+import { waitUtilAsync } from "../../utils/wait";
+import { OutlineType } from "../../utils/workspace";
+import { PluginCEBase } from "../base";
 import {
   getEditorInstance,
   moveHeading,
   updateHeadingTextAtLine,
-} from "../utils/editor";
-import { getNoteLinkParams } from "../utils/link";
-import { getNoteTree, getNoteTreeNodeById } from "../utils/note";
-import { getPref } from "../utils/prefs";
+} from "../../utils/editor";
+import { getNoteLinkParams } from "../../utils/link";
+import { getNoteTree, getNoteTreeNodeById } from "../../utils/note";
+import { getPref } from "../../utils/prefs";
 
 export class OutlinePane extends PluginCEBase {
   _outlineType: OutlineType = OutlineType.empty;
@@ -42,7 +42,7 @@ export class OutlinePane extends PluginCEBase {
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/outline.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/outline.css"
   ></html:link>
 </linkset>
 <hbox id="left-toolbar">

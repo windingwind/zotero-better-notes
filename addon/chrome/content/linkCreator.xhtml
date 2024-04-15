@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://__addonRef__/content/styles/linkCreator/toolbar.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://__addonRef__/content/styles/linkCreator/linkCreator.css" type="text/css"?>
+<!-- prettier-ignore -->
+<!DOCTYPE window>
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="bn-note-picker"
+  data-l10n-id="__addonRef__-title"
+  windowtype="__addonRef__-link-note"
+  persist="screenX screenY width height sizemode"
+  style="min-width: 40em"
+>
+  <linkset>
+    <html:link rel="localization" href="__addonRef__-linkCreator.ftl" />
+  </linkset>
+
+  <script src="chrome://zotero/content/include.js"></script>
+  <script src="chrome://zotero/content/customElements.js"></script>
+  <script src="chrome://__addonRef__/content/scripts/customElements.js"></script>
+  <script src="chrome://__addonRef__/content/scripts/linkCreator.js"></script>
+
+  <dialog buttons="accept, cancel">
+    <tabbox id="top-container" class="container">
+      <tabs>
+        <tab data-l10n-id="__addonRef__-tab-inbound"></tab>
+        <tab data-l10n-id="__addonRef__-tab-outbound"></tab>
+      </tabs>
+      <tabpanels class="container">
+        <tabpanel class="content-container">
+          <bn-inbound-creator
+            id="bn-inbound-creator"
+            data-bn-type="content"
+          ></bn-inbound-creator>
+        </tabpanel>
+        <tabpanel class="content-container">
+          <bn-outbound-creator
+            id="bn-outbound-creator"
+            data-bn-type="content"
+          ></bn-outbound-creator>
+        </tabpanel>
+      </tabpanels>
+    </tabbox>
+  </dialog>
+</window>

@@ -1,5 +1,5 @@
-import { config } from "../../package.json";
-import { PluginCEBase } from "./base";
+import { config } from "../../../package.json";
+import { PluginCEBase } from "../base";
 
 export class ContextPane extends PluginCEBase {
   _item?: Zotero.Item;
@@ -21,7 +21,7 @@ export class ContextPane extends PluginCEBase {
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/context.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/context.css"
   ></html:link>
 </linkset>
 <bn-details id="container" class="container"></bn-details>

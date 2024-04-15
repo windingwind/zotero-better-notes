@@ -1,0 +1,19 @@
+bn-inbound-creator {
+  gap: 16px;
+  overflow: auto;
+
+  bn-note-picker {
+    border: var(--material-border);
+    min-width: 600px;
+  }
+
+  bn-note-outline {
+    border: var(--material-border);
+    min-width: 300px;
+  }
+
+  bn-note-preview {
+    border: var(--material-border);
+    min-width: 450px;
+  }
+}

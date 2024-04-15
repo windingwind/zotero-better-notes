@@ -1,7 +1,7 @@
-import { config } from "../../package.json";
-import { waitUtilAsync } from "../utils/wait";
-import { PluginCEBase } from "./base";
-import { ContextPane } from "./context";
+import { config } from "../../../package.json";
+import { waitUtilAsync } from "../../utils/wait";
+import { PluginCEBase } from "../base";
+import { ContextPane } from "./contextPane";
 import { OutlinePane } from "./outlinePane";
 
 export class Workspace extends PluginCEBase {
@@ -20,7 +20,7 @@ export class Workspace extends PluginCEBase {
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/workspace.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/workspace.css"
   ></html:link>
 </linkset>
 <hbox id="top-container" class="container">

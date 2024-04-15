@@ -4,7 +4,7 @@ import { getLineAtCursor, getSectionAtCursor } from "../../utils/editor";
 import { showHint } from "../../utils/hint";
 import { getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
-import { openLinkNoteDialog } from "../../utils/linkNote";
+import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
@@ -19,13 +19,15 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
       classList: ["toolbar-button"],
       properties: {
         innerHTML: ICONS.addon,
-        title: "Link current note to another note",
+        title: "Link creator",
       },
       listeners: [
         {
           type: "click",
           listener: (e) => {
-            openLinkNoteDialog(noteItem);
+            openLinkCreator(noteItem, {
+              lineIndex: getLineAtCursor(editor),
+            });
           },
         },
       ],

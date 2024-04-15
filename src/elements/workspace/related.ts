@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { config } from "../../package.json";
+import { config } from "../../../package.json";
 
 const RelatedBox = customElements.get("related-box")! as typeof XULElementBase;
 
@@ -11,7 +11,7 @@ export class NoteRelatedBox extends RelatedBox {
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/related.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/related.css"
   ></html:link>
 </linkset>
 <collapsible-section

@@ -18,7 +18,7 @@ export function registerNoteRelation() {
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/relation.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/relation.css"
   ></html:link>
 </linkset>
 <iframe

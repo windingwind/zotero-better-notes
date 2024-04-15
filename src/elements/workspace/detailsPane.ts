@@ -1,12 +1,12 @@
-import { config } from "../../package.json";
+import { config } from "../../../package.json";
 const ItemDetails = customElements.get("item-details")! as any;
 
-export class NoteDetails extends ItemDetails {
+export class DetailsPane extends ItemDetails {
   content = MozXULElement.parseXULToFragment(`
 <linkset>
   <html:link
     rel="stylesheet"
-    href="chrome://${config.addonRef}/content/styles/details.css"
+    href="chrome://${config.addonRef}/content/styles/workspace/details.css"
   ></html:link>
 </linkset>
 <hbox id="zotero-view-item-container" class="zotero-view-item-container" flex="1">

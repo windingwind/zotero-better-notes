@@ -2,11 +2,37 @@ import { config } from "../../package.json";
 
 export class PluginCEBase extends XULElementBase {
   _addon!: typeof addon;
+  useShadowRoot = false;
 
   connectedCallback(): void {
     this._addon = Zotero[config.addonInstance];
     Zotero.UIProperties.registerRoot(this);
-    super.connectedCallback();
+    if (!this.useShadowRoot) {
+      super.connectedCallback();
+      return;
+    }
+    this.attachShadow({ mode: "open" });
+    // Following the connectedCallback from XULElementBase
+    let content = this.content;
+    if (content) {
+      content = document.importNode(content, true);
+      this.shadowRoot?.append(content);
+    }
+
+    MozXULElement.insertFTLIfNeeded("branding/brand.ftl");
+    MozXULElement.insertFTLIfNeeded("zotero.ftl");
+    // @ts-ignore
+    if (document.l10n && this.shadowRoot) {
+      // @ts-ignore
+      document.l10n.connectRoot(this.shadowRoot);
+    }
+
+    // @ts-ignore
+    window.addEventListener("unload", this._handleWindowUnload);
+
+    // @ts-ignore
+    this.initialized = true;
+    this.init();
   }
 
   _wrapID(key: string) {
@@ -24,7 +50,12 @@ export class PluginCEBase extends XULElementBase {
   }
 
   _queryID(key: string) {
-    return this.querySelector(`#${this._wrapID(key)}`) as XUL.Element | null;
+    const selector = `#${this._wrapID(key)}`;
+    return (this.querySelector(selector) ||
+      this.shadowRoot?.querySelector(selector)) as
+      | XUL.Element
+      | HTMLElement
+      | null;
   }
 
   _parseContentID(dom: DocumentFragment) {
