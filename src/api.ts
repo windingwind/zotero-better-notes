@@ -9,6 +9,7 @@ import {
   html2md,
   annotations2html,
   note2html,
+  link2params,
 } from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
@@ -59,10 +60,14 @@ import {
   getRangeAtCursor,
   move,
   replace,
+  moveHeading,
+  updateHeadingTextAtLine,
 } from "./utils/editor";
 import {
   addLineToNote,
+  getNoteTree,
   getNoteTreeFlattened,
+  getNoteTreeNodeById,
   getLinesInNote,
 } from "./utils/note";
 import {
@@ -92,6 +97,7 @@ const convert = {
   note2noteDiff,
   note2link,
   link2note,
+  link2params,
   link2html,
   md2html,
   html2md,
@@ -140,12 +146,16 @@ const editor = {
   getPositionAtLine,
   getTextBetween,
   getTextBetweenLines,
+  moveHeading,
+  updateHeadingTextAtLine,
 };
 
 const note = {
   insert: addLineToNote,
   getLinesInNote,
+  getNoteTree,
   getNoteTreeFlattened,
+  getNoteTreeNodeById,
 };
 
 const relation = {

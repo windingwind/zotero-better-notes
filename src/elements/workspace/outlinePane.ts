@@ -1,18 +1,11 @@
 import { FilePickerHelper } from "zotero-plugin-toolkit/dist/helpers/filePicker";
 import { config } from "../../../package.json";
-import { showHintWithLink } from "../../utils/hint";
 import { formatPath } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
 import { OutlineType } from "../../utils/workspace";
 import { PluginCEBase } from "../base";
-import {
-  getEditorInstance,
-  moveHeading,
-  updateHeadingTextAtLine,
-} from "../../utils/editor";
-import { getNoteLinkParams } from "../../utils/link";
-import { getNoteTree, getNoteTreeNodeById } from "../../utils/note";
 import { getPref } from "../../utils/prefs";
+import { showHintWithLink } from "../../utils/hint";
 
 export class OutlinePane extends PluginCEBase {
   _outlineType: OutlineType = OutlineType.empty;
@@ -296,7 +289,7 @@ export class OutlinePane extends PluginCEBase {
         return;
       }
       case "openNote": {
-        const linkParams = getNoteLinkParams(ev.data.link);
+        const linkParams = this._addon.api.convert.link2params(ev.data.link);
         if (!linkParams.noteItem) {
           return;
         }
@@ -307,11 +300,19 @@ export class OutlinePane extends PluginCEBase {
       }
       case "moveNode": {
         if (!this.item) return;
-        const tree = getNoteTree(this.item);
-        const fromNode = getNoteTreeNodeById(this.item, ev.data.fromID, tree);
-        const toNode = getNoteTreeNodeById(this.item, ev.data.toID, tree);
-        moveHeading(
-          getEditorInstance(this.item.id),
+        const tree = this._addon.api.note.getNoteTree(this.item);
+        const fromNode = this._addon.api.note.getNoteTreeNodeById(
+          this.item,
+          ev.data.fromID,
+          tree,
+        );
+        const toNode = this._addon.api.note.getNoteTreeNodeById(
+          this.item,
+          ev.data.toID,
+          tree,
+        );
+        this._addon.api.editor.moveHeading(
+          this._addon.api.editor.getEditorInstance(this.item.id),
           fromNode!,
           toNode!,
           ev.data.moveType,
@@ -322,7 +323,7 @@ export class OutlinePane extends PluginCEBase {
         if (!this.editor) {
           return;
         }
-        updateHeadingTextAtLine(
+        this._addon.api.editor.updateHeadingTextAtLine(
           this.editor,
           ev.data.lineIndex,
           ev.data.text.replace(/[\r\n]/g, ""),

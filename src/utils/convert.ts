@@ -41,6 +41,7 @@ export {
   note2noteDiff,
   note2link,
   link2note,
+  link2params,
   link2html,
   md2html,
   html2md,
@@ -177,6 +178,10 @@ function note2link(
 
 function link2note(link: string) {
   return getNoteLinkParams(link).noteItem;
+}
+
+function link2params(link: string) {
+  return getNoteLinkParams(link);
 }
 
 async function link2html(

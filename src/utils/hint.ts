@@ -1,8 +1,15 @@
+import { config } from "../../package.json";
+import { ProgressWindowHelper } from "zotero-plugin-toolkit/dist/helpers/progressWindow";
 import { PROGRESS_TITLE } from "./config";
 import { waitUtilAsync } from "./wait";
 
+ProgressWindowHelper.setIconURI(
+  "default",
+  `chrome://${config.addonRef}/content/icons/favicon.png`,
+);
+
 function showHint(text: string) {
-  return new ztoolkit.ProgressWindow(PROGRESS_TITLE)
+  return new ProgressWindowHelper(PROGRESS_TITLE)
     .createLine({ text, progress: 100, type: "default" })
     .show();
 }
@@ -12,7 +19,7 @@ async function showHintWithLink(
   linkText: string,
   linkCallback: (ev: MouseEvent) => any,
 ) {
-  const progress = new ztoolkit.ProgressWindow(PROGRESS_TITLE)
+  const progress = new ProgressWindowHelper(PROGRESS_TITLE)
     .createLine({ text, progress: 100, type: "default" })
     .show(-1);
   // Just a placeholder

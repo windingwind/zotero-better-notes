@@ -29,7 +29,6 @@ function initZToolkit(_ztoolkit: ReturnType<typeof createZToolkit>) {
 
 import { BasicTool, unregister } from "zotero-plugin-toolkit/dist/basic";
 import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
-import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
 import { DialogHelper } from "zotero-plugin-toolkit/dist/helpers/dialog";
 import { FilePickerHelper } from "zotero-plugin-toolkit/dist/helpers/filePicker";
@@ -47,7 +46,6 @@ class MyToolkit extends BasicTool {
   LibraryTabPanel: LibraryTabPanelManager;
   ReaderTabPanel: ReaderTabPanelManager;
   Menu: MenuManager;
-  PreferencePane: PreferencePaneManager;
   Clipboard: typeof ClipboardHelper;
   FilePicker: typeof FilePickerHelper;
   ProgressWindow: typeof ProgressWindowHelper;
@@ -62,7 +60,6 @@ class MyToolkit extends BasicTool {
     this.LibraryTabPanel = new LibraryTabPanelManager(this);
     this.ReaderTabPanel = new ReaderTabPanelManager(this);
     this.Menu = new MenuManager(this);
-    this.PreferencePane = new PreferencePaneManager(this);
     this.Clipboard = ClipboardHelper;
     this.FilePicker = FilePickerHelper;
     this.ProgressWindow = ProgressWindowHelper;
