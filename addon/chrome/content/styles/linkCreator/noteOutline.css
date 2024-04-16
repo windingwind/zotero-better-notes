@@ -1,7 +1,16 @@
 bn-note-outline {
   flex-direction: column;
-}
 
-#bn-link-insert-position-container {
-  align-items: center;
+  #bn-select-note-outline-container {
+    flex: 1;
+    flex-direction: column;
+  }
+
+  #bn-select-note-outline-content {
+    min-height: 100%;
+  }
+
+  #bn-link-insert-position-container {
+    align-items: center;
+  }
 }

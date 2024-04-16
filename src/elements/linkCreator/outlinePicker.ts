@@ -25,11 +25,13 @@ export class OutlinePicker extends PluginCEBase {
   <hbox class="toolbar-middle"></hbox>
   <hbox class="toolbar-end"></hbox>
 </hbox>
-<vbox
-  id="bn-select-note-outline-content"
-  class="container virtualized-table-container"
->
-  <html:div id="bn-select-note-outline-tree-${this.uid}"></html:div>
+<vbox id="bn-select-note-outline-container">
+  <vbox
+    id="bn-select-note-outline-content"
+    class="virtualized-table-container"
+  >
+    <html:div id="bn-select-note-outline-tree-${this.uid}"></html:div>
+  </vbox>
 </vbox>
 <hbox id="bn-link-insert-position-container">
   <label>At section</label>
