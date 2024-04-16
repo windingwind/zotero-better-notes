@@ -76,6 +76,7 @@ class Addon {
     relation: {
       worker?: Worker;
     };
+    imageCache: Record<number, string>;
     readonly prompt?: Prompt;
   } = {
     alive: true,
@@ -119,6 +120,7 @@ class Addon {
       },
     },
     relation: {},
+    imageCache: {},
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;
     },

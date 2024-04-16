@@ -69,11 +69,23 @@ function arrayBufferToBase64(buffer: ArrayBufferLike) {
 }
 
 export async function getItemDataURL(item: Zotero.Item) {
+  if (addon.data.imageCache[item.id]) {
+    return addon.data.imageCache[item.id];
+  }
   const path = (await item.getFilePathAsync()) as string;
   const buf = (await IOUtils.read(path)).buffer;
-  return (
-    "data:" + item.attachmentContentType + ";base64," + arrayBufferToBase64(buf)
-  );
+  const dataURL =
+    "data:" +
+    item.attachmentContentType +
+    ";base64," +
+    arrayBufferToBase64(buf);
+  const keys = Object.keys(addon.data.imageCache);
+  // Limit cache size
+  while (keys.length > 100) {
+    delete addon.data.imageCache[keys.shift() as any];
+  }
+  addon.data.imageCache[item.id] = dataURL;
+  return dataURL;
 }
 
 export async function fileExists(path: string): Promise<boolean> {
