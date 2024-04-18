@@ -76,3 +76,4 @@ templatePicker-itemData-title = Choose Item Template Data Source
 alert-notValidCollectionError = Please select a valid collection.
 alert-notValidParentItemError = No valid parent item.
 alert-syncImportedNotes = Keep imported notes in sync with MarkDown files?
+alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 

@@ -76,3 +76,4 @@ templatePicker-itemData-title=选择条目模板数据源
 alert-notValidCollectionError=请选择一个有效的分类。
 alert-notValidParentItemError=无效的父条目。
 alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？
+alert-linkCreator-emptyNote = 无法从/向空笔记创建链接。

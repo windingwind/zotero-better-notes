@@ -76,3 +76,4 @@ templatePicker-itemData-title=Выбрать источник данных ша�
 alert-notValidCollectionError=Выберите валидную коллекцию.
 alert-notValidParentItemError=Нет валидного родительского элемента.
 alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами MarkDown?
+alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 

@@ -1,4 +1,6 @@
 import { config } from "../../package.json";
+import { showHint } from "./hint";
+import { getString } from "./locale";
 import { addLineToNote } from "./note";
 
 export { openLinkCreator };
@@ -9,6 +11,10 @@ async function openLinkCreator(
     lineIndex: number;
   },
 ) {
+  if (!currentNote.id) {
+    showHint(getString("alert-linkCreator-emptyNote"));
+    return;
+  }
   const io = {
     openedNoteIDs: Zotero_Tabs._tabs
       .map((tab) => tab.data?.itemID)
