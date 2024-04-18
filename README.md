@@ -83,7 +83,7 @@ and:
 
 🖨️ Export notes to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
 
-📝 Enhancements for Zotero's note editor.
+📝 Enhancements for Zotero's note editor with outline, link relation, view images.... Open as much note tabs/windows as you like!
 
 ## 👋 Install
 
@@ -92,11 +92,11 @@ and:
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
   - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
-  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including Beta)
+  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including beta plugin for Zotero 7 beta)
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
-- In Zotero click `Tools` in the top menu bar and then click `Addons`
+- In Zotero click `Tools` in the top menu bar and then click `Plugins`
 - Go to the Extensions page and then click the gear icon in the top right.
 - Select `Install Add-on from file`.
 - Browse to where you downloaded the `.xpi` file and select it.
@@ -109,6 +109,8 @@ BN offers a range of features that can be combined like Lego blocks to build you
 Start taking notes in Zotero with BN in **5 minutes**!
 
 ### Getting Started with the _Workspace_
+
+> 💡 This section is outdated and will be removed. For the latest beta version, the workspace is no longer a thing. You can open unlimited number of note tab/window, which is what we call `workspace` in the past.
 
 The _workspace_ serves as the **central hub** where input flows (papers and annotations) converge with output flows (summaries and comparisons).
 
