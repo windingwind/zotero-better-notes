@@ -245,7 +245,7 @@ export class OutlinePane extends PluginCEBase {
       `${this.item.getNoteTitle()}.mm`,
     ).open();
     if (filename) {
-      await addon.api.$export.saveFreeMind(filename, this.item.id);
+      await this._addon.api.$export.saveFreeMind(filename, this.item.id);
     }
   }
 
