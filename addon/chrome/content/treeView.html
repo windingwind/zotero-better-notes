@@ -361,7 +361,7 @@
           cachedNodes = nodes;
           console.log(expandedStatus);
           const treeData = [];
-          nodes.map((node) => {
+          nodes.forEach((node) => {
             treeData.push({
               id: String(node.model.id),
               name: node.model.name,
@@ -375,7 +375,9 @@
                   ? expandedStatus[node.model.name]
                   : node.model.level < expandLevel,
               parentId:
-                node.model.level > 1 ? String(node.parent.model.id) : undefined,
+                node.parent.model.id > 0
+                  ? String(node.parent.model.id)
+                  : undefined,
             });
           });
           $(() => {
