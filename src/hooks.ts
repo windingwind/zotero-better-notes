@@ -117,7 +117,7 @@ async function onNotify(
   ids: Parameters<_ZoteroTypes.Notifier.Notify>["2"],
   extraData: Parameters<_ZoteroTypes.Notifier.Notify>["3"],
 ) {
-  if (extraData.skipBN) {
+  if (extraData?.skipBN) {
     return;
   }
   if (event === "select" && type === "tab") {
