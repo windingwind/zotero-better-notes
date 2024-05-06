@@ -158,7 +158,7 @@ async function getMDStatus(
       ret.filedir = formatPath(pathSplit.slice(0, -1).join("/"));
       ret.filename = pathSplit.pop() || "";
       const stat = await IOUtils.stat(filepath);
-      ret.lastmodify = new Date(stat.lastModified);
+      ret.lastmodify = new Date(stat.lastModified || 0);
     }
   } catch (e) {
     ztoolkit.log(e);
@@ -191,9 +191,9 @@ async function getMDFileName(noteId: number, searchDir?: string) {
             entry.name.split(".").shift()?.split("-").pop() === noteItem.key
           ) {
             const stat = await IOUtils.stat(entry.path);
-            if (stat.lastModified > matchedDate) {
+            if (stat.lastModified || 0 > matchedDate) {
               matchedFileName = entry.name;
-              matchedDate = stat.lastModified;
+              matchedDate = stat.lastModified || 0;
             }
           }
         }

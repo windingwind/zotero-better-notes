@@ -18,7 +18,6 @@ window.addEventListener("DOMContentLoaded", () => {
     { once: true },
   );
 
-  // @ts-ignore
   window.arguments[0]._initPromise.resolve();
 });
 

@@ -13,7 +13,7 @@ export class PluginCEBase extends XULElementBase {
     }
     this.attachShadow({ mode: "open" });
     // Following the connectedCallback from XULElementBase
-    let content = this.content;
+    let content: Node = this.content;
     if (content) {
       content = document.importNode(content, true);
       this.shadowRoot?.append(content);
@@ -21,9 +21,7 @@ export class PluginCEBase extends XULElementBase {
 
     MozXULElement.insertFTLIfNeeded("branding/brand.ftl");
     MozXULElement.insertFTLIfNeeded("zotero.ftl");
-    // @ts-ignore
     if (document.l10n && this.shadowRoot) {
-      // @ts-ignore
       document.l10n.connectRoot(this.shadowRoot);
     }
 

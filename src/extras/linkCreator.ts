@@ -48,7 +48,6 @@ function init() {
     window.resizeTo(Number(size[0] || "800"), Number(size[1] || "600"));
   }, 0);
 
-  // @ts-ignore
   io = window.arguments[0];
 
   tabbox = document.querySelector("#top-container")!;

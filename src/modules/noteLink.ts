@@ -16,6 +16,7 @@ export function registerNoteLinkProxyHandler() {
       this.doAction(uri);
     },
   };
+  // @ts-ignore
   Services.io.getProtocolHandler("zotero").wrappedJSObject._extensions[
     "zotero://note"
   ] = openNoteExtension;

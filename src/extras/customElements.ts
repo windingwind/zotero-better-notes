@@ -12,7 +12,7 @@ import { OutboundCreator } from "../elements/linkCreator/outboundCreator";
 const elements = {
   "bn-context": ContextPane,
   "bn-outline": OutlinePane,
-  "bn-details": DetailsPane as unknown as CustomElementConstructor,
+  "bn-details": DetailsPane,
   "bn-workspace": Workspace,
   "bn-note-picker": NotePicker,
   "bn-note-outline": OutlinePicker,
@@ -20,7 +20,7 @@ const elements = {
   "bn-inbound-creator": InboundCreator,
   "bn-outbound-creator": OutboundCreator,
   "bn-related-box": NoteRelatedBox,
-};
+} as unknown as Record<string, CustomElementConstructor>;
 
 for (const [key, constructor] of Object.entries(elements)) {
   if (!customElements.get(key)) {

@@ -5,9 +5,9 @@ function isWindowAlive(win?: Window) {
 }
 
 function getFocusedWindow() {
-  const wins = Services.wm.getEnumerator(null) as Window[];
+  const wins = Services.wm.getEnumerator("") as unknown as Window[];
   for (const win of wins) {
-    if (win.document.hasFocus()) {
+    if (win.document?.hasFocus()) {
       return win;
     }
   }

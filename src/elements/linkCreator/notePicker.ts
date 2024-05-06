@@ -136,7 +136,6 @@ export class NotePicker extends PluginCEBase {
   }
 
   loadQuickSearch() {
-    // @ts-ignore
     const searchBox = document.createXULElement("quick-search-textbox");
     searchBox.id = "zotero-tb-search";
     searchBox.setAttribute("timeout", "250");
@@ -146,6 +145,7 @@ export class NotePicker extends PluginCEBase {
       searchBox,
     );
 
+    // @ts-ignore
     searchBox.updateMode();
   }
 
