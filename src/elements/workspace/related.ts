@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { config } from "../../../package.json";
 
-const RelatedBox = customElements.get("related-box")! as typeof XULElementBase;
+const RelatedBox = document.createElement("related-box")
+  .constructor! as typeof XULElementBase;
 
 const _require = window.require;
 const { getCSSItemTypeIcon } = _require("components/icons");

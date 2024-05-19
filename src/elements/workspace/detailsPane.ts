@@ -1,5 +1,5 @@
 import { config } from "../../../package.json";
-const ItemDetails = customElements.get("item-details")! as any;
+const ItemDetails = document.createElement("item-details").constructor! as any;
 
 export class DetailsPane extends ItemDetails {
   content = MozXULElement.parseXULToFragment(`
