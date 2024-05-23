@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { config } from "../../../package.json";
 
-const RelatedBox = document.createElement("related-box")
+const RelatedBox = document.createXULElement("related-box")
   .constructor! as typeof XULElementBase;
 
 const _require = window.require;
