@@ -87,8 +87,9 @@ and:
 
 ## 👋 Install
 
-- Download the latest release (.xpi file) from:
+- Download the plugin (.xpi file) from below. For Zotero 7 beta, please always use the latest beta version.
 
+  - [Latest Version: 1.1.4-beta.75](https://github.com/windingwind/zotero-better-notes/releases/download/v1.1.4-beta.75/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
   - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)

@@ -1,6 +1,6 @@
-import { defineConfig } from "zotero-plugin-scaffold";
 import pkg from "./package.json";
-import { copyFileSync } from "fs";
+import { defineConfig } from "zotero-plugin-scaffold";
+import { replaceInFile } from "replace-in-file";
 
 export default defineConfig({
   source: ["src", "addon"],
@@ -43,24 +43,23 @@ export default defineConfig({
         outdir: "build/addon/chrome/content/scripts",
         bundle: true,
         target: ["firefox115"],
-      }
+      },
     ],
-    // If you want to checkout update.json into the repository, uncomment the following lines:
-    // makeUpdateJson: {
-    //   hash: false,
-    // },
-    // hooks: {
-    //   "build:makeUpdateJSON": (ctx) => {
-    //     copyFileSync("build/update.json", "update.json");
-    //     copyFileSync("build/update-beta.json", "update-beta.json");
-    //   },
-    // },
+    hooks: {
+      "build:replace": (ctx) => {
+        return replaceInFile({
+          files: ["README.md"],
+          from: /^ {2}- \[Latest Version.*/gm,
+          to: `  - [Latest Version: ${ctx.version}](${ctx.xpiDownloadLink})`,
+        }) as Promise<any>;
+      },
+    },
   },
-  // release: {
-  //   bumpp: {
-  //     execute: "npm run build",
-  //   },
-  // },
+  release: {
+    bumpp: {
+      execute: "npm run build",
+    },
+  },
 
   // If you need to see a more detailed build log, uncomment the following line:
   // logLevel: "trace",
