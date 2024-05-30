@@ -71,8 +71,11 @@ import {
   getLinesInNote,
 } from "./utils/note";
 import {
+  getAnnotationByLinkTarget,
+  getLinkTargetByAnnotation,
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
+  linkAnnotationToTarget,
   updateNoteLinkRelation,
 } from "./utils/relation";
 
@@ -162,6 +165,9 @@ const relation = {
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
   updateNoteLinkRelation,
+  linkAnnotationToTarget,
+  getLinkTargetByAnnotation,
+  getAnnotationByLinkTarget,
 };
 
 export default {

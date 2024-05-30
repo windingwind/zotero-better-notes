@@ -6,6 +6,9 @@ export {
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
   closeRelationWorker,
+  linkAnnotationToTarget,
+  getLinkTargetByAnnotation,
+  getAnnotationByLinkTarget,
 };
 
 function closeRelationWorker() {
@@ -156,5 +159,40 @@ interface LinkModel {
   fromLine: number;
   toLine: number | null;
   toSection: string | null;
+  url: string;
+}
+
+async function linkAnnotationToTarget(model: AnnotationModel): Promise<void> {
+  return executeRelationWorker({
+    type: "linkAnnotationToTarget",
+    data: model,
+  });
+}
+
+async function getLinkTargetByAnnotation(
+  fromLibID: number,
+  fromKey: string,
+): Promise<AnnotationModel> {
+  return executeRelationWorker({
+    type: "getLinkTargetByAnnotation",
+    data: { fromLibID, fromKey },
+  });
+}
+
+async function getAnnotationByLinkTarget(
+  toLibID: number,
+  toKey: string,
+): Promise<AnnotationModel> {
+  return executeRelationWorker({
+    type: "getAnnotationByLinkTarget",
+    data: { toLibID, toKey },
+  });
+}
+
+interface AnnotationModel {
+  fromLibID: number;
+  fromKey: string;
+  toLibID: number;
+  toKey: string;
   url: string;
 }

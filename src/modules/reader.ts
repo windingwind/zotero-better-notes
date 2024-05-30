@@ -23,7 +23,7 @@ export function registerReaderAnnotationButton() {
                 createNoteFromAnnotation(
                   reader._item.libraryID,
                   annotationData.id,
-                  (e as MouseEvent).shiftKey ? "builtin" : "auto",
+                  (e as MouseEvent).shiftKey ? "window" : "tab",
                 );
                 e.preventDefault();
               },
@@ -54,7 +54,7 @@ export function registerReaderAnnotationButton() {
 async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
-  openMode: "builtin" | "auto" = "auto",
+  openMode: "window" | "tab" | undefined,
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
     libraryID,
@@ -63,15 +63,27 @@ async function createNoteFromAnnotation(
   if (!annotationItem) {
     return;
   }
+
+  // Check if the annotation has a note link tag
   const annotationTags = annotationItem.getTags().map((_) => _.tag);
   const linkRegex = new RegExp("^zotero://note/(.*)$");
   for (const tag of annotationTags) {
     if (linkRegex.test(tag)) {
       const linkParams = getNoteLinkParams(tag);
       if (linkParams.noteItem) {
-        addon.hooks.onOpenNote(linkParams.noteItem.id, openMode, {
+        addon.hooks.onOpenNote(linkParams.noteItem.id, openMode || "tab", {
           lineIndex: linkParams.lineIndex || undefined,
         });
+        // Remove deprecated link tag and create a link in IndexedDB
+        await addon.api.relation.linkAnnotationToTarget({
+          fromLibID: annotationItem.libraryID,
+          fromKey: annotationItem.key,
+          toLibID: linkParams.libraryID,
+          toKey: linkParams.noteKey!,
+          url: tag,
+        });
+        annotationItem.removeTag(tag);
+        await annotationItem.saveTx();
         return;
       } else {
         annotationItem.removeTag(tag);
@@ -80,17 +92,31 @@ async function createNoteFromAnnotation(
     }
   }
 
+  const linkTarget = await addon.api.relation.getLinkTargetByAnnotation(
+    annotationItem.libraryID,
+    annotationItem.key,
+  );
+  if (linkTarget) {
+    const targetItem = Zotero.Items.getByLibraryAndKey(
+      linkTarget.toLibID,
+      linkTarget.toKey,
+    );
+    if (targetItem)
+      addon.hooks.onOpenNote(targetItem.id, openMode || "tab", {});
+    return;
+  }
+
   const note: Zotero.Item = new Zotero.Item("note");
   note.libraryID = annotationItem.libraryID;
   note.parentID = annotationItem.parentItem!.parentID;
   await note.saveTx();
 
-  const renderredTemplate = await addon.api.template.runTemplate(
+  const renderedTemplate = await addon.api.template.runTemplate(
     "[QuickNoteV5]",
     "annotationItem, topItem, noteItem",
     [annotationItem, annotationItem.parentItem!.parentItem, note],
   );
-  await addLineToNote(note, renderredTemplate);
+  await addLineToNote(note, renderedTemplate);
 
   const tags = annotationItem.getTags();
   for (const tag of tags) {
@@ -98,8 +124,13 @@ async function createNoteFromAnnotation(
   }
   await note.saveTx();
 
-  ZoteroPane.openNoteWindow(note.id);
+  await addon.api.relation.linkAnnotationToTarget({
+    fromLibID: annotationItem.libraryID,
+    fromKey: annotationItem.key,
+    toLibID: note.libraryID,
+    toKey: note.key,
+    url: addon.api.convert.note2link(note, { ignore: true })!,
+  });
 
-  annotationItem.addTag(getNoteLink(note)!);
-  await annotationItem.saveTx();
+  addon.hooks.onOpenNote(note.id, "builtin", {});
 }
