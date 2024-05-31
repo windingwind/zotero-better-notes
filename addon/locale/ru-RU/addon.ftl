@@ -77,3 +77,4 @@ alert-notValidCollectionError=Выберите валидную коллекци
 alert-notValidParentItemError=Нет валидного родительского элемента.
 alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами MarkDown?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
+alert-templateEditor-shouldImport = Вы пытаетесь сохранить код шаблона заметки. Хотите импортировать его как шаблон?

@@ -58,6 +58,7 @@ export default defineConfig({
   release: {
     bumpp: {
       execute: "npm run build",
+      all: true,
     },
   },
 

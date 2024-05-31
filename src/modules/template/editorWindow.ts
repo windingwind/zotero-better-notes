@@ -269,8 +269,23 @@ function saveSelectedTemplate() {
 
   const template = {
     name: header.value,
-    text: addon.data.template.editor.editor.getValue(),
+    text: addon.data.template.editor.editor.getValue() as string,
   };
+  if (
+    template.text.includes(
+      "# This template is specifically for importing/sharing",
+    )
+  ) {
+    const useImport = addon.data.template.editor.window?.confirm(
+      getString("alert-templateEditor-shouldImport"),
+    );
+    if (useImport) {
+      addon.hooks.onImportTemplateFromClipboard(template.text);
+      refresh();
+      return;
+    }
+  }
+
   addon.api.template.setTemplate(template);
   if (name !== template.name) {
     addon.api.template.removeTemplate(name);

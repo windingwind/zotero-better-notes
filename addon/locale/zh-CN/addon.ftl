@@ -77,3 +77,4 @@ alert-notValidCollectionError=请选择一个有效的分类。
 alert-notValidParentItemError=无效的父条目。
 alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？
 alert-linkCreator-emptyNote = 无法从/向空笔记创建链接。
+alert-templateEditor-shouldImport = 似乎您正在尝试直接保存一个笔记模板分享代码。您想要将其导入为模板吗？

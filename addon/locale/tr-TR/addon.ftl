@@ -77,3 +77,4 @@ alert-notValidCollectionError = Lütfen geçerli bir koleksiyon seçin.
 alert-notValidParentItemError = Geçerli üst öge yok.
 alert-syncImportedNotes = İçe aktarılmış notları Markdown dosyalarıyla senkron tutmak ister misiniz?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
+alert-templateEditor-shouldImport = Şablon kodunu doğrudan kaydetmeye çalışıyorsunuz gibi görünüyor. Şablon olarak içe aktarmak ister misiniz?
