@@ -140,6 +140,9 @@ function scrollPreviewEditorTo(
     `note-editor[data-id="${item.id}"]`,
   ) as EditorElement;
   if (!editor) return;
+  const section = editor.closest("item-pane-custom-section");
+  // @ts-ignore
+  workspace?.querySelector("bn-details")?.scrollToPane(section.dataset.pane);
   if (typeof options.lineIndex === "number") {
     addon.api.editor.scroll(editor._editorInstance, options.lineIndex);
   }
