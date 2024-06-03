@@ -7,8 +7,9 @@ export { setSyncing, callSyncing };
 
 function setSyncing() {
   const syncPeriod = getPref("syncPeriodSeconds") as number;
+  const enableHint = addon.data.env === "development";
   if (syncPeriod > 0) {
-    showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
+    enableHint && showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
     const timer = ztoolkit.getGlobal("setInterval")(
       () => {
         if (!addon.data.alive) {
