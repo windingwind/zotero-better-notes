@@ -15,16 +15,18 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   id="bn-note-picker"
-  data-l10n-id="__addonRef__-title"
+  data-l10n-id="title"
   windowtype="__addonRef__-link-note"
   persist="screenX screenY width height sizemode"
   style="min-width: 40em"
+  drawintitlebar-platforms="mac"
 >
   <linkset>
     <html:link rel="localization" href="__addonRef__-linkCreator.ftl" />
   </linkset>
 
   <script src="chrome://zotero/content/include.js"></script>
+  <script src="chrome://zotero/content/title.js"></script>
   <script src="chrome://zotero/content/customElements.js"></script>
   <script src="chrome://__addonRef__/content/scripts/customElements.js"></script>
   <script src="chrome://__addonRef__/content/scripts/linkCreator.js"></script>
@@ -32,8 +34,8 @@
   <dialog buttons="accept, cancel">
     <tabbox id="top-container" class="container">
       <tabs>
-        <tab data-l10n-id="__addonRef__-tab-inbound"></tab>
-        <tab data-l10n-id="__addonRef__-tab-outbound"></tab>
+        <tab data-l10n-id="tab-inbound"></tab>
+        <tab data-l10n-id="tab-outbound"></tab>
       </tabs>
       <tabpanels class="container">
         <tabpanel class="content-container">
