@@ -111,6 +111,9 @@ export function openNotePreview(
         );
       }
     },
+    onDestroy: () => {
+      Zotero.ItemPaneManager.unregisterSection(key || "");
+    },
   });
 
   const workspace = getWorkspaceByUID(workspaceUID);
