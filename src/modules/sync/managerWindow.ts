@@ -110,6 +110,9 @@ export async function showSyncManager() {
     const unSyncButton = win.document.querySelector(
       "#unSync",
     ) as HTMLButtonElement;
+    const detectButton = win.document.querySelector(
+      "#detect",
+    ) as HTMLButtonElement;
     refreshButton.addEventListener("click", (ev) => {
       refresh();
     });
@@ -126,6 +129,9 @@ export async function showSyncManager() {
         addon.api.sync.removeSyncNote(noteId);
       });
       refresh();
+    });
+    detectButton.addEventListener("click", () => {
+      detectSyncedNotes();
     });
   }
 }
@@ -218,5 +224,41 @@ async function unSyncNotes(itemIds: number[]) {
   for (const itemId of itemIds) {
     await addon.api.sync.removeSyncNote(itemId);
   }
-  refresh();
+  await refresh();
+}
+
+async function detectSyncedNotes() {
+  const dir = await new addon.data.ztoolkit.FilePicker(
+    "Select folder to detect",
+    "folder",
+  ).open();
+  if (!dir) return;
+
+  const statusList = await addon.api.sync.findAllSyncedFiles(dir);
+  let current = 0;
+  for (const status of statusList) {
+    if (addon.api.sync.isSyncNote(status.itemID)) {
+      current++;
+    }
+  }
+  const total = statusList.length;
+  const newCount = total - current;
+  if (
+    !addon.data.sync.manager.window?.confirm(
+      getString("syncManager-detectConfirmInfo", {
+        args: {
+          total,
+          new: newCount,
+          current,
+          dir,
+        },
+      }),
+    )
+  )
+    return;
+  for (const status of statusList) {
+    addon.api.sync.updateSyncStatus(status.itemID, status);
+  }
+  await addon.hooks.onSyncing();
+  await refresh();
 }

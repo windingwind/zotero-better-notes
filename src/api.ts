@@ -28,6 +28,7 @@ import {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  findAllSyncedFiles,
 } from "./modules/sync/api";
 import {
   runTemplate,
@@ -92,6 +93,7 @@ const sync = {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  findAllSyncedFiles,
 };
 
 const convert = {

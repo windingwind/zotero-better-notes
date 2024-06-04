@@ -26,6 +26,9 @@ editor-previewImage-title = Resmi Önizle
 syncManager-noteName = Not Adı
 syncManager-lastSync = Son Senkronizasyon
 syncManager-filePath = MarkDown Yolu
+syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
+    {$new} new, {$current} will be updated.
+    Do you want to apply the changes?
 
 syncInfo-syncTo = MarkDown Yolu
 syncInfo-lastSync = Son Senkronizasyon

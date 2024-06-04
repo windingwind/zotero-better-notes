@@ -22,6 +22,9 @@ templateEditor-templateName = Nome template
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
 syncManager-filePath = Percorso MarkDown
+syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
+    {$new} new, {$current} will be updated.
+    Do you want to apply the changes?
 
 syncInfo-syncTo = Percorso MarkDown
 syncInfo-lastSync = Ultima sincronizzazione

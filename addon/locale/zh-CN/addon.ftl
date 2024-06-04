@@ -26,6 +26,9 @@ editor-previewImage-title = 预览图片
 syncManager-noteName=笔记名称
 syncManager-lastSync=最近同步
 syncManager-filePath=MarkDown路径
+syncManager-detectConfirmInfo = 扫描到{$total}项由本插件同步的markdown文件 (来自{$dir})
+    将要新同步{$new}项, 将要覆盖{$current}项
+    确定应用这些更改吗?
 
 syncInfo-syncTo=MarkDown路径
 syncInfo-lastSync=最近同步

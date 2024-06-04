@@ -1,7 +1,13 @@
 title = Синк Менеджер
 refresh = 
     .label = Обновить
+    .tooltiptext = Refresh the list of notes
 sync = 
     .label = Синк
+    .tooltiptext = Sync the selected notes immediately
 unSync = 
     .label = ДеСинк
+    .tooltiptext = Unsync the selected notes
+detect = 
+    .label = Detect...
+    .tooltiptext = Detect synced notes from folder

@@ -26,11 +26,14 @@ editor-previewImage-title = Preview Image
 syncManager-noteName = Note Name
 syncManager-lastSync = Last Sync
 syncManager-filePath = MarkDown Path
+syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
+    {$new} new, {$current} will be updated.
+    Do you want to apply the changes?
 
 syncInfo-syncTo = MarkDown Path
 syncInfo-lastSync = Last Sync
 syncInfo-sync = Sync
-syncInfo-unSync = UnSync
+syncInfo-unSync = Unsync
 syncInfo-reveal = Show in Folder
 syncInfo-manager = Sync Manager
 syncInfo-export = Export As...

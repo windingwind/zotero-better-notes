@@ -26,6 +26,9 @@ editor-previewImage-title = Preview Image
 syncManager-noteName=Имя заметки
 syncManager-lastSync=Последний Синк
 syncManager-filePath=MarkDown путь
+syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
+    {$new} new, {$current} will be updated.
+    Do you want to apply the changes?
 
 syncInfo-syncTo=MarkDown путь
 syncInfo-lastSync=Последний Синк

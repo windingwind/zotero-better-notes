@@ -15,6 +15,7 @@ export {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  findAllSyncedFiles,
 };
 
 function initSyncList() {
@@ -209,4 +210,44 @@ async function getMDFileName(noteId: number, searchDir?: string) {
     "noteItem",
     [noteItem],
   );
+}
+
+async function findAllSyncedFiles(searchDir: string) {
+  const results: SyncStatus[] = [];
+  const mdRegex = /\.(md|MD|Md|mD)$/;
+  await Zotero.File.iterateDirectory(
+    searchDir,
+    async (entry: OS.File.Entry) => {
+      if (entry.isDir) {
+        const subDirResults = await findAllSyncedFiles(entry.path);
+        results.push(...subDirResults);
+        return;
+      }
+      if (mdRegex.test(entry.name)) {
+        const MDStatus = await getMDStatus(entry.path);
+        if (!MDStatus.meta?.$libraryID || !MDStatus.meta?.$itemKey) {
+          return;
+        }
+        const item = await Zotero.Items.getByLibraryAndKeyAsync(
+          MDStatus.meta.$libraryID,
+          MDStatus.meta.$itemKey,
+        );
+        if (!item || !(item as Zotero.Item).isNote()) {
+          return;
+        }
+        results.push({
+          path: MDStatus.filedir,
+          filename: MDStatus.filename,
+          md5: Zotero.Utilities.Internal.md5(MDStatus.content, false),
+          noteMd5: Zotero.Utilities.Internal.md5(
+            (item as Zotero.Item).getNote(),
+            false,
+          ),
+          lastsync: MDStatus.lastmodify.getTime(),
+          itemID: item.id,
+        });
+      }
+    },
+  );
+  return results;
 }

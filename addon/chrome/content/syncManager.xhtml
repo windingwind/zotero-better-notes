@@ -32,11 +32,6 @@
           "chrome://zotero/content/include.js",
           this,
         );
-
-        Services.scriptloader.loadSubScript(
-          "resource://zotero/require.js",
-          this,
-        );
         window.arguments[0]._initPromise.resolve();
       });
     </script>
@@ -47,12 +42,12 @@
         padding: 0;
         margin: 0;
         height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden;
         word-wrap: break-word;
       }
       .viewport {
         margin: 0 5px 0 5px;
+        overflow-y: auto;
       }
       .viewport-container {
         padding: 0;
@@ -62,6 +57,7 @@
         display: flex;
         flex-direction: row;
         overflow: hidden;
+        background: var(--material-background);
       }
       .list-viewport {
         width: 100%;
@@ -89,6 +85,7 @@
       <button id="refresh" data-l10n-id="refresh"></button>
       <button id="sync" data-l10n-id="sync"></button>
       <button id="unSync" data-l10n-id="unSync"></button>
+      <button id="detect" data-l10n-id="detect"></button>
     </div>
   </body>
 </html>

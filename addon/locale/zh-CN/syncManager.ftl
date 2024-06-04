@@ -1,7 +1,13 @@
 title = 同步管理
 refresh = 
     .label = 刷新
+    .tooltiptext = 刷新同步笔记列表
 sync = 
     .label = 同步
+    .tooltiptext = 立刻同步选中的笔记
 unSync = 
     .label = 取消同步
+    .tooltiptext = 不再同步选中的笔记
+detect = 
+    .label = 扫描...
+    .tooltiptext = 从文件夹扫描已同步的笔记
