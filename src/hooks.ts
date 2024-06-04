@@ -186,7 +186,7 @@ function onOpenNote(
           | HTMLElement
           | undefined
       )?.dataset.uid;
-    } else if (currentWindow?.document.querySelector("bn-workspace")) {
+    } else if (currentWindow?.document.querySelector("body.workspace-window")) {
       mode = "preview";
       workspaceUID = (
         currentWindow.document.querySelector("bn-workspace") as
