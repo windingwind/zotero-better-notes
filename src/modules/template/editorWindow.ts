@@ -14,7 +14,7 @@ export async function showTemplateEditor() {
     const windowArgs = {
       _initPromise: Zotero.Promise.defer(),
     };
-    const _window = window.openDialog(
+    const _window = Zotero.getMainWindow().openDialog(
       `chrome://${config.addonRef}/content/templateEditor.xhtml`,
       `${config.addonRef}-templateEditor`,
       `chrome,centerscreen,resizable,status,width=600,height=400,dialog=no`,

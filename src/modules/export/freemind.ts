@@ -16,7 +16,7 @@ async function note2mm(
 ) {
   const root = getNoteTree(noteItem, false);
   const textNodeForEach = (e: Node, callbackfn: (e: any) => void) => {
-    if (e.nodeType === document.TEXT_NODE) {
+    if (e.nodeType === Zotero.getMainWindow().document.TEXT_NODE) {
       callbackfn(e);
       return;
     }

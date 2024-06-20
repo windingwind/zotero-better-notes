@@ -99,7 +99,7 @@ async function runTemplate(
     if (options.dryRun) {
       return "Template Preview Error: " + String(e);
     }
-    window.alert(`Template ${key} Error: ${e}`);
+    Zotero.getMainWindow().alert(`Template ${key} Error: ${e}`);
     return "";
   }
 }

@@ -29,7 +29,7 @@ async function createNoteFromTemplate(
     const parentItemId =
       parentType === "reader" ? getReaderParentId() : getLibraryParentId();
     if (!parentItemId) {
-      window.alert(getString("alert.notValidParentItemError"));
+      Zotero.getMainWindow().alert(getString("alert.notValidParentItemError"));
       return;
     }
     addon.hooks.onShowTemplatePicker("create", {
@@ -48,11 +48,13 @@ async function createNoteFromTemplate(
 async function createNoteFromMD() {
   const currentCollection = ZoteroPane.getSelectedCollection();
   if (!currentCollection) {
-    window.alert(getString("alert.notValidCollectionError"));
+    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
     return;
   }
 
-  const syncNotes = window.confirm(getString("alert-syncImportedNotes"));
+  const syncNotes = Zotero.getMainWindow().confirm(
+    getString("alert-syncImportedNotes"),
+  );
 
   const filepaths = await new ztoolkit.FilePicker(
     "Import MarkDown",

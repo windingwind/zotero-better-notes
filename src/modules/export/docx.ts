@@ -263,7 +263,7 @@ async function getWorker(): Promise<HTMLIFrameElement> {
       position: "absolute",
     },
   });
-  window.document.documentElement.appendChild(worker);
+  Zotero.getMainWindow().document.documentElement.appendChild(worker);
   await waitUtilAsync(() => worker.contentDocument?.readyState === "complete");
   return worker;
 }

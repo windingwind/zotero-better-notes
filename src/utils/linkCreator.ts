@@ -23,7 +23,7 @@ async function openLinkCreator(
     currentLineIndex: options?.lineIndex,
     deferred: Zotero.Promise.defer(),
   } as any;
-  window.openDialog(
+  Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/linkCreator.xhtml`,
     "_blank",
     "chrome,modal,centerscreen,resizable=yes",

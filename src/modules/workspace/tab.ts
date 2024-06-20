@@ -87,9 +87,13 @@ function scrollTabEditorTo(
     sectionName?: string;
   } = {},
 ) {
-  const tab = Zotero_Tabs._tabs.find((tab) => tab.data?.itemID == item.id);
+  const tab = ztoolkit
+    .getGlobal("Zotero_Tabs")
+    ._tabs.find((tab) => tab.data?.itemID == item.id);
   if (!tab || tab.type !== TAB_TYPE) return;
-  const workspace = document.querySelector(`#${tab.id} > bn-workspace`);
+  const workspace = Zotero.getMainWindow().document.querySelector(
+    `#${tab.id} > bn-workspace`,
+  );
   if (!workspace) return;
   // @ts-ignore
   workspace.scrollEditorTo(options);

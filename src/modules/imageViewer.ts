@@ -14,7 +14,7 @@ export async function showImageViewer(
     Components.utils.isDeadWrapper(addon.data.imageViewer.window) ||
     addon.data.imageViewer.window.closed
   ) {
-    addon.data.imageViewer.window = window.openDialog(
+    addon.data.imageViewer.window = Zotero.getMainWindow().openDialog(
       `chrome://${config.addonRef}/content/imageViewer.html`,
       `${config.addonRef}-imageViewer`,
       `chrome,centerscreen,resizable,status,width=500,height=550,dialog=no${

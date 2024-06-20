@@ -63,7 +63,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
     }
 
     if (!isWindowAlive(addon.data.sync.diff.window)) {
-      addon.data.sync.diff.window = window.open(
+      addon.data.sync.diff.window = Zotero.getMainWindow().open(
         `chrome://${config.addonRef}/content/syncDiff.html`,
         `${config.addonRef}-syncDiff`,
         `chrome,centerscreen,resizable,status,width=900,height=550`,
@@ -114,7 +114,7 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
 
   switch (io.type) {
     case "skip":
-      window.alert(
+      Zotero.getMainWindow().alert(
         `Syncing of "${noteItem.getNoteTitle()}" is skipped.\nTo sync manually, go to File->Better Notes Sync Manager.`,
       );
       addon.data.sync.diff.window?.closed ||

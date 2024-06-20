@@ -4,7 +4,7 @@ import { getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
 import { slice } from "../utils/str";
 
-export function registerMenus() {
+export function registerMenus(win: Window) {
   // item
   ztoolkit.Menu.register("item", { tag: "menuseparator" });
   ztoolkit.Menu.register("item", {
@@ -19,7 +19,7 @@ export function registerMenus() {
   });
 
   // menuEdit
-  const menuEditAnchor = document.querySelector(
+  const menuEditAnchor = win.document.querySelector(
     "#menu_EditPreferencesItem",
   ) as XUL.MenuItem;
   ztoolkit.Menu.register(
@@ -93,7 +93,7 @@ export function registerMenus() {
   });
 
   // menuFile
-  const menuFileAnchor = document.querySelector(
+  const menuFileAnchor = win.document.querySelector(
     "#menu_newCollection",
   ) as XUL.MenuItem;
 
@@ -140,7 +140,7 @@ export function registerMenus() {
   );
 
   // create note menu in library
-  const newNoteMenu = document
+  const newNoteMenu = win.document
     .querySelector("#zotero-tb-note-add")
     ?.querySelector("menupopup") as XUL.MenuPopup;
   ztoolkit.Menu.register(newNoteMenu, {
@@ -165,7 +165,7 @@ export function registerMenus() {
 
   // create note menu in reader side panel
   ztoolkit.Menu.register(
-    document.querySelector(
+    win.document.querySelector(
       "#context-pane-add-child-note-button-popup",
     ) as XUL.MenuPopup,
     {

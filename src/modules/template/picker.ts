@@ -103,7 +103,9 @@ async function createTemplateNoteCallback(name: string) {
     case "standalone": {
       const currentCollection = ZoteroPane.getSelectedCollection();
       if (!currentCollection) {
-        window.alert(getString("alert.notValidCollectionError"));
+        Zotero.getMainWindow().alert(
+          getString("alert.notValidCollectionError"),
+        );
         return;
       }
       const noteID = await ZoteroPane.newNote();

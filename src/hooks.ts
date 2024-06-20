@@ -75,7 +75,7 @@ async function onStartup() {
 }
 
 async function onMainWindowLoad(win: Window): Promise<void> {
-  await waitUtilAsync(() => document.readyState === "complete");
+  await waitUtilAsync(() => win.document.readyState === "complete");
 
   Services.scriptloader.loadSubScript(
     `chrome://${config.addonRef}/content/scripts/customElements.js`,
@@ -84,9 +84,9 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
 
-  registerNotify(["tab", "item", "item-tag"]);
+  registerNotify(["tab", "item", "item-tag"], win);
 
-  registerMenus();
+  registerMenus(win);
 
   initTemplates();
 
@@ -157,7 +157,7 @@ async function onPrefsEvent(type: string, data: { [key: string]: any }) {
   }
 }
 
-function onOpenNote(
+async function onOpenNote(
   noteId: number,
   mode: "auto" | "preview" | "tab" | "window" | "builtin" = "auto",
   options: {
@@ -182,9 +182,9 @@ function onOpenNote(
     if ((currentWindow as any)?.Zotero_Tabs?.selectedType === "note") {
       mode = "preview";
       workspaceUID = (
-        document.querySelector(`#${Zotero_Tabs.selectedID} bn-workspace`) as
-          | HTMLElement
-          | undefined
+        currentWindow?.document.querySelector(
+          `#${Zotero_Tabs.selectedID} bn-workspace`,
+        ) as HTMLElement | undefined
       )?.dataset.uid;
     } else if (currentWindow?.document.querySelector("body.workspace-window")) {
       mode = "preview";
@@ -207,10 +207,10 @@ function onOpenNote(
       openNotePreview(noteItem, workspaceUID, options);
       break;
     case "tab":
-      openWorkspaceTab(noteItem, options);
+      await openWorkspaceTab(noteItem, options);
       break;
     case "window":
-      openWorkspaceWindow(noteItem, options);
+      await openWorkspaceWindow(noteItem, options);
       break;
     case "builtin":
       ZoteroPane.openNoteWindow(noteId);

@@ -18,7 +18,7 @@ function setSyncing() {
         }
         // Only when Zotero is active and focused
         if (
-          document.hasFocus() &&
+          Zotero.getMainWindow().document.hasFocus() &&
           (getPref("syncPeriodSeconds") as number) > 0
         ) {
           callSyncing(undefined, {
