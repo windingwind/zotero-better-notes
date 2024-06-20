@@ -82,8 +82,6 @@ export class Workspace extends PluginCEBase {
 
     this._context = this._queryID("right-container") as unknown as ContextPane;
 
-    this._loadPersist();
-
     this.resizeOb = new ResizeObserver(() => {
       if (!this.editor) return;
       this._addon.api.editor.scroll(

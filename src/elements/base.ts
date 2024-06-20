@@ -62,28 +62,4 @@ export class PluginCEBase extends XULElementBase {
     });
     return dom;
   }
-
-  _loadPersist() {
-    const persistValues = Zotero.Prefs.get("pane.persist") as string;
-    if (!persistValues) return;
-    const serializedValues = JSON.parse(persistValues) as Record<
-      string,
-      Record<string, string>
-    >;
-
-    for (const id in serializedValues) {
-      const el = this.querySelector(`#${id}`) as HTMLElement;
-      if (!el) {
-        continue;
-      }
-
-      const elValues = serializedValues[id];
-      for (const attr in elValues) {
-        el.setAttribute(attr, elValues[attr]);
-        if (["width", "height"].includes(attr)) {
-          el.style[attr as any] = `${elValues[attr]}px`;
-        }
-      }
-    }
-  }
 }

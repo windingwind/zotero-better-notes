@@ -139,8 +139,6 @@ export class OutlinePane extends PluginCEBase {
       ["item"],
       "attachmentsBox",
     );
-
-    this._loadPersist();
   }
 
   destroy(): void {
