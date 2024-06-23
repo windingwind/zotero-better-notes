@@ -14,6 +14,7 @@ import { createZToolkit } from "./utils/ztoolkit";
 
 class Addon {
   public data: {
+    uid: string;
     alive: boolean;
     // Env type, see build.js
     env: "development" | "production";
@@ -78,7 +79,11 @@ class Addon {
     };
     imageCache: Record<number, string>;
     readonly prompt?: Prompt;
+    hint: {
+      silent: boolean;
+    };
   } = {
+    uid: Zotero.Utilities.randomString(8),
     alive: true,
     env: __env__,
     ztoolkit: createZToolkit(),
@@ -123,6 +128,9 @@ class Addon {
     imageCache: {},
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;
+    },
+    hint: {
+      silent: false,
     },
   };
   // Lifecycle hooks

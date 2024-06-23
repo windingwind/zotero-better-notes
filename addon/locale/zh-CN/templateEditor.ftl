@@ -1,4 +1,7 @@
 title = 模板编辑器
+
+templateName = 模板名称
+
 previewContainer = 
     .label = 预览
 create = 

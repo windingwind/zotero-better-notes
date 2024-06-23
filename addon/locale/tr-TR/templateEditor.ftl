@@ -1,4 +1,7 @@
 title = Şablon Düzenleyici
+
+templateName = Şablon Adı
+
 previewContainer = 
     .label = Ön İzle
 create = 

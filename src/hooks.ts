@@ -40,6 +40,7 @@ import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref, setPref } from "./utils/prefs";
 import { closeRelationWorker } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
+import { showUserGuide } from "./modules/userGuide";
 
 async function onStartup() {
   await Promise.all([
@@ -71,7 +72,7 @@ async function onStartup() {
 
   setSyncing();
 
-  await onMainWindowLoad(window);
+  await onMainWindowLoad(Zotero.getMainWindow());
 }
 
 async function onMainWindowLoad(win: Window): Promise<void> {
@@ -93,6 +94,8 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   patchViewItems(win);
 
   restoreNoteTabs();
+
+  showUserGuide(win);
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
@@ -207,10 +210,10 @@ async function onOpenNote(
       openNotePreview(noteItem, workspaceUID, options);
       break;
     case "tab":
-      await openWorkspaceTab(noteItem, options);
+      return await openWorkspaceTab(noteItem, options);
       break;
     case "window":
-      await openWorkspaceWindow(noteItem, options);
+      return await openWorkspaceWindow(noteItem, options);
       break;
     case "builtin":
       ZoteroPane.openNoteWindow(noteId);
@@ -246,6 +249,8 @@ const onCreateNoteFromTemplate = createNoteFromTemplate;
 
 const onCreateNoteFromMD = createNoteFromMD;
 
+const onShowUserGuide = showUserGuide;
+
 // Add your hooks here. For element click, etc.
 // Keep in mind hooks only do dispatch. Don't add code that does real jobs in hooks.
 // Otherwise the code would be hard to read and maintain.
@@ -272,4 +277,5 @@ export default {
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
   restoreNoteTabs,
+  onShowUserGuide,
 };

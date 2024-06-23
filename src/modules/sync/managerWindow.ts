@@ -140,10 +140,9 @@ const sortDataKeys = ["noteName", "lastSync", "filePath"] as Array<
   keyof SyncDataType
 >;
 
-function updateData() {
+async function updateData() {
   const sortKey = sortDataKeys[addon.data.sync.manager.columnIndex];
-  addon.data.sync.manager.data = addon.api.sync
-    .getSyncNoteIds()
+  addon.data.sync.manager.data = (await addon.api.sync.getSyncNoteIds())
     .map((noteId) => {
       const syncStatus = addon.api.sync.getSyncStatus(noteId);
       return {

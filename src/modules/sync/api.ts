@@ -34,12 +34,12 @@ function initSyncList() {
   setPref("syncNoteIds", JSON.stringify(keys));
 }
 
-function getSyncNoteIds(): number[] {
+async function getSyncNoteIds() {
   const keys = addon.data.sync.data?.getKeys();
   if (!keys) {
     return [];
   }
-  return Zotero.Items.get(keys)
+  return (await Zotero.Items.getAsync(keys))
     .filter((item) => item.isNote())
     .map((item) => item.id);
 }

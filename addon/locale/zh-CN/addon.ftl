@@ -17,7 +17,7 @@ menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
 
 menuEditor-resizeImage=缩放图片
 
-templateEditor-templateName = 模板名称
+menuHelp-openUserGuide = 打开Better Notes用户指南
 
 editor-resizeImage-title = 缩放图片
 editor-resizeImage-prompt = 缩放图片宽度为：
@@ -81,3 +81,37 @@ alert-notValidParentItemError=无效的父条目。
 alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？
 alert-linkCreator-emptyNote = 无法从/向空笔记创建链接。
 alert-templateEditor-shouldImport = 似乎您正在尝试直接保存一个笔记模板分享代码。您想要将其导入为模板吗？
+
+userGuide-start-title = 欢迎使用Better Notes！
+userGuide-start-desc = Better Notes是一个强大的笔记工具，帮助您组织思想和想法。它设计简单易用，但足够灵活，能够处理复杂的笔记任务。本指南将帮助您开始使用Better Notes，并向您展示如何充分利用其功能。
+userGuide-start-close = 稍后提醒我
+userGuide-createNoteButton-title = 创建新笔记
+userGuide-createNoteButton-desc = 您可以在这里创建笔记：空白或从模板创建。
+userGuide-createNote-title = 创建新笔记
+userGuide-createNote-desc = 看来您还没有任何笔记，让我们创建一个。
+userGuide-createNote-next = 创建笔记
+userGuide-openNote-title = 打开笔记
+userGuide-openNote-desc = 您可以通过双击在Better Notes工作区标签中打开一个笔记。
+userGuide-openNote-next = 打开笔记
+userGuide-workspace-title = 笔记工作区标签
+userGuide-workspace-desc = 笔记标签是您可以编辑笔记内容、查看大纲和管理关系的地方。
+userGuide-workspaceEditor-title = 笔记编辑器
+userGuide-workspaceEditor-desc = 编辑器支持富文本编辑、代码块、数学块等。
+userGuide-workspaceEditorToolbar-title = 笔记编辑器 - 工具栏
+userGuide-workspaceEditorToolbar-desc = 工具栏提供对常见编辑功能的快速访问。
+    您可以在这里设置标题、文本/背景颜色、文本样式、插入链接或引用。
+userGuide-workspaceEditorLinkCreator-title = 笔记编辑器 - 链接精灵
+userGuide-workspaceEditorLinkCreator-desc = 您可以通过链接精灵创建从/到另一个笔记的链接。
+userGuide-workspaceEditorMoreOptions-title = 笔记编辑器 - 更多选项
+userGuide-workspaceEditorMoreOptions-desc = 在新窗口中打开笔记，显示在库中，插入模板，复制链接，导出笔记等。
+userGuide-workspaceOutline-title = 大纲
+userGuide-workspaceOutline-desc = 大纲显示了笔记的结构。您可以通过点击它来导航到一个部分。
+userGuide-workspaceOutlineMode-title = 大纲模式
+userGuide-workspaceOutlineMode-desc = 切换到大纲模式以不同的方式查看笔记结构。
+userGuide-workspaceOutlineSaveAs-title = 另存为
+userGuide-workspaceOutlineSaveAs-desc = 您可以将笔记导出为多种格式，包括PDF、Markdown、MS Word、思维导图等。
+userGuide-workspaceNoteInfo-title = 笔记信息
+userGuide-workspaceNoteInfo-desc = 您可以查看、编辑和管理笔记的标签、关系和链接。
+userGuide-finish-title = 准备完成！
+userGuide-finish-desc = 享受您的笔记旅程与Better Notes！
+    您可以随时从菜单栏 - 帮助再次运行此指南。

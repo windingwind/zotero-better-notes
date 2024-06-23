@@ -176,4 +176,11 @@ export function registerMenus(win: Window) {
         addon.hooks.onCreateNoteFromTemplate("item", "reader"),
     },
   );
+
+  ztoolkit.Menu.register("menuHelp", {
+    tag: "menuitem",
+    label: getString("menuHelp-openUserGuide"),
+    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+    commandListener: () => addon.hooks.onShowUserGuide(win, true),
+  });
 }

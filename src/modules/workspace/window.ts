@@ -24,5 +24,5 @@ export async function openWorkspaceWindow(
   win.focus();
   // @ts-ignore
   win.updateTitle();
-  return workspace;
+  return win;
 }

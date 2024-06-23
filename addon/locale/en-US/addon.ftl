@@ -17,7 +17,7 @@ menuAddReaderNote-newTemplateNote = New Item Note from Template
 
 menuEditor-resizeImage = Resize Image
 
-templateEditor-templateName = Template Name
+menuHelp-openUserGuide = Open Better Notes User Guide
 
 editor-resizeImage-title = Resize Image
 editor-resizeImage-prompt = Resize image width to:
@@ -81,3 +81,37 @@ alert-notValidParentItemError = No valid parent item.
 alert-syncImportedNotes = Keep imported notes in sync with MarkDown files?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
 alert-templateEditor-shouldImport = Seems like you are trying to directly save a note template share code. Do you want to import it as a template?
+
+userGuide-start-title = Welcome to Better Notes!
+userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas. It is designed to be simple and easy to use, yet flexible enough to handle complex note-taking tasks. This guide will help you get started with Better Notes and show you how to make the most of its features.
+userGuide-start-close = Remind me later
+userGuide-createNoteButton-title = Create a New Note
+userGuide-createNoteButton-desc = You can create a note here: blank or from a template.
+userGuide-createNote-title = Create a New Note
+userGuide-createNote-desc = Seems like you don't have any notes yet, let's create one.
+userGuide-createNote-next = Create Note
+userGuide-openNote-title = Open note
+userGuide-openNote-desc = You can open a note in Better Notes workspace tab by double-clicking it.
+userGuide-openNote-next = Open Note
+userGuide-workspace-title = Note Workspace Tab
+userGuide-workspace-desc = The note tab is where you can edit your note content, view the outline, and manage the relations.
+userGuide-workspaceEditor-title = Note Editor
+userGuide-workspaceEditor-desc = The editor supports rich text editing, code block, math block, and more.
+userGuide-workspaceEditorToolbar-title = Note Editor - Toolbar
+userGuide-workspaceEditorToolbar-desc = The toolbar provides quick access to common editing functions.
+    You can set the heading, text/background color, text style, insert link or reference here.
+userGuide-workspaceEditorLinkCreator-title = Note Editor - Link Creator
+userGuide-workspaceEditorLinkCreator-desc = You can create a link from/to another note via the link creator.
+userGuide-workspaceEditorMoreOptions-title = Note Editor - More Options
+userGuide-workspaceEditorMoreOptions-desc = Open the note in a new window, show it in the library, insert a template, copy the link, export the note, and more.
+userGuide-workspaceOutline-title = Outline
+userGuide-workspaceOutline-desc = The outline shows the structure of the note. You can navigate to a section by clicking on it.
+userGuide-workspaceOutlineMode-title = Outline Mode
+userGuide-workspaceOutlineMode-desc = Switch to outline mode to view the note structure in a more compact way.
+userGuide-workspaceOutlineSaveAs-title = Save As
+userGuide-workspaceOutlineSaveAs-desc = You can export the note to multiple formats, including PDF, Markdown, MS Word, mind map, and more.
+userGuide-workspaceNoteInfo-title = Note Info
+userGuide-workspaceNoteInfo-desc = You can view, edit, and manage the note's tags, relations, and links.
+userGuide-finish-title = We are all set!
+userGuide-finish-desc = Enjoy your note-taking journey with Better Notes!
+    You can always run this guide again from the Help menu.

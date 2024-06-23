@@ -9,6 +9,7 @@ ProgressWindowHelper.setIconURI(
 );
 
 function showHint(text: string) {
+  if (addon.data.hint.silent) return;
   return new ProgressWindowHelper(PROGRESS_TITLE)
     .createLine({ text, progress: 100, type: "default" })
     .show();
@@ -19,6 +20,7 @@ async function showHintWithLink(
   linkText: string,
   linkCallback: (ev: MouseEvent) => any,
 ) {
+  if (addon.data.hint.silent) return;
   const progress = new ProgressWindowHelper(PROGRESS_TITLE)
     .createLine({ text, progress: 100, type: "default" })
     .show(-1);

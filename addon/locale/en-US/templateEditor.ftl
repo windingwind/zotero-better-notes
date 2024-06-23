@@ -1,4 +1,7 @@
 title = Template Editor
+
+templateName = Template Name
+
 previewContainer = 
     .label = Preview
 create = 

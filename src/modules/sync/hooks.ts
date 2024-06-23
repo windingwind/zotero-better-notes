@@ -55,7 +55,7 @@ async function callSyncing(
     addon.data.sync.lock = true;
     let skippedCount = 0;
     if (!items || !items.length) {
-      items = Zotero.Items.get(addon.api.sync.getSyncNoteIds());
+      items = Zotero.Items.get(await addon.api.sync.getSyncNoteIds());
     } else {
       items = items.filter((item) => addon.api.sync.isSyncNote(item.id));
     }

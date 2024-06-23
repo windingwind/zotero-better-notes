@@ -16,7 +16,7 @@ export async function openWorkspaceTab(
   if (currentTab) {
     if (select ?? true) Zotero_Tabs.select(currentTab.id);
     scrollTabEditorTo(item, options);
-    return;
+    return currentTab.id;
   }
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
@@ -32,6 +32,7 @@ export async function openWorkspaceTab(
     lineIndex,
     sectionName,
   });
+  return id;
 }
 
 let contextPaneOpen: boolean | undefined = undefined;
