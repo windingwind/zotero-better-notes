@@ -19,6 +19,8 @@ menuEditor-resizeImage=缩放图片
 
 menuHelp-openUserGuide = 打开Better Notes用户指南
 
+templateEditor-templateName = 模板名称
+
 editor-resizeImage-title = 缩放图片
 editor-resizeImage-prompt = 缩放图片宽度为：
 editor-previewImage-title = 预览图片

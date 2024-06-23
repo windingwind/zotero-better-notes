@@ -19,6 +19,8 @@ menuEditor-resizeImage = Ridimensiona immagine
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 
+templateEditor-templateName = Template Name
+
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
 syncManager-filePath = Percorso MarkDown

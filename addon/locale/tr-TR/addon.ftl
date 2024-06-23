@@ -19,6 +19,8 @@ menuEditor-resizeImage = Resmi Boyutlandır
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 
+templateEditor-templateName = Template Name
+
 editor-resizeImage-title = Resmi Boyutlandır
 editor-resizeImage-prompt = Resmi Şuna Boyutlandır:
 editor-previewImage-title = Resmi Önizle

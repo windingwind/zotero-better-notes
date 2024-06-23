@@ -19,6 +19,8 @@ menuEditor-resizeImage = Resize Image
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 
+templateEditor-templateName = Template Name
+
 editor-resizeImage-title = Resize Image
 editor-resizeImage-prompt = Resize image width to:
 editor-previewImage-title = Preview Image

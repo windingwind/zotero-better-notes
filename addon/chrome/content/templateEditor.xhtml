@@ -48,12 +48,14 @@
         padding: 0;
         margin: 0;
         height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
         word-wrap: break-word;
       }
       .viewport {
+        flex-grow: 1;
+        flex-shrink: 1;
         margin: 0 5px 0 5px;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
       .viewport-container {
         padding: 0;
@@ -63,6 +65,8 @@
         display: flex;
         flex-direction: row;
         overflow: hidden;
+        border-bottom: var(--material-border);
+        background: var(--material-background);
       }
       .footer-container {
         padding: 5px;
@@ -102,15 +106,33 @@
       type="text/css"
       href="chrome://__addonRef__/content/lib/css/github-markdown.css"
     />
+    <link rel="localization" href="browser/browserSets.ftl" />
     <link rel="localization" href="__addonRef__-templateEditor.ftl" />
   </head>
   <body class="zotero-window">
+    <xul:commandset id="mainCommandSet">
+      <xul:command id="cmd_close" oncommand="window.close();" />
+    </xul:commandset>
+    <xul:keyset id="mainKeyset">
+      <xul:key
+        id="key_close"
+        data-l10n-id="close-shortcut"
+        command="cmd_close"
+        modifiers="accel"
+        reserved="true"
+      />
+    </xul:keyset>
     <div class="viewport-container">
-      <div id="list-container" class="viewport list-viewport">
+      <xul:hbox id="list-container" class="viewport list-viewport">
         <div id="table-container"></div>
-      </div>
-      <div class="viewport editor-viewport">
-        <div style="display: flex">
+      </xul:hbox>
+      <xul:splitter
+        state="open"
+        collapse="before"
+        orient="horizontal"
+      ></xul:splitter>
+      <xul:hbox class="viewport editor-viewport">
+        <div style="display: flex; align-items: center">
           <div style="flex-shrink: 0" data-l10n-id="templateName"></div>
           <input id="editor-name" type="text" style="width: 100%" />
         </div>
@@ -122,13 +144,18 @@
             onmousedown="this.focus()"
           ></iframe>
         </div>
-      </div>
-      <div class="viewport preview-viewport">
+      </xul:hbox>
+      <xul:splitter
+        state="open"
+        collapse="after"
+        orient="horizontal"
+      ></xul:splitter>
+      <xul:hbox class="viewport preview-viewport">
         <div style="display: flex">
           <div style="flex-shrink: 0" data-l10n-id="previewContainer"></div>
         </div>
         <article id="preview-container" class="markdown-body"></article>
-      </div>
+      </xul:hbox>
     </div>
     <div
       class="footer-container"
