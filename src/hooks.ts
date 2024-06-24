@@ -167,9 +167,10 @@ async function onOpenNote(
     workspaceUID?: string;
     lineIndex?: number;
     sectionName?: string;
+    forceTakeover?: boolean;
   } = {},
 ) {
-  if (!getPref("openNote.takeover")) {
+  if (!options.forceTakeover && !getPref("openNote.takeover")) {
     ZoteroPane.openNoteWindow(noteId);
     return;
   }

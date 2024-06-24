@@ -117,7 +117,9 @@ You can find more information in the following links:
       showButtons: ["next"],
       showProgress: true,
       onBeforeRender: async ({ state: { step, controller } }) => {
-        tabID = (await addon.hooks.onOpenNote(noteItem!.id, "tab")) as string;
+        tabID = (await addon.hooks.onOpenNote(noteItem!.id, "tab", {
+          forceTakeover: true,
+        })) as string;
 
         if (!tabID) {
           controller.abort();
