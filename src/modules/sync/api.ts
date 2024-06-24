@@ -35,7 +35,10 @@ function initSyncList() {
 }
 
 async function getSyncNoteIds() {
-  const keys = addon.data.sync.data?.getKeys();
+  const keys = addon.data.sync.data
+    ?.getKeys()
+    .map((key) => Number(key))
+    .filter((key) => !!key);
   if (!keys) {
     return [];
   }
