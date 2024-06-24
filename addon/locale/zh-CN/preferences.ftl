@@ -1,8 +1,8 @@
 basic-title = 基本
 basic-openNote-takeover =
     .label = 接管打开笔记
-basic-related-takeover =
-    .label = 接管笔记关联
+basic-openNote-defaultAsWindow =
+    .label = 默认在窗口打开笔记
 
 editor-title = 笔记编辑器
 editor-expandLevel-label = 大纲展开至标题层级

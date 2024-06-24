@@ -1,8 +1,8 @@
 basic-title = Basic
 basic-openNote-takeover =
     .label = Take over opening note
-basic-related-takeover =
-    .label = Take over note relation
+basic-openNote-defaultAsWindow =
+    .label = Open note as window by default
 
 editor-title = Note Editor
 editor-expandLevel-label = Anahat başlık seviyesine genişletildi

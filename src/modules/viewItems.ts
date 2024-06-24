@@ -1,4 +1,5 @@
 import { PatchHelper } from "zotero-plugin-toolkit/dist/helpers/patch";
+import { getPref } from "../utils/prefs";
 
 export function patchViewItems(win: Window) {
   // @ts-ignore
@@ -15,7 +16,10 @@ export function patchViewItems(win: Window) {
         const otherItems = [];
         for (const item of items) {
           if (item.isNote()) {
-            addon.hooks.onOpenNote(item.id, "tab");
+            addon.hooks.onOpenNote(
+              item.id,
+              getPref("openNote.defaultAsWindow") ? "window" : "tab",
+            );
             continue;
           }
           otherItems.push(item);
