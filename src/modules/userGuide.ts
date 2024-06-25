@@ -88,12 +88,11 @@ You can find more information in the following links:
       position: "center",
       showButtons: ["next"],
       showProgress: true,
-      nextBtnText: getString("userGuide-createNote-next"),
-      onBeforeRender: async ({ state }) => {
+      onBeforeRender: async ({ state, config }) => {
         noteItem = (await Zotero.Items.getAll(1)).find((item) => item.isNote());
         if (noteItem) {
-          ZoteroPane.selectItem(noteItem.id);
-          state.controller._currentIndex = 3;
+          await ZoteroPane.selectItem(noteItem.id);
+          config.description = getString("userGuide-createNoteFound-desc");
         }
       },
       onExit: async () => {

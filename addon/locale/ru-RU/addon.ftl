@@ -85,13 +85,13 @@ alert-linkCreator-emptyNote = Cannot create link from/to an empty note.
 alert-templateEditor-shouldImport = Вы пытаетесь сохранить код шаблона заметки. Хотите импортировать его как шаблон?
 
 userGuide-start-title = Welcome to Better Notes!
-userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas. It is designed to be simple and easy to use, yet flexible enough to handle complex note-taking tasks. This guide will help you get started with Better Notes and show you how to make the most of its features.
+userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas while reading papers. This guide will help you get started with Better Notes and show you how to make the most of its features.
 userGuide-start-close = Remind me later
 userGuide-createNoteButton-title = Create a New Note
 userGuide-createNoteButton-desc = You can create a note here: blank or from a template.
 userGuide-createNote-title = Create a New Note
 userGuide-createNote-desc = Seems like you don't have any notes yet, let's create one.
-userGuide-createNote-next = Create Note
+userGuide-createNoteFound-desc = Found notes in your library. Let's open one as an example.
 userGuide-openNote-title = Open note
 userGuide-openNote-desc = You can open a note in Better Notes workspace tab by double-clicking it.
 userGuide-openNote-next = Open Note
