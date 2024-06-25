@@ -22,3 +22,5 @@ outbound-step3-middle =
         [true] 指向了
         *[other] { "" }
     }
+
+outlinePicker-cursorLine = 🖋️光标位置 (行{ $line })

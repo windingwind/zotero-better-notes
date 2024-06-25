@@ -134,10 +134,17 @@ export class OutlinePicker extends PluginCEBase {
     this.noteOutline = this._addon.api.note.getNoteTreeFlattened(this.item);
     // Fake a cursor position
     if (typeof this.lineIndex === "number") {
+      // @ts-ignore - formatValues is not in the types
+      const [name] = (await document?.l10n?.formatValues([
+        {
+          id: `${config.addonRef}-outlinePicker-cursorLine`,
+          args: { line: this.lineIndex },
+        },
+      ])) as string[];
       this.noteOutline.unshift({
         model: {
           level: 0,
-          name: `🖋️Cursor (L${this._lineIndex})`,
+          name,
           lineIndex: this._lineIndex,
           endIndex: this._lineIndex,
         },

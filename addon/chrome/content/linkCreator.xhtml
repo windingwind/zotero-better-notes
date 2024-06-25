@@ -13,6 +13,7 @@
 <!DOCTYPE window>
 <window
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   id="bn-note-picker"
   data-l10n-id="title"
@@ -21,9 +22,26 @@
   style="min-width: 40em"
   drawintitlebar-platforms="mac"
 >
-  <linkset>
+  <xul:linkset>
+    <html:link rel="localization" href="browser/menubar.ftl" />
+    <html:link rel="localization" href="browser/browserSets.ftl" />
+    <html:link rel="localization" href="toolkit/global/textActions.ftl" />
+    <html:link rel="localization" href="zotero.ftl" />
     <html:link rel="localization" href="__addonRef__-linkCreator.ftl" />
-  </linkset>
+  </xul:linkset>
+
+  <xul:commandset id="mainCommandSet">
+    <xul:command id="cmd_close" oncommand="window.close();" />
+  </xul:commandset>
+  <xul:keyset id="mainKeyset">
+    <xul:key
+      id="key_close"
+      data-l10n-id="close-shortcut"
+      command="cmd_close"
+      modifiers="accel"
+      reserved="true"
+    />
+  </xul:keyset>
 
   <script src="chrome://zotero/content/include.js"></script>
   <script src="chrome://zotero/content/title.js"></script>

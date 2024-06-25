@@ -29,7 +29,20 @@
       <link rel="localization" href="browser/browserSets.ftl" />
       <link rel="localization" href="toolkit/global/textActions.ftl" />
       <link rel="localization" href="zotero.ftl" />
+      <link rel="localization" href="__addonRef__-workspaceWindow.ftl" />
     </xul:linkset>
+    <xul:commandset id="mainCommandSet">
+      <xul:command id="cmd_close" oncommand="window.close();" />
+    </xul:commandset>
+    <xul:keyset id="mainKeyset">
+      <xul:key
+        id="key_close"
+        data-l10n-id="close-shortcut"
+        command="cmd_close"
+        modifiers="accel"
+        reserved="true"
+      />
+    </xul:keyset>
     <style>
       html,
       body {
@@ -48,22 +61,8 @@
         overflow: hidden;
       }
     </style>
-    <link rel="localization" href="browser/browserSets.ftl" />
-    <link rel="localization" href="__addonRef__-workspaceWindow.ftl" />
   </head>
   <body class="zotero-window workspace-window">
-    <xul:commandset id="mainCommandSet">
-      <xul:command id="cmd_close" oncommand="window.close();" />
-    </xul:commandset>
-    <xul:keyset id="mainKeyset">
-      <xul:key
-        id="key_close"
-        data-l10n-id="close-shortcut"
-        command="cmd_close"
-        modifiers="accel"
-        reserved="true"
-      />
-    </xul:keyset>
     <div id="workspace-container"></div>
   </body>
 </html>

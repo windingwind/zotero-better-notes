@@ -22,3 +22,5 @@ outbound-step3-middle =
         [true] links to
         *[other] { "" }
     }
+
+outlinePicker-cursorLine = 🖋️Cursor (L{ $line })
