@@ -8,6 +8,8 @@ editor-title = Note Editor
 editor-expandLevel-label = Espansione dello schema al livello delle intestazioni
 editor-keepLinks = 
     .label = Mostra i collegamenti delle note nello schema
+editor-noteLinkPreview = 
+    .label = Show note link preview on hover
 
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)

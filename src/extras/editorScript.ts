@@ -11,6 +11,7 @@ import {
 } from "prosemirror-model";
 import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
+import { initLinkPreviewPlugin } from "./editor/linkPreview";
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -376,6 +377,7 @@ export const BetterNotesEditorAPI = {
   getSliceFromHTML,
   getNodeFromHTML,
   setSelection,
+  initLinkPreviewPlugin,
 };
 
 // @ts-ignore

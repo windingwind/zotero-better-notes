@@ -8,6 +8,8 @@ editor-title = Note Editor
 editor-expandLevel-label = Outline expand to heading level
 editor-keepLinks = 
     .label = Show note links in outline
+editor-noteLinkPreview = 
+    .label = Show note link preview on hover
 
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)

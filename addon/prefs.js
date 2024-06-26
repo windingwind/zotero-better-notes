@@ -18,15 +18,10 @@ pref("__prefsPrefix__.exportPDF", false);
 pref("__prefsPrefix__.exportFreeMind", false);
 pref("__prefsPrefix__.exportNote", false);
 
-pref("__prefsPrefix__.OCREngine", "bing");
-pref("__prefsPrefix__.OCRMathpix.Appid", "");
-pref("__prefsPrefix__.OCRMathpix.Appkey", "");
-pref("__prefsPrefix__.OCRXunfei.APPID", "");
-pref("__prefsPrefix__.OCRMathpix.APISecret", "");
-pref("__prefsPrefix__.OCRMathpix.APIKey", "");
-
 pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
+
+pref("__prefsPrefix__.editor.noteLinkPreview", true);
 
 pref("__prefsPrefix__.openNote.takeover", true);
 pref("__prefsPrefix__.openNote.defaultAsWindow", false);

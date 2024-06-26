@@ -8,6 +8,8 @@ editor-title = 笔记编辑器
 editor-expandLevel-label = 大纲展开至标题层级
 editor-keepLinks = 
     .label = 在大纲中显示笔记链接
+editor-noteLinkPreview = 
+    .label = 鼠标悬停时显示笔记链接预览
 
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)

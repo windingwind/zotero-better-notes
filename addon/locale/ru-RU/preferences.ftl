@@ -8,6 +8,8 @@ editor-title = Note Editor
 editor-expandLevel-label = Outline расширить до уровня заголовка
 editor-keepLinks = 
     .label = Сохранить ссылки
+editor-noteLinkPreview = 
+    .label = Show note link preview on hover
 
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)

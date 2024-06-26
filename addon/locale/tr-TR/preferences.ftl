@@ -8,6 +8,8 @@ editor-title = Note Editor
 editor-expandLevel-label = Anahat başlık seviyesine genişletildi
 editor-keepLinks = 
     .label = Not linklerini anahatta göster
+editor-noteLinkPreview = 
+    .label = Show note link preview on hover
 
 sync-title = Senkronize Et
 sync-period-label = Oto-Senkronize aralığı (saniye)

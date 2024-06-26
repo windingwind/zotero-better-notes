@@ -225,7 +225,7 @@ async function renderNoteHTML(
     if (await attachment.fileExists()) {
       const imageNodes = Array.from(
         doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
-      );
+      ) as HTMLImageElement[];
       if (imageNodes.length) {
         try {
           const b64 = await getItemDataURL(attachment);
@@ -243,6 +243,12 @@ async function renderNoteHTML(
                   Math.round((height * maxWidth) / width).toString(),
                 );
               }
+            }
+            if (node.hasAttribute("width")) {
+              node.style.width = `${node.getAttribute("width")}px`;
+            }
+            if (node.hasAttribute("height")) {
+              node.style.width = `${node.getAttribute("height")}px`;
             }
           });
         } catch (e) {

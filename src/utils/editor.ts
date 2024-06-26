@@ -1,6 +1,7 @@
 import TreeModel = require("tree-model");
 import { TextSelection } from "prosemirror-state";
 import { getNoteTreeFlattened } from "./note";
+import { getPref } from "./prefs";
 
 export {
   insert,
@@ -24,6 +25,7 @@ export {
   getTextBetween,
   getTextBetweenLines,
   isImageAtCursor,
+  initLinkPreview,
 };
 
 function insert(
@@ -432,4 +434,39 @@ function getTextBetweenLines(
   const from = getPositionAtLine(editor, fromIndex, "start");
   const to = getPositionAtLine(editor, toIndex, "end");
   return core.view.state.doc.textBetween(from, to);
+}
+
+function initLinkPreview(editor: Zotero.EditorInstance) {
+  if (!getPref("editor.noteLinkPreview")) {
+    return;
+  }
+  const EditorAPI = getEditorAPI(editor);
+  EditorAPI.initLinkPreviewPlugin(
+    Components.utils.cloneInto(
+      {
+        setPreviewContent: (
+          link: string,
+          setContent: (content: string) => void,
+        ) => {
+          const note = addon.api.convert.link2note(link);
+          if (!note) {
+            setContent(`<p style="color: red;">Invalid note link: ${link}</p>`);
+            return;
+          }
+          addon.api.convert
+            .link2html(link, {
+              noteItem: note,
+              dryRun: true,
+              usePosition: true,
+            })
+            .then((content) => setContent(content));
+        },
+        openURL: (url: string) => {
+          Zotero.getActiveZoteroPane().loadURI(url);
+        },
+      },
+      editor._iframeWindow,
+      { wrapReflectors: true, cloneFunctions: true },
+    ),
+  );
 }

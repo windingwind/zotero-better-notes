@@ -186,7 +186,11 @@ function link2params(link: string) {
 
 async function link2html(
   link: string,
-  options: { noteItem?: Zotero.Item; dryRun?: boolean } = {},
+  options: {
+    noteItem?: Zotero.Item;
+    dryRun?: boolean;
+    usePosition?: boolean;
+  } = {},
 ) {
   ztoolkit.log("link2html", link, options);
   const linkParams = getNoteLinkParams(link);
@@ -196,8 +200,22 @@ async function link2html(
   const refIds = getLinkedNotesRecursively(link);
   const refNotes = options.noteItem ? Zotero.Items.get(refIds) : [];
   ztoolkit.log(refIds);
-  const html =
-    addon.api.sync.getNoteStatus(linkParams.noteItem.id)?.content || "";
+  let html;
+  if (options.usePosition) {
+    const item = linkParams.noteItem;
+    let lineIndex = linkParams.lineIndex;
+
+    if (typeof linkParams.sectionName === "string") {
+      const sectionTree = addon.api.note.getNoteTreeFlattened(item);
+      const sectionNode = sectionTree.find(
+        (node) => node.model.name.trim() === linkParams.sectionName!.trim(),
+      );
+      lineIndex = sectionNode?.model.lineIndex;
+    }
+    html = addon.api.note.getLinesInNote(item).slice(lineIndex).join("\n");
+  } else {
+    html = addon.api.sync.getNoteStatus(linkParams.noteItem.id)?.content || "";
+  }
   if (options.dryRun) {
     return await renderNoteHTML(html, refNotes);
   } else {
