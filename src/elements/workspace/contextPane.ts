@@ -1,10 +1,11 @@
 import { config } from "../../../package.json";
 import { PluginCEBase } from "../base";
+import { DetailsPane } from "./detailsPane";
 
 export class ContextPane extends PluginCEBase {
   _item?: Zotero.Item;
 
-  _details!: any;
+  _details!: DetailsPane;
   _sidenav: any;
 
   get item() {
@@ -31,7 +32,7 @@ export class ContextPane extends PluginCEBase {
   }
 
   init(): void {
-    this._details = this._queryID("container");
+    this._details = this._queryID("container") as unknown as DetailsPane;
     this._sidenav = this._queryID("sidenav");
   }
 

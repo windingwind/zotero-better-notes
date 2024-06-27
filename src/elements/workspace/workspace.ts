@@ -1,16 +1,25 @@
 import { config } from "../../../package.json";
+import { getPrefJSON, registerPrefObserver, setPref, unregisterPrefObserver } from "../../utils/prefs";
 import { waitUtilAsync } from "../../utils/wait";
 import { PluginCEBase } from "../base";
 import { ContextPane } from "./contextPane";
 import { OutlinePane } from "./outlinePane";
 
+const persistKey = "persist.workspace";
+
 export class Workspace extends PluginCEBase {
   uid: string = Zotero.Utilities.randomString(8);
   _item?: Zotero.Item;
 
+  _prefObserverID!: symbol;
+
   _editorElement!: EditorElement;
   _outline!: OutlinePane;
+  _editorContainer!: XUL.Box;
   _context!: ContextPane;
+
+  _leftSplitter!: XUL.Splitter;
+  _rightSplitter!: XUL.Splitter;
 
   resizeOb!: ResizeObserver;
 
@@ -77,10 +86,22 @@ export class Workspace extends PluginCEBase {
     this._addon.data.workspace.instances[this.uid] = new WeakRef(this);
 
     this._outline = this._queryID("left-container") as unknown as OutlinePane;
+
+    this._editorContainer = this._queryID("center-container") as XUL.Box;
     this._editorElement = this._queryID("editor-main") as EditorElement;
     this._outline._editorElement = this._editorElement;
 
     this._context = this._queryID("right-container") as unknown as ContextPane;
+
+    this._leftSplitter = this._queryID("left-splitter") as XUL.Splitter;
+    this._rightSplitter = this._queryID("right-splitter") as XUL.Splitter;
+
+    this._leftSplitter.addEventListener("mouseup", () => {
+      this._persistState();
+    });
+    this._rightSplitter.addEventListener("mouseup", () => {
+      this._persistState();
+    });
 
     this.resizeOb = new ResizeObserver(() => {
       if (!this.editor) return;
@@ -90,9 +111,15 @@ export class Workspace extends PluginCEBase {
       );
     });
     this.resizeOb.observe(this._editorElement);
+
+    this._prefObserverID = registerPrefObserver(
+      persistKey,
+      this._restoreState.bind(this),
+    );
   }
 
   destroy(): void {
+    unregisterPrefObserver(this._prefObserverID);
     this.resizeOb.disconnect();
     delete this._addon.data.workspace.instances[this.uid];
   }
@@ -101,6 +128,8 @@ export class Workspace extends PluginCEBase {
     await this._outline.render();
     await this.updateEditor();
     await this._context.render();
+
+    this._restoreState();
   }
 
   async updateEditor() {
@@ -123,6 +152,36 @@ export class Workspace extends PluginCEBase {
     }
     if (typeof options.sectionName === "string") {
       this._addon.api.editor.scrollToSection(this.editor, options.sectionName);
+    }
+  }
+
+  _persistState() {
+    const state = {
+      leftState: this._leftSplitter.getAttribute("state"),
+      rightState: this._rightSplitter.getAttribute("state"),
+      leftWidth: window.getComputedStyle(this._outline)?.width,
+      centerWidth: window.getComputedStyle(this._editorContainer)?.width,
+      rightWidth: window.getComputedStyle(this._context)?.width,
+    };
+    setPref(persistKey, JSON.stringify(state));
+  }
+
+  _restoreState() {
+    const state = getPrefJSON(persistKey);
+    if (typeof state.leftState === "string") {
+      this._leftSplitter.setAttribute("state", state.leftState);
+    }
+    if (typeof state.rightState === "string") {
+      this._rightSplitter.setAttribute("state", state.rightState);
+    }
+    if (state.leftWidth) {
+      this._outline.style.width = state.leftWidth;
+    }
+    if (state.centerWidth) {
+      this._editorContainer.style.width = state.centerWidth;
+    }
+    if (state.rightWidth) {
+      this._context.style.width = state.rightWidth;
     }
   }
 }

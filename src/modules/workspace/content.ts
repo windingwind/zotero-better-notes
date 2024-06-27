@@ -1,3 +1,4 @@
+import { Workspace } from "../../elements/workspace/workspace";
 import { waitUtilAsync } from "../../utils/wait";
 
 export async function initWorkspace(container: XUL.Box, item: Zotero.Item) {
@@ -14,7 +15,7 @@ export async function initWorkspace(container: XUL.Box, item: Zotero.Item) {
 
   await waitUtilAsync(() => !!customElements.get("bn-workspace"));
 
-  const workspace = new (customElements.get("bn-workspace")!)() as any;
+  const workspace = new (customElements.get("bn-workspace")!)() as Workspace;
   container.append(workspace);
   workspace.item = item;
   workspace.containerType = "tab";

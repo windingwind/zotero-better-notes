@@ -1,8 +1,30 @@
 import { config } from "../../../package.json";
+import {
+  getPrefJSON,
+  registerPrefObserver,
+  setPref,
+  unregisterPrefObserver,
+} from "../../utils/prefs";
+
 const ItemDetails = document.createXULElement("item-details")
   .constructor! as any;
 
+const persistKey = "persist.workspaceContext";
+
 export class DetailsPane extends ItemDetails {
+  _prefObserverID!: symbol;
+
+  get pinnedPane() {
+    // @ts-ignore super
+    return super.pinnedPane;
+  }
+
+  set pinnedPane(val) {
+    // @ts-ignore super
+    super.pinnedPane = val;
+    this._persistState();
+  }
+
   content = MozXULElement.parseXULToFragment(`
 <linkset>
   <html:link
@@ -25,7 +47,22 @@ export class DetailsPane extends ItemDetails {
   init() {
     MozXULElement.insertFTLIfNeeded(`${config.addonRef}-notePreview.ftl`);
     MozXULElement.insertFTLIfNeeded(`${config.addonRef}-noteRelation.ftl`);
+
+    this._prefObserverID = registerPrefObserver(
+      persistKey,
+      this._restoreState.bind(this),
+    );
     super.init();
+  }
+
+  destroy() {
+    unregisterPrefObserver(this._prefObserverID);
+    super.destroy();
+  }
+
+  render() {
+    super.render();
+    this._restoreState();
   }
 
   forceUpdateSideNav() {
@@ -33,5 +70,31 @@ export class DetailsPane extends ItemDetails {
       .querySelectorAll("toolbarbutton")
       .forEach((elem: HTMLElement) => (elem.parentElement!.hidden = true));
     super.forceUpdateSideNav();
+  }
+
+  _restorePinnedPane() {}
+
+  _persistState() {
+    let state = getPrefJSON(persistKey);
+
+    if (state?.pinnedPane === this.pinnedPane) {
+      return;
+    }
+
+    state = {
+      ...state,
+      pinnedPane: this.pinnedPane,
+    };
+
+    setPref(persistKey, JSON.stringify(state));
+  }
+
+  _restoreState() {
+    const state = getPrefJSON(persistKey);
+
+    console.trace("Restore State", state);
+
+    this.pinnedPane = state?.pinnedPane;
+    this.scrollToPane(this.pinnedPane);
   }
 }

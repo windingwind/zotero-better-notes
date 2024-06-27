@@ -4,8 +4,16 @@ import { formatPath } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
 import { OutlineType } from "../../utils/workspace";
 import { PluginCEBase } from "../base";
-import { getPref } from "../../utils/prefs";
+import {
+  getPref,
+  getPrefJSON,
+  registerPrefObserver,
+  setPref,
+  unregisterPrefObserver,
+} from "../../utils/prefs";
 import { showHintWithLink } from "../../utils/hint";
+
+const persistKey = "persist.workspaceOutline";
 
 export class OutlinePane extends PluginCEBase {
   _outlineType: OutlineType = OutlineType.empty;
@@ -14,6 +22,8 @@ export class OutlinePane extends PluginCEBase {
 
   _outlineContainer!: HTMLIFrameElement;
   _notifierID!: string;
+
+  _prefObserverID!: symbol;
 
   static outlineSources = [
     "",
@@ -108,6 +118,7 @@ export class OutlinePane extends PluginCEBase {
     }
 
     this._outlineType = newType;
+    this._persistState();
   }
 
   get item() {
@@ -139,9 +150,15 @@ export class OutlinePane extends PluginCEBase {
       ["item"],
       "attachmentsBox",
     );
+
+    this._prefObserverID = registerPrefObserver(
+      persistKey,
+      this._restoreState.bind(this),
+    );
   }
 
   destroy(): void {
+    unregisterPrefObserver(this._prefObserverID);
     Zotero.Notifier.unregisterObserver(this._notifierID);
     this._outlineContainer.contentWindow?.removeEventListener(
       "message",
@@ -165,6 +182,7 @@ export class OutlinePane extends PluginCEBase {
   }
 
   async render() {
+    this._restoreState();
     if (this.outlineType === OutlineType.empty) {
       this.outlineType = OutlineType.treeView;
     }
@@ -380,4 +398,30 @@ export class OutlinePane extends PluginCEBase {
         return;
     }
   };
+
+  _persistState() {
+    let state = getPrefJSON(persistKey);
+
+    if (state?.outlineType === this.outlineType) {
+      return;
+    }
+
+    state = {
+      ...state,
+      outlineType: this.outlineType,
+    };
+
+    setPref(persistKey, JSON.stringify(state));
+  }
+
+  _restoreState() {
+    const state = getPrefJSON(persistKey);
+    if (
+      typeof state.outlineType === "number" &&
+      state.outlineType !== this.outlineType
+    ) {
+      this.outlineType = state.outlineType;
+      this.updateOutline();
+    }
+  }
 }

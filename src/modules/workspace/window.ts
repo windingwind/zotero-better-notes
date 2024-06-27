@@ -19,10 +19,9 @@ export async function openWorkspaceWindow(
     "#workspace-container",
   ) as XUL.Box;
   const workspace = await addon.hooks.onInitWorkspace(container, item);
-  workspace.scrollEditorTo(options);
+  workspace?.scrollEditorTo(options);
 
   win.focus();
-  // @ts-ignore
   win.updateTitle();
   return win;
 }

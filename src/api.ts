@@ -79,8 +79,12 @@ import {
   linkAnnotationToTarget,
   updateNoteLinkRelation,
 } from "./utils/relation";
+import { getWorkspaceByTabID, getWorkspaceByUID } from "./utils/workspace";
 
-const workspace = {};
+const workspace = {
+  getWorkspaceByTabID,
+  getWorkspaceByUID,
+};
 
 const sync = {
   isSyncNote,

@@ -28,7 +28,7 @@ export async function openWorkspaceTab(
     onClose: () => {},
   });
   const workspace = await initWorkspace(container, item);
-  workspace.scrollEditorTo({
+  workspace?.scrollEditorTo({
     lineIndex,
     sectionName,
   });
