@@ -19,6 +19,7 @@ export function registerEditorInstanceHook() {
       },
     },
   );
+  Zotero.Notes._editorInstances.forEach(onEditorInstanceCreated);
 }
 
 async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
