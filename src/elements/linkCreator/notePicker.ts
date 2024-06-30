@@ -1,22 +1,34 @@
 import { config } from "../../../package.json";
 import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
 import { PluginCEBase } from "../base";
+import {
+  getPrefJSON,
+  registerPrefObserver,
+  setPref,
+  unregisterPrefObserver,
+} from "../../utils/prefs";
 
 const _require = window.require;
 const CollectionTree = _require("chrome://zotero/content/collectionTree.js");
 const ItemTree = _require("chrome://zotero/content/itemTree.js");
 const { getCSSItemTypeIcon } = _require("components/icons");
 
+const persistKey = "persist.notePicker";
+
 export class NotePicker extends PluginCEBase {
   itemsView!: _ZoteroTypes.ItemTree;
   collectionsView!: _ZoteroTypes.CollectionTree;
   openedNotesView!: VirtualizedTableHelper;
+
+  _collectionsList!: XUL.Box;
 
   openedNotes: Zotero.Item[] = [];
 
   activeSelectionType: "library" | "tabs" | "none" = "none";
 
   uid = Zotero.Utilities.randomString(8);
+
+  _prefObserverID!: symbol;
 
   get content() {
     return MozXULElement.parseXULToFragment(`
@@ -41,6 +53,7 @@ export class NotePicker extends PluginCEBase {
         >
           <html:div id="zotero-collections-tree"></html:div>
         </vbox>
+        <splitter id="collections-items-splitter" orient="horizontal" collapse="after"></splitter>
         <hbox
           id="zotero-items-pane-content"
           class="virtualized-table-container"
@@ -75,11 +88,30 @@ export class NotePicker extends PluginCEBase {
     window.addEventListener("unload", () => {
       this.destroy();
     });
+
+    this._collectionsList = this.querySelector(
+      "#zotero-collections-tree-container",
+    ) as XUL.Box;
+
+    this._restoreState();
+
+    this.querySelector("#collections-items-splitter")?.addEventListener(
+      "mouseup",
+      () => {
+        this._persistState();
+      },
+    );
+
+    this._prefObserverID = registerPrefObserver(
+      persistKey,
+      this._restoreState.bind(this),
+    );
   }
 
   destroy(): void {
     this.collectionsView.unregister();
     if (this.itemsView) this.itemsView.unregister();
+    unregisterPrefObserver(this._prefObserverID);
   }
 
   async load() {
@@ -303,5 +335,32 @@ export class NotePicker extends PluginCEBase {
     return Array.from(
       (selection || this.openedNotesView.treeInstance.selection).selected,
     ).map((index) => this.openedNotes[index]);
+  }
+
+  _persistState() {
+    let state = getPrefJSON(persistKey);
+
+    const collectionsListWidth = getComputedStyle(this._collectionsList).width;
+    if (state?.collectionsListWidth === collectionsListWidth) {
+      return;
+    }
+
+    state = {
+      ...state,
+      collectionsListWidth,
+    };
+
+    setPref(persistKey, JSON.stringify(state));
+  }
+
+  _restoreState() {
+    const state = getPrefJSON(persistKey);
+    if (
+      typeof state.collectionsListWidth === "string" &&
+      state.collectionsListWidth !==
+        Number(getComputedStyle(this._collectionsList).width)
+    ) {
+      this._collectionsList.style.width = state.collectionsListWidth;
+    }
   }
 }

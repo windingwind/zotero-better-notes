@@ -9,10 +9,6 @@ bn-note-picker {
     user-select: none;
   }
 
-  #zotero-collections-tree-container {
-    border-right: var(--material-border);
-  }
-
   #zotero-collections-tree {
     background: var(--material-sidepane);
   }

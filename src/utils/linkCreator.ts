@@ -25,7 +25,7 @@ async function openLinkCreator(
   } as any;
   Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/linkCreator.xhtml`,
-    "_blank",
+    `${config.addonRef}-linkCreator`,
     "chrome,modal,centerscreen,resizable=yes",
     io,
   );

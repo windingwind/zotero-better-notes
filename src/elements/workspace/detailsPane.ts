@@ -92,8 +92,6 @@ export class DetailsPane extends ItemDetails {
   _restoreState() {
     const state = getPrefJSON(persistKey);
 
-    console.trace("Restore State", state);
-
     this.pinnedPane = state?.pinnedPane;
     this.scrollToPane(this.pinnedPane);
   }
