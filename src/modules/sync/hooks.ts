@@ -78,7 +78,7 @@ async function callSyncing(
       skippedCount = items.length - filteredItems.length;
       items = filteredItems;
     }
-    ztoolkit.log("sync start", reason, items, skippedCount);
+    ztoolkit.log("sync start", reason, items.length, skippedCount);
 
     if (!quiet) {
       progress = new ztoolkit.ProgressWindow(
@@ -133,9 +133,11 @@ async function callSyncing(
       });
       i += 1;
     }
-    ztoolkit.log("will be synced:", toExport, toImport, toDiff);
-    i = 1;
+
     let totalCount = Object.keys(toExport).length;
+    ztoolkit.log("will be synced:", totalCount, toImport.length, toDiff.length);
+
+    i = 1;
     for (const filepath of Object.keys(toExport)) {
       progress?.changeLine({
         text: `[${getString("sync.running.hint.updateMD")}] ${i}/${
