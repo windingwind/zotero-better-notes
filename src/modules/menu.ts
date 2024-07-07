@@ -1,8 +1,5 @@
 import { config } from "../../package.json";
-import { itemPicker } from "../utils/itemPicker";
 import { getString } from "../utils/locale";
-import { getPref } from "../utils/prefs";
-import { slice } from "../utils/str";
 
 export function registerMenus(win: Window) {
   // item
@@ -22,19 +19,6 @@ export function registerMenus(win: Window) {
   const menuEditAnchor = win.document.querySelector(
     "#menu_EditPreferencesItem",
   ) as XUL.MenuItem;
-  ztoolkit.Menu.register(
-    "menuEdit",
-    {
-      tag: "menuitem",
-      label: getString("menuEdit.insertTemplate"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: (ev) => {
-        addon.hooks.onShowTemplatePicker();
-      },
-    },
-    "before",
-    menuEditAnchor,
-  );
   ztoolkit.Menu.register(
     "menuEdit",
     {

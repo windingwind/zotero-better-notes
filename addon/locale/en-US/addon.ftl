@@ -2,7 +2,6 @@ pref-title = Better Notes
 
 menuItem-exportNote = Export Note
 
-menuEdit-insertTemplate = Insert Template to Workspace Note
 menuEdit-exportTemplate = Export Template to File...
 menuEdit-templateEditor = Template Editor
 menuEdit-importTemplate = New Template from Clipboard

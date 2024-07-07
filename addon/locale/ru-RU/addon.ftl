@@ -2,7 +2,6 @@ pref-title=Better Notes
 
 menuItem-exportNote=Экспорт заметки
 
-menuEdit-insertTemplate=Вставить шаблон в Заметку раб. пространства
 menuEdit-exportTemplate=Экспорт шаблона в файл...
 menuEdit-templateEditor=Редактор шаблонов
 menuEdit-importTemplate=Новый шаблон из буфера обмена

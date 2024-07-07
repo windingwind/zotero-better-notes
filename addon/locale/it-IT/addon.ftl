@@ -2,7 +2,6 @@ pref-title = Better Notes
 
 menuItem-exportNote = Esporta nota
 
-menuEdit-insertTemplate = Inserisci template nella nota di lavoro
 menuEdit-exportTemplate = Esporta il template su file...
 menuEdit-templateEditor = Editor dei template
 menuEdit-importTemplate = Nuovo template dagli appunti

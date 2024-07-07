@@ -2,7 +2,6 @@ pref-title = Better Notes
 
 menuItem-exportNote = Notu Dışa Aktar
 
-menuEdit-insertTemplate = Çalışma Alanı Notu İçerisine Şablon Yerleştir
 menuEdit-exportTemplate = Şablonu Dosya Olarak Dışa Aktar...
 menuEdit-templateEditor = Şablon Düzenleyici
 menuEdit-importTemplate = Panodan Yeni Şablon Al
