@@ -15,56 +15,6 @@ export function registerMenus(win: Window) {
     },
   });
 
-  // menuEdit
-  const menuEditAnchor = win.document.querySelector(
-    "#menu_EditPreferencesItem",
-  ) as XUL.MenuItem;
-  ztoolkit.Menu.register(
-    "menuEdit",
-    {
-      tag: "menuitem",
-      label: getString("menuEdit.exportTemplate"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: (ev) => {
-        addon.hooks.onShowTemplatePicker("export");
-      },
-    },
-    "before",
-    menuEditAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuEdit",
-    {
-      tag: "menuitem",
-      label: getString("menuEdit.templateEditor"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: (ev) => {
-        addon.hooks.onShowTemplateEditor();
-      },
-    },
-    "before",
-    menuEditAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuEdit",
-    {
-      tag: "menuitem",
-      label: getString("menuEdit.importTemplate"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: (ev) => {
-        addon.hooks.onImportTemplateFromClipboard();
-      },
-    },
-    "before",
-    menuEditAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuEdit",
-    { tag: "menuseparator" },
-    "before",
-    menuEditAnchor,
-  );
-
   // menuTools
   ztoolkit.Menu.register("menuTools", { tag: "menuseparator" });
   ztoolkit.Menu.register("menuTools", {
@@ -73,6 +23,22 @@ export function registerMenus(win: Window) {
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
       addon.hooks.onShowSyncManager();
+    },
+  });
+  ztoolkit.Menu.register("menuTools", {
+    tag: "menuitem",
+    label: getString("menuEdit.templateEditor"),
+    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+    commandListener: (ev) => {
+      addon.hooks.onShowTemplateEditor();
+    },
+  });
+  ztoolkit.Menu.register("menuTools", {
+    tag: "menuitem",
+    label: getString("menuEdit.importTemplate"),
+    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+    commandListener: (ev) => {
+      addon.hooks.onImportTemplateFromClipboard();
     },
   });
 
@@ -84,6 +50,19 @@ export function registerMenus(win: Window) {
   ztoolkit.Menu.register(
     "menuFile",
     { tag: "menuseparator" },
+    "after",
+    menuFileAnchor,
+  );
+  ztoolkit.Menu.register(
+    "menuEdit",
+    {
+      tag: "menuitem",
+      label: getString("menuEdit.exportTemplate"),
+      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+      commandListener: (ev) => {
+        addon.hooks.onShowTemplatePicker("export");
+      },
+    },
     "after",
     menuFileAnchor,
   );
