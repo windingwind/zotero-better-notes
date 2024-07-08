@@ -24,6 +24,10 @@
         animation: append-animate 0.3s ease-in-out;
       }
 
+      body {
+        overflow: hidden;
+      }
+
       @keyframes append-animate {
         from {
           opacity: 0;
@@ -43,7 +47,7 @@
       }
 
       #treeview {
-        padding: 8px;
+        padding: 8px 0 0 16px;
       }
 
       .drive-header {
@@ -77,8 +81,41 @@
         cursor: auto;
       }
 
+      .dx-scrollable-container {
+        padding-right: 8px;
+      }
+
       .dx-treeview-toggle-item-visibility {
         color: var(--fill-primary);
+      }
+
+      .dx-treeview-toggle-item-visibility::before {
+        content: "";
+        position: absolute;
+        display: block;
+        top: 50%;
+        margin-top: -8px;
+        left: 50%;
+        margin-left: -8px;
+        width: 16px;
+        height: 16px;
+        padding: 4px;
+        box-sizing: border-box;
+        background: url("chrome://zotero/skin/8/universal/chevron-8.svg")
+          content-box no-repeat;
+        -moz-context-properties: fill, fill-opacity;
+        fill: var(--fill-secondary);
+        transition: transform 0.125s ease;
+        transform: rotate(-90deg);
+      }
+
+      .dx-treeview-toggle-item-visibility.dx-treeview-toggle-item-visibility-opened::before {
+        content: "";
+        margin-top: -8px;
+        margin-left: -8px;
+        width: 16px;
+        height: 16px;
+        transform: rotate(0deg);
       }
 
       :not(.dx-state-focused) > .dx-treeview-item.dx-state-hover {
