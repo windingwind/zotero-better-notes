@@ -16,6 +16,10 @@ sync-period-label = Авто-синк период (сек)
 sync-attachmentFolder-label = Attachment folder
 sync-manager =
     .label = Открыть Синк менеджер
+sync-updateTags =
+    .label = Всегда обновлять теги
+    .tooltiptext = Keep note tags in sync with tags in YAML header of the markdown file
+
 template-title = Шаблон
 template-editor =
     .label = Открыть  редактор шаблонов

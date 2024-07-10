@@ -16,6 +16,10 @@ sync-period-label = Intervallo della sincronizzazione automatica (secondi)
 sync-attachmentFolder-label = Cartella degli allegati
 sync-manager =
     .label = Apri Manager di sincronizzazione
+sync-updateTags =
+    .label = Aggiorna sempre i tag
+    .tooltiptext = Keep note tags in sync with tags in YAML header of the markdown file
+
 template-title = Template
 template-editor =
     .label = Apri Editor dei template

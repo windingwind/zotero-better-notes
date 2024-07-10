@@ -1,5 +1,6 @@
 import { addLineToNote } from "../../utils/note";
 import { config } from "../../../package.json";
+import { getPref } from "../../utils/prefs";
 
 export async function fromMD(
   filepath: string,
@@ -61,6 +62,16 @@ export async function fromMD(
     await addLineToNote(noteItem, parsedContent, options.appendLineIndex || -1);
   } else {
     noteItem.setNote(noteStatus!.meta + parsedContent + noteStatus!.tail);
+    await noteItem.saveTx({
+      notifierData: {
+        autoSyncDelay: Zotero.Notes.AUTO_SYNC_DELAY,
+      },
+    });
+  }
+
+  if (getPref("sync.updateTags")) {
+    const tags = mdStatus.meta?.tags || [];
+    noteItem.setTags(tags);
     await noteItem.saveTx({
       notifierData: {
         autoSyncDelay: Zotero.Notes.AUTO_SYNC_DELAY,

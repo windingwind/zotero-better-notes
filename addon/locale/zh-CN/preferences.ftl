@@ -16,6 +16,10 @@ sync-period-label = 自动同步周期 (秒)
 sync-attachmentFolder-label = 附件文件夹
 sync-manager =
     .label = 打开同步管理器
+sync-updateTags =
+    .label = 总是更新标签
+    .tooltiptext = 保持笔记标签与 markdown 的 YAML 头标签同步
+
 template-title = 模板
 template-editor =
     .label = 打开模板编辑器

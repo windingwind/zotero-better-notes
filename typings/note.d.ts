@@ -28,6 +28,7 @@ declare interface MDStatus {
     $version: number;
     $libraryID?: number;
     $itemKey?: string;
+    tags?: string[];
   } | null;
   content: string;
   filedir: string;

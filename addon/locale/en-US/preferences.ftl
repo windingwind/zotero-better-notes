@@ -16,6 +16,10 @@ sync-period-label = Auto-sync period (seconds)
 sync-attachmentFolder-label = Attachment folder
 sync-manager =
     .label = Open Sync Manager
+sync-updateTags =
+    .label = Always update tags
+    .tooltiptext = Keep note tags in sync with tags in YAML header of the markdown file
+
 template-title = Template
 template-editor =
     .label = Open Template Editor

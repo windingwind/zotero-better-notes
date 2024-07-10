@@ -16,6 +16,10 @@ sync-period-label = Oto-Senkronize aralığı (saniye)
 sync-attachmentFolder-label = Ek Klasörü
 sync-manager =
     .label = Senkronizasyon Yönetimini Aç
+sync-updateTags =
+    .label = Her zaman etiketleri güncelle
+    .tooltiptext = Keep note tags in sync with tags in YAML header of the markdown file
+
 template-title = Şablon
 template-editor =
     .label = Şablon Düzenleyiciyi Aç
