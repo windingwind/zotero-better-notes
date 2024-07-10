@@ -26,5 +26,7 @@ template-editor =
 annotation-title = Annotazione PDF
 annotation-autoAnnotation =
     .label = Aggiungi automaticamente le nuove annotazioni alla nota di lavoro
+
+about-title = About
 help =
     .value = { $name } VERSION { $version } Build { $time }

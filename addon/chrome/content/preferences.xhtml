@@ -1,111 +1,127 @@
 <linkset>
   <html:link rel="localization" href="__addonRef__-preferences.ftl" />
 </linkset>
-<vbox
-  id="zotero-prefpane-__addonRef__"
-  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', {window})"
->
-  <groupbox>
-    <label><html:h2 data-l10n-id="basic-title"></html:h2></label>
-    <checkbox
-      data-l10n-id="basic-openNote-takeover"
-      native="true"
-      preference="__prefsPrefix__.openNote.takeover"
-    />
-    <checkbox
-      data-l10n-id="basic-openNote-defaultAsWindow"
-      native="true"
-      preference="__prefsPrefix__.openNote.defaultAsWindow"
-    />
-  </groupbox>
-  <groupbox>
-    <label><html:h2 data-l10n-id="editor-title"></html:h2></label>
-    <hbox align="center">
-      <html:label
-        for="__addonRef__-editor-expandLevel"
-        data-l10n-id="editor-expandLevel-label"
-      ></html:label>
-      <html:input
-        type="number"
-        min="1"
-        max="6"
-        step="1"
-        id="__addonRef__-editor-expandLevel"
-        preference="__prefsPrefix__.workspace.outline.expandLevel"
-      ></html:input>
-    </hbox>
-    <checkbox
-      data-l10n-id="editor-keepLinks"
-      native="true"
-      preference="__prefsPrefix__.workspace.outline.keepLinks"
-    />
-    <checkbox
-      data-l10n-id="editor-noteLinkPreview"
-      native="true"
-      preference="__prefsPrefix__.editor.noteLinkPreview"
-    />
-  </groupbox>
-  <groupbox>
-    <label><html:h2 data-l10n-id="sync-title"></html:h2></label>
-    <hbox align="center">
-      <html:label
-        for="__addonRef__-sync-period"
-        data-l10n-id="sync-period-label"
-      ></html:label>
-      <html:input
-        type="number"
-        min="-1"
-        max="3600"
-        step="1"
-        placeholder="-1 for disable"
-        id="__addonRef__-sync-period"
-        preference="__prefsPrefix__.syncPeriodSeconds"
-      ></html:input>
-    </hbox>
-    <hbox align="center">
-      <html:label
-        for="__addonRef__-sync-attachmentFolder"
-        data-l10n-id="sync-attachmentFolder-label"
-      ></html:label>
-      <html:input
-        id="__addonRef__-sync-attachmentFolder"
-        preference="__prefsPrefix__.syncAttachmentFolder"
-      ></html:input>
-    </hbox>
-    <checkbox
-      data-l10n-id="sync-updateTags"
-      native="true"
-      preference="__prefsPrefix__.sync.updateTags"
-    />
-    <hbox align="center">
-      <button
-        onclick="Zotero.__addonInstance__.hooks.onShowSyncManager()"
-        data-l10n-id="sync-manager"
-      ></button>
-    </hbox>
-  </groupbox>
-  <groupbox>
-    <label><html:h2 data-l10n-id="template-title"></html:h2></label>
-    <hbox align="center">
-      <button
-        onclick="Zotero.__addonInstance__.hooks.onShowTemplateEditor()"
-        data-l10n-id="template-editor"
-      ></button>
-    </hbox>
-  </groupbox>
-  <groupbox>
-    <label><html:h2 data-l10n-id="annotation-title"></html:h2></label>
-    <!-- <checkbox
-      id="__addonRef__-enableAddToNote"
-      data-l10n-id="annotation-autoAnnotation"
-      native="true"
-      preference="__prefsPrefix__.autoAnnotation"
-    /> -->
-  </groupbox>
-</vbox>
-<vbox>
+<script>
+  Zotero.__addonInstance__.hooks.onPrefsEvent("load", { window });
+</script>
+<groupbox>
+  <label><html:h2 data-l10n-id="basic-title"></html:h2></label>
+  <checkbox
+    data-l10n-id="basic-openNote-takeover"
+    native="true"
+    preference="__prefsPrefix__.openNote.takeover"
+  />
+  <checkbox
+    data-l10n-id="basic-openNote-defaultAsWindow"
+    native="true"
+    preference="__prefsPrefix__.openNote.defaultAsWindow"
+  />
+</groupbox>
+<groupbox>
+  <label><html:h2 data-l10n-id="editor-title"></html:h2></label>
+  <hbox align="center">
+    <html:label
+      for="__addonRef__-editor-expandLevel"
+      data-l10n-id="editor-expandLevel-label"
+    ></html:label>
+    <html:input
+      type="number"
+      min="1"
+      max="6"
+      step="1"
+      id="__addonRef__-editor-expandLevel"
+      preference="__prefsPrefix__.workspace.outline.expandLevel"
+    ></html:input>
+  </hbox>
+  <checkbox
+    data-l10n-id="editor-keepLinks"
+    native="true"
+    preference="__prefsPrefix__.workspace.outline.keepLinks"
+  />
+  <checkbox
+    data-l10n-id="editor-noteLinkPreview"
+    native="true"
+    preference="__prefsPrefix__.editor.noteLinkPreview"
+  />
+</groupbox>
+<groupbox>
+  <label><html:h2 data-l10n-id="sync-title"></html:h2></label>
+  <hbox align="center">
+    <html:label
+      for="__addonRef__-sync-period"
+      data-l10n-id="sync-period-label"
+    ></html:label>
+    <html:input
+      type="number"
+      min="-1"
+      max="3600"
+      step="1"
+      placeholder="-1 for disable"
+      id="__addonRef__-sync-period"
+      preference="__prefsPrefix__.syncPeriodSeconds"
+    ></html:input>
+  </hbox>
+  <hbox align="center">
+    <html:label
+      for="__addonRef__-sync-attachmentFolder"
+      data-l10n-id="sync-attachmentFolder-label"
+    ></html:label>
+    <html:input
+      id="__addonRef__-sync-attachmentFolder"
+      preference="__prefsPrefix__.syncAttachmentFolder"
+    ></html:input>
+  </hbox>
+  <checkbox
+    data-l10n-id="sync-updateTags"
+    native="true"
+    preference="__prefsPrefix__.sync.updateTags"
+  />
+  <hbox align="center">
+    <button
+      onclick="Zotero.__addonInstance__.hooks.onShowSyncManager()"
+      data-l10n-id="sync-manager"
+    ></button>
+  </hbox>
+</groupbox>
+<groupbox>
+  <label><html:h2 data-l10n-id="template-title"></html:h2></label>
+  <hbox align="center">
+    <button
+      onclick="Zotero.__addonInstance__.hooks.onShowTemplateEditor()"
+      data-l10n-id="template-editor"
+    ></button>
+  </hbox>
+</groupbox>
+<groupbox>
+  <label><html:h2 data-l10n-id="about-title"></html:h2></label>
+
+  <hbox>
+    <label
+      class="zotero-text-link keyboard-clickable"
+      is="zotero-text-link"
+      role="link"
+      href="https://github.com/windingwind/zotero-better-notes"
+      value="Homepage - GitHub"
+    ></label>
+    <label value="|"></label>
+    <label
+      class="zotero-text-link keyboard-clickable"
+      is="zotero-text-link"
+      role="link"
+      href="https://github.com/windingwind/zotero-better-notes/issues"
+      value="Bug Report, Feature Request"
+    ></label>
+    <label value="|"></label>
+    <label
+      class="zotero-text-link keyboard-clickable"
+      is="zotero-text-link"
+      role="link"
+      href="https://github.com/windingwind/zotero-better-notes/discussions/categories/q-a"
+      value="Q&amp;A"
+    ></label>
+  </hbox>
   <label
     data-l10n-id="help"
     data-l10n-args='{"time": "__buildTime__","name": "__addonName__","version":"__buildVersion__"}'
   ></label>
-</vbox>
+</groupbox>

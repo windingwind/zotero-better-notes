@@ -68,7 +68,7 @@ export async function showTemplateEditor() {
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || "",
+        (index) => addon.data.template.editor.templates[index] || "",
       )
       .render();
     _window.document

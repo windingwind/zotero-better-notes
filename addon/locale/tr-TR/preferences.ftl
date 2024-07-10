@@ -26,5 +26,7 @@ template-editor =
 annotation-title = PDF Dipnotları
 annotation-autoAnnotation =
     .label = Çalışma alanı notuna otomatik olarak yeni dipnotlar ekle
+
+about-title = About
 help =
     .value = { $name } Versiyon { $version } İnşa { $time }

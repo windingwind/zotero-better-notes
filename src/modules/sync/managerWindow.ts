@@ -95,7 +95,7 @@ export async function showSyncManager() {
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || "",
+        (index) => addon.data.sync.manager?.data[index].noteName || "",
       )
       .setProp("onColumnSort", (columnIndex, ascending) => {
         addon.data.sync.manager.columnIndex = columnIndex;

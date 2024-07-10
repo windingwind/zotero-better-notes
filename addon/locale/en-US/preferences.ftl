@@ -26,5 +26,7 @@ template-editor =
 annotation-title = PDF Annotation
 annotation-autoAnnotation =
     .label = Automatically add new annotations to workspace note
+
+about-title = About
 help =
     .value = { $name } VERSION { $version } Build { $time }

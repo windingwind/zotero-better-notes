@@ -25,8 +25,6 @@ class Addon {
     };
     prefs?: {
       window: Window;
-      columns: Array<ColumnOptions>;
-      rows: Array<{ [dataKey: string]: string }>;
     };
     export: {
       pdf: { promise?: _ZoteroTypes.PromiseObject };

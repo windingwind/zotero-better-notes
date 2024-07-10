@@ -26,5 +26,7 @@ template-editor =
 annotation-title = PDF批注
 annotation-autoAnnotation =
     .label = 自动添加新批注到工作区笔记
+
+about-title = 关于
 help =
     .value = { $name } 版本 { $version } 构建 { $time }
