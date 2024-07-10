@@ -113,6 +113,9 @@ async function note2md(
         if (key.startsWith("$") && key in header) {
           // generated header overwrites cached header
           continue;
+        } else if (key == "tags" && getPref("sync.updateTags")) {
+          // overwrite tags with updated ExportMDFileHeaderV2
+          continue;
         } else {
           // otherwise do not overwrite
           header[key] = cachedHeader[key];
@@ -126,13 +129,6 @@ async function note2md(
       $libraryID: noteItem.libraryID,
       $itemKey: noteItem.key,
     });
-    if (getPref("sync.updateTags")) {
-      const tags = noteItem.getTags();
-      header.tags = [];
-      if (tags.length) {
-        tags.forEach((tag) => header.tags.push(tag.tag));
-      }
-    }
     const yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
     md = `${yamlFrontMatter}\n${md}`;
   }
