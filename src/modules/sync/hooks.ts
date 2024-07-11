@@ -246,18 +246,19 @@ async function doCompare(
   } else if (MDAhead) {
     return SyncCode.MDAhead;
   } else {
-    const maxLastModifiedPeriod = 3000;
-    if (
-      mdStatus.lastmodify &&
-      syncStatus.lastsync &&
-      // If the file is modified after the last sync, it's ahead
-      Math.abs(mdStatus.lastmodify.getTime() - syncStatus.lastsync) >
-        maxLastModifiedPeriod
-    ) {
-      return SyncCode.MDAhead;
-    } else {
-      return SyncCode.UpToDate;
-    }
+    // const maxLastModifiedPeriod = 3000;
+    // if (
+    //   mdStatus.lastmodify &&
+    //   syncStatus.lastsync &&
+    //   // If the file is modified after the last sync, it's ahead
+    //   Math.abs(mdStatus.lastmodify.getTime() - syncStatus.lastsync) >
+    //     maxLastModifiedPeriod
+    // ) {
+    //   return SyncCode.MDAhead;
+    // } else {
+    //   return SyncCode.UpToDate;
+    // }
+    return SyncCode.UpToDate;
   }
 }
 

@@ -110,7 +110,7 @@ async function note2md(
       );
       const cachedHeader = options.cachedYAMLHeader || {};
       for (const key in cachedHeader) {
-        if (key.startsWith("$") && key in header) {
+        if ((key === "tags" || key.startsWith("$")) && key in header) {
           // generated header overwrites cached header
           continue;
         } else {
@@ -126,13 +126,6 @@ async function note2md(
       $libraryID: noteItem.libraryID,
       $itemKey: noteItem.key,
     });
-    if (getPref("sync.updateTags")) {
-      const tags = noteItem.getTags();
-      header.tags = [];
-      if (tags.length) {
-        tags.forEach((tag) => header.tags.push(tag.tag));
-      }
-    }
     const yamlFrontMatter = `---\n${YAML.stringify(header, 10)}\n---`;
     md = `${yamlFrontMatter}\n${md}`;
   }
@@ -199,7 +192,7 @@ async function link2html(
     usePosition?: boolean;
   } = {},
 ) {
-  ztoolkit.log("link2html", link);
+  ztoolkit.log("link2html", link, options);
   const linkParams = getNoteLinkParams(link);
   if (!linkParams.noteItem) {
     return "";
@@ -1230,7 +1223,7 @@ async function processM2NRehypeImageNodes(
             src = jointPath(fileDir, src);
           }
           if (!(await fileExists(src))) {
-            ztoolkit.log("parse image, path invalid", src.slice(0, 50));
+            ztoolkit.log("parse image, path invalid", src);
             continue;
           }
         }

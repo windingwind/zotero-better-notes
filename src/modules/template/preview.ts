@@ -1,6 +1,5 @@
 import YAML = require("yamljs");
 import { getNoteLink } from "../../utils/link";
-import { getPref } from "../../utils/prefs";
 
 export { renderTemplatePreview };
 
@@ -56,12 +55,6 @@ async function renderTemplatePreview(
         libraryID: data.libraryID,
         itemKey: data.key,
       });
-      if (getPref("sync.updateTags")) {
-        const tags = data.getTags();
-        if (tags.length) {
-          header.tags = tags.map((tag) => tag.tag);
-        }
-      }
       html = `<pre>${YAML.stringify(header, 10)}</pre>`;
     }
   } else if (templateName.includes("ExportMDFileContent")) {
