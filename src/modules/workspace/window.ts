@@ -10,7 +10,7 @@ export async function openWorkspaceWindow(
   const win = Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/workspaceWindow.xhtml`,
     `${config.addonRef}-workspaceWindow`,
-    `chrome,centerscreen,resizable,status`,
+    `chrome,centerscreen,resizable,status,dialog=no`,
     windowArgs,
   )!;
   await windowArgs._initPromise.promise;
