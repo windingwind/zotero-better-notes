@@ -160,6 +160,14 @@ export class Workspace extends PluginCEBase {
     }
   }
 
+  toggleContext(open: boolean) {
+    if (typeof open !== "boolean") {
+      open = this._rightSplitter.getAttribute("state") === "collapsed";
+    }
+
+    this._rightSplitter.setAttribute("state", open ? "open" : "collapsed");
+  }
+
   _persistState() {
     const state = {
       leftState: this._leftSplitter.getAttribute("state"),

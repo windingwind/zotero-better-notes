@@ -117,12 +117,12 @@ export function openNotePreview(
   });
 
   const workspace = getWorkspaceByUID(workspaceUID);
-  setTimeout(
-    () =>
-      // @ts-ignore
-      workspace?.querySelector("bn-details")?.scrollToPane(key),
-    500,
-  );
+  workspace?.toggleContext(true);
+
+  setTimeout(() => {
+    // @ts-ignore
+    workspace?.querySelector("bn-details")?.scrollToPane(key);
+  }, 500);
 
   if (!key) {
     scrollPreviewEditorTo(noteItem, workspaceUID, options);
