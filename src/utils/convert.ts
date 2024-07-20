@@ -192,7 +192,13 @@ async function link2html(
     usePosition?: boolean;
   } = {},
 ) {
-  ztoolkit.log("link2html", link, options);
+  ztoolkit.log(
+    "link2html",
+    link,
+    options.noteItem?.id,
+    options.dryRun,
+    options.usePosition,
+  );
   const linkParams = getNoteLinkParams(link);
   if (!linkParams.noteItem) {
     return "";
