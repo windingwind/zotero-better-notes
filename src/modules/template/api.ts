@@ -1,3 +1,4 @@
+import YAML = require("yamljs");
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
 import { fill, slice } from "../../utils/str";
@@ -114,7 +115,7 @@ async function runTextTemplate(
   const { targetNoteId, dryRun } = options;
   const targetNoteItem = Zotero.Items.get(targetNoteId || -1);
   const sharedObj = {};
-  return await runTemplate(
+  let renderedString = await runTemplate(
     key,
     "targetNoteItem, sharedObj",
     [targetNoteItem, sharedObj],
@@ -122,6 +123,15 @@ async function runTextTemplate(
       dryRun,
     },
   );
+
+  const templateText = addon.api.template.getTemplateText(key);
+  // Find if any line starts with // @use-refresh using regex
+  if (/\/\/ @use-refresh/.test(templateText)) {
+    renderedString = wrapYAMLData(renderedString, {
+      template: key,
+    });
+  }
+  return renderedString;
 }
 
 async function runItemTemplate(
@@ -208,10 +218,20 @@ async function runItemTemplate(
   );
 
   const html = results.join("\n");
-  return await addon.api.convert.note2html(copyImageRefNotes, {
+  let renderedString = await addon.api.convert.note2html(copyImageRefNotes, {
     targetNoteItem,
     html,
   });
+
+  const templateText = addon.api.template.getTemplateText(key);
+  // Find if any line starts with // @use-refresh using regex
+  if (/\/\/ @use-refresh/.test(templateText)) {
+    renderedString = wrapYAMLData(renderedString, {
+      template: key,
+      items: Array.from(items.map((item) => item.libraryKey)),
+    });
+  }
+  return renderedString;
 }
 
 async function getItemTemplateData() {
@@ -258,4 +278,11 @@ async function getItemTemplateData() {
     }
   }
   return await itemPicker();
+}
+
+function wrapYAMLData(str: string, data: any) {
+  const yamlContent = YAML.stringify(data, 4);
+  return `<hr>
+<pre>${yamlContent}</pre>${str}
+<hr>`;
 }

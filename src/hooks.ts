@@ -41,6 +41,7 @@ import { getPref, setPref } from "./utils/prefs";
 import { closeRelationWorker } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";
+import { refreshTemplatesInNote } from "./modules/template/refresh";
 
 async function onStartup() {
   await Promise.all([
@@ -234,6 +235,8 @@ const onUpdateTemplatePicker = updateTemplatePicker;
 
 const onImportTemplateFromClipboard = importTemplateFromClipboard;
 
+const onRefreshTemplatesInNote = refreshTemplatesInNote;
+
 const onShowImageViewer = showImageViewer;
 
 const onShowExportNoteOptions = showExportNoteOptions;
@@ -269,6 +272,7 @@ export default {
   onShowTemplatePicker,
   onUpdateTemplatePicker,
   onImportTemplateFromClipboard,
+  onRefreshTemplatesInNote,
   onShowImageViewer,
   onShowExportNoteOptions,
   onShowSyncDiff,

@@ -6,6 +6,7 @@ import { getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
+import { refreshTemplatesInNote } from "../template/refresh";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
@@ -120,6 +121,13 @@ async function getMenuData(editor: Zotero.EditorInstance) {
               noteId: e.editor._item.id,
               lineIndex: currentLine,
             });
+          },
+        },
+        {
+          id: makeId("settings-refreshTemplates"),
+          text: getString("editor.toolbar.settings.refreshTemplates"),
+          callback: (e) => {
+            addon.hooks.onRefreshTemplatesInNote(e.editor);
           },
         },
         {

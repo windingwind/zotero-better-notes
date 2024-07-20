@@ -61,6 +61,7 @@ editor-toolbar-settings-openAsTab = Open as tab
 editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate = Inserisci template
+editor-toolbar-settings-refreshTemplates = Update content from templates (Beta)
 editor-toolbar-settings-copyLink = Copia link (L{ $line })
 editor-toolbar-settings-copyLinkAtSection = Copia link (Sec. { $section })
 editor-toolbar-settings-openParent = Apri allegato

@@ -19,6 +19,7 @@ export {
   getSectionAtCursor,
   getPositionAtLine,
   getPositionAtCursor,
+  getLineCount,
   getURLAtCursor,
   updateImageDimensionsAtCursor,
   updateURLAtCursor,
@@ -249,6 +250,10 @@ function getPositionAtLine(
       core.view.state.tr.doc.content.size,
     ),
   );
+}
+
+function getLineCount(editor: Zotero.EditorInstance) {
+  return getEditorCore(editor).view.docView.children.length;
 }
 
 function getURLAtCursor(editor: Zotero.EditorInstance) {

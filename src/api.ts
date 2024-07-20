@@ -63,6 +63,7 @@ import {
   replace,
   moveHeading,
   updateHeadingTextAtLine,
+  getLineCount,
 } from "./utils/editor";
 import {
   addLineToNote,
@@ -153,6 +154,7 @@ const editor = {
   getLineAtCursor,
   getSectionAtCursor,
   getPositionAtLine,
+  getLineCount,
   getTextBetween,
   getTextBetweenLines,
   moveHeading,

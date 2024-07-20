@@ -127,13 +127,20 @@ export function htmlEscape(doc: Document, str: string) {
   return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
-export function htmlUnescape(str: string) {
-  const map = {
+export function htmlUnescape(
+  str: string,
+  options: {
+    excludeLineBreak?: boolean;
+  } = {},
+) {
+  const map: Record<string, string> = {
     "&nbsp;": " ",
     "&quot;": '"',
     "&#39;": "'",
-    "\n": "",
   };
+  if (!options.excludeLineBreak) {
+    map["\n"] = "";
+  }
   const re = new RegExp(Object.keys(map).join("|"), "g");
   return str.replace(re, function (match) {
     return map[match as keyof typeof map];

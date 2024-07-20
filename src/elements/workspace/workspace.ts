@@ -1,5 +1,10 @@
 import { config } from "../../../package.json";
-import { getPrefJSON, registerPrefObserver, setPref, unregisterPrefObserver } from "../../utils/prefs";
+import {
+  getPrefJSON,
+  registerPrefObserver,
+  setPref,
+  unregisterPrefObserver,
+} from "../../utils/prefs";
 import { waitUtilAsync } from "../../utils/wait";
 import { PluginCEBase } from "../base";
 import { ContextPane } from "./contextPane";
