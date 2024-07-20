@@ -97,7 +97,7 @@ class LinkPreviewState {
   .link-preview > .popup {
     max-width: 360px;
     max-height: 360px;
-    overflow: hidden;
+    overflow: hidden auto;
   }
   .link-preview > .popup > * {
     margin-block: 0;
