@@ -1,3 +1,4 @@
+import { waitUtilAsync } from "../../utils/wait";
 import { initWorkspace } from "./content";
 
 export const TAB_TYPE = "note";
@@ -18,6 +19,8 @@ export async function openWorkspaceTab(
     scrollTabEditorTo(item, options);
     return currentTab.id;
   }
+  // @ts-ignore fix uncaught error when called during startup
+  await waitUtilAsync(() => item._noteTitle);
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: item.getNoteTitle(),
@@ -62,7 +65,7 @@ export function restoreNoteTabs() {
     const tab = tabsCache[i];
     if (tab.type !== TAB_TYPE) continue;
     openWorkspaceTab(Zotero.Items.get(tab.data.itemID), {
-      select: tab.selected,
+      select: !!tab.selected,
     });
   }
 }
