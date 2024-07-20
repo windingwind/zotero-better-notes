@@ -6,7 +6,6 @@ import { getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
-import { refreshTemplatesInNote } from "../template/refresh";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
@@ -284,6 +283,9 @@ async function registerEditorToolbarPopup(
     },
     popup,
   ) as HTMLDivElement;
+
+  popup.style.removeProperty("left");
+  popup.style.right = "0px";
 }
 
 async function registerEditorToolbarElement(
