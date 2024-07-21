@@ -43,3 +43,9 @@
 .primary-editor hr {
   max-width: unset;
 }
+
+.toolbar .end,
+.toolbar .start {
+  width: auto;
+  gap: 4px;
+}

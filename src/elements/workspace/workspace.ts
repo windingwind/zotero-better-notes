@@ -1,4 +1,5 @@
 import { config } from "../../../package.json";
+import { ICONS } from "../../utils/config";
 import {
   getPrefJSON,
   registerPrefObserver,
@@ -108,6 +109,8 @@ export class Workspace extends PluginCEBase {
       this._persistState();
     });
 
+    this._initEditor();
+
     this.resizeOb = new ResizeObserver(() => {
       if (!this.editor) return;
       this._addon.api.editor.scroll(
@@ -160,12 +163,73 @@ export class Workspace extends PluginCEBase {
     }
   }
 
-  toggleContext(open: boolean) {
+  toggleOutline(open?: boolean) {
+    if (typeof open !== "boolean") {
+      open = this._leftSplitter.getAttribute("state") === "collapsed";
+    }
+
+    this._leftSplitter.setAttribute("state", open ? "open" : "collapsed");
+  }
+
+  toggleContext(open?: boolean) {
     if (typeof open !== "boolean") {
       open = this._rightSplitter.getAttribute("state") === "collapsed";
     }
 
     this._rightSplitter.setAttribute("state", open ? "open" : "collapsed");
+  }
+
+  async _initEditor() {
+    await waitUtilAsync(() => !!this._editorElement._editorInstance);
+    const editor = this._editorElement._editorInstance;
+    await editor._initPromise;
+
+    const _document = editor._iframeWindow.document;
+    const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
+
+    const toggleOutline = this._addon.data.ztoolkit.UI.createElement(
+      _document,
+      "button",
+      {
+        classList: ["toolbar-button"],
+        properties: {
+          innerHTML: ICONS.workspaceToggleLeft,
+          title: "Toggle left pane",
+        },
+        listeners: [
+          {
+            type: "click",
+            listener: (e) => {
+              this.toggleOutline();
+            },
+          },
+        ],
+      },
+    );
+
+    toolbar.querySelector(".start")?.append(toggleOutline);
+
+    const toggleContext = this._addon.data.ztoolkit.UI.createElement(
+      _document,
+      "button",
+      {
+        classList: ["toolbar-button"],
+        properties: {
+          innerHTML: ICONS.workspaceToggleRight,
+          title: "Toggle right pane",
+        },
+        listeners: [
+          {
+            type: "click",
+            listener: (e) => {
+              this.toggleContext();
+            },
+          },
+        ],
+      },
+    );
+
+    toolbar.querySelector(".end")?.prepend(toggleContext);
   }
 
   _persistState() {

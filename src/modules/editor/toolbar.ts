@@ -11,14 +11,16 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
 
   const _document = editor._iframeWindow.document;
+  const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
+  // Link creator
   registerEditorToolbarElement(
     editor,
-    _document.querySelector(".toolbar") as HTMLDivElement,
+   toolbar,
     "start",
     ztoolkit.UI.createElement(_document, "button", {
       classList: ["toolbar-button"],
       properties: {
-        innerHTML: ICONS.addon,
+        innerHTML: ICONS.linkCreator,
         title: "Link creator",
       },
       listeners: [
@@ -293,9 +295,17 @@ async function registerEditorToolbarElement(
   toolbar: HTMLDivElement,
   position: "start" | "middle" | "end",
   elem: HTMLElement,
+  after: boolean = false,
 ) {
   await editor._initPromise;
-  toolbar.querySelector(`.${position}`)?.append(elem);
+  const target = toolbar.querySelector(`.${position}`);
+  if (target) {
+    if (after) {
+      target.append(elem);
+    } else {
+      target.prepend(elem);
+    }
+  }
   return elem;
 }
 
