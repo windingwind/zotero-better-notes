@@ -169,6 +169,7 @@ export class Workspace extends PluginCEBase {
     }
 
     this._leftSplitter.setAttribute("state", open ? "open" : "collapsed");
+    this._persistState();
   }
 
   toggleContext(open?: boolean) {
@@ -177,6 +178,7 @@ export class Workspace extends PluginCEBase {
     }
 
     this._rightSplitter.setAttribute("state", open ? "open" : "collapsed");
+    this._persistState();
   }
 
   async _initEditor() {
