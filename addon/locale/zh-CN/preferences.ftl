@@ -1,9 +1,16 @@
-workspace-title = 工作区
-workspace-expandLevel-label = 大纲展开至标题层级
-workspace-keepLinks = 
+basic-title = 基本
+basic-openNote-takeover =
+    .label = 接管打开笔记
+basic-openNote-defaultAsWindow =
+    .label = 默认在窗口打开笔记
+
+editor-title = 笔记编辑器
+editor-expandLevel-label = 大纲展开至标题层级
+editor-keepLinks = 
     .label = 在大纲中显示笔记链接
-workspace-autoUpdateRelatedNotes =
-    .label = 自动更新"相关"
+editor-noteLinkPreview = 
+    .label = 鼠标悬停时显示笔记链接预览
+
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)
 sync-attachmentFolder-label = 附件文件夹
@@ -15,5 +22,7 @@ template-editor =
 annotation-title = PDF批注
 annotation-autoAnnotation =
     .label = 自动添加新批注到工作区笔记
+
+about-title = 关于
 help =
     .value = { $name } 版本 { $version } 构建 { $time }

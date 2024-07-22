@@ -8,10 +8,9 @@
 <!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
 <!-- prettier-ignore -->
-<?xml-stylesheet href="chrome://__addonRef__/content/virtualizedTable.css" type="text/css"?>
-<!-- prettier-ignore -->
 <!DOCTYPE html>
 <html
+  id="__addonRef__-templateEditor"
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -25,6 +24,25 @@
     <title data-l10n-id="title"></title>
     <meta charset="utf-8" />
     <meta name="referrer" content="no-referrer" />
+    <xul:linkset>
+      <link rel="localization" href="browser/menubar.ftl" />
+      <link rel="localization" href="browser/browserSets.ftl" />
+      <link rel="localization" href="toolkit/global/textActions.ftl" />
+      <link rel="localization" href="zotero.ftl" />
+      <link rel="localization" href="__addonRef__-templateEditor.ftl" />
+    </xul:linkset>
+    <xul:commandset id="mainCommandSet">
+      <xul:command id="cmd_close" oncommand="window.close();" />
+    </xul:commandset>
+    <xul:keyset id="mainKeyset">
+      <xul:key
+        id="key_close"
+        data-l10n-id="close-shortcut"
+        command="cmd_close"
+        modifiers="accel"
+        reserved="true"
+      />
+    </xul:keyset>
     <script>
       document.addEventListener("DOMContentLoaded", (ev) => {
         const { Services } = ChromeUtils.import(
@@ -45,19 +63,24 @@
     </script>
     <style>
       html,
+      body {
+        min-width: 600px;
+        min-height: 400px;
+      }
+      html,
       body,
       .viewport {
         padding: 0;
         margin: 0;
         height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
         word-wrap: break-word;
-        background-color: #f0f0f0;
-        font-family: initial;
       }
       .viewport {
+        flex-grow: 1;
+        flex-shrink: 1;
         margin: 0 5px 0 5px;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
       .viewport-container {
         padding: 0;
@@ -67,22 +90,24 @@
         display: flex;
         flex-direction: row;
         overflow: hidden;
-        background-color: #f0f0f0;
+        border-bottom: var(--material-border);
+        background: var(--material-background);
       }
       .footer-container {
         padding: 5px;
-        background-color: #f0f0f0;
       }
       .list-viewport {
         width: calc(20% - 10px);
         height: 100%;
-        background-color: #ffffff;
         overflow: hidden;
       }
       #table-container {
         height: 100%;
         width: 100%;
-        overflow: hidden;
+        overflow: auto;
+      }
+      #templates-table {
+        height: 100%;
       }
       .editor-viewport {
         display: flex;
@@ -107,17 +132,21 @@
     <link
       rel="stylesheet"
       type="text/css"
-      href="chrome://__addonRef__/content/lib/css/github-markdown-light.min.css"
+      href="chrome://__addonRef__/content/lib/css/github-markdown.css"
     />
-    <link rel="localization" href="__addonRef__-templateEditor.ftl" />
   </head>
-  <body>
+  <body class="zotero-window">
     <div class="viewport-container">
-      <div id="list-container" class="viewport list-viewport">
+      <xul:hbox id="list-container" class="viewport list-viewport">
         <div id="table-container"></div>
-      </div>
-      <div class="viewport editor-viewport">
-        <div style="display: flex">
+      </xul:hbox>
+      <xul:splitter
+        state="open"
+        collapse="before"
+        orient="horizontal"
+      ></xul:splitter>
+      <xul:hbox class="viewport editor-viewport">
+        <div style="display: flex; align-items: center">
           <div style="flex-shrink: 0" data-l10n-id="templateName"></div>
           <input id="editor-name" type="text" style="width: 100%" />
         </div>
@@ -129,13 +158,18 @@
             onmousedown="this.focus()"
           ></iframe>
         </div>
-      </div>
-      <div class="viewport preview-viewport">
+      </xul:hbox>
+      <xul:splitter
+        state="open"
+        collapse="after"
+        orient="horizontal"
+      ></xul:splitter>
+      <xul:hbox class="viewport preview-viewport">
         <div style="display: flex">
           <div style="flex-shrink: 0" data-l10n-id="previewContainer"></div>
         </div>
         <article id="preview-container" class="markdown-body"></article>
-      </div>
+      </xul:hbox>
     </div>
     <div
       class="footer-container"

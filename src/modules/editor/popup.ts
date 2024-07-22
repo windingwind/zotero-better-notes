@@ -11,6 +11,7 @@ import {
 } from "../../utils/editor";
 import { getNoteLink, getNoteLinkParams } from "../../utils/link";
 import { getString } from "../../utils/locale";
+import { waitUtilAsync } from "../../utils/wait";
 
 export function initEditorPopup(editor: Zotero.EditorInstance) {
   const ob = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
@@ -137,51 +138,19 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
         {
           type: "click",
           listener: async (e) => {
-            ZoteroPane.openNoteWindow(linkNote.id);
+            addon.hooks.onOpenNote(linkNote.id, "window", linkParams);
           },
         },
       ],
     });
 
-    _window.document
-      .querySelector(".link-popup")
-      ?.append(insertButton, updateButton, openButton);
-    // if (linkPopup) {
-    //   if (Zotero.Prefs.get("Knowledge4Zotero.linkAction.preview") as boolean) {
-    //     let previewContainer =
-    //       _window.document.getElementById("note-link-preview");
-    //     if (previewContainer) {
-    //       previewContainer.remove();
-    //     }
-    //     previewContainer = ztoolkit.UI.createElement(
-    //       _window.document,
-    //       "div"
-    //     ) as HTMLDivElement;
-    //     previewContainer.id = "note-link-preview";
-    //     previewContainer.className = "ProseMirror primary-editor";
-    //     previewContainer.innerHTML =
-    //       await this._Addon.NoteParse.parseNoteStyleHTML(linkNote);
-    //     previewContainer.addEventListener("click", (e) => {
-    //       this._Addon.WorkspaceWindow.setWorkspaceNote("preview", linkNote);
-    //     });
-    //     linkPopup.append(previewContainer);
-    //     previewContainer.setAttribute(
-    //       "style",
-    //       `width: 98%;height: ${
-    //         linkPopup ? Math.min(linkPopup.offsetTop, 300) : 300
-    //       }px;position: absolute;background: white;bottom: 36px;overflow: hidden;box-shadow: 0 0 5px 5px rgba(0,0,0,0.2);border-radius: 5px;cursor: pointer;opacity: 0.9;`
-    //     );
-    //     previewContainer
-    //       .querySelector("div[data-schema-version]")
-    //       ?.childNodes.forEach((node) => {
-    //         if ((node as Element).setAttribute) {
-    //           (node as Element).setAttribute("style", "margin: 0");
-    //         } else {
-    //           node.remove();
-    //         }
-    //       });
-    //   }
-    // }
+    const linkPopup = _window.document.querySelector(".link-popup");
+    if (!linkPopup) {
+      return;
+    }
+    // Ensure the builtin buttons are appended
+    await waitUtilAsync(() => linkPopup.querySelectorAll("button").length >= 2);
+    linkPopup?.append(insertButton, updateButton, openButton);
   } else {
     Array.from(_window.document.querySelectorAll(".link-popup-extra")).forEach(
       (elem) => elem.remove(),

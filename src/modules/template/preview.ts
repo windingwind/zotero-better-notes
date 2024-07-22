@@ -78,7 +78,7 @@ async function renderTemplatePreview(
       const link = getNoteLink(data);
       const linkText = data.getNoteTitle().trim() || link;
       const subNoteItem = data;
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      const noteItem = new Zotero.Item("note");
       html = await addon.api.template.runTemplate(
         templateName,
         "link, linkText, subNoteItem, noteItem",
@@ -95,7 +95,7 @@ async function renderTemplatePreview(
       html = "<p>No note item selected</p>";
     } else {
       const link = getNoteLink(data);
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      const noteItem = new Zotero.Item("note");
       const linkText = noteItem.getNoteTitle().trim() || "Workspace Note";
       const subNoteItem = data;
       html = await addon.api.template.runTemplate(
@@ -114,7 +114,7 @@ async function renderTemplatePreview(
       html = "<p>No note item selected</p>";
     } else {
       const link = getNoteLink(data);
-      const noteItem = Zotero.Items.get(addon.data.workspace.mainId);
+      const noteItem = new Zotero.Item("note");
       html = await addon.api.template.runTemplate(
         templateName,
         "link, noteItem",

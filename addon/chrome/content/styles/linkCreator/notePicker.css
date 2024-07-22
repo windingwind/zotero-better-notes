@@ -1,0 +1,33 @@
+bn-note-picker {
+  flex-direction: column;
+
+  #collections-items-container {
+    display: flex;
+    height: 100%;
+    max-height: 50%;
+    border-bottom: var(--material-border);
+    user-select: none;
+  }
+
+  #zotero-collections-tree {
+    background: var(--material-sidepane);
+  }
+
+  #select-items-dialog {
+    display: flex;
+    padding: 0;
+
+    #zotero-select-items-container {
+      gap: 0;
+    }
+
+    #collections-items-container {
+      margin-bottom: 0;
+    }
+  }
+
+  #bn-select-opened-notes-container {
+    min-width: 200px;
+    max-height: 50%;
+  }
+}

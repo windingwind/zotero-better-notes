@@ -1,45 +1,7 @@
 import { getString } from "../utils/locale";
-import { config } from "../../package.json";
 import { formatPath } from "../utils/str";
 
-export { createWorkspaceNote, createNoteFromTemplate, createNoteFromMD };
-
-async function createWorkspaceNote() {
-  const currentCollection = ZoteroPane.getSelectedCollection();
-  if (!currentCollection) {
-    window.alert(getString("alert.notValidCollectionError"));
-    return;
-  }
-  const confirmOperation = window.confirm(
-    `${getString(
-      "menuAddNote.newMainNote.confirmHead",
-      // @ts-ignore
-    )} '${currentCollection.getName()}' ${getString(
-      "menuAddNote.newMainNote.confirmTail",
-    )}`,
-  );
-  if (!confirmOperation) {
-    return;
-  }
-  const header = window.prompt(
-    getString("menuAddNote.newMainNote.enterNoteTitle"),
-    `New Note ${new Date().toLocaleString()}`,
-  );
-  const noteID = await ZoteroPane.newNote();
-  const noteItem = Zotero.Items.get(noteID);
-  noteItem.setNote(
-    `<div data-schema-version="${config.dataSchemaVersion}"><h1>${header}</h1>\n</div>`,
-  );
-  await noteItem.saveTx();
-  addon.hooks.onSetWorkspaceNote(noteID, "main");
-  if (
-    !addon.data.workspace.tab.active &&
-    !addon.data.workspace.window.active &&
-    window.confirm(getString("menuAddNote.newMainNote.openWorkspaceTab"))
-  ) {
-    addon.hooks.onOpenWorkspace("tab");
-  }
-}
+export { createNoteFromTemplate, createNoteFromMD };
 
 function getLibraryParentId() {
   return ZoteroPane.getSelectedItems().filter((item) => item.isRegularItem())[0]
@@ -67,7 +29,7 @@ async function createNoteFromTemplate(
     const parentItemId =
       parentType === "reader" ? getReaderParentId() : getLibraryParentId();
     if (!parentItemId) {
-      window.alert(getString("alert.notValidParentItemError"));
+      Zotero.getMainWindow().alert(getString("alert.notValidParentItemError"));
       return;
     }
     addon.hooks.onShowTemplatePicker("create", {
@@ -86,11 +48,13 @@ async function createNoteFromTemplate(
 async function createNoteFromMD() {
   const currentCollection = ZoteroPane.getSelectedCollection();
   if (!currentCollection) {
-    window.alert(getString("alert.notValidCollectionError"));
+    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
     return;
   }
 
-  const syncNotes = window.confirm(getString("alert-syncImportedNotes"));
+  const syncNotes = Zotero.getMainWindow().confirm(
+    getString("alert-syncImportedNotes"),
+  );
 
   const filepaths = await new ztoolkit.FilePicker(
     "Import MarkDown",

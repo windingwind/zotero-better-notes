@@ -10,7 +10,7 @@ export async function savePDF(noteId: number) {
     browser: undefined as any,
     url: `chrome://${config.addonRef}/content/printTemplate.xhtml`,
   };
-  const win = window.openDialog(
+  const win = Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/printWrapper.xhtml`,
     `${config.addonRef}-printWrapper`,
     `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`,
@@ -23,7 +23,6 @@ export async function savePDF(noteId: number) {
 }
 
 function disablePrintFooterHeader() {
-  // @ts-ignore
   Zotero.Prefs.resetBranch([], "print");
   Zotero.Prefs.set("print.print_footercenter", "", true);
   Zotero.Prefs.set("print.print_footerleft", "", true);

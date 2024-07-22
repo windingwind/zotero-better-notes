@@ -7,13 +7,14 @@ import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
 
 import { getPref, setPref } from "./utils/prefs";
-import { OutlineType } from "./utils/workspace";
+import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
 import { createZToolkit } from "./utils/ztoolkit";
 
 class Addon {
   public data: {
+    uid: string;
     alive: boolean;
     // Env type, see build.js
     env: "development" | "production";
@@ -24,8 +25,6 @@ class Addon {
     };
     prefs?: {
       window: Window;
-      columns: Array<ColumnOptions>;
-      rows: Array<{ [dataKey: string]: string }>;
     };
     export: {
       pdf: { promise?: _ZoteroTypes.PromiseObject };
@@ -36,12 +35,9 @@ class Addon {
       manager: {
         window?: Window;
         tableHelper?: VirtualizedTableHelper;
-        data: {
-          noteId: number;
-          noteName: string;
-          lastSync: string;
-          filePath: string;
-        }[];
+        data: SyncDataType[];
+        columnIndex: number;
+        columnAscending: boolean;
       };
       diff: {
         window?: Window;
@@ -49,19 +45,7 @@ class Addon {
     };
     notify: Array<Parameters<_ZoteroTypes.Notifier.Notify>>;
     workspace: {
-      mainId: number;
-      previewId: number;
-      tab: {
-        active: boolean;
-        id?: string;
-        container?: XUL.Box;
-      };
-      window: {
-        active: boolean;
-        window?: Window;
-        container?: XUL.Box;
-      };
-      outline: OutlineType;
+      instances: Record<string, WeakRef<HTMLElement>>;
     };
     imageViewer: {
       window?: Window;
@@ -88,8 +72,16 @@ class Addon {
         data: Record<string, any>;
       };
     };
+    relation: {
+      worker?: Worker;
+    };
+    imageCache: Record<number, string>;
     readonly prompt?: Prompt;
+    hint: {
+      silent: boolean;
+    };
   } = {
+    uid: Zotero.Utilities.randomString(8),
     alive: true,
     env: __env__,
     ztoolkit: createZToolkit(),
@@ -101,41 +93,14 @@ class Addon {
       lock: false,
       manager: {
         data: [],
+        columnAscending: true,
+        columnIndex: 0,
       },
       diff: {},
     },
     notify: [],
     workspace: {
-      get mainId(): number {
-        return parseInt(getPref("mainKnowledgeID") as string);
-      },
-      set mainId(id: number) {
-        setPref("mainKnowledgeID", id);
-        const recentMainNoteIds = getPref("recentMainNoteIds") as string;
-        const recentMainNoteIdsArr = recentMainNoteIds
-          ? recentMainNoteIds.split(",").map((id) => parseInt(id))
-          : [];
-        const idx = recentMainNoteIdsArr.indexOf(id);
-        if (idx !== -1) {
-          recentMainNoteIdsArr.splice(idx, 1);
-        }
-        recentMainNoteIdsArr.unshift(id);
-        setPref(
-          "recentMainNoteIds",
-          recentMainNoteIdsArr
-            .slice(0, 10)
-            .filter((id) => Zotero.Items.get(id).isNote())
-            .join(","),
-        );
-      },
-      previewId: -1,
-      tab: {
-        active: false,
-      },
-      window: {
-        active: false,
-      },
-      outline: OutlineType.treeView,
+      instances: {},
     },
     imageViewer: {
       window: undefined,
@@ -157,8 +122,13 @@ class Addon {
         data: {},
       },
     },
+    relation: {},
+    imageCache: {},
     get prompt() {
       return ToolkitGlobal.getInstance().prompt.instance;
+    },
+    hint: {
+      silent: false,
     },
   };
   // Lifecycle hooks

@@ -17,10 +17,10 @@ function initZToolkit(_ztoolkit: ReturnType<typeof createZToolkit>) {
   const env = __env__;
   _ztoolkit.basicOptions.log.prefix = `[${config.addonName}]`;
   _ztoolkit.basicOptions.log.disableConsole = env === "production";
-  _ztoolkit.UI.basicOptions.ui.enableElementJSONLog = __env__ === "development";
-  _ztoolkit.UI.basicOptions.ui.enableElementDOMLog = __env__ === "development";
+  _ztoolkit.UI.basicOptions.ui.enableElementJSONLog = env === "development";
+  _ztoolkit.UI.basicOptions.ui.enableElementDOMLog = env === "development";
   _ztoolkit.basicOptions.debug.disableDebugBridgePassword =
-    __env__ === "development";
+    env === "development";
   _ztoolkit.ProgressWindow.setIconURI(
     "default",
     `chrome://${config.addonRef}/content/icons/favicon.png`,
@@ -29,7 +29,6 @@ function initZToolkit(_ztoolkit: ReturnType<typeof createZToolkit>) {
 
 import { BasicTool, unregister } from "zotero-plugin-toolkit/dist/basic";
 import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
-import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
 import { DialogHelper } from "zotero-plugin-toolkit/dist/helpers/dialog";
 import { FilePickerHelper } from "zotero-plugin-toolkit/dist/helpers/filePicker";
@@ -40,6 +39,7 @@ import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PromptManager } from "zotero-plugin-toolkit/dist/managers/prompt";
 import { ReaderTabPanelManager } from "zotero-plugin-toolkit/dist/managers/readerTabPanel";
 import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
+import { GuideHelper } from "zotero-plugin-toolkit/dist/helpers/guide";
 
 class MyToolkit extends BasicTool {
   UI: UITool;
@@ -47,13 +47,13 @@ class MyToolkit extends BasicTool {
   LibraryTabPanel: LibraryTabPanelManager;
   ReaderTabPanel: ReaderTabPanelManager;
   Menu: MenuManager;
-  PreferencePane: PreferencePaneManager;
   Clipboard: typeof ClipboardHelper;
   FilePicker: typeof FilePickerHelper;
   ProgressWindow: typeof ProgressWindowHelper;
   VirtualizedTable: typeof VirtualizedTableHelper;
   Dialog: typeof DialogHelper;
   LargePref: typeof LargePrefHelper;
+  Guide: typeof GuideHelper;
 
   constructor() {
     super();
@@ -62,13 +62,13 @@ class MyToolkit extends BasicTool {
     this.LibraryTabPanel = new LibraryTabPanelManager(this);
     this.ReaderTabPanel = new ReaderTabPanelManager(this);
     this.Menu = new MenuManager(this);
-    this.PreferencePane = new PreferencePaneManager(this);
     this.Clipboard = ClipboardHelper;
     this.FilePicker = FilePickerHelper;
     this.ProgressWindow = ProgressWindowHelper;
     this.VirtualizedTable = VirtualizedTableHelper;
     this.Dialog = DialogHelper;
     this.LargePref = LargePrefHelper;
+    this.Guide = GuideHelper;
   }
 
   unregisterAll() {

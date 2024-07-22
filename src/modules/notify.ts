@@ -1,4 +1,7 @@
-export function registerNotify(types: _ZoteroTypes.Notifier.Type[]) {
+export function registerNotify(
+  types: _ZoteroTypes.Notifier.Type[],
+  win: Window,
+) {
   const callback = {
     notify: async (...data: Parameters<_ZoteroTypes.Notifier.Notify>) => {
       if (!addon?.data.alive) {
@@ -13,7 +16,7 @@ export function registerNotify(types: _ZoteroTypes.Notifier.Type[]) {
   const notifyID = Zotero.Notifier.registerObserver(callback, types);
 
   // Unregister callback when the window closes (important to avoid a memory leak)
-  window.addEventListener(
+  win.addEventListener(
     "unload",
     (e: Event) => {
       unregisterNotify(notifyID);

@@ -75,17 +75,19 @@ function removeTemplate(
   }
 }
 
-function importTemplateFromClipboard() {
-  const templateText = Zotero.Utilities.Internal.getClipboard("text/unicode");
-  if (!templateText) {
+function importTemplateFromClipboard(text?: string) {
+  if (!text) {
+    text = Zotero.Utilities.Internal.getClipboard("text/plain") || "";
+  }
+  if (!text) {
     return;
   }
   let template: Record<string, string>;
   try {
-    template = YAML.parse(templateText);
+    template = YAML.parse(text);
   } catch (e) {
     try {
-      template = JSON.parse(templateText);
+      template = JSON.parse(text);
     } catch (e) {
       template = { name: "", text: "" };
     }

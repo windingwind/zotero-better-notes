@@ -10,10 +10,10 @@ export function initEditorMenu(editor: Zotero.EditorInstance) {
   const makeId = (key: string) =>
     `${config.addonRef}-editor-menu-${editor.instanceID}-${key}`;
   // Prevent duplicate menu items
-  if (editor._popup.getAttribute("bn-init") === "true") {
+  if (editor._popup.getAttribute("bn-init") === addon.data.uid) {
     return;
   }
-  editor._popup.setAttribute("bn-init", "true");
+  editor._popup.setAttribute("bn-init", addon.data.uid);
   (editor._popup as XUL.Menu).addEventListener("popupshowing", (ev) => {
     const menuitemID = makeId("resizeImage");
     if (

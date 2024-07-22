@@ -83,6 +83,14 @@ Pragmas are lines start with `// @`. They have special effect and will not be re
 
 Let the compiler know you are using markdown. Otherwise the template will be processed as HTML.
 
+### `// @use-update`
+
+Allow the generated content to be updated using the `Update content from templates` in the note editor.
+The generated content will be wrapped in separators with a YAML metadata section for update.
+This is a beta feature and can be changed/removed in the future.
+
+> The template with this pragma should not contain any separator (`---` or `<hr>`) in the content.
+
 ### `// @author`
 
 Mark the code belongs to you. Your GitHub account or your email.

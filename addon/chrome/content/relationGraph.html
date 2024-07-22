@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Force-Directed Tree</title>
+    <script src="chrome://__addonRef__/content/lib/js/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="chrome://zotero-platform/content/zotero.css" />
+    <style>
+      html,
+      body {
+        overflow: hidden;
+        background: var(--material-background);
+      }
+
+      .node:hover {
+        cursor: pointer;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --text-color: black;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --text-color: white;
+        }
+      }
+    </style>
+    <script>
+      window.addEventListener("message", (ev) => {
+        if (ev.data.type === "render") {
+          render(ev.data.graph);
+        }
+      });
+      function render(data) {
+        // Define the data for the nodes and links
+        // Specify the dimensions of the chart.
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        // 2: 100; 22: 50
+        function distance() {
+          if (data.nodes.length > 22) {
+            return 50;
+          }
+          return 105 - 2.5 * data.nodes.length;
+        }
+
+        // Specify the color scale.
+        const color = d3.scaleOrdinal([1, 2], ["grey", "#A88F6A"]);
+
+        // The force simulation mutates links and nodes, so create a copy
+        // so that re-evaluating this cell produces the same result.
+        const links = data.links.map((d) => ({ ...d }));
+        const nodes = data.nodes.map((d) => ({ ...d }));
+        const linkColor = "#e8af59";
+        // Create a simulation with several forces.
+        const simulation = d3
+          .forceSimulation(nodes)
+          .force(
+            "link",
+            d3
+              .forceLink(links)
+              .id((d) => d.id)
+              .distance(distance()),
+          )
+          .force("charge", d3.forceManyBody().strength(-400))
+          .force("x", d3.forceX())
+          .force("y", d3.forceY());
+
+        // Create the SVG container.
+        const svg = d3
+          .create("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("viewBox", [-width / 2, -height / 2, width, height])
+          .attr("style", "max-width: 100%; height: auto;");
+
+        svg
+          .append("defs")
+          .append("marker")
+          .attr("id", "arrowhead")
+          .attr("refX", 25)
+          .attr("refY", 6)
+          .attr("orient", "auto-start-reverse")
+          .attr("markerWidth", 20)
+          .attr("markerHeight", 12)
+          .attr("markerUnits", "userSpaceOnUse")
+          .append("path")
+          .attr("d", "M 1 1 L 18 6 L 1 11 Z")
+          .attr("fill", linkColor)
+          .attr("stroke", linkColor)
+          .attr("class", "arrow-head");
+
+        const link = svg
+          .append("g")
+          .attr("fill", "none")
+          .selectAll("path")
+          .data(links)
+          .join("line")
+          .attr("stroke-width", (d) => Math.sqrt(d.value))
+          .attr("stroke", linkColor)
+          .attr("marker-start", (d) =>
+            d.type === "both" ? "url(#arrowhead)" : "",
+          )
+          .attr("marker-end", "url(#arrowhead)");
+
+        const node = svg
+          .append("g")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1.5)
+          .selectAll("circle")
+          .data(nodes)
+          .join("g") // Append a 'g' element for each node
+          .attr("class", "node"); // Assign a class for styling if needed
+
+        node
+          .append("circle")
+          .attr("r", 7)
+          .attr("fill", (d) => color(d.group));
+
+        node
+          .append("text")
+          .attr("x", 0) // Center the text horizontally
+          .attr("y", 18) // Position the text below the circle
+          .attr("text-anchor", "middle") // Ensure the text is centered
+          .attr("fill", "var(--text-color)")
+          .attr("stroke", "none")
+          .text((d) => (d.group === 1 ? "" : d.shortTitle));
+
+        node.append("title").text((d) => d.title);
+
+        // Add a drag behavior.
+        node.call(
+          d3
+            .drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended),
+        );
+
+        // Set the position attributes of links and nodes each time the simulation ticks.
+        simulation.on("tick", () => {
+          link
+            .attr("x1", (d) => d.source.x)
+            .attr("y1", (d) => d.source.y)
+            .attr("x2", (d) => d.target.x)
+            .attr("y2", (d) => d.target.y);
+
+          node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+        });
+
+        // Reheat the simulation when drag starts, and fix the subject position.
+        function dragstarted(event) {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          event.subject.fx = event.subject.x;
+          event.subject.fy = event.subject.y;
+        }
+
+        // Update the subject (dragged node) position during drag.
+        function dragged(event) {
+          event.subject.fx = event.x;
+          event.subject.fy = event.y;
+        }
+
+        // Restore the target alpha so the simulation cools after dragging ends.
+        // Unfix the subject position now that it’s no longer being dragged.
+        function dragended(event) {
+          if (!event.active) simulation.alphaTarget(0);
+          event.subject.fx = null;
+          event.subject.fy = null;
+        }
+
+        // Add the hover interaction
+        node
+          .on("mouseover", function (event, d) {
+            // Enlarge the node circle
+            d3.select(this)
+              .select("circle")
+              .transition()
+              .duration(200)
+              .attr("r", 10); // New, larger radius
+            d3.select(this)
+              .select("text")
+              .text((d) => d.title);
+          })
+          .on("mouseout", function (event, d) {
+            // Shrink the node circle back to original size
+            d3.select(this)
+              .select("circle")
+              .transition()
+              .duration(500)
+              .attr("r", 7); // Original radius
+            d3.select(this)
+              .select("text")
+              .text((d) => (d.group === 1 ? "" : d.shortTitle));
+          })
+          .on("click", function (event, d) {
+            window.postMessage(
+              { type: "openNote", isShift: !!event.shiftKey, id: d.id },
+              "*",
+            );
+          });
+
+        document.body.replaceChildren(svg.node());
+      }
+
+      d3.select(window).on("resize", function () {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        d3.select(document.querySelector("svg"))
+          .attr("width", width)
+          .attr("height", height)
+          .attr("viewBox", [-width / 2, -height / 2, width, height]);
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

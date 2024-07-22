@@ -1,9 +1,16 @@
-workspace-title = Рабочее пространство
-workspace-expandLevel-label = Outline расширить до уровня заголовка
-workspace-keepLinks = 
+basic-title = Basic
+basic-openNote-takeover =
+    .label = Take over opening note
+basic-openNote-defaultAsWindow =
+    .label = Open note as window by default
+
+editor-title = Note Editor
+editor-expandLevel-label = Outline расширить до уровня заголовка
+editor-keepLinks = 
     .label = Сохранить ссылки
-workspace-autoUpdateRelatedNotes =
-    .label = Автообновление связанных заметок
+editor-noteLinkPreview = 
+    .label = Show note link preview on hover
+
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)
 sync-attachmentFolder-label = Attachment folder
@@ -15,5 +22,7 @@ template-editor =
 annotation-title = PDF Аннотация
 annotation-autoAnnotation =
     .label = Автодобавлять новые аннотации к заметкам раб.пространства
+
+about-title = About
 help =
     .value = { $name } VERSION { $version } Build { $time }

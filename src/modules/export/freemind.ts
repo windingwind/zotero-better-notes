@@ -1,6 +1,7 @@
 import TreeModel = require("tree-model");
 import { showHintWithLink } from "../../utils/hint";
 import { getNoteTree, parseHTMLLines, renderNoteHTML } from "../../utils/note";
+import { htmlEscape, htmlUnescape } from "../../utils/str";
 
 export async function saveFreeMind(filename: string, noteId: number) {
   const noteItem = Zotero.Items.get(noteId);
@@ -16,16 +17,11 @@ async function note2mm(
 ) {
   const root = getNoteTree(noteItem, false);
   const textNodeForEach = (e: Node, callbackfn: (e: any) => void) => {
-    if (e.nodeType === document.TEXT_NODE) {
+    if (e.nodeType === Zotero.getMainWindow().document.TEXT_NODE) {
       callbackfn(e);
       return;
     }
     e.childNodes.forEach((_e) => textNodeForEach(_e, callbackfn));
-  };
-  const html2Escape = (sHtml: string) => {
-    return sHtml.replace(/[<>&"]/g, function (c) {
-      return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]!;
-    });
   };
   let lines: string[] = [];
   if (options.withContent) {
@@ -33,9 +29,11 @@ async function note2mm(
       .getDOMParser()
       .parseFromString(await renderNoteHTML(noteItem), "text/html");
     textNodeForEach(doc.body, (e: Text) => {
-      e.data = html2Escape(e.data);
+      e.data = htmlEscape(doc, e.data);
     });
-    lines = parseHTMLLines(doc.body.innerHTML);
+    lines = parseHTMLLines(doc.body.innerHTML).map((line) =>
+      htmlUnescape(line),
+    );
   }
   const convertClosingTags = (htmlStr: string) => {
     const regConfs = [
@@ -56,7 +54,8 @@ async function note2mm(
     return htmlStr;
   };
   const convertNode = (node: TreeModel.Node<NoteNodeData>) => {
-    mmXML += `<node ID="${node.model.id}" TEXT="${html2Escape(
+    mmXML += `<node ID="${node.model.id}" TEXT="${htmlEscape(
+      Zotero.getMainWindow().document,
       node.model.name || noteItem.getNoteTitle(),
     )}"><hook NAME="AlwaysUnfoldedNode" />`;
     if (

@@ -9,7 +9,8 @@ import {
   html2md,
   annotations2html,
   note2html,
-} from "./modules/convert/api";
+  link2params,
+} from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
 import { saveFreeMind } from "./modules/export/freemind";
@@ -27,6 +28,7 @@ import {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  findAllSyncedFiles,
 } from "./modules/sync/api";
 import {
   runTemplate,
@@ -44,7 +46,6 @@ import {
   DEFAULT_TEMPLATES,
 } from "./modules/template/data";
 import { renderTemplatePreview } from "./modules/template/preview";
-import { getWorkspaceEditor } from "./modules/workspace/content";
 import { parseCitationHTML } from "./utils/citation";
 import {
   getEditorInstance,
@@ -60,15 +61,30 @@ import {
   getRangeAtCursor,
   move,
   replace,
+  moveHeading,
+  updateHeadingTextAtLine,
+  getLineCount,
 } from "./utils/editor";
 import {
   addLineToNote,
-  updateRelatedNotes,
-  getRelatedNoteIds,
+  getNoteTree,
+  getNoteTreeFlattened,
+  getNoteTreeNodeById,
+  getLinesInNote,
 } from "./utils/note";
+import {
+  getAnnotationByLinkTarget,
+  getLinkTargetByAnnotation,
+  getNoteLinkInboundRelation,
+  getNoteLinkOutboundRelation,
+  linkAnnotationToTarget,
+  updateNoteLinkRelation,
+} from "./utils/relation";
+import { getWorkspaceByTabID, getWorkspaceByUID } from "./utils/workspace";
 
 const workspace = {
-  getWorkspaceEditor,
+  getWorkspaceByTabID,
+  getWorkspaceByUID,
 };
 
 const sync = {
@@ -82,10 +98,7 @@ const sync = {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
-  /**
-   * @deprecated Use `api.note.getRelatedNoteIds` instead
-   */
-  getRelatedNoteIds,
+  findAllSyncedFiles,
 };
 
 const convert = {
@@ -94,6 +107,7 @@ const convert = {
   note2noteDiff,
   note2link,
   link2note,
+  link2params,
   link2html,
   md2html,
   html2md,
@@ -140,14 +154,28 @@ const editor = {
   getLineAtCursor,
   getSectionAtCursor,
   getPositionAtLine,
+  getLineCount,
   getTextBetween,
   getTextBetweenLines,
+  moveHeading,
+  updateHeadingTextAtLine,
 };
 
 const note = {
   insert: addLineToNote,
-  updateRelatedNotes,
-  getRelatedNoteIds,
+  getLinesInNote,
+  getNoteTree,
+  getNoteTreeFlattened,
+  getNoteTreeNodeById,
+};
+
+const relation = {
+  getNoteLinkInboundRelation,
+  getNoteLinkOutboundRelation,
+  updateNoteLinkRelation,
+  linkAnnotationToTarget,
+  getLinkTargetByAnnotation,
+  getAnnotationByLinkTarget,
 };
 
 export default {
@@ -159,4 +187,5 @@ export default {
   $import,
   editor,
   note,
+  relation,
 };

@@ -1,6 +1,6 @@
 {
   "name": "zotero-better-notes",
-  "version": "1.1.4-36",
+  "version": "1.1.4-beta.103",
   "description": "Everything about note management. All in Zotero.",
   "config": {
     "addonName": "Better Notes for Zotero",
@@ -8,26 +8,14 @@
     "addonRef": "BetterNotes",
     "prefsPrefix": "extensions.zotero.Knowledge4Zotero",
     "addonInstance": "BetterNotes",
-    "dataSchemaVersion": "8",
-    "releasepage": "https://github.com/windingwind/zotero-better-notes/releases/latest/download/zotero-better-notes.xpi",
-    "updaterdf": "https://raw.githubusercontent.com/windingwind/zotero-better-notes/master/update.json"
+    "dataSchemaVersion": "8"
   },
   "main": "src/index.ts",
   "scripts": {
-    "build-dev": "cross-env NODE_ENV=development node scripts/build.mjs",
-    "build-prod": "cross-env NODE_ENV=production node scripts/build.mjs",
-    "build": "concurrently -c auto npm:build-prod npm:tsc",
-    "tsc": "tsc --noEmit",
-    "start": "node scripts/start.mjs",
-    "stop": "node scripts/stop.mjs",
-    "start-watch": "npm run build-dev && concurrently -c auto npm:start npm:watch",
-    "restart-dev": "npm run build-dev && npm run stop && npm run start",
-    "restart-prod": "npm run build-prod && npm run stop && npm run start",
-    "restart": "npm run restart-dev",
-    "reload": "npm run build-dev && node scripts/reload.mjs",
-    "watch": "chokidar \"src/**\" \"addon/**\" -c \"npm run reload\"",
-    "release": "release-it",
-    "lint": "prettier --write . '!addon/chrome/content/lib/**' && eslint . --ext .ts --fix",
+    "start": "zotero-plugin serve",
+    "build": "tsc --noEmit && zotero-plugin build",
+    "release": "zotero-plugin release",
+    "lint": "prettier --write . && eslint . --ext .ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "update-deps": "npm update --save"
   },
@@ -43,7 +31,7 @@
   "homepage": "https://github.com/windingwind/zotero-better-notes#readme",
   "dependencies": {
     "asciidoctor": "^3.0.2",
-    "crypto-js": "^4.1.1",
+    "dexie": "^4.0.4",
     "diff": "^5.1.0",
     "hast-util-to-html": "^9.0.0",
     "hast-util-to-mdast": "^8.4.1",
@@ -51,12 +39,12 @@
     "hastscript": "^8.0.0",
     "html-docx-js": "^0.3.1",
     "html-docx-js-typescript": "^0.1.5",
-    "katex": "^0.16.8",
+    "katex": "^0.16.9",
     "path-browserify": "^1.0.1",
     "rehype-format": "^4.0.1",
-    "rehype-parse": "^8.0.4",
+    "rehype-parse": "^8.0.5",
     "rehype-remark": "^9.1.2",
-    "rehype-stringify": "^9.0.3",
+    "rehype-stringify": "^9.0.4",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "remark-parse": "^10.0.2",
@@ -68,36 +56,118 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^2.3.9"
+    "zotero-plugin-toolkit": "^2.3.37"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@prettier/plugin-xml": "^3.2.0",
-    "@types/browser-or-node": "^1.3.0",
-    "@types/diff": "^5.0.3",
-    "@types/html-docx-js": "^0.3.1",
-    "@types/katex": "^0.16.2",
-    "@types/node": "^20.5.6",
-    "@types/path-browserify": "^1.0.1",
-    "@types/seedrandom": "^3.0.5",
-    "@types/yamljs": "^0.2.31",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "@typescript-eslint/parser": "^6.4.1",
+    "@prettier/plugin-xml": "^3.2.2",
+    "@types/browser-or-node": "^1.3.2",
+    "@types/diff": "^5.0.9",
+    "@types/html-docx-js": "^0.3.4",
+    "@types/katex": "^0.16.7",
+    "@types/node": "^20.10.4",
+    "@types/path-browserify": "^1.0.2",
+    "@types/seedrandom": "^3.0.8",
+    "@types/yamljs": "^0.2.34",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
     "chokidar-cli": "^3.0.0",
-    "compressing": "^1.10.0",
-    "concurrently": "^8.2.1",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.19.2",
-    "eslint": "^8.47.0",
-    "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.0.2",
-    "prosemirror-model": "^1.19.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.1.1",
+    "prosemirror-model": "^1.19.4",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-transform": "^1.7.5",
-    "prosemirror-view": "^1.31.7",
-    "release-it": "^16.1.5",
-    "replace-in-file": "^7.0.1",
-    "typescript": "^5.2.2",
-    "zotero-types": "^1.3.5"
+    "prosemirror-transform": "^1.8.0",
+    "prosemirror-view": "^1.32.6",
+    "replace-in-file": "^7.2.0",
+    "typescript": "^5.3.3",
+    "xslt3": "^2.6.0",
+    "zotero-plugin-scaffold": "^0.0.32",
+    "zotero-types": "^2.0.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "root": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "@typescript-eslint/ban-ts-comment": [
+        "warn",
+        {
+          "ts-expect-error": "allow-with-description",
+          "ts-ignore": "allow-with-description",
+          "ts-nocheck": "allow-with-description",
+          "ts-check": "allow-with-description"
+        }
+      ],
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": [
+        "off",
+        {
+          "ignoreRestArgs": true
+        }
+      ],
+      "@typescript-eslint/no-non-null-assertion": "off"
+    },
+    "ignorePatterns": [
+      "**/build/**",
+      "**/logs/**",
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/scripts/**",
+      "**/*.js",
+      "**/*.bak"
+    ]
+  },
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "endOfLine": "lf",
+    "overrides": [
+      {
+        "files": [
+          "*.xhtml"
+        ],
+        "options": {
+          "htmlWhitespaceSensitivity": "css"
+        }
+      }
+    ]
+  },
+  "release-it": {
+    "git": {
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "github": {
+      "release": false,
+      "assets": [
+        "build/*.xpi"
+      ]
+    },
+    "hooks": {
+      "before:init": "npm run lint",
+      "after:bump": "npm run build",
+      "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+    }
   }
 }

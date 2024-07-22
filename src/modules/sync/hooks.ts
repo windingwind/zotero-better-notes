@@ -7,8 +7,9 @@ export { setSyncing, callSyncing };
 
 function setSyncing() {
   const syncPeriod = getPref("syncPeriodSeconds") as number;
+  const enableHint = addon.data.env === "development";
   if (syncPeriod > 0) {
-    showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
+    enableHint && showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
     const timer = ztoolkit.getGlobal("setInterval")(
       () => {
         if (!addon.data.alive) {
@@ -17,7 +18,7 @@ function setSyncing() {
         }
         // Only when Zotero is active and focused
         if (
-          document.hasFocus() &&
+          Zotero.getMainWindow().document.hasFocus() &&
           (getPref("syncPeriodSeconds") as number) > 0
         ) {
           callSyncing(undefined, {
@@ -54,7 +55,7 @@ async function callSyncing(
     addon.data.sync.lock = true;
     let skippedCount = 0;
     if (!items || !items.length) {
-      items = Zotero.Items.get(addon.api.sync.getSyncNoteIds());
+      items = Zotero.Items.get(await addon.api.sync.getSyncNoteIds());
     } else {
       items = items.filter((item) => addon.api.sync.isSyncNote(item.id));
     }
@@ -77,7 +78,7 @@ async function callSyncing(
       skippedCount = items.length - filteredItems.length;
       items = filteredItems;
     }
-    ztoolkit.log("sync start", reason, items, skippedCount);
+    ztoolkit.log("sync start", reason, items.length, skippedCount);
 
     if (!quiet) {
       progress = new ztoolkit.ProgressWindow(
@@ -98,11 +99,15 @@ async function callSyncing(
     const toExport = {} as Record<string, number[]>;
     const toImport: SyncStatus[] = [];
     const toDiff: SyncStatus[] = [];
+    const mdStatusMap = {} as Record<number, MDStatus>;
     let i = 1;
     for (const item of items) {
       const syncStatus = addon.api.sync.getSyncStatus(item.id);
       const filepath = syncStatus.path;
-      const compareResult = await doCompare(item);
+      const mdStatus = await addon.api.sync.getMDStatus(item.id);
+      mdStatusMap[item.id] = mdStatus;
+
+      const compareResult = await doCompare(item, mdStatus);
       switch (compareResult) {
         case SyncCode.NoteAhead:
           if (Object.keys(toExport).includes(filepath)) {
@@ -128,9 +133,11 @@ async function callSyncing(
       });
       i += 1;
     }
-    ztoolkit.log("will be synced:", toExport, toImport, toDiff);
-    i = 1;
+
     let totalCount = Object.keys(toExport).length;
+    ztoolkit.log("will be synced:", totalCount, toImport.length, toDiff.length);
+
+    i = 1;
     for (const filepath of Object.keys(toExport)) {
       progress?.changeLine({
         text: `[${getString("sync.running.hint.updateMD")}] ${i}/${
@@ -138,7 +145,12 @@ async function callSyncing(
         } ...`,
         progress: ((i - 1) / items.length) * 100,
       });
-      await addon.api.$export.syncMDBatch(filepath, toExport[filepath]);
+      const itemIDs = toExport[filepath];
+      await addon.api.$export.syncMDBatch(
+        filepath,
+        itemIDs,
+        itemIDs.map((id) => mdStatusMap[id].meta!),
+      );
       i += 1;
     }
     i = 1;
@@ -154,7 +166,11 @@ async function callSyncing(
       const filepath = jointPath(syncStatus.path, syncStatus.filename);
       await addon.api.$import.fromMD(filepath, { noteId: item.id });
       // Update md file to keep the metadata synced
-      await addon.api.$export.syncMDBatch(syncStatus.path, [item.id]);
+      await addon.api.$export.syncMDBatch(
+        syncStatus.path,
+        [item.id],
+        [mdStatusMap[item.id].meta!],
+      );
       i += 1;
     }
     i = 1;
@@ -193,20 +209,22 @@ async function callSyncing(
   addon.data.sync.lock = false;
 }
 
-async function doCompare(noteItem: Zotero.Item): Promise<SyncCode> {
+async function doCompare(
+  noteItem: Zotero.Item,
+  mdStatus: MDStatus,
+): Promise<SyncCode> {
   const syncStatus = addon.api.sync.getSyncStatus(noteItem.id);
-  const MDStatus = await addon.api.sync.getMDStatus(noteItem.id);
   // No file found
-  if (!MDStatus.meta) {
+  if (!mdStatus.meta) {
     return SyncCode.NoteAhead;
   }
   // File meta is unavailable
-  if (MDStatus.meta.version < 0) {
+  if (mdStatus.meta.$version < 0) {
     return SyncCode.NeedDiff;
   }
   let MDAhead = false;
   let noteAhead = false;
-  const md5 = Zotero.Utilities.Internal.md5(MDStatus.content, false);
+  const md5 = Zotero.Utilities.Internal.md5(mdStatus.content, false);
   const noteMd5 = Zotero.Utilities.Internal.md5(noteItem.getNote(), false);
   // MD5 doesn't match (md side change)
   if (md5 !== syncStatus.md5) {
@@ -218,7 +236,7 @@ async function doCompare(noteItem: Zotero.Item): Promise<SyncCode> {
   }
   // Note version doesn't match (note side change)
   // This might be unreliable when Zotero account is not login
-  if (Number(MDStatus.meta.version) !== noteItem.version) {
+  if (Number(mdStatus.meta.$version) !== noteItem.version) {
     noteAhead = true;
   }
   if (noteAhead && MDAhead) {
@@ -228,6 +246,18 @@ async function doCompare(noteItem: Zotero.Item): Promise<SyncCode> {
   } else if (MDAhead) {
     return SyncCode.MDAhead;
   } else {
+    // const maxLastModifiedPeriod = 3000;
+    // if (
+    //   mdStatus.lastmodify &&
+    //   syncStatus.lastsync &&
+    //   // If the file is modified after the last sync, it's ahead
+    //   Math.abs(mdStatus.lastmodify.getTime() - syncStatus.lastsync) >
+    //     maxLastModifiedPeriod
+    // ) {
+    //   return SyncCode.MDAhead;
+    // } else {
+    //   return SyncCode.UpToDate;
+    // }
     return SyncCode.UpToDate;
   }
 }

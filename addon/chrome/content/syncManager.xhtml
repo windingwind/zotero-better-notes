@@ -8,10 +8,9 @@
 <!-- prettier-ignore -->
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
 <!-- prettier-ignore -->
-<?xml-stylesheet href="chrome://__addonRef__/content/virtualizedTable.css" type="text/css"?>
-<!-- prettier-ignore -->
 <!DOCTYPE html>
 <html
+  id="__addonRef__-syncManager"
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -24,6 +23,25 @@
   <head>
     <title data-l10n-id="title"></title>
     <meta charset="utf-8" />
+    <xul:linkset>
+      <link rel="localization" href="browser/menubar.ftl" />
+      <link rel="localization" href="browser/browserSets.ftl" />
+      <link rel="localization" href="toolkit/global/textActions.ftl" />
+      <link rel="localization" href="zotero.ftl" />
+      <link rel="localization" href="__addonRef__-syncManager.ftl" />
+    </xul:linkset>
+    <xul:commandset id="mainCommandSet">
+      <xul:command id="cmd_close" oncommand="window.close();" />
+    </xul:commandset>
+    <xul:keyset id="mainKeyset">
+      <xul:key
+        id="key_close"
+        data-l10n-id="close-shortcut"
+        command="cmd_close"
+        modifiers="accel"
+        reserved="true"
+      />
+    </xul:keyset>
     <script>
       document.addEventListener("DOMContentLoaded", (ev) => {
         const { Services } = ChromeUtils.import(
@@ -34,29 +52,28 @@
           "chrome://zotero/content/include.js",
           this,
         );
-
-        Services.scriptloader.loadSubScript(
-          "resource://zotero/require.js",
-          this,
-        );
         window.arguments[0]._initPromise.resolve();
       });
     </script>
     <style>
+      html,
+      body {
+        min-width: 800px;
+        min-height: 400px;
+      }
       html,
       body,
       .viewport {
         padding: 0;
         margin: 0;
         height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden;
         word-wrap: break-word;
-        background-color: #f0f0f0;
-        font-family: initial;
+        user-select: none;
       }
       .viewport {
         margin: 0 5px 0 5px;
+        overflow-y: auto;
       }
       .viewport-container {
         padding: 0;
@@ -66,22 +83,23 @@
         display: flex;
         flex-direction: row;
         overflow: hidden;
-        background-color: #f0f0f0;
+        background: var(--material-background);
       }
       .list-viewport {
         width: 100%;
-        background-color: #ffffff;
         overflow: hidden;
       }
       #table-container {
         height: 100%;
         width: 100%;
-        overflow: hidden;
+        overflow: auto;
+      }
+      #manager-table {
+        height: 100%;
       }
     </style>
-    <link rel="localization" href="__addonRef__-syncManager.ftl" />
   </head>
-  <body>
+  <body class="zotero-window">
     <div class="viewport-container">
       <div id="list-container" class="viewport list-viewport">
         <div id="table-container"></div>
@@ -95,6 +113,7 @@
       <button id="refresh" data-l10n-id="refresh"></button>
       <button id="sync" data-l10n-id="sync"></button>
       <button id="unSync" data-l10n-id="unSync"></button>
+      <button id="detect" data-l10n-id="detect"></button>
     </div>
   </body>
 </html>

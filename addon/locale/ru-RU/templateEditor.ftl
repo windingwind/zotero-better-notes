@@ -1,4 +1,7 @@
 title = Редактор шаблонов
+
+templateName = Имя шаблона
+
 previewContainer = 
     .label = Предпросмотр
 create = 

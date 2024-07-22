@@ -1,32 +1,27 @@
 import { config } from "../../../package.json";
-import { isWindowAlive } from "../../utils/window";
-import { messageHandler } from "./message";
 
-export async function showWorkspaceWindow() {
-  if (isWindowAlive(addon.data.workspace.window.window)) {
-    addon.data.workspace.window.window?.focus();
-    return;
-  }
+export async function openWorkspaceWindow(
+  item: Zotero.Item,
+  options: { lineIndex?: number; sectionName?: string } = {},
+) {
   const windowArgs = {
     _initPromise: Zotero.Promise.defer(),
   };
-  const win = window.openDialog(
+  const win = Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/workspaceWindow.xhtml`,
     `${config.addonRef}-workspaceWindow`,
-    `chrome,centerscreen,resizable,status,width=800,height=400,dialog=no`,
+    `chrome,centerscreen,resizable,status,dialog=no`,
     windowArgs,
   )!;
   await windowArgs._initPromise.promise;
-  addon.data.workspace.window.active = true;
-  addon.data.workspace.window.window = win;
-  addon.data.workspace.window.container = win.document.querySelector(
+
+  const container = win.document.querySelector(
     "#workspace-container",
   ) as XUL.Box;
-  addon.hooks.onInitWorkspace(addon.data.workspace.window.container);
-  win.addEventListener("message", messageHandler, false);
-  win.addEventListener("unload", function onWindowUnload(ev) {
-    addon.data.workspace.window.active = false;
-    this.window.removeEventListener("unload", onWindowUnload, false);
-    this.window.removeEventListener("message", messageHandler, false);
-  });
+  const workspace = await addon.hooks.onInitWorkspace(container, item);
+  workspace?.scrollEditorTo(options);
+
+  win.focus();
+  win.updateTitle();
+  return win;
 }

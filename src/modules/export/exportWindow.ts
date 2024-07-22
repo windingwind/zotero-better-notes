@@ -1,4 +1,4 @@
-import { getString } from "../../utils/locale";
+import { config } from "../../../package.json";
 import { getPref, setPref } from "../../utils/prefs";
 import { fill, slice } from "../../utils/str";
 
@@ -64,6 +64,8 @@ export async function showExportNoteOptions(
     updateSyncCheckbox();
   };
 
+  data.l10nFiles = `${config.addonRef}-export.ftl`;
+
   const dialog = new ztoolkit.Dialog(18, 1)
     .setDialogData(data)
     .addCell(0, 0, {
@@ -77,40 +79,40 @@ export async function showExportNoteOptions(
       children: [
         {
           tag: "label",
-          properties: {
-            innerHTML: `${getString("export.target")}: ${fill(
-              slice(noteItems[0].getNoteTitle(), 40),
-              40,
-            )}${
-              noteItems.length > 1 ? ` and ${noteItems.length - 1} more` : ""
-            }`,
+          attributes: {
+            "data-l10n-id": `${config.addonRef}-target`,
+            "data-l10n-args": JSON.stringify({
+              left: noteItems.length - 1,
+              title: fill(slice(noteItems[0].getNoteTitle(), 40), 40),
+            }),
           },
         },
       ],
     })
-    .addCell(1, 0, makeHeadingLine(getString("export.options.linkMode")))
+    .addCell(1, 0, makeHeadingLine("options-linkMode"))
     .addCell(2, 0, makeRadioLine("embedLink", "linkMode"))
     .addCell(3, 0, makeRadioLine("standaloneLink", "linkMode"))
     .addCell(4, 0, makeRadioLine("keepLink", "linkMode"))
-    .addCell(5, 0, makeHeadingLine(getString("export.options.MD")))
+    .addCell(5, 0, makeHeadingLine("options-MD"))
     .addCell(6, 0, makeCheckboxLine("exportMD"))
     .addCell(7, 0, makeCheckboxLine("setAutoSync"))
     .addCell(8, 0, makeCheckboxLine("withYAMLHeader"))
     .addCell(9, 0, makeCheckboxLine("autoMDFileName"))
-    .addCell(10, 0, makeHeadingLine(getString("export.options.Docx")))
+    .addCell(10, 0, makeHeadingLine("options-Docx"))
     .addCell(11, 0, makeCheckboxLine("exportDocx"))
-    .addCell(12, 0, makeHeadingLine(getString("export.options.PDF")))
+    .addCell(12, 0, makeHeadingLine("options-PDF"))
     .addCell(13, 0, makeCheckboxLine("exportPDF"))
-    .addCell(14, 0, makeHeadingLine(getString("export.options.mm")))
+    .addCell(14, 0, makeHeadingLine("options-mm"))
     .addCell(15, 0, makeCheckboxLine("exportFreeMind"))
-    .addCell(16, 0, makeHeadingLine(getString("export.options.note")))
+    .addCell(16, 0, makeHeadingLine("options-note"))
     .addCell(17, 0, makeCheckboxLine("exportNote"))
-    .addButton(getString("export.confirm"), "confirm")
-    .addButton(getString("export.cancel"), "cancel")
-    .open(getString("export.title"), {
+    .addButton(`${config.addonRef}-confirm`, "confirm")
+    .addButton(`${config.addonRef}-cancel`, "cancel")
+    .open(`${config.addonRef}-title`, {
       resizable: true,
       centerscreen: true,
-      fitContent: true,
+      width: 350,
+      height: 600,
       noDialogMode: true,
     });
 
@@ -126,7 +128,7 @@ export async function showExportNoteOptions(
   }
 }
 
-function makeHeadingLine(text: string) {
+function makeHeadingLine(l10nID: string) {
   return {
     tag: "div",
     styles: {
@@ -138,8 +140,8 @@ function makeHeadingLine(text: string) {
     children: [
       {
         tag: "h3",
-        properties: {
-          innerHTML: text,
+        attributes: {
+          "data-l10n-id": `${config.addonRef}-${l10nID}`,
         },
       },
     ],
@@ -160,9 +162,7 @@ function makeCheckboxLine(dataKey: string, callback?: (ev: Event) => void) {
         tag: "label",
         attributes: {
           for: dataKey,
-        },
-        properties: {
-          innerHTML: getString(`export.${dataKey}`),
+          "data-l10n-id": `${config.addonRef}-${dataKey}`,
         },
       },
       {
@@ -206,9 +206,7 @@ function makeRadioLine(
         tag: "label",
         attributes: {
           for: dataKey,
-        },
-        properties: {
-          innerHTML: getString(`export.${dataKey}`),
+          "data-l10n-id": `${config.addonRef}-${dataKey}`,
         },
       },
       {

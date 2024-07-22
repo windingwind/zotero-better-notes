@@ -1,0 +1,1 @@
+npx xslt3 -t -xsl:scripts/docx/mml2omml.xsl -export:addon/chrome/content/lib/js/mml2omml.sef.json -nogo -relocate:on -ns:##html5

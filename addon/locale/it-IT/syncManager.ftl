@@ -1,7 +1,13 @@
 title = Manager di sincronizzazione
 refresh = 
     .label = Aggiorna
+    .tooltiptext = Refresh the list of notes
 sync = 
     .label = Sincronizza
+    .tooltiptext = Sync the selected notes immediately
 unSync = 
     .label = Interrompi sincronizzazione
+    .tooltiptext = Unsync the selected notes
+detect = 
+    .label = Detect...
+    .tooltiptext = Detect synced notes from folder

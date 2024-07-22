@@ -15,6 +15,7 @@ export {
   getMDStatus,
   getMDStatusFromContent,
   getMDFileName,
+  findAllSyncedFiles,
 };
 
 function initSyncList() {
@@ -33,12 +34,15 @@ function initSyncList() {
   setPref("syncNoteIds", JSON.stringify(keys));
 }
 
-function getSyncNoteIds(): number[] {
-  const keys = addon.data.sync.data?.getKeys();
+async function getSyncNoteIds() {
+  const keys = addon.data.sync.data
+    ?.getKeys()
+    .map((key) => Number(key))
+    .filter((key) => !!key);
   if (!keys) {
     return [];
   }
-  return Zotero.Items.get(keys)
+  return (await Zotero.Items.getAsync(keys))
     .filter((item) => item.isNote())
     .map((item) => item.id);
 }
@@ -71,20 +75,19 @@ function getNoteStatus(noteId: number) {
     tail: "</div>",
     lastmodify: Zotero.Date.sqlToDate(noteItem.dateModified, true),
   };
-  const metaRegex = /"?data-schema-version"?="[0-9]*">/;
-  const match = fullContent?.match(metaRegex);
-  if (!match || match.length == 0) {
+  const metaRegex = /^<div[^>]*>/;
+  // Not wrapped inside div
+  if (!metaRegex.test(fullContent)) {
     ret.meta = `<div "data-schema-version"="${config.dataSchemaVersion}">`;
     ret.content = fullContent || "";
     return ret;
   }
-  const idx = fullContent.search(metaRegex);
-  if (idx != -1) {
-    ret.content = fullContent.substring(
-      idx + match[0].length,
-      fullContent.length - ret.tail.length,
-    );
-  }
+  const metaMatch = fullContent.match(metaRegex);
+  ret.meta = metaMatch ? metaMatch[0] : "";
+  ret.content = fullContent.substring(
+    ret.meta.length,
+    fullContent.length - ret.tail.length,
+  );
   return ret;
 }
 
@@ -109,7 +112,7 @@ function getMDStatusFromContent(contentRaw: string): MDStatus {
   contentRaw = contentRaw.replace(/\r\n/g, "\n");
   const result = contentRaw.match(/^---\n(.*\n)+?---$/gm);
   const ret: MDStatus = {
-    meta: { version: -1 },
+    meta: { $version: -1 },
     content: contentRaw,
     filedir: "",
     filename: "",
@@ -159,7 +162,7 @@ async function getMDStatus(
       ret.filedir = formatPath(pathSplit.slice(0, -1).join("/"));
       ret.filename = pathSplit.pop() || "";
       const stat = await IOUtils.stat(filepath);
-      ret.lastmodify = new Date(stat.lastModified);
+      ret.lastmodify = new Date(stat.lastModified || 0);
     }
   } catch (e) {
     ztoolkit.log(e);
@@ -192,9 +195,9 @@ async function getMDFileName(noteId: number, searchDir?: string) {
             entry.name.split(".").shift()?.split("-").pop() === noteItem.key
           ) {
             const stat = await IOUtils.stat(entry.path);
-            if (stat.lastModified > matchedDate) {
+            if (stat.lastModified || 0 > matchedDate) {
               matchedFileName = entry.name;
-              matchedDate = stat.lastModified;
+              matchedDate = stat.lastModified || 0;
             }
           }
         }
@@ -210,4 +213,44 @@ async function getMDFileName(noteId: number, searchDir?: string) {
     "noteItem",
     [noteItem],
   );
+}
+
+async function findAllSyncedFiles(searchDir: string) {
+  const results: SyncStatus[] = [];
+  const mdRegex = /\.(md|MD|Md|mD)$/;
+  await Zotero.File.iterateDirectory(
+    searchDir,
+    async (entry: OS.File.Entry) => {
+      if (entry.isDir) {
+        const subDirResults = await findAllSyncedFiles(entry.path);
+        results.push(...subDirResults);
+        return;
+      }
+      if (mdRegex.test(entry.name)) {
+        const MDStatus = await getMDStatus(entry.path);
+        if (!MDStatus.meta?.$libraryID || !MDStatus.meta?.$itemKey) {
+          return;
+        }
+        const item = await Zotero.Items.getByLibraryAndKeyAsync(
+          MDStatus.meta.$libraryID,
+          MDStatus.meta.$itemKey,
+        );
+        if (!item || !(item as Zotero.Item).isNote()) {
+          return;
+        }
+        results.push({
+          path: MDStatus.filedir,
+          filename: MDStatus.filename,
+          md5: Zotero.Utilities.Internal.md5(MDStatus.content, false),
+          noteMd5: Zotero.Utilities.Internal.md5(
+            (item as Zotero.Item).getNote(),
+            false,
+          ),
+          lastsync: MDStatus.lastmodify.getTime(),
+          itemID: item.id,
+        });
+      }
+    },
+  );
+  return results;
 }

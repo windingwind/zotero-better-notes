@@ -10,7 +10,11 @@ function showTemplatePicker(
 ): void;
 function showTemplatePicker(
   mode: "create",
-  data?: { noteType?: "standalone" | "item"; parentItemId?: number, topItemIds?: number[] },
+  data?: {
+    noteType?: "standalone" | "item";
+    parentItemId?: number;
+    topItemIds?: number[];
+  },
 ): void;
 function showTemplatePicker(mode: "export", data?: Record<string, never>): void;
 function showTemplatePicker(): void;
@@ -73,7 +77,7 @@ function getTemplatePromptHandler(name: string) {
 
 async function insertTemplateCallback(name: string) {
   const targetNoteItem = Zotero.Items.get(
-    addon.data.template.picker.data.noteId || addon.data.workspace.mainId,
+    addon.data.template.picker.data.noteId,
   );
   let html = "";
   if (name.toLowerCase().startsWith("[item]")) {
@@ -99,7 +103,9 @@ async function createTemplateNoteCallback(name: string) {
     case "standalone": {
       const currentCollection = ZoteroPane.getSelectedCollection();
       if (!currentCollection) {
-        window.alert(getString("alert.notValidCollectionError"));
+        Zotero.getMainWindow().alert(
+          getString("alert.notValidCollectionError"),
+        );
         return;
       }
       const noteID = await ZoteroPane.newNote();

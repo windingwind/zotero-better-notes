@@ -4,22 +4,18 @@ import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { formatPath, getItemDataURL } from "./str";
 import { showHint } from "./hint";
 import { config } from "../../package.json";
-import { getNoteLinkParams } from "./link";
 
 export {
   renderNoteHTML,
   parseHTMLLines,
   getLinesInNote,
   addLineToNote,
-  getNoteType,
   getNoteTree,
   getNoteTreeFlattened,
   getNoteTreeNodeById,
   copyEmbeddedImagesFromNote,
   copyEmbeddedImagesInHTML,
   importImageToNote,
-  getRelatedNoteIds,
-  updateRelatedNotes,
 };
 
 function parseHTMLLines(html: string): string[] {
@@ -112,11 +108,32 @@ function parseHTMLLines(html: string): string[] {
   return parsedLines;
 }
 
-function getLinesInNote(note: Zotero.Item): string[] {
+function getLinesInNote(note: Zotero.Item): string[];
+
+async function getLinesInNote(
+  note: Zotero.Item,
+  options: {
+    convertToHTML?: true;
+  },
+): Promise<string[]>;
+
+function getLinesInNote(
+  note: Zotero.Item,
+  options?: {
+    convertToHTML?: boolean;
+  },
+): string[] | Promise<string[]> {
   if (!note) {
     return [];
   }
   const noteText: string = note.getNote();
+  if (options?.convertToHTML) {
+    return new Promise((resolve) => {
+      addon.api.convert.note2html(note).then((html) => {
+        resolve(parseHTMLLines(html));
+      });
+    });
+  }
   return parseHTMLLines(noteText);
 }
 
@@ -163,7 +180,7 @@ async function addLineToNote(
   const editor = getEditorInstance(note.id);
   if (editor && !forceMetadata) {
     // The note is opened. Add line via note editor
-    const pos = getPositionAtLine(editor, lineIndex, "end");
+    const pos = getPositionAtLine(editor, lineIndex, "start");
     ztoolkit.log("Add note line via note editor", pos);
     insert(editor, html, pos);
     // The selection is automatically moved to the next line
@@ -197,7 +214,7 @@ async function renderNoteHTML(
     refNotes = [noteItem];
   }
 
-  const parser = ztoolkit.getDOMParser();
+  const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
   const imageAttachments = refNotes.reduce((acc, note) => {
     acc.push(...Zotero.Items.get(note.getAttachments()));
@@ -208,11 +225,32 @@ async function renderNoteHTML(
     if (await attachment.fileExists()) {
       const imageNodes = Array.from(
         doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
-      );
+      ) as HTMLImageElement[];
       if (imageNodes.length) {
         try {
           const b64 = await getItemDataURL(attachment);
-          imageNodes.forEach((node) => node.setAttribute("src", b64));
+          imageNodes.forEach((node) => {
+            node.setAttribute("src", b64);
+            const width = Number(node.getAttribute("width"));
+            const height = Number(node.getAttribute("height"));
+            // 650/470 is the default width of images in Word
+            const maxWidth = Zotero.isMac ? 470 : 650;
+            if (width > maxWidth) {
+              node.setAttribute("width", maxWidth.toString());
+              if (height) {
+                node.setAttribute(
+                  "height",
+                  Math.round((height * maxWidth) / width).toString(),
+                );
+              }
+            }
+            if (node.hasAttribute("width")) {
+              node.style.width = `${node.getAttribute("width")}px`;
+            }
+            if (node.hasAttribute("height")) {
+              node.style.width = `${node.getAttribute("height")}px`;
+            }
+          });
         } catch (e) {
           ztoolkit.log(e);
         }
@@ -241,24 +279,17 @@ async function renderNoteHTML(
 
   const mathDelimiterRegex = /^\$+|\$+$/g;
   doc.querySelectorAll(".math").forEach((node) => {
+    const displayMode = node.innerHTML.startsWith("$$");
     node.innerHTML = katex.renderToString(
-      node.innerHTML.replace(mathDelimiterRegex, ""),
+      node.textContent!.replace(mathDelimiterRegex, ""),
       {
         throwOnError: false,
+        // output: "mathml",
+        displayMode,
       },
     );
   });
   return doc.body.innerHTML;
-}
-
-function getNoteType(id: number) {
-  if (id === addon.data.workspace.mainId) {
-    return "main";
-  } else if (id === addon.data.workspace.previewId) {
-    return "preview";
-  } else {
-    return "default";
-  }
 }
 
 function getNoteTree(
@@ -266,7 +297,7 @@ function getNoteTree(
   parseLink: boolean = true,
 ): TreeModel.Node<NoteNodeData> {
   const noteLines = getLinesInNote(note);
-  const parser = ztoolkit.getDOMParser();
+  const parser = new DOMParser();
   const tree = new TreeModel();
   const root = tree.parse({
     id: -1,
@@ -404,7 +435,7 @@ async function copyEmbeddedImagesInHTML(
 
   ztoolkit.log(attachments);
 
-  const doc = ztoolkit.getDOMParser().parseFromString(html, "text/html");
+  const doc = new DOMParser().parseFromString(html, "text/html");
 
   // Copy note image attachments and replace keys in the new note
   for (const attachment of attachments) {
@@ -509,76 +540,4 @@ async function importImageToNote(
   });
 
   return attachment.key;
-}
-
-async function updateRelatedNotes(noteID: number) {
-  const noteItem = Zotero.Items.get(noteID);
-  if (!noteItem) {
-    ztoolkit.log(`updateRelatedNotes: ${noteID} is not a note.`);
-    return;
-  }
-  const relatedNoteIDs = await getRelatedNoteIds(noteID);
-  const relatedNotes = Zotero.Items.get(relatedNoteIDs);
-  const currentRelatedNotes = {} as Record<number, Zotero.Item>;
-
-  // Get current related items
-  for (const relItemKey of noteItem.relatedItems) {
-    try {
-      const relItem = (await Zotero.Items.getByLibraryAndKeyAsync(
-        noteItem.libraryID,
-        relItemKey,
-      )) as Zotero.Item;
-      if (relItem.isNote()) {
-        currentRelatedNotes[relItem.id] = relItem;
-      }
-    } catch (e) {
-      ztoolkit.log(e);
-    }
-  }
-  await Zotero.DB.executeTransaction(async () => {
-    const saveParams = {
-      skipDateModifiedUpdate: true,
-      skipSelect: true,
-      notifierData: {
-        skipBN: true,
-      },
-    };
-    for (const toAddNote of relatedNotes) {
-      if (toAddNote.id in currentRelatedNotes) {
-        // Remove existing notes from current dict for later process
-        delete currentRelatedNotes[toAddNote.id];
-        continue;
-      }
-      toAddNote.addRelatedItem(noteItem);
-      noteItem.addRelatedItem(toAddNote);
-      toAddNote.save(saveParams);
-      delete currentRelatedNotes[toAddNote.id];
-    }
-    for (const toRemoveNote of Object.values(currentRelatedNotes)) {
-      // Remove related notes that are not in the new list
-      toRemoveNote.removeRelatedItem(noteItem);
-      noteItem.removeRelatedItem(toRemoveNote);
-      toRemoveNote.save(saveParams);
-    }
-    noteItem.save(saveParams);
-  });
-}
-
-async function getRelatedNoteIds(noteId: number): Promise<number[]> {
-  let allNoteIds: number[] = [noteId];
-  const note = Zotero.Items.get(noteId);
-  const linkMatches = note.getNote().match(/zotero:\/\/note\/\w+\/\w+\//g);
-  if (!linkMatches) {
-    return allNoteIds;
-  }
-  const subNoteIds = (
-    await Promise.all(
-      linkMatches.map(async (link) => getNoteLinkParams(link).noteItem),
-    )
-  )
-    .filter((item) => item && item.isNote())
-    .map((item) => (item as Zotero.Item).id);
-  allNoteIds = allNoteIds.concat(subNoteIds);
-  allNoteIds = new Array(...new Set(allNoteIds));
-  return allNoteIds;
 }

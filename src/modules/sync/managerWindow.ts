@@ -4,6 +4,13 @@ import { getString } from "../../utils/locale";
 import { jointPath } from "../../utils/str";
 import { isWindowAlive } from "../../utils/window";
 
+export interface SyncDataType {
+  noteId: number;
+  noteName: string;
+  lastSync: string;
+  filePath: string;
+}
+
 export async function showSyncManager() {
   if (isWindowAlive(addon.data.sync.manager.window)) {
     addon.data.sync.manager.window?.focus();
@@ -12,10 +19,10 @@ export async function showSyncManager() {
     const windowArgs = {
       _initPromise: Zotero.Promise.defer(),
     };
-    const win = window.openDialog(
+    const win = Zotero.getMainWindow().openDialog(
       `chrome://${config.addonRef}/content/syncManager.xhtml`,
       `${config.addonRef}-syncManager`,
-      `chrome,centerscreen,resizable,status,width=800,height=400,dialog=no`,
+      `chrome,centerscreen,resizable,status,dialog=no`,
       windowArgs,
     )!;
     await windowArgs._initPromise.promise;
@@ -83,15 +90,18 @@ export async function showSyncManager() {
       })
       .setProp("onActivate", (ev) => {
         const noteIds = getSelectedNoteIds();
-        noteIds.forEach((noteId) =>
-          addon.hooks.onOpenNote(noteId, "standalone"),
-        );
+        noteIds.forEach((noteId) => addon.hooks.onOpenNote(noteId, "builtin"));
         return true;
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || "",
+        (index) => addon.data.sync.manager?.data[index].noteName || "",
       )
+      .setProp("onColumnSort", (columnIndex, ascending) => {
+        addon.data.sync.manager.columnIndex = columnIndex;
+        addon.data.sync.manager.columnAscending = ascending > 0;
+        refresh();
+      })
       .render();
     const refreshButton = win.document.querySelector(
       "#refresh",
@@ -99,6 +109,9 @@ export async function showSyncManager() {
     const syncButton = win.document.querySelector("#sync") as HTMLButtonElement;
     const unSyncButton = win.document.querySelector(
       "#unSync",
+    ) as HTMLButtonElement;
+    const detectButton = win.document.querySelector(
+      "#detect",
     ) as HTMLButtonElement;
     refreshButton.addEventListener("click", (ev) => {
       refresh();
@@ -117,12 +130,19 @@ export async function showSyncManager() {
       });
       refresh();
     });
+    detectButton.addEventListener("click", () => {
+      detectSyncedNotes();
+    });
   }
 }
 
-function updateData() {
-  addon.data.sync.manager.data = addon.api.sync
-    .getSyncNoteIds()
+const sortDataKeys = ["noteName", "lastSync", "filePath"] as Array<
+  keyof SyncDataType
+>;
+
+async function updateData() {
+  const sortKey = sortDataKeys[addon.data.sync.manager.columnIndex];
+  addon.data.sync.manager.data = (await addon.api.sync.getSyncNoteIds())
     .map((noteId) => {
       const syncStatus = addon.api.sync.getSyncStatus(noteId);
       return {
@@ -131,6 +151,16 @@ function updateData() {
         lastSync: new Date(syncStatus.lastsync).toLocaleString(),
         filePath: jointPath(syncStatus.path, syncStatus.filename),
       };
+    })
+    .sort((a, b) => {
+      if (!a || !b) {
+        return 0;
+      }
+      const valueA = String(a[sortKey] || "");
+      const valueB = String(b[sortKey] || "");
+      return addon.data.sync.manager.columnAscending
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
     });
 }
 
@@ -193,5 +223,41 @@ async function unSyncNotes(itemIds: number[]) {
   for (const itemId of itemIds) {
     await addon.api.sync.removeSyncNote(itemId);
   }
-  refresh();
+  await refresh();
+}
+
+async function detectSyncedNotes() {
+  const dir = await new addon.data.ztoolkit.FilePicker(
+    "Select folder to detect",
+    "folder",
+  ).open();
+  if (!dir) return;
+
+  const statusList = await addon.api.sync.findAllSyncedFiles(dir);
+  let current = 0;
+  for (const status of statusList) {
+    if (addon.api.sync.isSyncNote(status.itemID)) {
+      current++;
+    }
+  }
+  const total = statusList.length;
+  const newCount = total - current;
+  if (
+    !addon.data.sync.manager.window?.confirm(
+      getString("syncManager-detectConfirmInfo", {
+        args: {
+          total,
+          new: newCount,
+          current,
+          dir,
+        },
+      }),
+    )
+  )
+    return;
+  for (const status of statusList) {
+    addon.api.sync.updateSyncStatus(status.itemID, status);
+  }
+  await addon.hooks.onSyncing();
+  await refresh();
 }

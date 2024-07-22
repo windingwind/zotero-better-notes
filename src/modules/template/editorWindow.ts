@@ -14,10 +14,10 @@ export async function showTemplateEditor() {
     const windowArgs = {
       _initPromise: Zotero.Promise.defer(),
     };
-    const _window = window.openDialog(
+    const _window = Zotero.getMainWindow().openDialog(
       `chrome://${config.addonRef}/content/templateEditor.xhtml`,
       `${config.addonRef}-templateEditor`,
-      `chrome,centerscreen,resizable,status,width=600,height=400,dialog=no`,
+      `chrome,centerscreen,resizable,status,dialog=no`,
       windowArgs,
     )!;
     addon.data.template.editor.window = _window;
@@ -68,7 +68,7 @@ export async function showTemplateEditor() {
       })
       .setProp(
         "getRowString",
-        (index) => addon.data.prefs?.rows[index].title || "",
+        (index) => addon.data.template.editor.templates[index] || "",
       )
       .render();
     _window.document
@@ -128,9 +128,11 @@ export async function showTemplateEditor() {
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
     await waitUtilAsync(() => editorWin?.loadMonaco);
+    const isDark = editorWin?.matchMedia("(prefers-color-scheme: dark)")
+      .matches;
     const { monaco, editor } = await editorWin.loadMonaco({
       language: "javascript",
-      theme: "vs-light",
+      theme: "vs-" + (isDark ? "dark" : "light"),
     });
     addon.data.template.editor.editor = editor;
   }
@@ -267,8 +269,23 @@ function saveSelectedTemplate() {
 
   const template = {
     name: header.value,
-    text: addon.data.template.editor.editor.getValue(),
+    text: addon.data.template.editor.editor.getValue() as string,
   };
+  if (
+    template.text.includes(
+      "# This template is specifically for importing/sharing",
+    )
+  ) {
+    const useImport = addon.data.template.editor.window?.confirm(
+      getString("alert-templateEditor-shouldImport"),
+    );
+    if (useImport) {
+      addon.hooks.onImportTemplateFromClipboard(template.text);
+      refresh();
+      return;
+    }
+  }
+
   addon.api.template.setTemplate(template);
   if (name !== template.name) {
     addon.api.template.removeTemplate(name);
@@ -322,7 +339,7 @@ ${content
   .map((line) => `  ${line}`)
   .join("\n")}
 `;
-  new ztoolkit.Clipboard().addText(yaml, "text/unicode").copy();
+  new ztoolkit.Clipboard().addText(yaml, "text/plain").copy();
   showHint(
     `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `,
   );
