@@ -23,9 +23,9 @@ templateEditor-templateName = Template Name
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
 syncManager-filePath = Percorso MarkDown
-syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
-    {$new} new, {$current} will be updated.
-    Do you want to apply the changes?
+syncManager-detectConfirmInfo = Individuati {$total} file markdown sincronizzati nella cartella {$dir}
+    {$new} nuovo/i, {$current} da aggiornare.
+    Vuoi procedere con la modifica?
 
 syncInfo-syncTo = Percorso MarkDown
 syncInfo-lastSync = Ultima sincronizzazione
@@ -57,13 +57,13 @@ workspace-emptyWorkspaceGuideOpen = Scegli una nota da aprire
 workspace-emptyWorkspaceGuideOr = o
 workspace-emptyWorkspaceGuideCreate = Crea una nuova nota
 
-editor-toolbar-settings-openAsTab = Open as tab
-editor-toolbar-settings-openAsWindow = Open as window
-editor-toolbar-settings-showInLibrary = Show in Library
+editor-toolbar-settings-openAsTab = Apri come scheda
+editor-toolbar-settings-openAsWindow = Apri in nuova finestra
+editor-toolbar-settings-showInLibrary = Mostra nella biblioteca
 editor-toolbar-settings-insertTemplate = Inserisci template
-editor-toolbar-settings-refreshTemplates = Update content from templates (Beta)
+editor-toolbar-settings-refreshTemplates = Aggiorna il contenuto dal template (Beta)
 editor-toolbar-settings-copyLink = Copia link (L{ $line })
-editor-toolbar-settings-copyLinkAtSection = Copia link (Sec. { $section })
+editor-toolbar-settings-copyLinkAtSection = Copia link (Sez. { $section })
 editor-toolbar-settings-openParent = Apri allegato
 editor-toolbar-settings-export = Esporta nota corrente...
 editor-toolbar-settings-refreshSyncing = Sincronizza ora
@@ -77,39 +77,39 @@ templatePicker-itemData-title = Scegli la sorgente dei dati del template dell'el
 alert-notValidCollectionError = Si prega di scegliere una collezione valida.
 alert-notValidParentItemError = Nessun elemento genitore valido.
 alert-syncImportedNotes = Si desidera sincronizzare le note importate con i file markdown?
-alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
+alert-linkCreator-emptyNote = Non è possibile creare un link da/a una nota vuota. 
 alert-templateEditor-shouldImport = Sembra che tu stia cercando di salvare direttamente un codice di condivisione di un template di nota. Vuoi importarlo come template?
 
-userGuide-start-title = Welcome to Better Notes!
-userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas while reading papers. This guide will help you get started with Better Notes and show you how to make the most of its features.
-userGuide-start-close = Remind me later
-userGuide-createNoteButton-title = Create a New Note
-userGuide-createNoteButton-desc = You can create a note here: blank or from a template.
-userGuide-createNote-title = Create a New Note
-userGuide-createNote-desc = Seems like you don't have any notes yet, let's create one.
-userGuide-createNoteFound-desc = Found notes in your library. Let's open one as an example.
-userGuide-openNote-title = Open note
-userGuide-openNote-desc = You can open a note in Better Notes workspace tab by double-clicking it.
-userGuide-openNote-next = Open Note
-userGuide-workspace-title = Note Workspace Tab
-userGuide-workspace-desc = The note tab is where you can edit your note content, view the outline, and manage the relations.
-userGuide-workspaceEditor-title = Note Editor
-userGuide-workspaceEditor-desc = The editor supports rich text editing, code block, math block, and more.
-userGuide-workspaceEditorToolbar-title = Note Editor - Toolbar
-userGuide-workspaceEditorToolbar-desc = The toolbar provides quick access to common editing functions.
-    You can set the heading, text/background color, text style, insert link or reference here.
-userGuide-workspaceEditorLinkCreator-title = Note Editor - Link Creator
-userGuide-workspaceEditorLinkCreator-desc = You can create a link from/to another note via the link creator.
-userGuide-workspaceEditorMoreOptions-title = Note Editor - More Options
-userGuide-workspaceEditorMoreOptions-desc = Open the note in a new window, show it in the library, insert a template, copy the link, export the note, and more.
-userGuide-workspaceOutline-title = Outline
-userGuide-workspaceOutline-desc = The outline shows the structure of the note. You can navigate to a section by clicking on it.
-userGuide-workspaceOutlineMode-title = Outline Mode
-userGuide-workspaceOutlineMode-desc = Switch to outline mode to view the note structure in a more compact way.
-userGuide-workspaceOutlineSaveAs-title = Save As
-userGuide-workspaceOutlineSaveAs-desc = You can export the note to multiple formats, including PDF, Markdown, MS Word, mind map, and more.
-userGuide-workspaceNoteInfo-title = Note Info
-userGuide-workspaceNoteInfo-desc = You can view, edit, and manage the note's tags, relations, and links.
-userGuide-finish-title = We are all set!
-userGuide-finish-desc = Enjoy your note-taking journey with Better Notes!
+userGuide-start-title = Questo è Better Notes!
+userGuide-start-desc = Better Notes è un potente strumento di gestione delle note che ti può aiutare a organizzare pensieri e idee mentre leggi articoli. Questa guida ti aiuterà a prendere confidenza con Better Notes e ti mostrerà come usare al meglio le sue funzioni.
+userGuide-start-close = Ricordami più tardi
+userGuide-createNoteButton-title = Crea una nuova nota
+userGuide-createNoteButton-desc = Puoi creare una nuova nota da qui: vuota o da un template.
+userGuide-createNote-title = Crea una nuova nota
+userGuide-createNote-desc = Sembra che tu non abbia ancora alcuna nota, creiamone una.
+userGuide-createNoteFound-desc = Sono state trovate delle note nella tua biblioteca. Apriamone una come esempio.
+userGuide-openNote-title = Apri nota
+userGuide-openNote-desc = Puoi aprire una nota nella scheda di lavoro di Better Notes facendo doppio click su di essa.
+userGuide-openNote-next = Apri nota
+userGuide-workspace-title = Scheda della nota di lavoro
+userGuide-workspace-desc = La scheda della nota è il luogo dove puoi modificare il contenuto della nota, vederne lo schema e gestirne le relazioni.
+userGuide-workspaceEditor-title = Editor delle note
+userGuide-workspaceEditor-desc = L'editor supporta testo ricco, righe di codice, codice matematico e altro.
+userGuide-workspaceEditorToolbar-title = Editor delle note - Barra degli strumenti
+userGuide-workspaceEditorToolbar-desc = La Barra degli strumenti fornisce un rapido accesso alle funzioni di editing più comuni.
+    Puoi impostare le intestazioni, il colore del testo o dello sfondo, lo stile e inserire link o riferimenti.
+userGuide-workspaceEditorLinkCreator-title = Editor delle note - Creazione guidata link
+userGuide-workspaceEditorLinkCreator-desc = Con la creazione guidata dei link puoi creare un collegamento da/a un'altra nota.
+userGuide-workspaceEditorMoreOptions-title = Editor delle note - Altre opzioni
+userGuide-workspaceEditorMoreOptions-desc = Apri la nota in una nuova finestra, mostrala nella biblioteca, inserisci un template, copia il link, esporta la nota e altro.
+userGuide-workspaceOutline-title = Schema
+userGuide-workspaceOutline-desc = Lo schema mostra la struttura della nota. Puoi navigare tra le sezioni facendo click su una di esse.
+userGuide-workspaceOutlineMode-title = Modalità dello schema
+userGuide-workspaceOutlineMode-desc = Cambia la modalità dello schema per visualizzare la struttura della nota in modi diversi.
+userGuide-workspaceOutlineSaveAs-title = Salva come
+userGuide-workspaceOutlineSaveAs-desc = Puoi esportare la nota in diversi formati, come PDF, Markdown, MS Word, mind map e altri.
+userGuide-workspaceNoteInfo-title = Informazioni della nota
+userGuide-workspaceNoteInfo-desc = Puoi vedere, modificare e gestire i tag della nota, le relazioni e i link.
+userGuide-finish-title = Fine del tutorial!
+userGuide-finish-desc = Divertiti a usare Better Notes!
     You can always run this guide again from the Help menu.

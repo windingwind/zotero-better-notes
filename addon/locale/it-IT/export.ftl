@@ -21,5 +21,5 @@ confirm = Esporta
 cancel = Chiudi
 target = Oggetto: {$title}{ $left ->
         [0]{ "" }
-        *[other] { " " }and {$left} more
+        *[other] { " " }e {$left} altri
     }

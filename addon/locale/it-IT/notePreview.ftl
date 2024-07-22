@@ -1,10 +1,10 @@
 note-preview-header =
-    .label = Note Preview
+    .label = Anteprima della nota
 note-preview-sidenav =
     .tooltiptext = {$title}
 note-preview-open =
-    .tooltiptext = Open note
+    .tooltiptext = Apri nota
 note-preview-close =
-    .tooltiptext = Close
+    .tooltiptext = Chiudi
 note-preview-full =
-    .tooltiptext = Toggle full height
+    .tooltiptext = Passa ad altezza piena

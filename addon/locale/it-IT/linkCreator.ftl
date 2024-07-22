@@ -1,26 +1,26 @@
 title =
-    .title = Link Creator
+    .title = Creazione guidata link
 tab-inbound =
-    .label = Mention in
+    .label = Riferimento in
 tab-outbound =
-    .label = Link to
+    .label = Collega a
 
-inbound-step1-content = Step 1. Mention in note:
-inbound-step2-content = Step 2. Insert link to:
-inbound-step3-content = Step 3. Preview:
+inbound-step1-content = Step 1. Riferimento nella nota:
+inbound-step2-content = Step 2. Inserisci link a:
+inbound-step3-content = Step 3. Anteprima:
 inbound-step3-middle =
     { $show ->
-        [true] mentions
+        [true] riferimenti
         *[other] { "" }
     }
 
-outbound-step1-content = Step 1. Link to note:
-outbound-step2-content = Step 2. Insert link to:
-outbound-step3-content = Step 3. Preview:
+outbound-step1-content = Step 1. Link alla nota:
+outbound-step2-content = Step 2. Inserisci link a:
+outbound-step3-content = Step 3. Anteprima:
 outbound-step3-middle =
     { $show ->
-        [true] links to
+        [true] link a
         *[other] { "" }
     }
 
-outlinePicker-cursorLine = 🖋️Cursor (L{ $line })
+outlinePicker-cursorLine = 🖋️Cursore (L{ $line })

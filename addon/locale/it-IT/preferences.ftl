@@ -1,15 +1,15 @@
 basic-title = Basic
 basic-openNote-takeover =
-    .label = Take over opening note
+    .label = Gestisci l'apertura delle note
 basic-openNote-defaultAsWindow =
-    .label = Open note as window by default
+    .label = Apri note come finestra per impostazione predefinita
 
-editor-title = Note Editor
+editor-title = Editor delle note
 editor-expandLevel-label = Espansione dello schema al livello delle intestazioni
 editor-keepLinks = 
     .label = Mostra i collegamenti delle note nello schema
 editor-noteLinkPreview = 
-    .label = Show note link preview on hover
+    .label = Mostra l'anteprima del link alla nota al passaggio del mouse
 
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)
@@ -23,6 +23,6 @@ annotation-title = Annotazione PDF
 annotation-autoAnnotation =
     .label = Aggiungi automaticamente le nuove annotazioni alla nota di lavoro
 
-about-title = About
+about-title = Informazioni su Better Notes
 help =
     .value = { $name } VERSION { $version } Build { $time }
