@@ -6,37 +6,37 @@ menuEdit-exportTemplate = Şablonu Dosya Olarak Dışa Aktar...
 menuEdit-templateEditor = Şablon Düzenleyici
 menuEdit-importTemplate = Panodan Yeni Şablon Al
 
-menuTools-syncManager = Senkronizasyon Yönetimi
+menuTools-syncManager = Eşitleme Yönetimi
 
 menuAddNote-newTemplateStandaloneNote = Şablondan Yeni Bağımsız Not
-menuAddNote-newTemplateItemNote = Şablondan Yeni Öge Notu
+menuAddNote-newTemplateItemNote = Şablondan Yeni Eser Notu
 menuAddNote-importMD = Markdown Dosyasını Not Olarak İçe Aktar
 
-menuAddReaderNote-newTemplateNote = Şablondan Yeni Öge Notu
+menuAddReaderNote-newTemplateNote = Şablondan Yeni Eser Notu
 
 menuEditor-resizeImage = Resmi Boyutlandır
 
-menuHelp-openUserGuide = Open Better Notes User Guide
+menuHelp-openUserGuide = Better Notes Kullanıcı Rehberini Aç
 
-templateEditor-templateName = Template Name
+templateEditor-templateName = Şablon Adı
 
 editor-resizeImage-title = Resmi Boyutlandır
 editor-resizeImage-prompt = Resmi Şuna Boyutlandır:
 editor-previewImage-title = Resmi Önizle
 
 syncManager-noteName = Not Adı
-syncManager-lastSync = Son Senkronizasyon
-syncManager-filePath = MarkDown Yolu
-syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
-    {$new} new, {$current} will be updated.
-    Do you want to apply the changes?
+syncManager-lastSync = Son Eşitleme
+syncManager-filePath = MarkDown Dosya Yolu
+syncManager-detectConfirmInfo = {$dir} dosya yolunda toplam {$total} adet eşitlenmiş Markdown dosyası bulundu. 
+    {$new} Yeni, {$current} dosya güncellenecek.
+    Değişiklikleri uygulamak istediğinizden emin misiniz?
 
-syncInfo-syncTo = MarkDown Yolu
-syncInfo-lastSync = Son Senkronizasyon
-syncInfo-sync = Senkronize Et
-syncInfo-unSync = Senkronizasyonu Geri Al
+syncInfo-syncTo = MarkDown Dosya Yolu
+syncInfo-lastSync = Son Eşitleme
+syncInfo-sync = Eşitle
+syncInfo-unSync = Eşitlemeyi Kaldır
 syncInfo-reveal = Klasörde Göster
-syncInfo-manager = Senkronizasyon Yönetimi
+syncInfo-manager = Eşitleme Yöneticisi
 syncInfo-export = ...olarak dışa aktar
 syncInfo-cancel = Kapat
 
@@ -56,64 +56,64 @@ sync-running-hint-upToDate = Güncel
 workspace-switchOutline = Anahat Moduna Geç
 workspace-saveOutlineImage = Resmi Kaydet
 workspace-saveOutlineFreeMind = Zihin Haritasını Kaydet
-workspace-emptyWorkspaceGuideInfo = Çalışma alanında hiç not açık değil.
+workspace-emptyWorkspaceGuideInfo = Çalışma alanında açık not yok.
 workspace-emptyWorkspaceGuideOpen = Açmak için bir not seçin
 workspace-emptyWorkspaceGuideOr = ya da
 workspace-emptyWorkspaceGuideCreate = Yeni bir not oluşturun
 
-editor-toolbar-settings-openAsTab = Open as tab
-editor-toolbar-settings-openAsWindow = Open as window
-editor-toolbar-settings-showInLibrary = Show in Library
-editor-toolbar-settings-insertTemplate = Insert template
-editor-toolbar-settings-refreshTemplates = Update content from templates (Beta)
-editor-toolbar-settings-copyLink = Copy link (L{ $line })
-editor-toolbar-settings-copyLinkAtSection =Copy link (Sec. { $section })
+editor-toolbar-settings-openAsTab = Sekme Olarak Aç
+editor-toolbar-settings-openAsWindow = Pencere Olarak Aç
+editor-toolbar-settings-showInLibrary = Kitaplıkta Göster
+editor-toolbar-settings-insertTemplate = Şablon Uygula
+editor-toolbar-settings-refreshTemplates = İçeriği Şablona Göre Güncelle (Beta)
+editor-toolbar-settings-copyLink = Bağlantıyı Kopyala (Satır { $line })
+editor-toolbar-settings-copyLinkAtSection = Bağlantıyı Kopyala (Başlık { $section })
 editor-toolbar-settings-openParent = Eki Aç
 editor-toolbar-settings-export = Bu Notu Dışa Aktar...
-editor-toolbar-settings-refreshSyncing = Senkronize Et
-editor-toolbar-settings-updateRelatedNotes = Alakalı Notları Güncelle
+editor-toolbar-settings-refreshSyncing = Eşitle
+editor-toolbar-settings-updateRelatedNotes = İlişkili Notları Güncelle
 
 templatePicker-itemData-info = kütphanede seçili. Lütfen veri kaynağı seçin:
-templatePicker-itemData-useLibrary = Seçili ögeleri kütüphanede kullan
+templatePicker-itemData-useLibrary = Seçili ögeleri kitaplıkta kullan
 templatePicker-itemData-useCustom = Başka bir tane seç.
-templatePicker-itemData-title = Öge Şablonu İçin Veri Kaynağı Seç
+templatePicker-itemData-title = Eser Şablonu İçin Veri Kaynağı Seç
 
-alert-notValidCollectionError = Lütfen geçerli bir koleksiyon seçin.
-alert-notValidParentItemError = Geçerli üst öge yok.
-alert-syncImportedNotes = İçe aktarılmış notları Markdown dosyalarıyla senkron tutmak ister misiniz?
-alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
+alert-notValidCollectionError = Lütfen geçerli bir derme seçin.
+alert-notValidParentItemError = Geçerli ana eser yok.
+alert-syncImportedNotes = İçe aktarılmış notları Markdown dosyalarıyla eşitlemede tutmak ister misiniz?
+alert-linkCreator-emptyNote = Boş bir nota/nottan bağlantı oluşturulamaz. note. 
 alert-templateEditor-shouldImport = Şablon kodunu doğrudan kaydetmeye çalışıyorsunuz gibi görünüyor. Şablon olarak içe aktarmak ister misiniz?
 
-userGuide-start-title = Welcome to Better Notes!
-userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas. It is designed to be simple and easy to use, yet flexible enough to handle complex note-taking tasks. This guide will help you get started with Better Notes and show you how to make the most of its features.
-userGuide-start-close = Remind me later
-userGuide-createNoteButton-title = Create a New Note
-userGuide-createNoteButton-desc = You can create a note here: blank or from a template.
-userGuide-createNote-title = Create a New Note
-userGuide-createNote-desc = Seems like you don't have any notes yet, let's create one.
-userGuide-createNote-next = Create Note
-userGuide-openNote-title = Open note
-userGuide-openNote-desc = You can open a note in Better Notes workspace tab by double-clicking it.
-userGuide-openNote-next = Open Note
-userGuide-workspace-title = Note Workspace Tab
-userGuide-workspace-desc = The note tab is where you can edit your note content, view the outline, and manage the relations.
-userGuide-workspaceEditor-title = Note Editor
-userGuide-workspaceEditor-desc = The editor supports rich text editing, code block, math block, and more.
-userGuide-workspaceEditorToolbar-title = Note Editor - Toolbar
-userGuide-workspaceEditorToolbar-desc = The toolbar provides quick access to common editing functions.
-    You can set the heading, text/background color, text style, insert link or reference here.
-userGuide-workspaceEditorLinkCreator-title = Note Editor - Link Creator
-userGuide-workspaceEditorLinkCreator-desc = You can create a link from/to another note via the link creator.
-userGuide-workspaceEditorMoreOptions-title = Note Editor - More Options
-userGuide-workspaceEditorMoreOptions-desc = Open the note in a new window, show it in the library, insert a template, copy the link, export the note, and more.
-userGuide-workspaceOutline-title = Outline
-userGuide-workspaceOutline-desc = The outline shows the structure of the note. You can navigate to a section by clicking on it.
-userGuide-workspaceOutlineMode-title = Outline Mode
-userGuide-workspaceOutlineMode-desc = Switch to outline mode to view the note structure in a more compact way.
-userGuide-workspaceOutlineSaveAs-title = Save As
-userGuide-workspaceOutlineSaveAs-desc = You can export the note to multiple formats, including PDF, Markdown, MS Word, mind map, and more.
-userGuide-workspaceNoteInfo-title = Note Info
-userGuide-workspaceNoteInfo-desc = You can view, edit, and manage the note's tags, relations, and links.
-userGuide-finish-title = We are all set!
-userGuide-finish-desc = Enjoy your note-taking journey with Better Notes!
-    You can always run this guide again from the Help menu.
+userGuide-start-title = Better Notes'a hoş geldiniz!
+userGuide-start-desc = Better Notes düşüncelerinizi ve tasarılarınızı düzenlemenize yardımcı olan güçlü bir not alma aracıdır. Kullanımı kolay ve yalın biçimde tasarlanmış olsa da karmaşık not alma işlerini görebilecek kadar da esnektir. Bu rehber size Better Notes'u kullanmaya başlamanıza ve ileri düzey işlevleri verimli kullanmanıza yardımcı olacaktır.
+userGuide-start-close = Daha sonra hatırlat
+userGuide-createNoteButton-title = Yeni bir not oluştur
+userGuide-createNoteButton-desc = Buradan boş ya da şablondan yeni bir not oluşturabilirsiniz.
+userGuide-createNote-title = Yeni Not Oluştur.
+userGuide-createNote-desc = Görünen o ki hiçbir notunuz yok, hadi bir tane oluşturalım.
+userGuide-createNote-next = Not Oluştur
+userGuide-openNote-title = Notu Aç
+userGuide-openNote-desc = Herhangi bir nota çift tıklayarak notu yeni bir Better Notes çalışma alanı sekmesinde açabilirsiniz.
+userGuide-openNote-next = Notu Aç
+userGuide-workspace-title = Not Çalışma Alanı Sekmesi 
+userGuide-workspace-desc = Not çalışma alanı içeriğinizi düzenleyebileceğiniz, notunuzun anahattımı görüntüleyebileceğiniz ve not ilişkilerini yönetebileceğiniz bir sekmedir.
+userGuide-workspaceEditor-title = Not Düzenleyici
+userGuide-workspaceEditor-desc = Not düzenleyici zengin metinleri, kod bloklarını, matematik bloklarını ve daha fazlasını düzenlemeyi destekler.
+userGuide-workspaceEditorToolbar-title = Not Düzenleyici - Araç Çubuğu
+userGuide-workspaceEditorToolbar-desc = Araç çubuğu sık kullanılan düzenleme işlevlerine çabuk erişebilmenizi sağlar.
+    You can set Buradan başlık düzeyi belirleyebilir, metin/arka plan rengi seçebilir, metne biçim uygulayabilir, bağlantı ya da atıf ekleyebilirsiniz.
+userGuide-workspaceEditorLinkCreator-title = Not Düzenleyici - Bağlantı Oluşturucu
+userGuide-workspaceEditorLinkCreator-desc = Buradan bağlantı oluşturucuyu kullanarak başka bir nota/nottan bağlantı oluşturabilirsiniz.
+userGuide-workspaceEditorMoreOptions-title = Not Düzenleyici - Diğer Seçenekler
+userGuide-workspaceEditorMoreOptions-desc = Notu yeni bir pencerede açma, kitaplıkta gösterme, nota şablon uygulama, not bağlantısını kopyalama, notu dışa aktarma ve daha fazlasını yapabilirsiniz.
+userGuide-workspaceOutline-title = Anahat
+userGuide-workspaceOutline-desc = Anahat, notun yapısını gösterir. Üzerien tıklayarak herhangi bir başlığa gidebilirsiniz. The outline shows the structure of the note. You can navigate to a section by clicking on it.
+userGuide-workspaceOutlineMode-title = Anahat Görünümü
+userGuide-workspaceOutlineMode-desc = Notun yapısını anahat görünümünde daha öz biçimde görüntüleyebilirsiniz.
+userGuide-workspaceOutlineSaveAs-title = Farklı Kaydet
+userGuide-workspaceOutlineSaveAs-desc = Notunuzu PDF, Markdown, MS Word, zihin haritası veya başka biçimlerde dışarı aktarabilirsiniz.
+userGuide-workspaceNoteInfo-title = Not Bilgisi
+userGuide-workspaceNoteInfo-desc = Notunuz hakkındaki etiket, ilişki ve bağlantı bilgilerini görüntüleyebilir ve düzenleyebilirsiniz.
+userGuide-finish-title = Hazırız!
+userGuide-finish-desc = Better Notes ile not alma yolculuğunuzun tadını çıkartın!
+    Bu rehbere her yardım menüsünden her zaman ulaşabilirsiniz.

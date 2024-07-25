@@ -1,28 +1,28 @@
 note-relation-header =
-    .label = Relation Graph
+    .label = İlişki Haritası
 note-relation-sidenav =
-    .tooltiptext = Relation Graph
+    .tooltiptext = İlişki Haritası
 note-relation-refresh =
-    .tooltiptext = Refresh
+    .tooltiptext = Yenile
 
 note-inbound-header =
     .label =
         { $count ->
-            [one] { $count } Inbound Link
-            *[other] { $count } Inbound Links
+            [one] { $count } Gelen Bağlantı
+            *[other] { $count } Gelen Bağlantılar
         }
 note-inbound-sidenav =
-    .tooltiptext = Inbound Links
+    .tooltiptext = Gelen Bağlantılar
 note-inbound-refresh =
-    .tooltiptext = Refresh
+    .tooltiptext = Yenile
 
 note-outbound-header =
     .label =
         { $count ->
-            [one] { $count } Outbound Link
-            *[other] { $count } Outbound Links
+            [one] { $count } Giden Bağlantı
+            *[other] { $count } Giden Bağlantılar
         }
 note-outbound-sidenav =
-    .tooltiptext = Outbound Links
+    .tooltiptext = Giden Bağlantılar
 note-outbound-refresh =
-    .tooltiptext = Refresh
+    .tooltiptext = Yenile

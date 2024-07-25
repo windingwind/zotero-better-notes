@@ -1,28 +1,28 @@
-basic-title = Basic
+basic-title = Temel
 basic-openNote-takeover =
-    .label = Take over opening note
+    .label = Notları açmayı devral
 basic-openNote-defaultAsWindow =
-    .label = Open note as window by default
+    .label = Notları her zaman pencere olarak aç
 
-editor-title = Note Editor
-editor-expandLevel-label = Anahat başlık seviyesine genişletildi
+editor-title = Not Düzenleyici
+editor-expandLevel-label = Anahatta gösterilecek başlık düzeyleri
 editor-keepLinks = 
-    .label = Not linklerini anahatta göster
+    .label = Not bağlantılarını anahatta göster
 editor-noteLinkPreview = 
-    .label = Show note link preview on hover
+    .label = İmleci bağlantının üzerine getirdiğinde ön izlemeyi göster
 
-sync-title = Senkronize Et
-sync-period-label = Oto-Senkronize aralığı (saniye)
+sync-title = Eşitle
+sync-period-label = Otomatik Eşitleme Sıklığı (saniye)
 sync-attachmentFolder-label = Ek Klasörü
 sync-manager =
-    .label = Senkronizasyon Yönetimini Aç
+    .label = Eşitleme Yöneticisini Aç
 template-title = Şablon
 template-editor =
     .label = Şablon Düzenleyiciyi Aç
-annotation-title = PDF Dipnotları
+annotation-title = PDF Ek Açıklamaları
 annotation-autoAnnotation =
-    .label = Çalışma alanı notuna otomatik olarak yeni dipnotlar ekle
+    .label = Çalışma alanı notuna otomatik olarak yeni ek açıklamaları ekle
 
-about-title = About
+about-title = Hakkında
 help =
-    .value = { $name } Versiyon { $version } İnşa { $time }
+    .value = { $name } Sürüm { $version } Yapı Numarası { $time }
