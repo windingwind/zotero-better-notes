@@ -187,6 +187,7 @@ export class Workspace extends PluginCEBase {
     await editor._initPromise;
 
     const _document = editor._iframeWindow.document;
+    await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
     const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
 
     const toggleOutline = this._addon.data.ztoolkit.UI.createElement(

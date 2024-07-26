@@ -6,11 +6,13 @@ import { getNoteLink } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
+import { waitUtilAsync } from "../../utils/wait";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
 
   const _document = editor._iframeWindow.document;
+  await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
   const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
   // Link creator
   registerEditorToolbarElement(
