@@ -196,7 +196,7 @@ export class Workspace extends PluginCEBase {
       {
         classList: ["toolbar-button"],
         properties: {
-          innerHTML: ICONS.workspaceToggleLeft,
+          innerHTML: ICONS.workspaceToggle,
           title: "Toggle left pane",
         },
         listeners: [
@@ -218,8 +218,11 @@ export class Workspace extends PluginCEBase {
       {
         classList: ["toolbar-button"],
         properties: {
-          innerHTML: ICONS.workspaceToggleRight,
+          innerHTML: ICONS.workspaceToggle,
           title: "Toggle right pane",
+        },
+        styles: {
+          transform: "rotate(180deg)",
         },
         listeners: [
           {
