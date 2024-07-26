@@ -20,7 +20,7 @@ export async function openWorkspaceTab(
     return currentTab.id;
   }
   // @ts-ignore fix uncaught error when called during startup
-  await waitUtilAsync(() => item._noteTitle);
+  await waitUtilAsync(() => typeof item._noteTitle === "string");
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: item.getNoteTitle(),
