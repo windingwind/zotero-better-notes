@@ -24,6 +24,9 @@ bn-note-picker {
     #collections-items-container {
       margin-bottom: 0;
     }
+    #zotero-items-pane-content {
+      min-height: 100%;
+    }
   }
 
   #bn-select-opened-notes-container {
