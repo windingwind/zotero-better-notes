@@ -2,7 +2,7 @@
 
 [![zotero target version](https://img.shields.io/badge/Zotero-7-green?style=flat-square&logo=zotero&logoColor=CC2936)](https://www.zotero.org)
 [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
-[![telegram group](https://img.shields.io/badge/Join%20Community-@bnzotero-blue?style=flat-square&logo=telegram)](https://t.me/bnzotero)
+[![telegram group](https://img.shields.io/badge/Join%20Community-@bnzotero-blue?style=flat-square&logo=telegram)](https://t.me/boost/bnzotero)
 
 <div align=center><img src="./docs/res/teaser.png" width="800px"></img></div>
 
@@ -10,7 +10,7 @@ Everything about note management. All in Zotero.
 
 Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
 
-Join the community on Telegram: @bnzotero
+Join the community on Telegram: [@bnzotero](https://t.me/boost/bnzotero)
 
 ## 🧩 Outline
 
