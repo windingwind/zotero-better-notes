@@ -32,17 +32,6 @@ export function registerNoteRelation() {
       },
     ],
     onInit({ body, refresh }) {
-      body
-        .querySelector("iframe")!
-        .contentWindow?.addEventListener("message", (ev) => {
-          if (ev.data.type === "openNote") {
-            addon.hooks.onOpenNote(
-              ev.data.id,
-              ev.data.isShift ? "window" : "tab",
-            );
-          }
-        });
-
       const notifierKey = Zotero.Notifier.registerObserver(
         {
           notify: (event, type, ids, extraData) => {
@@ -81,10 +70,20 @@ export function registerNoteRelation() {
     onAsyncRender: async ({ body, item }) => {
       if (!item?.isNote()) return;
       if (!body.querySelector("#bn-relation-graph")) {
-        const iframe = body.ownerDocument.createXULElement("iframe") as HTMLIFrameElement;
+        const iframe = body.ownerDocument.createXULElement(
+          "iframe",
+        ) as HTMLIFrameElement;
         iframe.src = `chrome://${config.addonRef}/content/relationGraph.html`;
         iframe.id = "bn-relation-graph";
         body.appendChild(iframe);
+        iframe.contentWindow?.addEventListener("message", (ev) => {
+          if (ev.data.type === "openNote") {
+            addon.hooks.onOpenNote(
+              ev.data.id,
+              ev.data.isShift ? "window" : "tab",
+            );
+          }
+        });
       }
       await renderGraph(body, item);
     },
