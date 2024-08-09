@@ -1,30 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-  <rdf:Description rdf:about="urn:mozilla:extension:Knowledge4Zotero@windingwind.com">
-    <em:updates>
-      <rdf:Seq>
-        <rdf:li>
-          <rdf:Description>
-            <em:version>1.0.4</em:version>
-            <em:targetApplication>
-              <rdf:Description>
-                <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>5.999</em:minVersion>
-                <em:maxVersion>*</em:maxVersion>
-                <em:updateLink>https://github.com/windingwind/zotero-better-notes/releases/download/1.0.4/zotero-better-notes.xpi</em:updateLink>
-              </rdf:Description>
-            </em:targetApplication>
-            <em:targetApplication>
-              <rdf:Description>
-                <em:id>juris-m@juris-m.github.io</em:id>
-                <em:minVersion>5.999</em:minVersion>
-                <em:maxVersion>*</em:maxVersion>
-                <em:updateLink>https://github.com/windingwind/zotero-better-notes/releases/download/1.0.4/zotero-better-notes.xpi</em:updateLink>
-              </rdf:Description>
-            </em:targetApplication>
-          </rdf:Description>
-        </rdf:li>
-      </rdf:Seq>
-    </em:updates>
-  </rdf:Description>
-</rdf:RDF>
+{
+  "addons": {
+    "Knowledge4Zotero@windingwind.com": {
+      "updates": [
+        {
+          "version": "2.0.0",
+          "update_link": "https://github.com/windingwind/zotero-better-notes/releases/download/v2.0.0/better-notes-for-zotero.xpi",
+          "update_hash": "sha512:eb8bcbcb70848ba0a51eb20a6ee0f597428a4df76e3a3db85f4eaae43f6ebd500e32fdf6d274a090e25dd52951d5e0f3989521f90c253de7b257c6974dfa5644",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "7.0.0-beta.70",
+              "strict_max_version": "7.0.*"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
