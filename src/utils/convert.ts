@@ -113,6 +113,9 @@ async function note2md(
         if ((key === "tags" || key.startsWith("$")) && key in header) {
           // generated header overwrites cached header
           continue;
+        } else if (key == "tags" && getPref("sync.updateTags")) {
+          // overwrite tags with updated ExportMDFileHeaderV2
+          continue;
         } else {
           // otherwise do not overwrite
           header[key] = cachedHeader[key];
