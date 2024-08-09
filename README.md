@@ -90,13 +90,11 @@ and:
 
 ## 👋 Install
 
-- Download the plugin (.xpi file) from below. For Zotero 7 beta, please always use the latest beta version.
+- Download the plugin (.xpi file) from below.
 
   - [Latest Version: 1.1.4-beta.113](https://github.com/windingwind/zotero-better-notes/releases/download/v1.1.4-beta.113/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
-  - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
-  - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
-  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including beta plugin for Zotero 7 beta)
+  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
@@ -268,8 +266,7 @@ Use this code under AGPL. No warranties are provided. Keep the laws of your loca
 ## 🔎 My Zotero Plugins
 
 - [Translate for Zotero](https://github.com/windingwind/zotero-pdf-translate): PDF translation for Zotero
-- [zotero-pdf-preview](https://github.com/windingwind/zotero-tag): PDF preview for Zotero
-- [zotero-tag](https://github.com/windingwind/zotero-tag): Automatically tag items/Batch tagging
+- [Actions & Tags for Zotero](https://github.com/windingwind/zotero-tag): Customize your Zotero workflow.
 
 ## 🙌 Sponsors
 
