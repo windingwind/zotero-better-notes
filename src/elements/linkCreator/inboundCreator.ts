@@ -80,7 +80,7 @@ export class InboundCreator extends PluginCEBase {
     await this.notePicker.load();
 
     this.notePicker.addEventListener("selectionchange", (event: any) => {
-      this.targetNote = event.detail.selectedNote;
+      this.targetNote = event.detail.selectedNotes[0];
       this.updatePickerTitle(this.targetNote);
       this.noteOutline.item = this.targetNote;
       this.noteOutline.render();

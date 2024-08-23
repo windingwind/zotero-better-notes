@@ -13,7 +13,7 @@ export class OutboundCreator extends PluginCEBase {
   // Where the link is inserted to
   currentNote: Zotero.Item | undefined;
   // Where the link is generated from
-  targetNote: Zotero.Item | undefined;
+  targetNotes: Zotero.Item[] | undefined;
 
   positionData: NoteNodeData | undefined;
 
@@ -68,7 +68,7 @@ export class OutboundCreator extends PluginCEBase {
   }
 
   async accept(io: any) {
-    if (!this.targetNote) return;
+    if (!this.targetNotes) return;
     const content = await this.getContentToInsert();
     this.notePicker.saveRecentNotes();
 
@@ -83,10 +83,10 @@ export class OutboundCreator extends PluginCEBase {
     await this.notePicker.load();
 
     this.notePicker.addEventListener("selectionchange", (event: any) => {
-      this.targetNote = event.detail.selectedNote;
-      this.updatePickerTitle(this.targetNote);
+      this.targetNotes = event.detail.selectedNotes;
+      this.updatePickerTitle(this.targetNotes);
       this.updateNotePreview();
-      if (this.targetNote) this.scrollToSection("outline");
+      if (this.targetNotes) this.scrollToSection("outline");
     });
 
     const content = document.createElement("span");
@@ -166,9 +166,22 @@ export class OutboundCreator extends PluginCEBase {
       ?.append(content, fromTitle, middleTitle, toTitle);
   }
 
-  updatePickerTitle(noteItem?: Zotero.Item) {
-    const title = noteItem ? noteItem.getNoteTitle() : "";
-    this.querySelector("#selected-note-title")!.textContent = title;
+  getPickedNotesTitle(noteItems?: Zotero.Item[]) {
+    let title = "";
+    if (!noteItems?.length) {
+      title = "-";
+    }
+    if (noteItems?.length === 1) {
+      title = noteItems[0].getNoteTitle();
+    } else {
+      title = `${noteItems?.length} notes`;
+    }
+    return title;
+  }
+
+  updatePickerTitle(noteItems?: Zotero.Item[]) {
+    this.querySelector("#selected-note-title")!.textContent =
+      this.getPickedNotesTitle(noteItems);
   }
 
   updateOutlineTitle() {
@@ -183,7 +196,7 @@ export class OutboundCreator extends PluginCEBase {
       this.querySelector("#preview-note-middle-title") as HTMLElement
     ).dataset.l10nArgs = `{"show": "true"}`;
     this.querySelector("#preview-note-to-title")!.textContent =
-      this.targetNote?.getNoteTitle() || "No title";
+      this.getPickedNotesTitle(this.targetNotes);
   }
 
   async updateNotePreview() {
@@ -224,21 +237,26 @@ export class OutboundCreator extends PluginCEBase {
   }
 
   async getContentToInsert() {
-    if (!this.currentNote || !this.targetNote) return "";
-    const forwardLink = this._addon.api.convert.note2link(this.targetNote, {});
-    const content = await this._addon.api.template.runTemplate(
-      "[QuickInsertV2]",
-      "link, linkText, subNoteItem, noteItem",
-      [
-        forwardLink,
-        this.targetNote.getNoteTitle().trim() || forwardLink,
-        this.targetNote,
-        this.currentNote,
-      ],
-      {
-        dryRun: true,
-      },
-    );
+    if (!this.currentNote || !this.targetNotes?.length) return "";
+    let content = "";
+    for (const note of this.targetNotes) {
+      const forwardLink = this._addon.api.convert.note2link(note, {});
+      content += await this._addon.api.template.runTemplate(
+        "[QuickInsertV2]",
+        "link, linkText, subNoteItem, noteItem",
+        [
+          forwardLink,
+          note.getNoteTitle().trim() || forwardLink,
+          note,
+          this.currentNote,
+        ],
+        {
+          dryRun: true,
+        },
+      );
+      content += "\n";
+    }
+
     return content;
   }
 

@@ -433,7 +433,7 @@ export class NotePicker extends PluginCEBase {
     this.dispatchEvent(
       new CustomEvent("selectionchange", {
         detail: {
-          selectedNote: this.getSelectedNotes(selection)[0],
+          selectedNotes: this.getSelectedNotes(selection),
         },
       }),
     );
