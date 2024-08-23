@@ -8,6 +8,14 @@
   overflow: auto;
 }
 
+window {
+  -moz-window-dragging: drag;
+}
+
+#top-container {
+  -moz-window-dragging: no-drag;
+}
+
 /* TODO: remove fx115 workaround */
 tab {
   color: unset !important;
