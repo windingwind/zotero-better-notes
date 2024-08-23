@@ -70,7 +70,7 @@ async function createNoteFromAnnotation(
   for (const tag of annotationTags) {
     if (linkRegex.test(tag)) {
       const linkParams = getNoteLinkParams(tag);
-      if (linkParams.noteItem) {
+      if (linkParams.noteItem && linkParams.noteItem.isNote()) {
         addon.hooks.onOpenNote(linkParams.noteItem.id, openMode || "tab", {
           lineIndex: linkParams.lineIndex || undefined,
         });
@@ -101,9 +101,10 @@ async function createNoteFromAnnotation(
       linkTarget.toLibID,
       linkTarget.toKey,
     );
-    if (targetItem)
+    if (targetItem) {
       addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {});
-    return;
+      return;
+    }
   }
 
   const note: Zotero.Item = new Zotero.Item("note");
