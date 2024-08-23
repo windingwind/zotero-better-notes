@@ -23,7 +23,7 @@ export function registerReaderAnnotationButton() {
                 createNoteFromAnnotation(
                   reader._item.libraryID,
                   annotationData.id,
-                  (e as MouseEvent).shiftKey ? "window" : "tab",
+                  (e as MouseEvent).shiftKey ? "window" : "builtin",
                 );
                 e.preventDefault();
               },
@@ -54,7 +54,7 @@ export function registerReaderAnnotationButton() {
 async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
-  openMode: "window" | "tab" | undefined,
+  openMode: "window" | "builtin" | undefined,
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
     libraryID,
@@ -102,7 +102,7 @@ async function createNoteFromAnnotation(
       linkTarget.toKey,
     );
     if (targetItem)
-      addon.hooks.onOpenNote(targetItem.id, openMode || "tab", {});
+      addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {});
     return;
   }
 
