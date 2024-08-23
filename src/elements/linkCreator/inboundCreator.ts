@@ -67,6 +67,7 @@ export class InboundCreator extends PluginCEBase {
   async accept(io: any) {
     if (!this.targetNote) return;
     const content = await this.getContentToInsert();
+    this.notePicker.saveRecentNotes();
 
     io.targetNoteID = this.targetNote.id;
     io.content = content;
