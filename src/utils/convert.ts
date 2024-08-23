@@ -567,7 +567,7 @@ function rehype2note(rehype: HRoot) {
         ? ancestors[ancestors.length - 1]
         : undefined;
       if (parent?.type == "element" && parent?.tagName === "pre") {
-        node.value = toText(node);
+        node.value = toText(node, { whitespace: "pre-wrap" });
         node.type = "text";
       }
     },
