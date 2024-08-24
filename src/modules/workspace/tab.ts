@@ -19,8 +19,10 @@ export async function openWorkspaceTab(
     scrollTabEditorTo(item, options);
     return currentTab.id;
   }
-  // @ts-ignore fix uncaught error when called during startup
-  await waitUtilAsync(() => typeof item._noteTitle === "string");
+  if (item.getNote()) {
+    // @ts-ignore fix uncaught error when called during startup
+    await waitUtilAsync(() => typeof item._noteTitle === "string");
+  }
   const { id, container } = Zotero_Tabs.add({
     type: TAB_TYPE,
     title: item.getNoteTitle(),
