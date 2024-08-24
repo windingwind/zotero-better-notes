@@ -23,7 +23,7 @@ Join the community on Telegram: [@bnzotero](https://t.me/boost/bnzotero)
 <details style="text-indent: 2em">
 <summary>More</summary>
 
-[Getting Started with the _Workspace_](#getting-started-with-the-workspace)
+[Getting Started by Opening a Note Tab](#getting-started-by-opening-a-note-tab)
 
 [Note Editor](#note-editor)
 
