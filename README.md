@@ -197,7 +197,7 @@ Simply click on the corresponding export button in the toolbar and follow the pr
 
 ### LLM Integration
 
-The [Zotero-GPT](https://github.com/MuiseDestiny/zotero-gpt) plugin provides GPT Integration. If you also have Better Notes installed, you can wake up its chatting pane in the  note editor and insert/modify content in the note.
+The [Zotero-GPT](https://github.com/MuiseDestiny/zotero-gpt) plugin provides GPT Integration. If you also have Better Notes installed, you can wake up its chatting pane in the note editor and insert/modify content in the note.
 
 ### Action Workflow
 

@@ -17,7 +17,7 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   // Link creator
   registerEditorToolbarElement(
     editor,
-   toolbar,
+    toolbar,
     "start",
     ztoolkit.UI.createElement(_document, "button", {
       classList: ["toolbar-button"],

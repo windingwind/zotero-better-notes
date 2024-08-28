@@ -420,7 +420,12 @@ async function copyEmbeddedImagesInHTML(
   targetNote?: Zotero.Item,
   refNotes: Zotero.Item[] = [],
 ) {
-  ztoolkit.log("parseEmbeddedImagesInHTML", html, targetNote?.getNoteTitle(), refNotes.length);
+  ztoolkit.log(
+    "parseEmbeddedImagesInHTML",
+    html,
+    targetNote?.getNoteTitle(),
+    refNotes.length,
+  );
   if (!targetNote) {
     return html;
   }
