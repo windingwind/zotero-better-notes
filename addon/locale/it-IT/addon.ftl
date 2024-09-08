@@ -18,7 +18,22 @@ menuEditor-resizeImage = Ridimensiona immagine
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 
-templateEditor-templateName = Template Name
+templateEditor-templateType = Type
+templateEditor-templateName = Name
+
+templateEditor-templateDisplayName =
+    .QuickInsertV2 = Quick Insert (Link)
+    .QuickImportV2 = Quick Import (Embed)
+    .QuickNoteV5 = Quick Note (From Annotation)
+    .ExportMDFileNameV2 = Export MD File Name
+    .ExportMDFileHeaderV2 = Export MD File Header
+    .ExportMDFileContent = Export MD File Content
+
+templateEditor-templateDisplayType =
+    .system = Builtin
+    .item = Item
+    .text = Text
+    .unknown = ?
 
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione

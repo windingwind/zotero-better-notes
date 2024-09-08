@@ -18,7 +18,22 @@ menuEditor-resizeImage=缩放图片
 
 menuHelp-openUserGuide = 打开Better Notes用户指南
 
-templateEditor-templateName = 模板名称
+templateEditor-templateType = 类型
+templateEditor-templateName = 名称
+
+templateEditor-templateDisplayName =
+    .QuickInsertV2 = Quick Insert (插入链接)
+    .QuickImportV2 = Quick Import (嵌入链接笔记)
+    .QuickNoteV5 = Quick Note (从批注创建笔记)
+    .ExportMDFileNameV2 = Export MD File Name (导出MD文件名)
+    .ExportMDFileHeaderV2 = Export MD File Header (导出MD头)
+    .ExportMDFileContent = Export MD File Content (导出MD正文)
+
+templateEditor-templateDisplayType =
+    .system = Builtin
+    .item = Item
+    .text = Text
+    .unknown = ?
 
 editor-resizeImage-title = 缩放图片
 editor-resizeImage-prompt = 缩放图片宽度为：
