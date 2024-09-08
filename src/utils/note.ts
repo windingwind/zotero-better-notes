@@ -248,7 +248,7 @@ async function renderNoteHTML(
               node.style.width = `${node.getAttribute("width")}px`;
             }
             if (node.hasAttribute("height")) {
-              node.style.width = `${node.getAttribute("height")}px`;
+              node.style.height = `${node.getAttribute("height")}px`;
             }
           });
         } catch (e) {
