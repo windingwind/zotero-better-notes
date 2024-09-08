@@ -34,18 +34,14 @@ import { DialogHelper } from "zotero-plugin-toolkit/dist/helpers/dialog";
 import { FilePickerHelper } from "zotero-plugin-toolkit/dist/helpers/filePicker";
 import { ProgressWindowHelper } from "zotero-plugin-toolkit/dist/helpers/progressWindow";
 import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
-import { LibraryTabPanelManager } from "zotero-plugin-toolkit/dist/managers/libraryTabPanel";
 import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PromptManager } from "zotero-plugin-toolkit/dist/managers/prompt";
-import { ReaderTabPanelManager } from "zotero-plugin-toolkit/dist/managers/readerTabPanel";
 import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
 import { GuideHelper } from "zotero-plugin-toolkit/dist/helpers/guide";
 
 class MyToolkit extends BasicTool {
   UI: UITool;
   Prompt: PromptManager;
-  LibraryTabPanel: LibraryTabPanelManager;
-  ReaderTabPanel: ReaderTabPanelManager;
   Menu: MenuManager;
   Clipboard: typeof ClipboardHelper;
   FilePicker: typeof FilePickerHelper;
@@ -59,8 +55,6 @@ class MyToolkit extends BasicTool {
     super();
     this.UI = new UITool(this);
     this.Prompt = new PromptManager(this);
-    this.LibraryTabPanel = new LibraryTabPanelManager(this);
-    this.ReaderTabPanel = new ReaderTabPanelManager(this);
     this.Menu = new MenuManager(this);
     this.Clipboard = ClipboardHelper;
     this.FilePicker = FilePickerHelper;

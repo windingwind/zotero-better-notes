@@ -25,9 +25,10 @@ async function note2mm(
   };
   let lines: string[] = [];
   if (options.withContent) {
-    const doc = ztoolkit
-      .getDOMParser()
-      .parseFromString(await renderNoteHTML(noteItem), "text/html");
+    const doc = new DOMParser().parseFromString(
+      await renderNoteHTML(noteItem),
+      "text/html",
+    );
     textNodeForEach(doc.body, (e: Text) => {
       e.data = htmlEscape(doc, e.data);
     });

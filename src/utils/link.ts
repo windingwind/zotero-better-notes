@@ -94,9 +94,7 @@ export function getLinkedNotesRecursively(
   if (ignoreIds.includes(noteItem.id)) {
     return [];
   }
-  const doc = ztoolkit
-    .getDOMParser()
-    .parseFromString(noteItem.getNote(), "text/html");
+  const doc = new DOMParser().parseFromString(noteItem.getNote(), "text/html");
   const links = Array.from(doc.querySelectorAll("a"));
   return links.reduce(
     (acc, link) => {
