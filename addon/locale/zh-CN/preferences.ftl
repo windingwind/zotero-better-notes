@@ -23,6 +23,10 @@ annotation-title = PDF批注
 annotation-autoAnnotation =
     .label = 自动添加新批注到工作区笔记
 
+annotationNote-title = 从注释生成笔记
+annotationNote-enableTagSync = 
+    .label = 保持注释生成的笔记的标签与原始注释同步
+
 about-title = 关于
 help =
     .value = { $name } 版本 { $version } 构建 { $time }

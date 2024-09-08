@@ -1,9 +1,12 @@
 import { config } from "../../package.json";
 import { ICONS } from "../utils/config";
-import { getNoteLink, getNoteLinkParams } from "../utils/link";
+import { getNoteLinkParams } from "../utils/link";
 import { addLineToNote } from "../utils/note";
+import { getPref } from "../utils/prefs";
 
-export function registerReaderAnnotationButton() {
+export { registerReaderAnnotationButton, syncAnnotationNoteTags };
+
+function registerReaderAnnotationButton() {
   Zotero.Reader.registerEventListener(
     "renderSidebarAnnotationHeader",
     (event) => {
@@ -134,4 +137,55 @@ async function createNoteFromAnnotation(
   });
 
   addon.hooks.onOpenNote(note.id, "builtin", {});
+}
+
+async function syncAnnotationNoteTags(
+  itemID: number,
+  action: "add" | "remove",
+  tagData: { tag: string; type: number },
+) {
+  if (!getPref("annotationNote.enableTagSync")) {
+    return;
+  }
+  const item = Zotero.Items.get(itemID);
+  if (!item || (!item.isAnnotation() && !item.isNote())) {
+    return;
+  }
+  let targetItem: Zotero.Item;
+  if (item.isAnnotation()) {
+    const annotationModel = await addon.api.relation.getLinkTargetByAnnotation(
+      item.libraryID,
+      item.key,
+    );
+    if (!annotationModel) {
+      return;
+    }
+    targetItem = Zotero.Items.getByLibraryAndKey(
+      annotationModel.toLibID,
+      annotationModel.toKey,
+    ) as Zotero.Item;
+  } else {
+    const annotationModel = await addon.api.relation.getAnnotationByLinkTarget(
+      item.libraryID,
+      item.key,
+    );
+    if (!annotationModel) {
+      return;
+    }
+    targetItem = Zotero.Items.getByLibraryAndKey(
+      annotationModel.fromLibID,
+      annotationModel.fromKey,
+    ) as Zotero.Item;
+  }
+  if (!targetItem) {
+    return;
+  }
+
+  if (action === "add") {
+    targetItem.addTag(tagData.tag, tagData.type);
+  } else {
+    targetItem.removeTag(tagData.tag);
+  }
+
+  await targetItem.saveTx();
 }

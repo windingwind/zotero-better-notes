@@ -23,6 +23,10 @@ annotation-title = Annotazione PDF
 annotation-autoAnnotation =
     .label = Aggiungi automaticamente le nuove annotazioni alla nota di lavoro
 
+annotationNote-title = Note from Annotation
+annotationNote-enableTagSync = 
+    .label = Keep tags of note from annotation in sync with the original annotation
+
 about-title = Informazioni su Better Notes
 help =
     .value = { $name } VERSION { $version } Build { $time }

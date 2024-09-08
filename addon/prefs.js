@@ -25,3 +25,5 @@ pref("__prefsPrefix__.editor.noteLinkPreview", true);
 
 pref("__prefsPrefix__.openNote.takeover", true);
 pref("__prefsPrefix__.openNote.defaultAsWindow", false);
+
+pref("__prefsPrefix__.annotationNote.enableTagSync", true);

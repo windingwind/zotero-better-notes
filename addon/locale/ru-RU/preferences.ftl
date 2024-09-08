@@ -23,6 +23,10 @@ annotation-title = PDF Аннотация
 annotation-autoAnnotation =
     .label = Автодобавлять новые аннотации к заметкам раб.пространства
 
+annotationNote-title = Note from Annotation
+annotationNote-enableTagSync = 
+    .label = Keep tags of note from annotation in sync with the original annotation
+
 about-title = About
 help =
     .value = { $name } VERSION { $version } Build { $time }
