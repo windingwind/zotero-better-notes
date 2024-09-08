@@ -110,6 +110,31 @@ export async function showTemplateEditor() {
       })
       .render();
     _window.document
+      .querySelector("#templateType-help")
+      ?.addEventListener("click", (ev) => {
+        new addon.data.ztoolkit.Guide().highlight(_window.document, {
+          title: "About Template Types",
+          description: ["system", "item", "text"]
+            .map(
+              (type) =>
+                `${getString(
+                  "templateEditor-templateDisplayType",
+                  type,
+                )}: ${getString("templateEditor-templateHelp", type)}`,
+            )
+            .join("\n"),
+          onNextClick: () => {
+            Zotero.launchURL(
+              "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md",
+            );
+          },
+          showButtons: ["next", "close"],
+          nextBtnText: "Learn more",
+          closeBtnText: "OK",
+          position: "center",
+        });
+      });
+    _window.document
       .querySelector("#create")
       ?.addEventListener("click", (ev) => {
         createTemplate();
@@ -185,6 +210,12 @@ async function refresh() {
 
 function getRowData(index: number) {
   const rowData = addon.data.template.editor.templates[index];
+  if (!rowData) {
+    return {
+      name: "",
+      type: "unknown",
+    };
+  }
   let templateType = "unknown";
   let templateDisplayName = rowData;
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(rowData)) {
@@ -230,42 +261,44 @@ function updateTable(selectId?: number) {
 
 function updateEditor() {
   const name = getSelectedTemplateName();
+  const { type, name: displayName } = getRowData(getSelectedIndex());
   const templateText = addon.api.template.getTemplateText(name);
+  const win = addon.data.template.editor.window;
+  if (!win) {
+    return;
+  }
 
-  const header = addon.data.template.editor.window?.document.getElementById(
-    "editor-name",
+  const templateType = win.document.querySelector(
+    "#editor-type",
+  ) as XUL.MenuList;
+  const templateName = win.document.querySelector(
+    "#editor-name",
   ) as HTMLInputElement;
-  const editor = addon.data.template.editor.window?.document.getElementById(
-    "editor",
-  ) as HTMLIFrameElement;
-  const saveTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "save",
-    ) as XUL.Button;
-  const deleteTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "delete",
-    ) as XUL.Button;
-  const resetTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "reset",
-    ) as XUL.Button;
+  const editor = win?.document.getElementById("editor") as HTMLIFrameElement;
+  const saveTemplate = win?.document.getElementById("save") as XUL.Button;
+  const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
+  const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
   if (!name) {
-    header.value = "";
-    header.setAttribute("disabled", "true");
+    templateType.value = "unknown";
+    templateType.setAttribute("disabled", "true");
+    templateName.value = "";
+    templateName.setAttribute("disabled", "true");
     editor.hidden = true;
     saveTemplate.setAttribute("disabled", "true");
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
     resetTemplate.hidden = true;
   } else {
-    header.value = name;
+    templateType.value = type;
+    templateName.value = displayName;
     if (!addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
-      header.removeAttribute("disabled");
+      templateType.removeAttribute("disabled");
+      templateName.removeAttribute("disabled");
       deleteTemplate.hidden = false;
       resetTemplate.hidden = true;
     } else {
-      header.setAttribute("disabled", "true");
+      templateType.setAttribute("disabled", "true");
+      templateName.setAttribute("disabled", "true");
       deleteTemplate.setAttribute("disabled", "true");
       deleteTemplate.hidden = true;
       resetTemplate.hidden = false;
@@ -292,13 +325,17 @@ async function updatePreview() {
 }
 
 function getSelectedTemplateName() {
-  const selectedTemplate = addon.data.template.editor.templates.find(
-    (v, i) =>
-      addon.data.template.editor.tableHelper?.treeInstance.selection.isSelected(
-        i,
-      ),
-  );
+  const selectedTemplate =
+    addon.data.template.editor.templates[getSelectedIndex()];
   return selectedTemplate || "";
+}
+
+function getSelectedIndex() {
+  const selectedIndex =
+    addon.data.template.editor.tableHelper?.treeInstance.selection.selected
+      .values()
+      .next().value;
+  return selectedIndex;
 }
 
 function createTemplate() {
@@ -327,14 +364,32 @@ async function importNoteTemplate() {
 }
 
 function saveSelectedTemplate() {
-  const name = getSelectedTemplateName();
-  const header = addon.data.template.editor.window?.document.getElementById(
-    "editor-name",
+  const win = addon.data.template.editor.window;
+  if (!win) {
+    return;
+  }
+
+  const templateType = win.document.querySelector(
+    "#editor-type",
+  ) as XUL.MenuList;
+  const templateName = win.document.querySelector(
+    "#editor-name",
   ) as HTMLInputElement;
+
+  const name = getSelectedTemplateName();
+  const type = templateType.value;
+  let modifiedName: string;
+  if (type === "system") {
+    modifiedName = name;
+  } else if (type === "unknown") {
+    modifiedName = templateName.value;
+  } else {
+    modifiedName = `[${type}]${templateName.value}`;
+  }
 
   if (
     addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name) &&
-    header.value !== name
+    modifiedName !== name
   ) {
     showHint(
       `Template ${name} is a system template. Modifying template name is not allowed.`,
@@ -343,7 +398,7 @@ function saveSelectedTemplate() {
   }
 
   const template = {
-    name: header.value,
+    name: modifiedName,
     text: addon.data.template.editor.editor.getValue() as string,
   };
   if (
@@ -362,10 +417,10 @@ function saveSelectedTemplate() {
   }
 
   addon.api.template.setTemplate(template);
-  if (name !== template.name) {
+  if (name !== modifiedName) {
     addon.api.template.removeTemplate(name);
   }
-  showHint(`Template ${template.name} saved.`);
+  showHint(`Template ${modifiedName} saved.`);
   const selectedId =
     addon.data.template.editor.tableHelper?.treeInstance.selection.selected
       .values()

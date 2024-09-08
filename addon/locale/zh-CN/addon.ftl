@@ -30,10 +30,15 @@ templateEditor-templateDisplayName =
     .ExportMDFileContent = Export MD File Content (导出MD正文)
 
 templateEditor-templateDisplayType =
-    .system = Builtin
-    .item = Item
-    .text = Text
+    .system = 内置
+    .item = 条目
+    .text = 文本
     .unknown = ?
+
+templateEditor-templateHelp =
+    .system = 用于特定目的，例如生成笔记链接。
+    .item = 可以从一个或多个选定的条目生成笔记片段。
+    .text = 可以生成笔记片段。不需要任何输入。
 
 editor-resizeImage-title = 缩放图片
 editor-resizeImage-prompt = 缩放图片宽度为：

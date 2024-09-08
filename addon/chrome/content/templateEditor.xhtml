@@ -128,6 +128,11 @@
         margin: 0 auto;
         padding: 0px;
       }
+      .help-button {
+        appearance: auto;
+        -moz-default-appearance: -moz-mac-help-button;
+        min-width: 0;
+      }
     </style>
     <link
       rel="stylesheet"
@@ -146,10 +151,39 @@
         orient="horizontal"
       ></xul:splitter>
       <xul:hbox class="viewport editor-viewport">
-        <div style="display: flex; align-items: center">
+        <xul:hbox align="center">
+          <div style="flex-shrink: 0" data-l10n-id="templateType"></div>
+          <xul:menulist id="editor-type" native="true">
+            <xul:menupopup>
+              <xul:menuitem
+                data-l10n-id="templateType-unknown"
+                value="unknown"
+              ></xul:menuitem>
+              <xul:menuitem
+                data-l10n-id="templateType-system"
+                value="system"
+                hidden="true"
+              ></xul:menuitem>
+              <xul:menuitem
+                data-l10n-id="templateType-item"
+                value="item"
+              ></xul:menuitem>
+              <xul:menuitem
+                data-l10n-id="templateType-text"
+                value="text"
+              ></xul:menuitem>
+            </xul:menupopup>
+          </xul:menulist>
+          <button
+            id="templateType-help"
+            data-l10n-id="templateType-help"
+            class="help-button"
+          ></button>
+        </xul:hbox>
+        <xul:hbox align="center">
           <div style="flex-shrink: 0" data-l10n-id="templateName"></div>
           <input id="editor-name" type="text" style="width: 100%" />
-        </div>
+        </xul:hbox>
         <div style="display: flex; flex-direction: column; height: 100%">
           <iframe
             id="editor"

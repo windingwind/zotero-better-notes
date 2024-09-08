@@ -1,5 +1,19 @@
 title = 模板编辑器
 
+templateType = 模板类型
+
+templateType-item =
+    .label = 条目
+templateType-text =
+    .label = 文本
+templateType-system =
+    .label = 内置
+templateType-unknown =
+    .label = ?
+templateType-help =
+    .label = 关于...
+    .title = 模板类型的详细解释
+
 templateName = 模板名称
 
 previewContainer = 

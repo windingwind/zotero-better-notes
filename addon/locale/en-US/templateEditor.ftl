@@ -1,5 +1,19 @@
 title = Template Editor
 
+templateType = Template Type
+
+templateType-item =
+    .label = Item
+templateType-text =
+    .label = Text
+templateType-system =
+    .label = Builtin
+templateType-unknown =
+    .label = ?
+templateType-help =
+    .label = About...
+    .title = Detailed explanation of template types
+
 templateName = Template Name
 
 previewContainer = 

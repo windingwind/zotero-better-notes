@@ -35,6 +35,11 @@ templateEditor-templateDisplayType =
     .text = Text
     .unknown = ?
 
+templateEditor-templateHelp =
+    .system = For specific purposes, e.g., generating note link.
+    .item = Can generate note fragments from one or more selected items as input.
+    .text = Can generate note fragments. It doesn't require any input.
+
 editor-resizeImage-title = Resmi Boyutlandır
 editor-resizeImage-prompt = Resmi Şuna Boyutlandır:
 editor-previewImage-title = Resmi Önizle
