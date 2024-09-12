@@ -610,6 +610,67 @@ const snippetsStore = {
       type: "syntax",
     },
     {
+      name: "markdownHeading1",
+      code: "\n# type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownHeading2",
+      code: "\n## type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownHeading3",
+      code: "\n### type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownBullet",
+      code: "\n\n- type your bullet list here",
+      type: "syntax",
+    },
+    {
+      name: "markdownNumber",
+      code: "\n\n1. type your number list here",
+      type: "syntax",
+    },
+    {
+      name: "markdownBold",
+      code: "**type your bold text here**",
+      type: "syntax",
+    },
+    {
+      name: "markdownItalic",
+      code: "_type your italic text here_",
+      type: "syntax",
+    },
+    {
+      name: "markdownLink",
+      code: "[type your link text here](type your link url here)",
+      type: "syntax",
+    },
+    {
+      name: "markdownMonospace",
+      code: "\n\n`type your text here`",
+      type: "syntax",
+    },
+    {
+      name: "markdownQuote",
+      code: "\n\n> type your quote here",
+      type: "syntax",
+    },
+    {
+      name: "markdownTable",
+      code: `
+
+| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
+
+`,
+      type: "syntax",
+    },
+    {
       name: "dryRunFlag",
       code: "_env.dryRun",
       type: "variable",
