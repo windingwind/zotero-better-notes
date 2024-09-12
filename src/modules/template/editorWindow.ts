@@ -365,6 +365,14 @@ async function updateSnippets(type: string) {
           forceMoveMarkers: true,
         },
       ]);
+      // Select the inserted text, should compute the new range, as the text can be multi-line
+      const newRange = new monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.startLineNumber + text.split("\n").length - 1,
+        text.split("\n").slice(-1)[0].length + 1,
+      );
+      editor.setSelection(newRange);
     });
     container.appendChild(button);
   }
