@@ -187,6 +187,11 @@ export async function showTemplateEditor() {
       ?.addEventListener("click", (ev) => {
         restoreTemplates(_window);
       });
+    _window.document
+      .querySelector("#editor-type")
+      ?.addEventListener("command", (ev) => {
+        updateSnippets((ev.target as XUL.MenuList)?.value);
+      });
     addon.data.template.editor.window?.focus();
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
