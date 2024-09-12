@@ -133,6 +133,37 @@
         -moz-default-appearance: -moz-mac-help-button;
         min-width: 0;
       }
+      #snippets-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 4px;
+      }
+      .snippet {
+        border: var(--material-panedivider);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.916666667em;
+        line-height: 1.272727273;
+        overflow: hidden;
+        padding: 1px 4px;
+        text-overflow: ellipsis;
+        white-space: pre;
+        box-sizing: border-box;
+        color: var(--fill-primary);
+      }
+      .snippet.syntax {
+       background-color: color-mix(in srgb, var(--accent-yellow) 50%, transparent 50%);
+      }
+      .snippet.expression {
+        background-color: color-mix(in srgb, var(--accent-green) 50%, transparent 50%);
+      }
+      .snippet.variable {
+        background-color: color-mix(in srgb, var(--accent-azure) 50%, transparent 50%);
+      }
+      .snippet:hover {
+        background-color: var(--fill-quinary);
+      }
     </style>
     <link
       rel="stylesheet"
@@ -192,6 +223,7 @@
             onmousedown="this.focus()"
           ></iframe>
         </div>
+        <div id="snippets-container"></div>
       </xul:hbox>
       <xul:splitter
         state="open"

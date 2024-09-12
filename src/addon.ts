@@ -65,6 +65,7 @@ class Addon {
         window?: Window;
         tableHelper?: VirtualizedTableHelper;
         editor?: any;
+        monaco?: any;
         templates: string[];
       };
       picker: {

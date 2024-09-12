@@ -197,6 +197,7 @@ export async function showTemplateEditor() {
       language: "javascript",
       theme: "vs-" + (isDark ? "dark" : "light"),
     });
+    addon.data.template.editor.monaco = monaco;
     addon.data.template.editor.editor = editor;
   }
 }
@@ -278,6 +279,9 @@ function updateEditor() {
   const saveTemplate = win?.document.getElementById("save") as XUL.Button;
   const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
   const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
+  const snippets = win?.document.getElementById(
+    "snippets-container",
+  ) as HTMLDivElement;
   if (!name) {
     templateType.value = "unknown";
     templateType.setAttribute("disabled", "true");
@@ -288,6 +292,7 @@ function updateEditor() {
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
     resetTemplate.hidden = true;
+    snippets.hidden = true;
   } else {
     templateType.value = type;
     templateName.value = displayName;
@@ -307,6 +312,56 @@ function updateEditor() {
     editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
+    snippets.hidden = false;
+    updateSnippets(
+      (type === "system"
+        ? name.slice(1, -1)
+        : type) as keyof typeof snippetsStore,
+    );
+  }
+}
+
+async function updateSnippets(type: string) {
+  const container = addon.data.template.editor.window?.document.querySelector(
+    "#snippets-container",
+  );
+  if (!container) {
+    return;
+  }
+  container.innerHTML = "";
+
+  const snippets = snippetsStore[type as keyof typeof snippetsStore].concat(
+    snippetsStore.global,
+  );
+  if (!snippets) {
+    return;
+  }
+
+  // Add snippets to the container, with each snippet as a button
+  // Dragging the button to the editor will insert the snippet
+  for (const snippet of snippets) {
+    const button = document.createElement("span");
+    button.classList.add("snippet", snippet.type);
+    button.dataset.l10nId = `${config.addonRef}-snippet-${snippet.name}`;
+    button.addEventListener("click", () => {
+      const { editor, monaco } = addon.data.template.editor;
+      const selection = editor.getSelection();
+      const range = new monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.endLineNumber,
+        selection.endColumn,
+      );
+      const text = snippet.code;
+      editor.executeEdits("", [
+        {
+          range,
+          text,
+          forceMoveMarkers: true,
+        },
+      ]);
+    });
+    container.appendChild(button);
   }
 }
 
@@ -526,3 +581,224 @@ async function restoreTemplates(win: Window) {
   }
   await refresh();
 }
+
+const snippetsStore = {
+  global: [
+    {
+      name: "useMarkdown",
+      code: "\n// @use-markdown\n",
+      type: "syntax",
+    },
+    {
+      name: "useRefresh",
+      code: "\n// @use-refresh\n",
+      type: "syntax",
+    },
+    {
+      name: "inlineScript",
+      code: "${ // write your script here }",
+      type: "syntax",
+    },
+    {
+      name: "multiLineScript",
+      code: "\n${{\n  // write your script here\n}}$\n",
+      type: "syntax",
+    },
+    {
+      name: "dryRunFlag",
+      code: "_env.dryRun",
+      type: "variable",
+    },
+  ],
+  item: [
+    {
+      name: "itemBeforeLoop",
+      code: "\n// @beforeloop-begin\n\n// @beforeloop-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemInLoop",
+      code: "\n// @default-begin\n\n// @default-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemAfterLoop",
+      code: "\n// @afterloop-begin\n\n// @afterloop-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemItems",
+      code: "items",
+      type: "variable",
+    },
+    {
+      name: "itemItem",
+      code: "item",
+      type: "variable",
+    },
+    {
+      name: "itemTopItem",
+      code: "topItem",
+      type: "variable",
+    },
+    {
+      name: "itemTargetNoteItem",
+      code: "targetNoteItem",
+      type: "variable",
+    },
+    {
+      name: "itemCopyNoteImage",
+      code: "${copyNoteImage(...)}",
+      type: "expression",
+    },
+    {
+      name: "itemSharedObj",
+      code: "sharedObj",
+      type: "variable",
+    },
+    {
+      name: "itemFieldTitle",
+      code: '${topItem.getField("title")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldAbstract",
+      code: '${topItem.getField("abstractNote")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldCitKey",
+      code: '${topItem.getField("citationKey")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDate",
+      code: '${topItem.getField("date")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDOI",
+      code: '${topItem.getField("DOI")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDOIURL",
+      code: `
+\${{
+const doi = topItem.getField("DOI");
+const url = topItem.getField("url");
+if (doi) {
+  return \`DOI: <a href="https://doi.org/\${doi}">\${doi}</a>\`;
+} else {
+  return \`URL: <a href="\${url}">\${url}</a>\`;
+}
+}}$
+`,
+      type: "expression",
+    },
+    {
+      name: "itemFieldAuthors",
+      code: '${topItem.getCreators().map((v)=>v.firstName+" "+v.lastName).join("; ")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldJournal",
+      code: '${topItem.getField("publicationTitle")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldTitleTranslation",
+      code: '${topItem.getField("titleTranslation")}',
+      type: "expression",
+    },
+  ],
+  text: [
+    {
+      name: "textTargetNoteItem",
+      code: "targetNoteItem",
+      type: "variable",
+    },
+    {
+      name: "textSharedObj",
+      code: "sharedObj",
+      type: "variable",
+    },
+  ],
+  QuickInsertV2: [
+    {
+      name: "quickInsertLink",
+      code: "link",
+      type: "variable",
+    },
+    {
+      name: "quickInsertLinkText",
+      code: "linkText",
+      type: "variable",
+    },
+    {
+      name: "quickInsertSubNoteItem",
+      code: "subNoteItem",
+      type: "variable",
+    },
+    {
+      name: "quickInsertNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  QuickImportV2: [
+    {
+      name: "quickImportLink",
+      code: "link",
+      type: "variable",
+    },
+    {
+      name: "quickImportNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  QuickNoteV5: [
+    {
+      name: "quickNoteAnnotationItem",
+      code: "annotationItem",
+      type: "variable",
+    },
+    {
+      name: "quickNoteTopItem",
+      code: "topItem",
+      type: "variable",
+    },
+    {
+      name: "quickNoteNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileNameV2: [
+    {
+      name: "exportMDFileNameNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileHeaderV2: [
+    {
+      name: "exportMDFileHeaderNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileContent: [
+    {
+      name: "exportMDFileContentNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+    {
+      name: "exportMDFileContentMDContent",
+      code: "mdContent",
+      type: "variable",
+    },
+  ],
+};
