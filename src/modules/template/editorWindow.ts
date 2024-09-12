@@ -98,6 +98,7 @@ export async function showTemplateEditor() {
             span.style.backgroundColor = getRowLabelColor(cellData);
             span.style.borderRadius = "4px";
             span.style.paddingInline = "4px";
+            span.style.marginInline = "2px -2px";
             span.style.textAlign = "center";
             span.textContent = getString(
               "templateEditor-templateDisplayType",
