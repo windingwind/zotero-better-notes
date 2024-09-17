@@ -16,9 +16,9 @@ menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
 
 menuEditor-resizeImage = Ridimensiona immagine
 
-menuHelp-openUserGuide = Open Better Notes User Guide
+menuHelp-openUserGuide = Apri la guida utente di Better Notes
 
-templateEditor-templateName = Template Name
+templateEditor-templateName = Nome Template
 
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
@@ -112,4 +112,4 @@ userGuide-workspaceNoteInfo-title = Informazioni della nota
 userGuide-workspaceNoteInfo-desc = Puoi vedere, modificare e gestire i tag della nota, le relazioni e i link.
 userGuide-finish-title = Fine del tutorial!
 userGuide-finish-desc = Divertiti a usare Better Notes!
-    You can always run this guide again from the Help menu.
+    Puoi visualizzare nuovamente questo tutorial dal menu aiuto.
