@@ -24,10 +24,21 @@ bn-note-picker {
     #collections-items-container {
       margin-bottom: 0;
     }
+    #zotero-items-pane-content {
+      min-height: 100%;
+    }
   }
 
   #bn-select-opened-notes-container {
     min-width: 200px;
     max-height: 50%;
+  }
+
+  .bn-note-list-container {
+    width: 100%;
+  }
+
+  #bn-select-recent-notes-content {
+    border-left: var(--material-border-quarternary);
   }
 }

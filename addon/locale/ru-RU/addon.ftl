@@ -18,7 +18,27 @@ menuEditor-resizeImage=Изменить размер изображения
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 
-templateEditor-templateName = Template Name
+templateEditor-templateType = Type
+templateEditor-templateName = Name
+
+templateEditor-templateDisplayName =
+    .QuickInsertV2 = Quick Insert (Link)
+    .QuickImportV2 = Quick Import (Embed)
+    .QuickNoteV5 = Quick Note (From Annotation)
+    .ExportMDFileNameV2 = Export MD File Name
+    .ExportMDFileHeaderV2 = Export MD File Header
+    .ExportMDFileContent = Export MD File Content
+
+templateEditor-templateDisplayType =
+    .system = Builtin
+    .item = Item
+    .text = Text
+    .unknown = ?
+
+templateEditor-templateHelp =
+    .system = For specific purposes, e.g., generating note link.
+    .item = Can generate note fragments from one or more selected items as input.
+    .text = Can generate note fragments. It doesn't require any input.
 
 editor-resizeImage-title = Resize Image
 editor-resizeImage-prompt = Resize image width to:
@@ -65,7 +85,7 @@ editor-toolbar-settings-openAsTab = Open as tab
 editor-toolbar-settings-openAsWindow = Open as window
 editor-toolbar-settings-showInLibrary = Show in Library
 editor-toolbar-settings-insertTemplate=Вставить шаблон
-editor-toolbar-settings-refreshTemplates = Update content from templates (Beta)
+editor-toolbar-settings-refreshTemplates = Update content from templates
 editor-toolbar-settings-copyLink = Копировать Ссылку (L{ $line })
 editor-toolbar-settings-copyLinkAtSection = Копировать Ссылку (Sec. { $section })
 editor-toolbar-settings-openParent=Открыть вложение

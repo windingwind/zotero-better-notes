@@ -1,9 +1,12 @@
 import { config } from "../../package.json";
 import { ICONS } from "../utils/config";
-import { getNoteLink, getNoteLinkParams } from "../utils/link";
+import { getNoteLinkParams } from "../utils/link";
 import { addLineToNote } from "../utils/note";
+import { getPref } from "../utils/prefs";
 
-export function registerReaderAnnotationButton() {
+export { registerReaderAnnotationButton, syncAnnotationNoteTags };
+
+function registerReaderAnnotationButton() {
   Zotero.Reader.registerEventListener(
     "renderSidebarAnnotationHeader",
     (event) => {
@@ -23,7 +26,7 @@ export function registerReaderAnnotationButton() {
                 createNoteFromAnnotation(
                   reader._item.libraryID,
                   annotationData.id,
-                  (e as MouseEvent).shiftKey ? "window" : "tab",
+                  (e as MouseEvent).shiftKey ? "window" : "builtin",
                 );
                 e.preventDefault();
               },
@@ -54,7 +57,7 @@ export function registerReaderAnnotationButton() {
 async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
-  openMode: "window" | "tab" | undefined,
+  openMode: "window" | "builtin" | undefined,
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
     libraryID,
@@ -70,7 +73,7 @@ async function createNoteFromAnnotation(
   for (const tag of annotationTags) {
     if (linkRegex.test(tag)) {
       const linkParams = getNoteLinkParams(tag);
-      if (linkParams.noteItem) {
+      if (linkParams.noteItem && linkParams.noteItem.isNote()) {
         addon.hooks.onOpenNote(linkParams.noteItem.id, openMode || "tab", {
           lineIndex: linkParams.lineIndex || undefined,
         });
@@ -101,9 +104,10 @@ async function createNoteFromAnnotation(
       linkTarget.toLibID,
       linkTarget.toKey,
     );
-    if (targetItem)
-      addon.hooks.onOpenNote(targetItem.id, openMode || "tab", {});
-    return;
+    if (targetItem) {
+      addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {});
+      return;
+    }
   }
 
   const note: Zotero.Item = new Zotero.Item("note");
@@ -133,4 +137,55 @@ async function createNoteFromAnnotation(
   });
 
   addon.hooks.onOpenNote(note.id, "builtin", {});
+}
+
+async function syncAnnotationNoteTags(
+  itemID: number,
+  action: "add" | "remove",
+  tagData: { tag: string; type: number },
+) {
+  if (!getPref("annotationNote.enableTagSync")) {
+    return;
+  }
+  const item = Zotero.Items.get(itemID);
+  if (!item || (!item.isAnnotation() && !item.isNote())) {
+    return;
+  }
+  let targetItem: Zotero.Item;
+  if (item.isAnnotation()) {
+    const annotationModel = await addon.api.relation.getLinkTargetByAnnotation(
+      item.libraryID,
+      item.key,
+    );
+    if (!annotationModel) {
+      return;
+    }
+    targetItem = Zotero.Items.getByLibraryAndKey(
+      annotationModel.toLibID,
+      annotationModel.toKey,
+    ) as Zotero.Item;
+  } else {
+    const annotationModel = await addon.api.relation.getAnnotationByLinkTarget(
+      item.libraryID,
+      item.key,
+    );
+    if (!annotationModel) {
+      return;
+    }
+    targetItem = Zotero.Items.getByLibraryAndKey(
+      annotationModel.fromLibID,
+      annotationModel.fromKey,
+    ) as Zotero.Item;
+  }
+  if (!targetItem) {
+    return;
+  }
+
+  if (action === "add") {
+    targetItem.addTag(tagData.tag, tagData.type);
+  } else {
+    targetItem.removeTag(tagData.tag);
+  }
+
+  await targetItem.saveTx();
 }

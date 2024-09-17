@@ -187,6 +187,7 @@ export class Workspace extends PluginCEBase {
     await editor._initPromise;
 
     const _document = editor._iframeWindow.document;
+    await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
     const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
 
     const toggleOutline = this._addon.data.ztoolkit.UI.createElement(
@@ -195,7 +196,7 @@ export class Workspace extends PluginCEBase {
       {
         classList: ["toolbar-button"],
         properties: {
-          innerHTML: ICONS.workspaceToggleLeft,
+          innerHTML: ICONS.workspaceToggle,
           title: "Toggle left pane",
         },
         listeners: [
@@ -217,8 +218,11 @@ export class Workspace extends PluginCEBase {
       {
         classList: ["toolbar-button"],
         properties: {
-          innerHTML: ICONS.workspaceToggleRight,
+          innerHTML: ICONS.workspaceToggle,
           title: "Toggle right pane",
+        },
+        styles: {
+          transform: "rotate(180deg)",
         },
         listeners: [
           {

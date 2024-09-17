@@ -3,7 +3,6 @@ export { SYSTEM_TEMPLATE_NAMES, DEFAULT_TEMPLATES };
 
 const SYSTEM_TEMPLATE_NAMES = [
   "[QuickInsertV2]",
-  "[QuickBackLinkV2]",
   "[QuickImportV2]",
   "[QuickNoteV5]",
   "[ExportMDFileNameV2]",
@@ -16,15 +15,6 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   {
     name: "[QuickInsertV2]",
     text: `<p>
-  <a href="\${link}">
-    \${linkText}
-  </a>
-</p>`,
-  },
-  {
-    name: "[QuickBackLinkV2]",
-    text: `<p>
-  Referred in
   <a href="\${link}">
     \${linkText}
   </a>

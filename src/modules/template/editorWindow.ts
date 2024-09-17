@@ -33,6 +33,12 @@ export async function showTemplateEditor() {
         // Set locales directly to columns
         columns: [
           {
+            dataKey: "type",
+            label: "templateEditor-templateType",
+            width: 60,
+            fixedWidth: true,
+          },
+          {
             dataKey: "name",
             label: "templateEditor-templateName",
             fixedWidth: false,
@@ -48,9 +54,7 @@ export async function showTemplateEditor() {
         disableFontSizeScaling: true,
       })
       .setProp("getRowCount", () => addon.data.template.editor.templates.length)
-      .setProp("getRowData", (index) => ({
-        name: addon.data.template.editor.templates[index] || "no data",
-      }))
+      .setProp("getRowData", getRowData)
       .setProp("onSelectionChange", (selection) => {
         updateEditor();
         updatePreview();
@@ -70,7 +74,67 @@ export async function showTemplateEditor() {
         "getRowString",
         (index) => addon.data.template.editor.templates[index] || "",
       )
+      .setProp("renderItem", (index, selection, oldElem, columns) => {
+        let div;
+        if (oldElem) {
+          div = oldElem;
+          div.innerHTML = "";
+        } else {
+          div = document.createElement("div");
+          div.className = "row";
+        }
+
+        div.classList.toggle("selected", selection.isSelected(index));
+        div.classList.toggle("focused", selection.focused == index);
+        const rowData = getRowData(index);
+
+        for (const column of columns) {
+          const span = document.createElement("span");
+          // @ts-ignore
+          span.className = `cell ${column?.className}`;
+          const cellData = rowData[column.dataKey as keyof typeof rowData];
+          span.textContent = cellData;
+          if (column.dataKey === "type") {
+            span.style.backgroundColor = getRowLabelColor(cellData);
+            span.style.borderRadius = "4px";
+            span.style.paddingInline = "4px";
+            span.style.marginInline = "2px -2px";
+            span.style.textAlign = "center";
+            span.textContent = getString(
+              "templateEditor-templateDisplayType",
+              cellData,
+            );
+          }
+          div.append(span);
+        }
+        return div;
+      })
       .render();
+    _window.document
+      .querySelector("#templateType-help")
+      ?.addEventListener("click", (ev) => {
+        new addon.data.ztoolkit.Guide().highlight(_window.document, {
+          title: "About Template Types",
+          description: ["system", "item", "text"]
+            .map(
+              (type) =>
+                `${getString(
+                  "templateEditor-templateDisplayType",
+                  type,
+                )}: ${getString("templateEditor-templateHelp", type)}`,
+            )
+            .join("\n"),
+          onNextClick: () => {
+            Zotero.launchURL(
+              "https://github.com/windingwind/zotero-better-notes/blob/master/docs/about-note-template.md",
+            );
+          },
+          showButtons: ["next", "close"],
+          nextBtnText: "Learn more",
+          closeBtnText: "OK",
+          position: "center",
+        });
+      });
     _window.document
       .querySelector("#create")
       ?.addEventListener("click", (ev) => {
@@ -124,6 +188,11 @@ export async function showTemplateEditor() {
       ?.addEventListener("click", (ev) => {
         restoreTemplates(_window);
       });
+    _window.document
+      .querySelector("#editor-type")
+      ?.addEventListener("command", (ev) => {
+        updateSnippets((ev.target as XUL.MenuList)?.value);
+      });
     addon.data.template.editor.window?.focus();
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
@@ -134,6 +203,7 @@ export async function showTemplateEditor() {
       language: "javascript",
       theme: "vs-" + (isDark ? "dark" : "light"),
     });
+    addon.data.template.editor.monaco = monaco;
     addon.data.template.editor.editor = editor;
   }
 }
@@ -143,6 +213,49 @@ async function refresh() {
   updateTable();
   updateEditor();
   await updatePreview();
+}
+
+function getRowData(index: number) {
+  const rowData = addon.data.template.editor.templates[index];
+  if (!rowData) {
+    return {
+      name: "",
+      type: "unknown",
+    };
+  }
+  let templateType = "unknown";
+  let templateDisplayName = rowData;
+  if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(rowData)) {
+    templateType = "system";
+    templateDisplayName = getString(
+      "templateEditor-templateDisplayName",
+      // Exclude the first and last character, which are '[' and ']'
+      rowData.slice(1, -1),
+    );
+  } else if (rowData.toLowerCase().startsWith("[item]")) {
+    templateType = "item";
+    templateDisplayName = rowData.slice(6);
+  } else if (rowData.toLowerCase().startsWith("[text]")) {
+    templateType = "text";
+    templateDisplayName = rowData.slice(6);
+  }
+  return {
+    name: templateDisplayName,
+    type: templateType,
+  };
+}
+
+function getRowLabelColor(type: string) {
+  switch (type) {
+    case "system":
+      return "var(--accent-yellow)";
+    case "item":
+      return "var(--accent-green)";
+    case "text":
+      return "var(--accent-azure)";
+    default:
+      return "var(--accent-red)";
+  }
 }
 
 function updateData() {
@@ -155,42 +268,48 @@ function updateTable(selectId?: number) {
 
 function updateEditor() {
   const name = getSelectedTemplateName();
+  const { type, name: displayName } = getRowData(getSelectedIndex());
   const templateText = addon.api.template.getTemplateText(name);
+  const win = addon.data.template.editor.window;
+  if (!win) {
+    return;
+  }
 
-  const header = addon.data.template.editor.window?.document.getElementById(
-    "editor-name",
+  const templateType = win.document.querySelector(
+    "#editor-type",
+  ) as XUL.MenuList;
+  const templateName = win.document.querySelector(
+    "#editor-name",
   ) as HTMLInputElement;
-  const editor = addon.data.template.editor.window?.document.getElementById(
-    "editor",
-  ) as HTMLIFrameElement;
-  const saveTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "save",
-    ) as XUL.Button;
-  const deleteTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "delete",
-    ) as XUL.Button;
-  const resetTemplate =
-    addon.data.template.editor.window?.document.getElementById(
-      "reset",
-    ) as XUL.Button;
+  const editor = win?.document.getElementById("editor") as HTMLIFrameElement;
+  const saveTemplate = win?.document.getElementById("save") as XUL.Button;
+  const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
+  const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
+  const snippets = win?.document.getElementById(
+    "snippets-container",
+  ) as HTMLDivElement;
   if (!name) {
-    header.value = "";
-    header.setAttribute("disabled", "true");
+    templateType.value = "unknown";
+    templateType.setAttribute("disabled", "true");
+    templateName.value = "";
+    templateName.setAttribute("disabled", "true");
     editor.hidden = true;
     saveTemplate.setAttribute("disabled", "true");
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
     resetTemplate.hidden = true;
+    snippets.hidden = true;
   } else {
-    header.value = name;
+    templateType.value = type;
+    templateName.value = displayName;
     if (!addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
-      header.removeAttribute("disabled");
+      templateType.removeAttribute("disabled");
+      templateName.removeAttribute("disabled");
       deleteTemplate.hidden = false;
       resetTemplate.hidden = true;
     } else {
-      header.setAttribute("disabled", "true");
+      templateType.setAttribute("disabled", "true");
+      templateName.setAttribute("disabled", "true");
       deleteTemplate.setAttribute("disabled", "true");
       deleteTemplate.hidden = true;
       resetTemplate.hidden = false;
@@ -199,6 +318,64 @@ function updateEditor() {
     editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
+    snippets.hidden = false;
+    updateSnippets(
+      (type === "system"
+        ? name.slice(1, -1)
+        : type) as keyof typeof snippetsStore,
+    );
+  }
+}
+
+async function updateSnippets(type: string) {
+  const container = addon.data.template.editor.window?.document.querySelector(
+    "#snippets-container",
+  );
+  if (!container) {
+    return;
+  }
+  container.innerHTML = "";
+
+  const snippets = snippetsStore[type as keyof typeof snippetsStore].concat(
+    snippetsStore.global,
+  );
+  if (!snippets) {
+    return;
+  }
+
+  // Add snippets to the container, with each snippet as a button
+  // Dragging the button to the editor will insert the snippet
+  for (const snippet of snippets) {
+    const button = document.createElement("span");
+    button.classList.add("snippet", snippet.type);
+    button.dataset.l10nId = `${config.addonRef}-snippet-${snippet.name}`;
+    button.addEventListener("click", () => {
+      const { editor, monaco } = addon.data.template.editor;
+      const selection = editor.getSelection();
+      const range = new monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.endLineNumber,
+        selection.endColumn,
+      );
+      const text = snippet.code;
+      editor.executeEdits("", [
+        {
+          range,
+          text,
+          forceMoveMarkers: true,
+        },
+      ]);
+      // Select the inserted text, should compute the new range, as the text can be multi-line
+      const newRange = new monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.startLineNumber + text.split("\n").length - 1,
+        text.split("\n").slice(-1)[0].length + 1,
+      );
+      editor.setSelection(newRange);
+    });
+    container.appendChild(button);
   }
 }
 
@@ -217,13 +394,17 @@ async function updatePreview() {
 }
 
 function getSelectedTemplateName() {
-  const selectedTemplate = addon.data.template.editor.templates.find(
-    (v, i) =>
-      addon.data.template.editor.tableHelper?.treeInstance.selection.isSelected(
-        i,
-      ),
-  );
+  const selectedTemplate =
+    addon.data.template.editor.templates[getSelectedIndex()];
   return selectedTemplate || "";
+}
+
+function getSelectedIndex() {
+  const selectedIndex =
+    addon.data.template.editor.tableHelper?.treeInstance.selection.selected
+      .values()
+      .next().value;
+  return selectedIndex;
 }
 
 function createTemplate() {
@@ -252,14 +433,32 @@ async function importNoteTemplate() {
 }
 
 function saveSelectedTemplate() {
-  const name = getSelectedTemplateName();
-  const header = addon.data.template.editor.window?.document.getElementById(
-    "editor-name",
+  const win = addon.data.template.editor.window;
+  if (!win) {
+    return;
+  }
+
+  const templateType = win.document.querySelector(
+    "#editor-type",
+  ) as XUL.MenuList;
+  const templateName = win.document.querySelector(
+    "#editor-name",
   ) as HTMLInputElement;
+
+  const name = getSelectedTemplateName();
+  const type = templateType.value;
+  let modifiedName: string;
+  if (type === "system") {
+    modifiedName = name;
+  } else if (type === "unknown") {
+    modifiedName = templateName.value;
+  } else {
+    modifiedName = `[${type}]${templateName.value}`;
+  }
 
   if (
     addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name) &&
-    header.value !== name
+    modifiedName !== name
   ) {
     showHint(
       `Template ${name} is a system template. Modifying template name is not allowed.`,
@@ -268,7 +467,7 @@ function saveSelectedTemplate() {
   }
 
   const template = {
-    name: header.value,
+    name: modifiedName,
     text: addon.data.template.editor.editor.getValue() as string,
   };
   if (
@@ -287,10 +486,10 @@ function saveSelectedTemplate() {
   }
 
   addon.api.template.setTemplate(template);
-  if (name !== template.name) {
+  if (name !== modifiedName) {
     addon.api.template.removeTemplate(name);
   }
-  showHint(`Template ${template.name} saved.`);
+  showHint(`Template ${modifiedName} saved.`);
   const selectedId =
     addon.data.template.editor.tableHelper?.treeInstance.selection.selected
       .values()
@@ -396,3 +595,285 @@ async function restoreTemplates(win: Window) {
   }
   await refresh();
 }
+
+const snippetsStore = {
+  global: [
+    {
+      name: "useMarkdown",
+      code: "\n// @use-markdown\n",
+      type: "syntax",
+    },
+    {
+      name: "useRefresh",
+      code: "\n// @use-refresh\n",
+      type: "syntax",
+    },
+    {
+      name: "inlineScript",
+      code: "${ // write your script here }",
+      type: "syntax",
+    },
+    {
+      name: "multiLineScript",
+      code: "\n${{\n  // write your script here\n}}$\n",
+      type: "syntax",
+    },
+    {
+      name: "markdownHeading1",
+      code: "\n# type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownHeading2",
+      code: "\n## type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownHeading3",
+      code: "\n### type your heading here",
+      type: "syntax",
+    },
+    {
+      name: "markdownBullet",
+      code: "\n\n- type your bullet list here",
+      type: "syntax",
+    },
+    {
+      name: "markdownNumber",
+      code: "\n\n1. type your number list here",
+      type: "syntax",
+    },
+    {
+      name: "markdownBold",
+      code: "**type your bold text here**",
+      type: "syntax",
+    },
+    {
+      name: "markdownItalic",
+      code: "_type your italic text here_",
+      type: "syntax",
+    },
+    {
+      name: "markdownLink",
+      code: "[type your link text here](type your link url here)",
+      type: "syntax",
+    },
+    {
+      name: "markdownMonospace",
+      code: "\n\n`type your text here`",
+      type: "syntax",
+    },
+    {
+      name: "markdownQuote",
+      code: "\n\n> type your quote here",
+      type: "syntax",
+    },
+    {
+      name: "markdownTable",
+      code: `
+
+| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
+
+`,
+      type: "syntax",
+    },
+    {
+      name: "dryRunFlag",
+      code: "_env.dryRun",
+      type: "variable",
+    },
+  ],
+  item: [
+    {
+      name: "itemBeforeLoop",
+      code: "\n// @beforeloop-begin\n\n// @beforeloop-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemInLoop",
+      code: "\n// @default-begin\n\n// @default-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemAfterLoop",
+      code: "\n// @afterloop-begin\n\n// @afterloop-end\n",
+      type: "syntax",
+    },
+    {
+      name: "itemItems",
+      code: "items",
+      type: "variable",
+    },
+    {
+      name: "itemItem",
+      code: "item",
+      type: "variable",
+    },
+    {
+      name: "itemTopItem",
+      code: "topItem",
+      type: "variable",
+    },
+    {
+      name: "itemTargetNoteItem",
+      code: "targetNoteItem",
+      type: "variable",
+    },
+    {
+      name: "itemCopyNoteImage",
+      code: "${copyNoteImage(...)}",
+      type: "expression",
+    },
+    {
+      name: "itemSharedObj",
+      code: "sharedObj",
+      type: "variable",
+    },
+    {
+      name: "itemFieldTitle",
+      code: '${topItem.getField("title")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldAbstract",
+      code: '${topItem.getField("abstractNote")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldCitKey",
+      code: '${topItem.getField("citationKey")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDate",
+      code: '${topItem.getField("date")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDOI",
+      code: '${topItem.getField("DOI")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldDOIURL",
+      code: `
+\${{
+const doi = topItem.getField("DOI");
+const url = topItem.getField("url");
+if (doi) {
+  return \`DOI: <a href="https://doi.org/\${doi}">\${doi}</a>\`;
+} else {
+  return \`URL: <a href="\${url}">\${url}</a>\`;
+}
+}}$
+`,
+      type: "expression",
+    },
+    {
+      name: "itemFieldAuthors",
+      code: '${topItem.getCreators().map((v)=>v.firstName+" "+v.lastName).join("; ")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldJournal",
+      code: '${topItem.getField("publicationTitle")}',
+      type: "expression",
+    },
+    {
+      name: "itemFieldTitleTranslation",
+      code: '${topItem.getField("titleTranslation")}',
+      type: "expression",
+    },
+  ],
+  text: [
+    {
+      name: "textTargetNoteItem",
+      code: "targetNoteItem",
+      type: "variable",
+    },
+    {
+      name: "textSharedObj",
+      code: "sharedObj",
+      type: "variable",
+    },
+  ],
+  QuickInsertV2: [
+    {
+      name: "quickInsertLink",
+      code: "link",
+      type: "variable",
+    },
+    {
+      name: "quickInsertLinkText",
+      code: "linkText",
+      type: "variable",
+    },
+    {
+      name: "quickInsertSubNoteItem",
+      code: "subNoteItem",
+      type: "variable",
+    },
+    {
+      name: "quickInsertNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  QuickImportV2: [
+    {
+      name: "quickImportLink",
+      code: "link",
+      type: "variable",
+    },
+    {
+      name: "quickImportNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  QuickNoteV5: [
+    {
+      name: "quickNoteAnnotationItem",
+      code: "annotationItem",
+      type: "variable",
+    },
+    {
+      name: "quickNoteTopItem",
+      code: "topItem",
+      type: "variable",
+    },
+    {
+      name: "quickNoteNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileNameV2: [
+    {
+      name: "exportMDFileNameNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileHeaderV2: [
+    {
+      name: "exportMDFileHeaderNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+  ],
+  ExportMDFileContent: [
+    {
+      name: "exportMDFileContentNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+    {
+      name: "exportMDFileContentMDContent",
+      code: "mdContent",
+      type: "variable",
+    },
+  ],
+};

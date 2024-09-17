@@ -18,7 +18,27 @@ menuEditor-resizeImage=缩放图片
 
 menuHelp-openUserGuide = 打开Better Notes用户指南
 
-templateEditor-templateName = 模板名称
+templateEditor-templateType = 类型
+templateEditor-templateName = 名称
+
+templateEditor-templateDisplayName =
+    .QuickInsertV2 = Quick Insert (插入链接)
+    .QuickImportV2 = Quick Import (嵌入链接笔记)
+    .QuickNoteV5 = Quick Note (从批注创建笔记)
+    .ExportMDFileNameV2 = Export MD File Name (导出MD文件名)
+    .ExportMDFileHeaderV2 = Export MD File Header (导出MD头)
+    .ExportMDFileContent = Export MD File Content (导出MD正文)
+
+templateEditor-templateDisplayType =
+    .system = 内置
+    .item = 条目
+    .text = 文本
+    .unknown = ?
+
+templateEditor-templateHelp =
+    .system = 用于特定目的，例如生成笔记链接。
+    .item = 可以从一个或多个选定的条目生成笔记片段。
+    .text = 可以生成笔记片段。不需要任何输入。
 
 editor-resizeImage-title = 缩放图片
 editor-resizeImage-prompt = 缩放图片宽度为：
@@ -65,7 +85,7 @@ editor-toolbar-settings-openAsTab = 在标签页中打开
 editor-toolbar-settings-openAsWindow = 在窗口中打开
 editor-toolbar-settings-showInLibrary = 在文库中显示
 editor-toolbar-settings-insertTemplate=插入模板
-editor-toolbar-settings-refreshTemplates = 更新模板生成内容 (Beta)
+editor-toolbar-settings-refreshTemplates = 更新模板生成内容
 editor-toolbar-settings-copyLink=复制行(L{ $line })
 editor-toolbar-settings-copyLinkAtSection=复制节(Sec. { $section })
 editor-toolbar-settings-openParent=打开附件

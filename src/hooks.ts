@@ -18,7 +18,10 @@ import {
 import { openWorkspaceWindow } from "./modules/workspace/window";
 import { openNotePreview } from "./modules/workspace/preview";
 import { registerNotify } from "./modules/notify";
-import { registerReaderAnnotationButton } from "./modules/reader";
+import {
+  registerReaderAnnotationButton,
+  syncAnnotationNoteTags,
+} from "./modules/annotationNote";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import {
   showTemplatePicker,
@@ -140,8 +143,15 @@ async function onNotify(
       }
       onUpdateNoteTabsTitle(modifiedNotes);
     }
-  } else {
-    return;
+  }
+  if (type === "item-tag") {
+    for (const itemTagID of ids) {
+      await syncAnnotationNoteTags(
+        Number((itemTagID as string).split("-")[0]),
+        event as "add" | "remove",
+        extraData[itemTagID],
+      );
+    }
   }
 }
 

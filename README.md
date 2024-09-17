@@ -2,12 +2,13 @@
 
 [![zotero target version](https://img.shields.io/badge/Zotero-7-green?style=flat-square&logo=zotero&logoColor=CC2936)](https://www.zotero.org)
 [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
+[![telegram group](https://img.shields.io/badge/Join%20Community-@bnzotero-blue?style=flat-square&logo=telegram)](https://t.me/boost/bnzotero)
 
 <div align=center><img src="./docs/res/teaser.png" width="800px"></img></div>
 
 Everything about note management. All in Zotero.
 
-Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translation)](https://zotero.yuque.com/staff-gkhviy/better-notes/biigg4?)
+Join the community on Telegram: [@bnzotero](https://t.me/boost/bnzotero)
 
 ## 🧩 Outline
 
@@ -22,7 +23,7 @@ Better Notes Handbook (outdated, for version<=0.8.9): [中文 (provide translati
 <details style="text-indent: 2em">
 <summary>More</summary>
 
-[Getting Started with the _Workspace_](#getting-started-with-the-workspace)
+[Getting Started by Opening a Note Tab](#getting-started-by-opening-a-note-tab)
 
 [Note Editor](#note-editor)
 
@@ -87,13 +88,11 @@ and:
 
 ## 👋 Install
 
-- Download the plugin (.xpi file) from below. For Zotero 7 beta, please always use the latest beta version.
+- Download the plugin (.xpi file) from below.
 
-  - [Latest Version: 1.1.4-beta.103](https://github.com/windingwind/zotero-better-notes/releases/download/v1.1.4-beta.103/better-notes-for-zotero.xpi)
+  - [Latest Version: 2.0.7](https://github.com/windingwind/zotero-better-notes/releases/download/v2.0.7/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
-  - [v1.0.4](https://github.com/windingwind/zotero-better-notes/releases/tag/1.0.4) (last for Zotero 6)
-  - [v0.8.9](https://github.com/windingwind/zotero-better-notes/releases/tag/0.8.9) (last with auto-insert, tag-insert, math-ocr, for Zotero 6)
-  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases) (including beta plugin for Zotero 7 beta)
+  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
@@ -109,61 +108,50 @@ BN offers a range of features that can be combined like Lego blocks to build you
 
 Start taking notes in Zotero with BN in **5 minutes**!
 
-### Getting Started with the _Workspace_
+### Getting Started by Opening a Note Tab
 
-> 💡 This section is outdated and will be removed. For the latest beta version, the workspace is no longer a thing. You can open unlimited number of note tab/window, which is what we call `workspace` in the past.
+> 💡 In the latest version, the workspace is no longer a thing. You can open an unlimited number of note tabs/windows, which is what we called `workspace` in the past.
 
-The _workspace_ serves as the **central hub** where input flows (papers and annotations) converge with output flows (summaries and comparisons).
+To open a note in a tab, double-click/press `Enter` on the item in the library, as you would do to open an attachment. Holding `shift` opens the note in a new window.
 
-To open the _workspace_, click the <img src="addon/chrome/content/icons/favicon.png" alt="icon" width="20px"> button in the tabs bar.
+<div align=center><img src="https://github.com/user-attachments/assets/0824293b-765d-47af-8815-66f009adab0e" width="800px"></img></div>
 
-<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622132-5ed9bd23-3c0e-4775-b273-745824cc4b51.gif" width="800px"></img></div>
-
-The _workspace_ contains a default note called the _workspace note_. You can create a new note as the _workspace note_ if prompted on opening _workspace_.
-
-> 💡 How to set an existing note as the _workspace note_?
->
-> 1. In the library: select a note item and right-click
-> 2. In the note editor: click on the Tools button
->
-> You can change the _workspace note_ at any time.
-
-The _workspace_ allows you to take notes and write, just like you would in MS Word or a markdown editor (e.g., Obsidian).
-
-> **Explore the _Workspace_!**  
+> **Explore the Note Tab!**  
 > 💡 The layout from left to right is:
 >
 > - Outline
-> - _Workspace note_ editor (main editor)
-> - Note link preview (hidden by default)
-> - Reader notes pane (hidden by default)
->
-> 💡 To toggle these panes, hover the _workspace_ tab and click corresponding buttons.  
-> 💡 To open the _workspace_ in a new window, drag the _workspace_ tab.
+> - Note editor
+> - Context pane (tags, related, relation graph, in/outbound links)
 
 ### Note Editor
 
-The _workspace_ includes the note editor for the _workspace note_. You can use it to take notes and write summaries.
-
-> 💡 How to open note editor?
+> 💡 Where can I find the note editor?
 >
-> - In the library: click to open a note editor and double-click to open note editor in a standalone window.
-> - In the PDF reader: right-side bar
+> - In the note tab/window
+> - In the library: click to open a note editor in the item pane
+> - In the PDF reader: right-side context pane
 >
 > 💡 How to create a new note?  
-> Click the note icon in the library tools bar (the row under the tabs bar).
+> Click the note icon in the library tools bar (the row under the tabs bar), or from the menu - File
 
-<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622355-2b8b2c00-a640-41fa-bb82-372fa10ecc64.png" width="400px"></img></div>
+<div align=center><img src="https://github.com/user-attachments/assets/ec2ba415-8ec9-450d-9d73-d24d177ccd13" width="400px"></img></div>
 
 ### Note Link
 
-To create a _note link_ between current note and the _workspace note_, simply click the <img src="addon/chrome/content/icons/favicon.png" width="20px"></img> button in the title bar of current note editor.
+To create a _note link_ between the note you are editing and another note, click the <img src="addon/chrome/content/icons/favicon.png" width="20px"></img> button in the title bar of the note editor.
 
-<div align=center><img src="https://user-images.githubusercontent.com/33902321/236622693-f7c7c82f-7434-4dbf-baf3-d03a72eb51c5.png" width="800px"></img></div>
+<div align=center><img src="https://github.com/user-attachments/assets/e37a694b-613e-4242-9c14-d83708a3d1e7" width="800px"></img></div>
+
+> 💡 What's the difference between `Mention in` and `Link to`?
+>
+> `Mention in` will insert a link of the current note (from which you open the link creator) to another note (which you pick in the link creator), i.e. inbound link.
+> `Link to` will insert links of picked notes to the current note, i.e. outbound link.
+
+You can also manually copy the note link from the note editor menu.
 
 ### Note Template
 
-Still spending a lot of time writing summaries or doing copy-pasting while taking notes? Say hello to _Note Template_!
+Are you spending a lot of time writing summaries and copy-pasting while taking notes? Say hello to _Note Template_!
 
 _Note Template_ is designed for tasks like:
 
@@ -173,13 +161,13 @@ _Note Template_ is designed for tasks like:
 
 > 💡 Need help or looking for community templates? [See here →](https://github.com/windingwind/zotero-better-notes/discussions/categories/note-templates)
 >
-> 💡 Want to write/share your own templates?
+> 💡 Want to write/share your templates?
 >
 > [How to write →](docs/about-note-template.md#write-note-template)
 >
 > [How to share →](docs/about-note-template.md#share-your-template)
 
-<div align=center><img src="https://user-images.githubusercontent.com/33902321/236623159-8f67064b-1fab-4cf1-abf4-0c8243370a14.gif" width="800px"></img></div>
+<div align=center><img src="https://github.com/user-attachments/assets/62e1438f-7910-4f57-ad88-c6a41dd9addf" width="800px"></img></div>
 
 ### Syncing: Note 🔄️ Markdown
 
@@ -207,15 +195,9 @@ You can export your note to the following formats:
 
 Simply click on the corresponding export button in the toolbar and follow the prompts.
 
-### GPT Integration
+### LLM Integration
 
-The [Zotero-GPT](https://github.com/MuiseDestiny/zotero-gpt) plugin provides GPT Integration. If you also have Better Notes installed, you can wake up GPT pane in the _workspace_ note editor with `space` key.
-
-You can:
-
-- Ask GPT questions about current note
-- Summarize/fix spelling and grammar/translate/polish the selection
-- Accept suggestions/modifications from GPT with `enter` key.
+The [Zotero-GPT](https://github.com/MuiseDestiny/zotero-gpt) plugin provides GPT Integration. If you also have Better Notes installed, you can wake up its chatting pane in the note editor and insert/modify content in the note.
 
 ### Action Workflow
 
@@ -228,7 +210,7 @@ The [Actions & Tags](https://github.com/windingwind/zotero-actions-tags) plugin 
 ### Other Features
 
 - Quick Note: convert annotation to note with one click.
-- Resize images with right-click menu.
+- Resize images with a right-click menu.
 - Preview images with double-click/ctrl-click.
 
 ## 🧲 API
@@ -241,13 +223,13 @@ BN provides APIs for other plugin developers in `Zotero.BetterNotes.api.${API_MO
 - `template`: Manipulate note templates
 - `$export`: Export note
 - `$import`: Import note
-- `editor`: Note editor APIs. Give your script the full control of contents in the note editor.
+- `editor`: Note editor APIs. Give your script full control of contents in the note editor.
 
 ## 🔧 Development
 
 This plugin is built based on the [Zotero Plugin Template](https://github.com/windingwind/zotero-plugin-template). See the setup and debug details there.
 
-To startup, run
+To start, run
 
 ```bash
 git clone https://github.com/windingwind/zotero-better-notes.git
@@ -265,8 +247,7 @@ Use this code under AGPL. No warranties are provided. Keep the laws of your loca
 ## 🔎 My Zotero Plugins
 
 - [Translate for Zotero](https://github.com/windingwind/zotero-pdf-translate): PDF translation for Zotero
-- [zotero-pdf-preview](https://github.com/windingwind/zotero-tag): PDF preview for Zotero
-- [zotero-tag](https://github.com/windingwind/zotero-tag): Automatically tag items/Batch tagging
+- [Actions & Tags for Zotero](https://github.com/windingwind/zotero-tag): Customize your Zotero workflow.
 
 ## 🙌 Sponsors
 

@@ -1,6 +1,6 @@
 {
   "name": "zotero-better-notes",
-  "version": "1.1.4-beta.103",
+  "version": "2.0.7",
   "description": "Everything about note management. All in Zotero.",
   "config": {
     "addonName": "Better Notes for Zotero",
@@ -56,7 +56,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^2.3.37"
+    "zotero-plugin-toolkit": "^3.0.3"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -84,7 +84,7 @@
     "replace-in-file": "^7.2.0",
     "typescript": "^5.3.3",
     "xslt3": "^2.6.0",
-    "zotero-plugin-scaffold": "^0.0.32",
+    "zotero-plugin-scaffold": "^0.1.2",
     "zotero-types": "^2.0.1"
   },
   "eslintConfig": {

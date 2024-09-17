@@ -224,6 +224,7 @@ export async function parseAnnotationHTML(
   annotations: Zotero.Item[],
   options: {
     noteItem?: Zotero.Item; // If you are sure there are no image annotations, note is not required.
+    ignoreBody?: boolean;
     ignoreComment?: boolean;
     skipCitation?: boolean;
   } = {},
@@ -232,6 +233,10 @@ export async function parseAnnotationHTML(
   for (const annot of annotations) {
     const annotJson = await parseAnnotationJSON(annot);
     if (options.ignoreComment && annotJson?.comment) {
+      annotJson.comment = "";
+    }
+    if (options.ignoreBody && annotJson?.text && annotJson?.comment) {
+      annotJson.text = annotJson.comment;
       annotJson.comment = "";
     }
     annotationJSONList.push(annotJson!);

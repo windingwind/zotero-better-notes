@@ -2,6 +2,7 @@ import { config } from "../../../package.json";
 import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
 import { PluginCEBase } from "../base";
 import {
+  getPref,
   getPrefJSON,
   registerPrefObserver,
   setPref,
@@ -19,12 +20,15 @@ export class NotePicker extends PluginCEBase {
   itemsView!: _ZoteroTypes.ItemTree;
   collectionsView!: _ZoteroTypes.CollectionTree;
   openedNotesView!: VirtualizedTableHelper;
+  recentNotesView!: VirtualizedTableHelper;
 
   _collectionsList!: XUL.Box;
 
   openedNotes: Zotero.Item[] = [];
 
-  activeSelectionType: "library" | "tabs" | "none" = "none";
+  recentNotes: Zotero.Item[] = [];
+
+  activeSelectionType: "library" | "tabs" | "recent" | "none" = "none";
 
   uid = Zotero.Utilities.randomString(8);
 
@@ -62,14 +66,20 @@ export class NotePicker extends PluginCEBase {
           <html:div id="zotero-items-tree"></html:div>
         </hbox>
       </hbox>
-      <vbox id="bn-select-opened-notes-container" class="container">
+      <hbox id="bn-select-opened-notes-container" class="container">
         <vbox
           id="bn-select-opened-notes-content"
-          class="container virtualized-table-container"
+          class="container virtualized-table-container bn-note-list-container"
         >
           <html:div id="bn-select-opened-notes-tree-${this.uid}"></html:div>
         </vbox>
-      </vbox>
+         <vbox
+          id="bn-select-recent-notes-content"
+          class="container virtualized-table-container bn-note-list-container"
+        >
+          <html:div id="bn-select-recent-notes-tree-${this.uid}"></html:div>
+        </vbox>
+      </hbox>
     </vbox>
   </vbox>
 </vbox>
@@ -118,6 +128,10 @@ export class NotePicker extends PluginCEBase {
     await this.loadLibraryNotes();
     this.loadQuickSearch();
     await this.loadOpenedNotes();
+
+    this.recentNotes = this.getRecentNotes();
+
+    await this.loadRecentNotes();
   }
 
   async loadLibraryNotes() {
@@ -250,6 +264,78 @@ export class NotePicker extends PluginCEBase {
     // }
   }
 
+  async loadRecentNotes() {
+    const renderLock = Zotero.Promise.defer();
+    this.recentNotesView = new VirtualizedTableHelper(window)
+      .setContainerId(`bn-select-recent-notes-tree-${this.uid}`)
+      .setProp({
+        id: `bn-select-recent-notes-table-${this.uid}`,
+        columns: [
+          {
+            dataKey: "title",
+            label: "Recent Notes",
+            flex: 1,
+          },
+        ],
+        showHeader: true,
+        multiSelect: false,
+        staticColumns: true,
+        disableFontSizeScaling: true,
+      })
+      .setProp("getRowCount", () => this.recentNotes.length || 0)
+      .setProp("getRowData", (index) => {
+        const note = this.recentNotes[index];
+        return {
+          title: note.getNoteTitle(),
+        };
+      })
+      .setProp("onSelectionChange", (selection) => {
+        this.onRecentNoteSelected(selection);
+      })
+      // For find-as-you-type
+      .setProp(
+        "getRowString",
+        (index) => this.recentNotes[index].getNoteTitle() || "",
+      )
+      .setProp("renderItem", (index, selection, oldElem, columns) => {
+        let div;
+        if (oldElem) {
+          div = oldElem;
+          div.innerHTML = "";
+        } else {
+          div = document.createElement("div");
+          div.className = "row";
+        }
+
+        div.classList.toggle("selected", selection.isSelected(index));
+        div.classList.toggle("focused", selection.focused == index);
+        const rowData = this.recentNotes[index];
+
+        for (const column of columns) {
+          const span = document.createElement("span");
+          // @ts-ignore
+          span.className = `cell ${column?.className}`;
+          span.textContent = rowData.getNoteTitle();
+          const icon = getCSSItemTypeIcon("note");
+          icon.classList.add("cell-icon");
+          span.prepend(icon);
+          div.append(span);
+        }
+        return div;
+      })
+      .render(-1, () => {
+        renderLock.resolve();
+      });
+    await renderLock.promise;
+
+    if (this.recentNotes.length > 0) {
+      setTimeout(() => {
+        this.recentNotesView.treeInstance.selection.select(0);
+        this.onRecentNoteSelected(this.recentNotesView.treeInstance.selection);
+      }, 200);
+    }
+  }
+
   onSearch() {
     if (this.itemsView) {
       const searchVal = (
@@ -316,11 +402,38 @@ export class NotePicker extends PluginCEBase {
     this.dispatchSelectionChange(selection);
   }
 
+  onRecentNoteSelected(selection: { selected: Set<number> }) {
+    this.activeSelectionType = "recent";
+    this.dispatchSelectionChange(selection);
+  }
+
+  getRecentNotes() {
+    return ((getPref("linkCreator.recentNotes") as string) || "")
+      .split(",")
+      .map((id) => Zotero.Items.get(parseInt(id)))
+      .filter((item) => item && item.isNote());
+  }
+
+  saveRecentNotes() {
+    const selectedNotes = this.getSelectedNotes();
+    if (!selectedNotes.length) {
+      return;
+    }
+    const recentNotes: number[] = [...selectedNotes.map((note) => note.id)];
+    for (const note of this.recentNotes) {
+      if (!recentNotes.includes(note.id)) {
+        recentNotes.push(note.id);
+      }
+    }
+    // Save only 10 recent notes
+    setPref("linkCreator.recentNotes", recentNotes.slice(0, 10).join(","));
+  }
+
   dispatchSelectionChange(selection?: { selected: Set<number> }) {
     this.dispatchEvent(
       new CustomEvent("selectionchange", {
         detail: {
-          selectedNote: this.getSelectedNotes(selection)[0],
+          selectedNotes: this.getSelectedNotes(selection),
         },
       }),
     );
@@ -331,10 +444,16 @@ export class NotePicker extends PluginCEBase {
       return [];
     } else if (this.activeSelectionType == "library") {
       return this.itemsView.getSelectedItems();
+    } else if (this.activeSelectionType == "tabs") {
+      return Array.from(
+        (selection || this.openedNotesView.treeInstance.selection).selected,
+      ).map((index) => this.openedNotes[index]);
+    } else if (this.activeSelectionType == "recent") {
+      return Array.from(
+        (selection || this.recentNotesView.treeInstance.selection).selected,
+      ).map((index) => this.recentNotes[index]);
     }
-    return Array.from(
-      (selection || this.openedNotesView.treeInstance.selection).selected,
-    ).map((index) => this.openedNotes[index]);
+    return [];
   }
 
   _persistState() {

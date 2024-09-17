@@ -68,7 +68,8 @@ export function registerNoteLinkSection(type: "inbound" | "outbound") {
       setEnabled(false);
     },
     onRender: () => {},
-    onAsyncRender: async ({ body, item, setL10nArgs }) => {
+    onAsyncRender: async ({ body, item, setL10nArgs, tabType }) => {
+      if (!item?.isNote()) return;
       await renderSection(type, {
         body,
         item,

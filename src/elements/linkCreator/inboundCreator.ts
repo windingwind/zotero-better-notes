@@ -67,6 +67,7 @@ export class InboundCreator extends PluginCEBase {
   async accept(io: any) {
     if (!this.targetNote) return;
     const content = await this.getContentToInsert();
+    this.notePicker.saveRecentNotes();
 
     io.targetNoteID = this.targetNote.id;
     io.content = content;
@@ -79,7 +80,7 @@ export class InboundCreator extends PluginCEBase {
     await this.notePicker.load();
 
     this.notePicker.addEventListener("selectionchange", (event: any) => {
-      this.targetNote = event.detail.selectedNote;
+      this.targetNote = event.detail.selectedNotes[0];
       this.updatePickerTitle(this.targetNote);
       this.noteOutline.item = this.targetNote;
       this.noteOutline.render();

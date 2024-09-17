@@ -248,7 +248,7 @@ async function renderNoteHTML(
               node.style.width = `${node.getAttribute("width")}px`;
             }
             if (node.hasAttribute("height")) {
-              node.style.width = `${node.getAttribute("height")}px`;
+              node.style.height = `${node.getAttribute("height")}px`;
             }
           });
         } catch (e) {
@@ -420,7 +420,12 @@ async function copyEmbeddedImagesInHTML(
   targetNote?: Zotero.Item,
   refNotes: Zotero.Item[] = [],
 ) {
-  ztoolkit.log("parseEmbeddedImagesInHTML", html, targetNote, refNotes);
+  ztoolkit.log(
+    "parseEmbeddedImagesInHTML",
+    html,
+    targetNote?.getNoteTitle(),
+    refNotes.length,
+  );
   if (!targetNote) {
     return html;
   }
@@ -433,7 +438,7 @@ async function copyEmbeddedImagesInHTML(
     return html;
   }
 
-  ztoolkit.log(attachments);
+  ztoolkit.log(attachments.length, "attachments found in refNotes");
 
   const doc = new DOMParser().parseFromString(html, "text/html");
 

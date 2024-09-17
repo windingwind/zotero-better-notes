@@ -16,9 +16,29 @@ menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
 
 menuEditor-resizeImage = Ridimensiona immagine
 
-menuHelp-openUserGuide = Apri la guida utente di Better Notes
+menuHelp-openUserGuide = Open Better Notes User Guide
 
-templateEditor-templateName = Nome Template
+templateEditor-templateType = Type
+templateEditor-templateName = Name
+
+templateEditor-templateDisplayName =
+    .QuickInsertV2 = Quick Insert (Link)
+    .QuickImportV2 = Quick Import (Embed)
+    .QuickNoteV5 = Quick Note (From Annotation)
+    .ExportMDFileNameV2 = Export MD File Name
+    .ExportMDFileHeaderV2 = Export MD File Header
+    .ExportMDFileContent = Export MD File Content
+
+templateEditor-templateDisplayType =
+    .system = Builtin
+    .item = Item
+    .text = Text
+    .unknown = ?
+
+templateEditor-templateHelp =
+    .system = For specific purposes, e.g., generating note link.
+    .item = Can generate note fragments from one or more selected items as input.
+    .text = Can generate note fragments. It doesn't require any input.
 
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
@@ -61,7 +81,7 @@ editor-toolbar-settings-openAsTab = Apri come scheda
 editor-toolbar-settings-openAsWindow = Apri in nuova finestra
 editor-toolbar-settings-showInLibrary = Mostra nella biblioteca
 editor-toolbar-settings-insertTemplate = Inserisci template
-editor-toolbar-settings-refreshTemplates = Aggiorna il contenuto dal template (Beta)
+editor-toolbar-settings-refreshTemplates = Aggiorna il contenuto dal template
 editor-toolbar-settings-copyLink = Copia link (L{ $line })
 editor-toolbar-settings-copyLinkAtSection = Copia link (Sez. { $section })
 editor-toolbar-settings-openParent = Apri allegato
@@ -112,4 +132,4 @@ userGuide-workspaceNoteInfo-title = Informazioni della nota
 userGuide-workspaceNoteInfo-desc = Puoi vedere, modificare e gestire i tag della nota, le relazioni e i link.
 userGuide-finish-title = Fine del tutorial!
 userGuide-finish-desc = Divertiti a usare Better Notes!
-    Puoi visualizzare nuovamente questo tutorial dal menu aiuto.
+    You can always run this guide again from the Help menu.

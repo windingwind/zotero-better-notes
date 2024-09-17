@@ -85,7 +85,8 @@ export function openNotePreview(
     onRender: ({ setSectionSummary }) => {
       setSectionSummary(noteItem.getNoteTitle());
     },
-    onAsyncRender: async ({ body }) => {
+    onAsyncRender: async ({ body, item }) => {
+      if (!item?.isNote()) return;
       const editorElement = body.querySelector("note-editor")! as EditorElement;
       await waitUtilAsync(() => Boolean(editorElement._initialized));
       if (!editorElement._initialized) {

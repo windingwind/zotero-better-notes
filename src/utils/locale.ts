@@ -83,7 +83,13 @@ function _getString(
     return localStringWithPrefix;
   }
   if (branch && pattern.attributes) {
-    return pattern.attributes[branch] || localStringWithPrefix;
+    return (
+      pattern.attributes[branch] ||
+      pattern.attributes.find(
+        (attr: { name: string; value: string }) => attr.name === branch,
+      )?.value ||
+      localStringWithPrefix
+    );
   } else {
     return pattern.value || localStringWithPrefix;
   }

@@ -9,7 +9,7 @@ export async function openWorkspaceWindow(
   };
   const win = Zotero.getMainWindow().openDialog(
     `chrome://${config.addonRef}/content/workspaceWindow.xhtml`,
-    `${config.addonRef}-workspaceWindow`,
+    "_blank",
     `chrome,centerscreen,resizable,status,dialog=no`,
     windowArgs,
   )!;
