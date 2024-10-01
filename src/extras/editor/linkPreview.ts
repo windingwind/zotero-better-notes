@@ -106,6 +106,9 @@ class LinkPreviewState {
     max-width: 100%;
     height: auto;
   }
+  .link-preview .primary-editor li {
+    white-space: nowrap;
+  }
 </style>`),
     ]);
     this.popup.popup.classList.add("primary-editor");
