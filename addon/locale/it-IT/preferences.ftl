@@ -25,7 +25,7 @@ annotation-autoAnnotation =
 
 annotationNote-title = Note from Annotation
 annotationNote-enableTagSync = 
-    .label = Keep tags of note from annotation in sync with the original annotation
+    .label = Mantieni i tag di una nota derivata da un'annotazione sincronizzati con l'annotazione di origine
 
 about-title = Informazioni su Better Notes
 help =

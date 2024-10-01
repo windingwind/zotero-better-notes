@@ -16,29 +16,29 @@ menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
 
 menuEditor-resizeImage = Ridimensiona immagine
 
-menuHelp-openUserGuide = Open Better Notes User Guide
+menuHelp-openUserGuide = Apri la guida utente di Better Notes
 
-templateEditor-templateType = Type
-templateEditor-templateName = Name
+templateEditor-templateType = Tipo
+templateEditor-templateName = Nome
 
 templateEditor-templateDisplayName =
-    .QuickInsertV2 = Quick Insert (Link)
-    .QuickImportV2 = Quick Import (Embed)
-    .QuickNoteV5 = Quick Note (From Annotation)
-    .ExportMDFileNameV2 = Export MD File Name
-    .ExportMDFileHeaderV2 = Export MD File Header
-    .ExportMDFileContent = Export MD File Content
+    .QuickInsertV2 = Inserimento rapido (Link)
+    .QuickImportV2 = Importazione rapida (Inserisci)
+    .QuickNoteV5 = Nota rapida (Da annotazione)
+    .ExportMDFileNameV2 = Esporta il nome del file MD
+    .ExportMDFileHeaderV2 = Esporta l'intestazione del file MD
+    .ExportMDFileContent = Esporta il contenuto del file MD
 
 templateEditor-templateDisplayType =
-    .system = Builtin
-    .item = Item
-    .text = Text
+    .system = Integrato
+    .item = Elemento
+    .text = Testo
     .unknown = ?
 
 templateEditor-templateHelp =
-    .system = For specific purposes, e.g., generating note link.
-    .item = Can generate note fragments from one or more selected items as input.
-    .text = Can generate note fragments. It doesn't require any input.
+    .system = Per scopi specifici, ad esempio generare link a una nota.
+    .item = Può generare una porzione di nota da uno o più elementi di origine.
+    .text = Può generare una porzione di nota. Non richiede alcun input.
 
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
@@ -101,7 +101,7 @@ alert-linkCreator-emptyNote = Non è possibile creare un link da/a una nota vuot
 alert-templateEditor-shouldImport = Sembra che tu stia cercando di salvare direttamente un codice di condivisione di un template di nota. Vuoi importarlo come template?
 
 userGuide-start-title = Questo è Better Notes!
-userGuide-start-desc = Better Notes è un potente strumento di gestione delle note che ti può aiutare a organizzare pensieri e idee mentre leggi articoli. Questa guida ti aiuterà a prendere confidenza con Better Notes e ti mostrerà come usare al meglio le sue funzioni.
+userGuide-start-desc = Better Notes è un potente strumento di gestione delle note che ti può aiutare a organizzare pensieri e idee durante la lettura di articoli scientifici. Questa guida ti aiuterà a prendere confidenza con Better Notes e ti mostrerà come usare al meglio le sue funzioni.
 userGuide-start-close = Ricordami più tardi
 userGuide-createNoteButton-title = Crea una nuova nota
 userGuide-createNoteButton-desc = Puoi creare una nuova nota da qui: vuota o da un template.
@@ -132,4 +132,4 @@ userGuide-workspaceNoteInfo-title = Informazioni della nota
 userGuide-workspaceNoteInfo-desc = Puoi vedere, modificare e gestire i tag della nota, le relazioni e i link.
 userGuide-finish-title = Fine del tutorial!
 userGuide-finish-desc = Divertiti a usare Better Notes!
-    You can always run this guide again from the Help menu.
+    Puoi visualizzare nuovamente il tutorial dal menu aiuto.
