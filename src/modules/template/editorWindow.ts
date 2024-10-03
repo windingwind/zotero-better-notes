@@ -404,7 +404,7 @@ function getSelectedIndex() {
     addon.data.template.editor.tableHelper?.treeInstance.selection.selected
       .values()
       .next().value;
-  return selectedIndex;
+  return selectedIndex as number;
 }
 
 function createTemplate() {

@@ -165,10 +165,11 @@ export class OutlinePicker extends PluginCEBase {
   }
 
   getSelectedSection(selection?: { selected: Set<number> }): NoteNodeData {
-    return this.noteOutline[
-      (selection || this.noteOutlineView.treeInstance.selection).selected
-        .values()
-        .next().value
-    ]?.model;
+    const selected = (
+      selection || this.noteOutlineView.treeInstance.selection
+    ).selected
+      .values()
+      .next().value;
+    return this.noteOutline[selected!]?.model;
   }
 }
