@@ -1,5 +1,5 @@
 import { config } from "../../package.json";
-import { ProgressWindowHelper } from "zotero-plugin-toolkit/dist/helpers/progressWindow";
+import { ProgressWindowHelper } from "zotero-plugin-toolkit";
 import { PROGRESS_TITLE } from "./config";
 import { waitUtilAsync } from "./wait";
 

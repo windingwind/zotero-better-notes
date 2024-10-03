@@ -1,4 +1,4 @@
-import { PatchHelper } from "zotero-plugin-toolkit/dist/helpers/patch";
+import { PatchHelper } from "zotero-plugin-toolkit";
 import { getPref } from "../utils/prefs";
 
 export function patchViewItems(win: Window) {

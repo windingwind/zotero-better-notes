@@ -1,4 +1,4 @@
-import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
+import { Prompt } from "zotero-plugin-toolkit";
 import { addLineToNote } from "../../utils/note";
 import { getString } from "../../utils/locale";
 

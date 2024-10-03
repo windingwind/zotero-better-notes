@@ -1,12 +1,7 @@
-import { Prompt } from "zotero-plugin-toolkit/dist/managers/prompt";
-import {
-  ColumnOptions,
-  VirtualizedTableHelper,
-} from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
-import { LargePrefHelper } from "zotero-plugin-toolkit/dist/helpers/largePref";
-import ToolkitGlobal from "zotero-plugin-toolkit/dist/managers/toolkitGlobal";
+import { Prompt, PromptManager } from "zotero-plugin-toolkit";
+import { VirtualizedTableHelper } from "zotero-plugin-toolkit";
+import { LargePrefHelper } from "zotero-plugin-toolkit";
 
-import { getPref, setPref } from "./utils/prefs";
 import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
@@ -126,7 +121,7 @@ class Addon {
     relation: {},
     imageCache: {},
     get prompt() {
-      return ToolkitGlobal.getInstance().prompt.instance;
+      return new PromptManager().prompt;
     },
     hint: {
       silent: false,

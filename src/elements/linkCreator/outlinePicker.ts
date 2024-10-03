@@ -1,5 +1,5 @@
 import { config } from "../../../package.json";
-import { VirtualizedTableHelper } from "zotero-plugin-toolkit/dist/helpers/virtualizedTable";
+import { VirtualizedTableHelper } from "zotero-plugin-toolkit";
 import { PluginCEBase } from "../base";
 import TreeModel = require("tree-model");
 
