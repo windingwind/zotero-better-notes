@@ -1,7 +1,7 @@
 import { getString } from "../utils/locale";
 import { formatPath } from "../utils/str";
 
-export { createNoteFromTemplate, createNoteFromMD };
+export { createNoteFromTemplate, createNoteFromMD, createNote };
 
 function getLibraryParentId() {
   return ZoteroPane.getSelectedItems().filter((item) => item.isRegularItem())[0]
@@ -46,9 +46,8 @@ async function createNoteFromTemplate(
 }
 
 async function createNoteFromMD() {
-  const currentCollection = ZoteroPane.getSelectedCollection();
-  if (!currentCollection) {
-    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
+  // Check if we can create a note
+  if (!(await createNote({ dryRun: true }))) {
     return;
   }
 
@@ -67,7 +66,12 @@ async function createNoteFromMD() {
   }
 
   for (const filepath of filepaths) {
-    const noteItem = await addon.api.$import.fromMD(filepath, {
+    const noteItem = await createNote();
+    if (!noteItem) {
+      continue;
+    }
+    await addon.api.$import.fromMD(filepath, {
+      noteId: noteItem.id,
       ignoreVersion: true,
     });
     if (noteItem && syncNotes) {
@@ -82,4 +86,45 @@ async function createNoteFromMD() {
       });
     }
   }
+}
+
+async function createNote(): Promise<Zotero.Item | false>;
+async function createNote(options: {
+  dryRun: true;
+  noSave?: boolean;
+}): Promise<boolean>;
+async function createNote(options: {
+  dryRun?: false;
+  noSave?: boolean;
+}): Promise<Zotero.Item | false>;
+async function createNote(
+  options: { dryRun?: boolean; noSave?: boolean } = {},
+) {
+  let noteItem: Zotero.Item;
+  const ZoteroPane = Zotero.getActiveZoteroPane();
+
+  const cView = ZoteroPane.collectionsView;
+  if (!cView) {
+    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
+    return false;
+  }
+  const cRow = cView.selectedTreeRow;
+  if (["library", "group", "collection"].includes(cRow.type)) {
+    if (options.dryRun) {
+      return true;
+    }
+    noteItem = new Zotero.Item("note");
+    noteItem.libraryID = ZoteroPane.getSelectedLibraryID();
+    if (cRow.type === "collection") {
+      noteItem.addToCollection(cRow.ref.id);
+    }
+  } else {
+    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
+    return false;
+  }
+
+  if (!options.noSave) {
+    await noteItem.saveTx();
+  }
+  return noteItem;
 }

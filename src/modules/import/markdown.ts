@@ -41,11 +41,13 @@ export async function fromMD(
       };
 
   if (!noteItem) {
-    noteItem = new Zotero.Item("note");
-    noteItem.libraryID = ZoteroPane.getSelectedLibraryID();
-    if (ZoteroPane.getCollectionTreeRow()?.isCollection()) {
-      noteItem.addToCollection(ZoteroPane.getCollectionTreeRow()?.ref.id);
+    const _noteItem = await addon.hooks.onCreateNote({
+      noSave: true,
+    });
+    if (!_noteItem) {
+      return;
     }
+    noteItem = _noteItem;
     await noteItem.saveTx({
       notifierData: {
         autoSyncDelay: Zotero.Notes.AUTO_SYNC_DELAY,

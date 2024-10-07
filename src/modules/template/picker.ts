@@ -80,17 +80,11 @@ async function createTemplateNoteCallback(name: string) {
     ZoteroPane.getSelectedItems(true);
   switch (addon.data.template.picker.data.noteType) {
     case "standalone": {
-      const currentCollection = ZoteroPane.getSelectedCollection();
-      if (!currentCollection) {
-        Zotero.getMainWindow().alert(
-          getString("alert.notValidCollectionError"),
-        );
+      const noteItem = await addon.hooks.onCreateNote();
+      if (!noteItem) {
         return;
       }
-      const noteID = await ZoteroPane.newNote();
-      const noteItem = Zotero.Items.get(noteID);
-      await noteItem.saveTx();
-      addon.data.template.picker.data.noteId = noteID;
+      addon.data.template.picker.data.noteId = noteItem.id;
       break;
     }
     case "item": {

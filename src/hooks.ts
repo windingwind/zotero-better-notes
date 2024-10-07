@@ -30,7 +30,7 @@ import { showSyncDiff } from "./modules/sync/diffWindow";
 import { showSyncInfo } from "./modules/sync/infoWindow";
 import { showSyncManager } from "./modules/sync/managerWindow";
 import { showTemplateEditor } from "./modules/template/editorWindow";
-import { createNoteFromTemplate, createNoteFromMD } from "./modules/createNote";
+import { createNoteFromTemplate, createNoteFromMD, createNote } from "./modules/createNote";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
@@ -256,6 +256,8 @@ const onShowTemplateEditor = showTemplateEditor;
 
 const onCreateNoteFromTemplate = createNoteFromTemplate;
 
+const onCreateNote = createNote;
+
 const onCreateNoteFromMD = createNoteFromMD;
 
 const onShowUserGuide = showUserGuide;
@@ -285,6 +287,7 @@ export default {
   onShowTemplateEditor,
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
+  onCreateNote,
   restoreNoteTabs,
   onShowUserGuide,
 };
