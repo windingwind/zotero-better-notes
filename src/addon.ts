@@ -1,4 +1,3 @@
-import { Prompt, PromptManager } from "zotero-plugin-toolkit";
 import { VirtualizedTableHelper } from "zotero-plugin-toolkit";
 import { LargePrefHelper } from "zotero-plugin-toolkit";
 
@@ -72,7 +71,6 @@ class Addon {
       worker?: Worker;
     };
     imageCache: Record<number, string>;
-    readonly prompt?: Prompt;
     hint: {
       silent: boolean;
     };
@@ -120,9 +118,6 @@ class Addon {
     },
     relation: {},
     imageCache: {},
-    get prompt() {
-      return new PromptManager().prompt;
-    },
     hint: {
       silent: false,
     },

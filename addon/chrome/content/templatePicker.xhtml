@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://__addonRef__/content/styles/templatePicker.css" type="text/css"?>
+<!-- prettier-ignore -->
+<!DOCTYPE window>
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="bn-note-picker"
+  data-l10n-id="title"
+  windowtype="__addonRef__-templatePicker"
+  persist="screenX screenY width height sizemode"
+  style="min-width: 20em"
+  drawintitlebar-platforms="mac"
+>
+  <xul:linkset>
+    <html:link rel="localization" href="browser/menubar.ftl" />
+    <html:link rel="localization" href="browser/browserSets.ftl" />
+    <html:link rel="localization" href="toolkit/global/textActions.ftl" />
+    <html:link rel="localization" href="zotero.ftl" />
+    <html:link rel="localization" href="__addonRef__-templatePicker.ftl" />
+  </xul:linkset>
+
+  <xul:commandset id="mainCommandSet">
+    <xul:command id="cmd_close" oncommand="window.close();" />
+  </xul:commandset>
+  <xul:keyset id="mainKeyset">
+    <xul:key
+      id="key_close"
+      data-l10n-id="close-shortcut"
+      command="cmd_close"
+      modifiers="accel"
+      reserved="true"
+    />
+  </xul:keyset>
+
+  <script src="chrome://zotero/content/include.js"></script>
+  <script src="chrome://zotero/content/titlebar.js"></script>
+  <script src="resource://zotero/require.js"></script>
+  <script src="chrome://zotero/content/customElements.js"></script>
+  <script src="chrome://__addonRef__/content/scripts/customElements.js"></script>
+  <script src="chrome://__addonRef__/content/scripts/templatePicker.js"></script>
+
+  <dialog buttons="accept, cancel">
+    <hbox class="viewport-container">
+      <hbox id="list-container" class="viewport list-viewport">
+        <html:div id="table-container"></html:div>
+      </hbox>
+    </hbox>
+  </dialog>
+</window>

@@ -34,10 +34,9 @@ function initTemplates() {
   const templateKeys = getTemplateKeys();
   for (const defaultTemplate of addon.api.template.DEFAULT_TEMPLATES) {
     if (!templateKeys.includes(defaultTemplate.name)) {
-      setTemplate(defaultTemplate, false);
+      setTemplate(defaultTemplate);
     }
   }
-  addon.hooks.onUpdateTemplatePicker();
 }
 
 function getTemplateKeys(): string[] {
@@ -52,27 +51,15 @@ function getTemplateText(keyName: string): string {
   return addon.data.template.data?.getValue(keyName) || "";
 }
 
-function setTemplate(
-  template: NoteTemplate,
-  updatePrompt: boolean = true,
-): void {
+function setTemplate(template: NoteTemplate): void {
   addon.data.template.data?.setValue(template.name, template.text);
-  if (updatePrompt) {
-    addon.hooks.onUpdateTemplatePicker();
-  }
 }
 
-function removeTemplate(
-  keyName: string | undefined,
-  updatePrompt: boolean = true,
-): void {
+function removeTemplate(keyName: string | undefined): void {
   if (!keyName) {
     return;
   }
   addon.data.template.data?.deleteKey(keyName);
-  if (updatePrompt) {
-    addon.hooks.onUpdateTemplatePicker();
-  }
 }
 
 function importTemplateFromClipboard(text?: string) {

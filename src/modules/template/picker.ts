@@ -1,78 +1,57 @@
-import { Prompt } from "zotero-plugin-toolkit";
 import { addLineToNote } from "../../utils/note";
 import { getString } from "../../utils/locale";
+import { openTemplatePicker } from "../../utils/templatePicker";
 
-export { updateTemplatePicker, showTemplatePicker };
+export { showTemplatePicker };
 
-function showTemplatePicker(
+async function showTemplatePicker(
   mode: "insert",
   data?: { noteId?: number; lineIndex?: number },
-): void;
-function showTemplatePicker(
+): Promise<void>;
+async function showTemplatePicker(
   mode: "create",
   data?: {
     noteType?: "standalone" | "item";
     parentItemId?: number;
     topItemIds?: number[];
   },
-): void;
-function showTemplatePicker(mode: "export", data?: Record<string, never>): void;
-function showTemplatePicker(): void;
-function showTemplatePicker(
+): Promise<void>;
+async function showTemplatePicker(
+  mode: "export",
+  data?: Record<string, never>,
+): Promise<void>;
+async function showTemplatePicker(): Promise<void>;
+async function showTemplatePicker(
   mode: typeof addon.data.template.picker.mode = "insert",
   data: Record<string, any> = {},
 ) {
-  if (addon.data.prompt) {
-    addon.data.template.picker.mode = mode;
-    addon.data.template.picker.data = data;
-    addon.data.prompt.promptNode.style.display = "flex";
-    addon.data.prompt.showCommands(
-      addon.data.prompt.commands.filter(
-        (cmd) => cmd.label === "BNotes Template",
-      ),
-    );
+  addon.data.template.picker.mode = mode;
+  addon.data.template.picker.data = data;
+  const selected = await openTemplatePicker();
+  if (!selected.length) {
+    return;
   }
+  const name = selected[0];
+  await handleTemplateOperation(name);
 }
 
-function updateTemplatePicker() {
-  ztoolkit.Prompt.unregisterAll();
-  const templateKeys = addon.api.template.getTemplateKeys();
-  ztoolkit.Prompt.register(
-    templateKeys
-      .filter(
-        (template) =>
-          !addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(template),
-      )
-      .map((template) => {
-        return {
-          name: `Template: ${template}`,
-          label: "BNotes Template",
-          callback: getTemplatePromptHandler(template),
-        };
-      }),
-  );
-}
-
-function getTemplatePromptHandler(name: string) {
-  return async (prompt: Prompt) => {
-    ztoolkit.log(prompt, name);
-    prompt.promptNode.style.display = "none";
-    // TODO: add preview when command is selected
-    switch (addon.data.template.picker.mode) {
-      case "create":
-        await createTemplateNoteCallback(name);
-        break;
-      case "export":
-        await exportTemplateCallback(name);
-        break;
-      case "insert":
-      default:
-        await insertTemplateCallback(name);
-        break;
-    }
-    addon.data.template.picker.mode = "insert";
-    addon.data.template.picker.data = {};
-  };
+async function handleTemplateOperation(name: string) {
+  ztoolkit.log(name);
+  // TODO: add preview when command is selected
+  switch (addon.data.template.picker.mode) {
+    case "create":
+      await createTemplateNoteCallback(name);
+      break;
+    case "export":
+      await exportTemplateCallback(name);
+      break;
+    case "insert":
+    default:
+      await insertTemplateCallback(name);
+      break;
+  }
+  addon.data.template.picker.mode = "insert";
+  addon.data.template.picker.data = {};
 }
 
 async function insertTemplateCallback(name: string) {

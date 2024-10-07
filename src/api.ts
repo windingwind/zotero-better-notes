@@ -81,6 +81,7 @@ import {
   updateNoteLinkRelation,
 } from "./utils/relation";
 import { getWorkspaceByTabID, getWorkspaceByUID } from "./utils/workspace";
+import { getString } from "./utils/locale";
 
 const workspace = {
   getWorkspaceByTabID,
@@ -178,6 +179,10 @@ const relation = {
   getAnnotationByLinkTarget,
 };
 
+const utils = {
+  getString,
+};
+
 export default {
   workspace,
   sync,
@@ -188,4 +193,5 @@ export default {
   editor,
   note,
   relation,
+  utils,
 };

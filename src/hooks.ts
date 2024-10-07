@@ -23,10 +23,7 @@ import {
   syncAnnotationNoteTags,
 } from "./modules/annotationNote";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
-import {
-  showTemplatePicker,
-  updateTemplatePicker,
-} from "./modules/template/picker";
+import { showTemplatePicker } from "./modules/template/picker";
 import { showImageViewer } from "./modules/imageViewer";
 import { showExportNoteOptions } from "./modules/export/exportWindow";
 import { showSyncDiff } from "./modules/sync/diffWindow";
@@ -241,8 +238,6 @@ const onSyncing = callSyncing;
 
 const onShowTemplatePicker = showTemplatePicker;
 
-const onUpdateTemplatePicker = updateTemplatePicker;
-
 const onImportTemplateFromClipboard = importTemplateFromClipboard;
 
 const onRefreshTemplatesInNote = refreshTemplatesInNote;
@@ -280,7 +275,6 @@ export default {
   onInitWorkspace,
   onSyncing,
   onShowTemplatePicker,
-  onUpdateTemplatePicker,
   onImportTemplateFromClipboard,
   onRefreshTemplatesInNote,
   onShowImageViewer,
