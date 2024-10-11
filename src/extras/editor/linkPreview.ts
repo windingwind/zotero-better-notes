@@ -14,6 +14,8 @@ interface LinkPreviewOptions {
   ) => void;
 
   openURL: (url: string) => void;
+
+  requireCtrl: boolean;
 }
 
 class LinkPreviewState {
@@ -67,7 +69,7 @@ class LinkPreviewState {
           this.node = target;
           this.currentLink = href;
           this.hasHover = true;
-          this.tryOpenPopup();
+          this.tryOpenPopupByHover();
         }
       }
     }
@@ -79,13 +81,38 @@ class LinkPreviewState {
     }
   };
 
-  tryOpenPopup() {
+  handleKeydown = async (event: KeyboardEvent) => {
+    if (!this.options.requireCtrl) {
+      return;
+    }
+    if (!this.hasHover || !this.currentLink) {
+      return;
+    }
+    const isMac =
+      typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
+    if ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) {
+      this.tryTogglePopupByKey();
+    }
+  };
+
+  tryOpenPopupByHover() {
+    if (this.options.requireCtrl) {
+      return;
+    }
     const href = this.currentLink!;
     setTimeout(() => {
       if (this.currentLink === href) {
         this._openPopup();
       }
     }, 300);
+  }
+
+  tryTogglePopupByKey() {
+    if (this._hasPopup()) {
+      this._closePopup();
+    } else {
+      this._openPopup();
+    }
   }
 
   _openPopup() {
@@ -158,6 +185,10 @@ class LinkPreviewState {
     document.querySelectorAll(".link-preview").forEach((el) => el.remove());
     this.popup = null;
   }
+
+  _hasPopup() {
+    return !!document.querySelector(".link-preview");
+  }
 }
 
 function initLinkPreviewPlugin(options: LinkPreviewOptions) {
@@ -184,6 +215,10 @@ function initLinkPreviewPlugin(options: LinkPreviewOptions) {
               const pluginState = key.getState(view.state) as LinkPreviewState;
               pluginState.update(view.state);
               pluginState.handleMouseMove(event);
+            },
+            keydown: (view, event) => {
+              const pluginState = key.getState(view.state) as LinkPreviewState;
+              pluginState.handleKeydown(event);
             },
             wheel: (view, event) => {
               const pluginState = key.getState(view.state) as LinkPreviewState;

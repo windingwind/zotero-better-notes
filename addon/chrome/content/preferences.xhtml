@@ -38,11 +38,22 @@
     native="true"
     preference="__prefsPrefix__.workspace.outline.keepLinks"
   />
-  <checkbox
-    data-l10n-id="editor-noteLinkPreview"
-    native="true"
-    preference="__prefsPrefix__.editor.noteLinkPreview"
-  />
+  <hbox align="center">
+    <html:label
+      data-l10n-id="editor-noteLinkPreviewType"
+      for="__addonRef__-editor-noteLinkPreviewType"
+    ></html:label>
+    <radiogroup
+      id="__addonRef__-editor-noteLinkPreviewType"
+      preference="__prefsPrefix__.editor.noteLinkPreviewType"
+      orient="horizontal"
+      oncommand="Zotero.__addonInstance__.api.utils.requireRestart();"
+    >
+      <radio data-l10n-id="editor-noteLinkPreview-hover" value="hover" />
+      <radio data-l10n-id="editor-noteLinkPreview-ctrl" value="ctrl" />
+      <radio data-l10n-id="editor-noteLinkPreview-disable" value="disable" />
+    </radiogroup>
+  </hbox>
 </groupbox>
 <groupbox>
   <label><html:h2 data-l10n-id="sync-title"></html:h2></label>
@@ -59,6 +70,7 @@
       placeholder="-1 for disable"
       id="__addonRef__-sync-period"
       preference="__prefsPrefix__.syncPeriodSeconds"
+      onchange="Zotero.__addonInstance__.api.utils.requireRestart();"
     ></html:input>
   </hbox>
   <hbox align="center">

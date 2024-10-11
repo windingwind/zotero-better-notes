@@ -442,7 +442,8 @@ function getTextBetweenLines(
 }
 
 function initLinkPreview(editor: Zotero.EditorInstance) {
-  if (!getPref("editor.noteLinkPreview")) {
+  const previewType = getPref("editor.noteLinkPreviewType") as string;
+  if (!["hover", "ctrl"].includes(previewType)) {
     return;
   }
   const EditorAPI = getEditorAPI(editor);
@@ -469,6 +470,7 @@ function initLinkPreview(editor: Zotero.EditorInstance) {
         openURL: (url: string) => {
           Zotero.getActiveZoteroPane().loadURI(url);
         },
+        requireCtrl: previewType === "ctrl",
       },
       editor._iframeWindow,
       { wrapReflectors: true, cloneFunctions: true },

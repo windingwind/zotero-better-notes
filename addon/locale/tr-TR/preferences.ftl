@@ -8,8 +8,16 @@ editor-title = Not Düzenleyici
 editor-expandLevel-label = Anahatta gösterilecek başlık düzeyleri
 editor-keepLinks = 
     .label = Not bağlantılarını anahatta göster
-editor-noteLinkPreview = 
-    .label = İmleci bağlantının üzerine getirdiğinde ön izlemeyi göster
+editor-noteLinkPreviewType = Show preview for note link when:
+editor-noteLinkPreview-hover = 
+    .label = Hover
+editor-noteLinkPreview-ctrl = 
+    .label = Press { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    }
+editor-noteLinkPreview-disable = 
+    .label = Never
 
 sync-title = Eşitle
 sync-period-label = Otomatik Eşitleme Sıklığı (saniye)

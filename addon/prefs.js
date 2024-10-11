@@ -21,7 +21,7 @@ pref("__prefsPrefix__.exportNote", false);
 pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
 
-pref("__prefsPrefix__.editor.noteLinkPreview", true);
+pref("__prefsPrefix__.editor.noteLinkPreviewType", "hover");
 
 pref("__prefsPrefix__.openNote.takeover", true);
 pref("__prefsPrefix__.openNote.defaultAsWindow", false);

@@ -8,8 +8,16 @@ editor-title = Note Editor
 editor-expandLevel-label = Outline расширить до уровня заголовка
 editor-keepLinks = 
     .label = Сохранить ссылки
-editor-noteLinkPreview = 
-    .label = Show note link preview on hover
+editor-noteLinkPreviewType = Show preview for note link when:
+editor-noteLinkPreview-hover = 
+    .label = Hover
+editor-noteLinkPreview-ctrl = 
+    .label = Press { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    }
+editor-noteLinkPreview-disable = 
+    .label = Never
 
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)

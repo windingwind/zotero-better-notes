@@ -8,8 +8,16 @@ editor-title = Editor delle note
 editor-expandLevel-label = Espansione dello schema al livello delle intestazioni
 editor-keepLinks = 
     .label = Mostra i collegamenti delle note nello schema
-editor-noteLinkPreview = 
-    .label = Mostra l'anteprima del link alla nota al passaggio del mouse
+editor-noteLinkPreviewType = Show preview for note link when:
+editor-noteLinkPreview-hover = 
+    .label = Hover
+editor-noteLinkPreview-ctrl = 
+    .label = Press { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    }
+editor-noteLinkPreview-disable = 
+    .label = Never
 
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)

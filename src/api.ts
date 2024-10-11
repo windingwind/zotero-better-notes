@@ -82,6 +82,7 @@ import {
 } from "./utils/relation";
 import { getWorkspaceByTabID, getWorkspaceByUID } from "./utils/workspace";
 import { getString } from "./utils/locale";
+import { showRestartHint } from "./utils/hint";
 
 const workspace = {
   getWorkspaceByTabID,
@@ -181,6 +182,7 @@ const relation = {
 
 const utils = {
   getString,
+  requireRestart: showRestartHint,
 };
 
 export default {
