@@ -5,6 +5,7 @@ dialog {
 
 .viewport-container {
   -moz-window-dragging: no-drag;
+  height: 100%;
 }
 
 .viewport {
@@ -16,4 +17,8 @@ dialog {
   height: 100%;
   overflow: auto;
   background: var(--material-background);
+}
+
+.virtualized-table {
+  height: 100%;
 }
