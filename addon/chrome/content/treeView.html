@@ -412,7 +412,7 @@
                   ? expandedStatus[node.model.name]
                   : node.model.level < expandLevel,
               parentId:
-                node.parent.model.id > 0
+                node.parent.model.id !== -1
                   ? String(node.parent.model.id)
                   : undefined,
             });
