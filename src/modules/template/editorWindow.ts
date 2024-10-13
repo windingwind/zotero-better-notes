@@ -723,11 +723,11 @@ const formatStore = [
   },
   {
     name: "monospaced",
-    code: "`${text}`",
+    code: "<code>${text}</code>",
   },
   {
     name: "code",
-    code: "\n```\n${text}\n```\n",
+    code: "\n<pre>\n${text}\n</pre>\n",
   },
   {
     name: "table",

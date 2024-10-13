@@ -90,16 +90,10 @@ async function runTemplate(
     },
   );
 
-  // Match the backticks not inside a `${}` and replace them with a placeholder
-  // Not inside a `${}`
-  templateText = templateText.replace(/`(?![^${]*\})(?<!\${[^`]*`)/g, "__bt__");
-
   try {
     const func = new AsyncFunction(argString, "return `" + templateText + "`");
     let res = (await func(...argList)) as string;
     if (useMarkdown) {
-      // Replace the placeholder back to backticks
-      res = res.replace(/__bt__/g, "`");
       res = await addon.api.convert.md2html(res);
     }
     ztoolkit.log(res);
