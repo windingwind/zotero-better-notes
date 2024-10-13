@@ -11,7 +11,7 @@ templateType-system =
 templateType-unknown =
     .label = ?
 templateType-help =
-    .label = 关于...
+    .label = ?
     .title = 模板{ -variable-type }的详细解释
 
 templateName = 模板名称

@@ -11,7 +11,7 @@ templateType-system =
 templateType-unknown =
     .label = ?
 templateType-help =
-    .label = Informazioni su...
+    .label = ?
     .title = Spiegazioni dettagliate sui tipi di template
 
 templateName = Nome template
