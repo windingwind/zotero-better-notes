@@ -1,5 +1,6 @@
 import YAML = require("yamljs");
 import { getNoteLink } from "../../utils/link";
+import { renderNoteHTML } from "../../utils/note";
 
 export { renderTemplatePreview };
 
@@ -141,6 +142,9 @@ async function renderTemplatePreview(
   } catch (err: any) {
     html = generateWarning(`Error: ${err.message || "Unknown error"}`);
   }
+
+  // TODO: might not be stable?
+  html = await renderNoteHTML(html, []);
 
   return html;
 }

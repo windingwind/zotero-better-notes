@@ -61,126 +61,17 @@
         window.arguments[0]._initPromise.resolve();
       });
     </script>
-    <style>
-      html,
-      body {
-        min-width: 600px;
-        min-height: 400px;
-      }
-      html,
-      body,
-      .viewport {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        word-wrap: break-word;
-      }
-      .viewport {
-        flex-grow: 1;
-        flex-shrink: 1;
-        margin: 0 5px 0 5px;
-        overflow-x: hidden;
-        overflow-y: auto;
-      }
-      .viewport-container {
-        padding: 0;
-        margin: 0;
-        height: calc(100% - 50px);
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-        border-bottom: var(--material-border);
-        background: var(--material-background);
-      }
-      .footer-container {
-        padding: 5px;
-      }
-      .list-viewport {
-        width: calc(30% - 10px);
-        height: 100%;
-        overflow: hidden;
-      }
-      #table-container {
-        height: 100%;
-        width: 100%;
-        overflow: auto;
-      }
-      #templates-table {
-        height: 100%;
-      }
-      .editor-viewport {
-        display: flex;
-        flex-direction: column;
-        width: calc(40% - 10px);
-        padding: 5px;
-      }
-      .preview-viewport {
-        display: flex;
-        flex-direction: column;
-        width: calc(30% - 10px);
-        padding: 5px;
-      }
-      .markdown-body {
-        box-sizing: border-box;
-        min-width: 200px;
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 0px;
-      }
-      .help-button {
-        appearance: auto;
-        -moz-default-appearance: -moz-mac-help-button;
-        min-width: 0;
-      }
-      #snippets-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        padding: 4px;
-      }
-      .snippet {
-        border: var(--material-panedivider);
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.916666667em;
-        line-height: 1.272727273;
-        overflow: hidden;
-        padding: 1px 4px;
-        text-overflow: ellipsis;
-        white-space: pre;
-        box-sizing: border-box;
-        color: var(--fill-primary);
-      }
-      .snippet.syntax {
-        background-color: color-mix(
-          in srgb,
-          var(--accent-yellow) 50%,
-          transparent 50%
-        );
-      }
-      .snippet.expression {
-        background-color: color-mix(
-          in srgb,
-          var(--accent-green) 50%,
-          transparent 50%
-        );
-      }
-      .snippet.variable {
-        background-color: color-mix(
-          in srgb,
-          var(--accent-azure) 50%,
-          transparent 50%
-        );
-      }
-      .snippet:hover {
-        background-color: var(--fill-quinary);
-      }
-    </style>
     <link
       rel="stylesheet"
-      type="text/css"
       href="chrome://__addonRef__/content/lib/css/github-markdown.css"
+    />
+    <link
+      rel="stylesheet"
+      href="chrome://__addonRef__/content/lib/css/katex.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="chrome://__addonRef__/content/styles/templateEditor.css"
     />
   </head>
   <body class="zotero-window">
@@ -227,6 +118,7 @@
           <div style="flex-shrink: 0" data-l10n-id="templateName"></div>
           <input id="editor-name" type="text" style="width: 100%" />
         </xul:hbox>
+        <div id="formats-container" class="editor-button-container"></div>
         <div style="display: flex; flex-direction: column; height: 100%">
           <iframe
             id="editor"
@@ -235,7 +127,7 @@
             onmousedown="this.focus()"
           ></iframe>
         </div>
-        <div id="snippets-container"></div>
+        <div id="snippets-container" class="editor-button-container"></div>
       </xul:hbox>
       <xul:splitter
         state="open"

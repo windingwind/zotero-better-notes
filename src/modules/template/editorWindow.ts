@@ -205,6 +205,7 @@ export async function showTemplateEditor() {
     });
     addon.data.template.editor.monaco = monaco;
     addon.data.template.editor.editor = editor;
+    await initFormats();
   }
 }
 
@@ -285,6 +286,9 @@ function updateEditor() {
   const saveTemplate = win?.document.getElementById("save") as XUL.Button;
   const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
   const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
+  const formats = win?.document.getElementById(
+    "formats-container",
+  ) as HTMLDivElement;
   const snippets = win?.document.getElementById(
     "snippets-container",
   ) as HTMLDivElement;
@@ -298,6 +302,7 @@ function updateEditor() {
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
     resetTemplate.hidden = true;
+    formats.hidden = true;
     snippets.hidden = true;
   } else {
     templateType.value = type;
@@ -318,12 +323,98 @@ function updateEditor() {
     editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
+    formats.hidden = false;
     snippets.hidden = false;
     updateSnippets(
       (type === "system"
         ? name.slice(1, -1)
         : type) as keyof typeof snippetsStore,
     );
+  }
+}
+
+async function initFormats() {
+  const container =
+    addon.data.template.editor.window?.document.querySelector(
+      "#formats-container",
+    );
+  if (!container) {
+    return;
+  }
+  container.innerHTML = "";
+
+  // Add formats to the container, with each format as a button
+  for (const format of formatStore) {
+    const button = document.createElement("div");
+    button.classList.add("format", format.name);
+    button.style.backgroundImage = `url("chrome://${config.addonRef}/content/icons/editor/${format.name}.svg")`;
+    button.dataset.l10nId = `${config.addonRef}-format-${format.name}`;
+    button.addEventListener("click", () => {
+      const { editor, monaco } = addon.data.template.editor;
+      const selection = editor.getSelection();
+      const range = new monaco.Range(
+        selection.startLineNumber,
+        selection.startColumn,
+        selection.endLineNumber,
+        selection.endColumn,
+      );
+      const textTemplate = format.code;
+      const source =
+        editor.getModel().getValueInRange(range) ||
+        format.defaultText ||
+        "text";
+      const text = textTemplate.replace("${text}", source);
+      editor.executeEdits("", [
+        {
+          range,
+          text,
+          forceMoveMarkers: true,
+        },
+      ]);
+      // Keep the selection after inserting the format
+      const textBeforeReplace = textTemplate.split("${text}")[0];
+      const textBeforeLines = textBeforeReplace.split("\n");
+      const textLines = source.split("\n");
+
+      // Calculate the new range
+      const startLineNumber =
+        selection.startLineNumber + textBeforeLines.length - 1;
+      const startColumn =
+        textBeforeLines.length === 1
+          ? selection.startColumn + textBeforeReplace.length
+          : textBeforeLines.slice(-1)[0].length + 1;
+      const endLineNumber = startLineNumber + textLines.length - 1;
+      const endColumn =
+        textLines.length === 1
+          ? startColumn + source.length
+          : textLines.slice(-1)[0].length + 1;
+
+      const newRange = new monaco.Range(
+        startLineNumber,
+        startColumn,
+        endLineNumber,
+        endColumn,
+      );
+
+      editor.setSelection(newRange);
+
+      // If editor does not contain a line start with // @use-markdown, insert it
+      if (
+        !editor
+          .getModel()
+          .getLinesContent()
+          .some((line: any) => line.startsWith("// @use-markdown"))
+      ) {
+        editor.executeEdits("", [
+          {
+            range: new monaco.Range(1, 1, 1, 1),
+            text: "// @use-markdown\n",
+            forceMoveMarkers: true,
+          },
+        ]);
+      }
+    });
+    container.appendChild(button);
   }
 }
 
@@ -336,9 +427,9 @@ async function updateSnippets(type: string) {
   }
   container.innerHTML = "";
 
-  const snippets = snippetsStore[type as keyof typeof snippetsStore].concat(
-    snippetsStore.global,
-  );
+  const snippets = (
+    snippetsStore[type as keyof typeof snippetsStore] || []
+  ).concat(snippetsStore.global);
   if (!snippets) {
     return;
   }
@@ -596,6 +687,94 @@ async function restoreTemplates(win: Window) {
   await refresh();
 }
 
+const formatStore = [
+  {
+    name: "bold",
+    code: "**${text}**",
+  },
+  {
+    name: "italic",
+    code: "_${text}_",
+  },
+  {
+    name: "strikethrough",
+    code: "~~${text}~~",
+  },
+  {
+    name: "underline",
+    code: "<u>${text}</u>",
+  },
+  {
+    name: "superscript",
+    code: "<sup>${text}</sup>",
+  },
+  { name: "subscript", code: "<sub>${text}</sub>" },
+  {
+    name: "textColor",
+    code: '<span style="color: orange">${text}</span>',
+  },
+  {
+    name: "link",
+    code: "[${text}](url)",
+  },
+  {
+    name: "quote",
+    code: "\n> ${text}",
+  },
+  {
+    name: "monospaced",
+    code: "`${text}`",
+  },
+  {
+    name: "code",
+    code: "\n```\n${text}\n```\n",
+  },
+  {
+    name: "table",
+    code: "\n| ${text} | Header 2 |\n|----------|----------|\n| Cell 1   | Cell 2   |\n",
+  },
+  {
+    name: "h1",
+    code: "\n# ${text}",
+  },
+  {
+    name: "h2",
+    code: "\n## ${text}",
+  },
+  {
+    name: "h3",
+    code: "\n### ${text}",
+  },
+  {
+    name: "bullet",
+    code: "\n- ${text}",
+  },
+  {
+    name: "numbered",
+    code: "\n1. ${text}",
+  },
+  {
+    name: "inlineMath",
+    code: "$${text}$",
+    defaultText: "e=mc^2",
+  },
+  {
+    name: "blockMath",
+    code: "\n$$\n${text}\n$$\n",
+    defaultText: "e=mc^2",
+  },
+  {
+    name: "inlineScript",
+    code: "${ ${text} }",
+    defaultText: "Zotero.version",
+  },
+  {
+    name: "blockScript",
+    code: "\n${{\n  ${text}\n}}$\n",
+    defaultText: "return Zotero.version;",
+  },
+];
+
 const snippetsStore = {
   global: [
     {
@@ -606,77 +785,6 @@ const snippetsStore = {
     {
       name: "useRefresh",
       code: "\n// @use-refresh\n",
-      type: "syntax",
-    },
-    {
-      name: "inlineScript",
-      code: "${ // write your script here }",
-      type: "syntax",
-    },
-    {
-      name: "multiLineScript",
-      code: "\n${{\n  // write your script here\n}}$\n",
-      type: "syntax",
-    },
-    {
-      name: "markdownHeading1",
-      code: "\n# type your heading here",
-      type: "syntax",
-    },
-    {
-      name: "markdownHeading2",
-      code: "\n## type your heading here",
-      type: "syntax",
-    },
-    {
-      name: "markdownHeading3",
-      code: "\n### type your heading here",
-      type: "syntax",
-    },
-    {
-      name: "markdownBullet",
-      code: "\n\n- type your bullet list here",
-      type: "syntax",
-    },
-    {
-      name: "markdownNumber",
-      code: "\n\n1. type your number list here",
-      type: "syntax",
-    },
-    {
-      name: "markdownBold",
-      code: "**type your bold text here**",
-      type: "syntax",
-    },
-    {
-      name: "markdownItalic",
-      code: "_type your italic text here_",
-      type: "syntax",
-    },
-    {
-      name: "markdownLink",
-      code: "[type your link text here](type your link url here)",
-      type: "syntax",
-    },
-    {
-      name: "markdownMonospace",
-      code: "\n\n`type your text here`",
-      type: "syntax",
-    },
-    {
-      name: "markdownQuote",
-      code: "\n\n> type your quote here",
-      type: "syntax",
-    },
-    {
-      name: "markdownTable",
-      code: `
-
-| Header 1 | Header 2 |
-|----------|----------|
-| Cell 1   | Cell 2   |
-
-`,
       type: "syntax",
     },
     {

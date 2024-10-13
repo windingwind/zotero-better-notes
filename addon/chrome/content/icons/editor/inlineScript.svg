@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="a" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <path d="m6.12,16l.88-.88L1.88,10l5.12-5.12-.88-.88L.12,10l6,6Zm7.77,0l-.88-.88,5.12-5.12-5.12-5.12.88-.88,6,6-6,6Z"
+    style="fill-rule: evenodd; stroke-width: 0px;" fill="currentColor" />
+  <polygon points="8.91 14.4 10.59 10.2 12.25 6.07 11.09 5.6 9.43 9.74 7.75 13.93 8.91 14.4" style="stroke-width: 0px;"
+    fill="currentColor" />
+</svg>
