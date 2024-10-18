@@ -31,7 +31,7 @@ body:
     id: bn_version
     attributes:
       label: Test on Better Notes version
-      description: Please provide the Better Notes version you are using here. You can find this in the menu -> Edit -> Settings -> Better Notes.
+      description: Please provide the Better Notes version you are using here. You can find this in the Settings -> Better Notes.
       placeholder: e.g. 1.0.4
     validations:
       required: true

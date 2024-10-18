@@ -1,5 +1,5 @@
 import YAML = require("yamljs");
-import { config } from "../../../package.json";
+import { config, version } from "../../../package.json";
 import { showHint } from "../../utils/hint";
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
@@ -164,6 +164,11 @@ export async function showTemplateEditor() {
         resetSelectedTemplate();
       });
     _window.document
+      .querySelector("#share")
+      ?.addEventListener("click", (ev) => {
+        shareSelectedTemplate();
+      });
+    _window.document
       .querySelector("#importClipboard")
       ?.addEventListener("click", (ev) => {
         addon.hooks.onImportTemplateFromClipboard();
@@ -172,11 +177,6 @@ export async function showTemplateEditor() {
       .querySelector("#importNote")
       ?.addEventListener("click", (ev) => {
         importNoteTemplate();
-      });
-    _window.document
-      .querySelector("#share")
-      ?.addEventListener("click", (ev) => {
-        shareSelectedTemplate();
       });
     _window.document
       .querySelector("#backup")
@@ -286,6 +286,7 @@ function updateEditor() {
   const saveTemplate = win?.document.getElementById("save") as XUL.Button;
   const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
   const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
+  const shareTemplate = win?.document.getElementById("share") as XUL.Button;
   const formats = win?.document.getElementById(
     "formats-container",
   ) as HTMLDivElement;
@@ -301,6 +302,7 @@ function updateEditor() {
     saveTemplate.setAttribute("disabled", "true");
     deleteTemplate.setAttribute("disabled", "true");
     deleteTemplate.hidden = false;
+    shareTemplate.setAttribute("disabled", "true");
     resetTemplate.hidden = true;
     formats.hidden = true;
     snippets.hidden = true;
@@ -323,6 +325,7 @@ function updateEditor() {
     editor.hidden = false;
     saveTemplate.removeAttribute("disabled");
     deleteTemplate.removeAttribute("disabled");
+    shareTemplate.removeAttribute("disabled");
     formats.hidden = false;
     snippets.hidden = false;
     updateSnippets(
@@ -620,9 +623,12 @@ function shareSelectedTemplate() {
   const content = addon.api.template.getTemplateText(name);
   const yaml = `# This template is specifically for importing/sharing, using better 
 # notes 'import from clipboard': copy the content and
-# goto Zotero menu bar, click Edit->New Template from Clipboard.  
+# goto Zotero menu bar, click Tools->New Template from Clipboard.  
 # Do not copy-paste this to better notes template editor directly.
 name: "${name}"
+zoteroVersion: "${Zotero.version}"
+pluginVersion: "${version}"
+savedAt: "${new Date().toISOString()}"
 content: |-
 ${content
   .split("\n")
@@ -631,7 +637,7 @@ ${content
 `;
   new ztoolkit.Clipboard().addText(yaml, "text/plain").copy();
   showHint(
-    `Template ${name} is copied to clipboard. To import it, goto Zotero menu bar, click Edit->New Template from Clipboard.  `,
+    `Template ${name} is copied to clipboard. To import it, goto Zotero menu->Tools->New Template from Clipboard.  `,
   );
 }
 
