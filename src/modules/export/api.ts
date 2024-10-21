@@ -217,7 +217,7 @@ async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
   const globalCitationData = getNoteCitationData(noteItem as Zotero.Item);
 
   const newLines: string[] = [];
-  const noteLines = getLinesInNote(noteItem);
+  const noteLines = await getLinesInNote(noteItem);
   for (const i in noteLines) {
     newLines.push(noteLines[i]);
     const doc = parser.parseFromString(noteLines[i], "text/html");

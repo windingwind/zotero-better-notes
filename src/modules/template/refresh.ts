@@ -4,7 +4,7 @@ import { htmlUnescape } from "../../utils/str";
 export { refreshTemplatesInNote };
 
 async function refreshTemplatesInNote(editor: Zotero.EditorInstance) {
-  const lines = addon.api.note.getLinesInNote(editor._item);
+  const lines = await addon.api.note.getLinesInNote(editor._item);
   let startIndex = -1;
   const matchedIndexPairs: { from: number; to: number }[] = [];
 

@@ -131,7 +131,9 @@ export class OutlinePicker extends PluginCEBase {
     if (!this.item) {
       return;
     }
-    this.noteOutline = this._addon.api.note.getNoteTreeFlattened(this.item);
+    this.noteOutline = await this._addon.api.note.getNoteTreeFlattened(
+      this.item,
+    );
     // Fake a cursor position
     if (typeof this.lineIndex === "number") {
       // @ts-ignore - formatValues is not in the types

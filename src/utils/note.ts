@@ -2,8 +2,8 @@ import TreeModel = require("tree-model");
 import katex = require("katex");
 import { getEditorInstance, getPositionAtLine, insert } from "./editor";
 import { formatPath, getItemDataURL } from "./str";
-import { showHint } from "./hint";
 import { config } from "../../package.json";
+import { getParsingServer } from "./parsing";
 
 export {
   renderNoteHTML,
@@ -18,111 +18,17 @@ export {
   importImageToNote,
 };
 
-function parseHTMLLines(html: string): string[] {
-  // Remove container with one of the attrs named data-schema-version if exists
-  if (html.includes("data-schema-version")) {
-    html = html.replace(/<div[^>]*data-schema-version[^>]*>/, "");
-    html = html.replace(/<\/div>/, "");
-  }
-  const noteLines = html.split("\n").filter((e) => e);
-
-  // A cache for temporarily stored lines
-  let previousLineCache = [];
-  let nextLineCache = [];
-
-  const forceInline = ["table", "blockquote", "pre", "ol", "ul"];
-  const selfInline: string[] = [];
-  const forceInlineStack = [];
-  let forceInlineFlag = false;
-  let selfInlineFlag = false;
-
-  const parsedLines = [];
-  for (const line of noteLines) {
-    // restore self inline flag
-    selfInlineFlag = false;
-
-    // For force inline tags, set flag to append lines to current line
-    for (const tag of forceInline) {
-      const startReg = `<${tag}`;
-      const isStart = line.includes(startReg);
-      const endReg = `</${tag}>`;
-      const isEnd = line.includes(endReg);
-      if (isStart && !isEnd) {
-        forceInlineStack.push(tag);
-        ztoolkit.log("push", tag, line, forceInlineStack);
-        forceInlineFlag = true;
-        break;
-      }
-      if (isEnd && !isStart) {
-        forceInlineStack.pop();
-        ztoolkit.log("pop", tag, line, forceInlineStack);
-        // Exit force inline mode if the stack is empty
-        if (forceInlineStack.length === 0) {
-          forceInlineFlag = false;
-        }
-        break;
-      }
-    }
-
-    if (forceInlineFlag) {
-      nextLineCache.push(line);
-    } else {
-      // For self inline tags, cache start as previous line and end as next line
-      for (const tag of selfInline) {
-        const isStart = line.includes(`<${tag}`);
-        const isEnd = line.includes(`</${tag}>`);
-        if (isStart && !isEnd) {
-          selfInlineFlag = true;
-          nextLineCache.push(line);
-          break;
-        }
-        if (!isStart && isEnd) {
-          selfInlineFlag = true;
-          previousLineCache.push(line);
-          break;
-        }
-      }
-
-      if (!selfInlineFlag) {
-        // Append cache to previous line
-        if (previousLineCache.length) {
-          parsedLines[parsedLines.length - 1] += `\n${previousLineCache.join(
-            "\n",
-          )}`;
-          previousLineCache = [];
-        }
-        let nextLine = "";
-        // Append cache to next line
-        if (nextLineCache.length) {
-          nextLine = nextLineCache.join("\n");
-          nextLineCache = [];
-        }
-        if (nextLine) {
-          nextLine += "\n";
-        }
-        nextLine += `${line}`;
-        parsedLines.push(nextLine);
-      }
-    }
-  }
-  return parsedLines;
+async function parseHTMLLines(html: string) {
+  const server = await getParsingServer();
+  return await server.exec("parseHTMLLines", [html]);
 }
 
-function getLinesInNote(note: Zotero.Item): string[];
-
 async function getLinesInNote(
-  note: Zotero.Item,
-  options: {
-    convertToHTML?: true;
-  },
-): Promise<string[]>;
-
-function getLinesInNote(
   note: Zotero.Item,
   options?: {
     convertToHTML?: boolean;
   },
-): string[] | Promise<string[]> {
+): Promise<string[]> {
   if (!note) {
     return [];
   }
@@ -170,7 +76,7 @@ async function addLineToNote(
   if (!note || !html) {
     return;
   }
-  const noteLines = getLinesInNote(note);
+  const noteLines = await getLinesInNote(note);
   if (lineIndex < 0 || lineIndex >= noteLines.length) {
     lineIndex = noteLines.length;
   }
@@ -292,11 +198,14 @@ async function renderNoteHTML(
   return doc.body.innerHTML;
 }
 
-function getNoteTree(
+async function getNoteTree(
   note: Zotero.Item,
   parseLink: boolean = true,
-): TreeModel.Node<NoteNodeData> {
-  const noteLines = getLinesInNote(note);
+): Promise<TreeModel.Node<NoteNodeData>> {
+  const timeLabel = `getNoteTree-${note.id}-${Math.random()}`;
+  Zotero.getMainWindow().console.time(timeLabel);
+
+  const noteLines = await getLinesInNote(note);
   const parser = new DOMParser();
   const tree = new TreeModel();
   const root = tree.parse({
@@ -353,6 +262,8 @@ function getNoteTree(
           if (node.model.endIndex > parseInt(i) - 1) {
             node.model.endIndex = parseInt(i) - 1;
           }
+          Zotero.getMainWindow().console.timeEnd(timeLabel);
+
           return true;
         });
         previousNode.model.endIndex = parseInt(i) - 1;
@@ -360,21 +271,22 @@ function getNoteTree(
       lastNode = currentNode;
     }
   }
+  Zotero.getMainWindow().console.timeEnd(timeLabel);
   return root;
 }
 
-function getNoteTreeFlattened(
+async function getNoteTreeFlattened(
   note: Zotero.Item,
   options: {
     keepRoot?: boolean;
     keepLink?: boolean;
     customFilter?: (node: TreeModel.Node<NoteNodeData>) => boolean;
   } = { keepRoot: false, keepLink: false },
-): TreeModel.Node<NoteNodeData>[] {
+): Promise<TreeModel.Node<NoteNodeData>[]> {
   if (!note) {
     return [];
   }
-  return getNoteTree(note).all(
+  return (await getNoteTree(note)).all(
     (node) =>
       (options.keepRoot || node.model.lineIndex >= 0) &&
       (options.keepLink || node.model.level <= 6) &&
@@ -382,23 +294,23 @@ function getNoteTreeFlattened(
   );
 }
 
-function getNoteTreeNodeById(
+async function getNoteTreeNodeById(
   note: Zotero.Item,
   id: number,
   root: TreeModel.Node<NoteNodeData> | undefined = undefined,
 ) {
-  root = root || getNoteTree(note);
+  root = root || (await getNoteTree(note));
   return root.first(function (node) {
     return node.model.id === id;
   });
 }
 
-function getNoteTreeNodesByLevel(
+async function getNoteTreeNodesByLevel(
   note: Zotero.Item,
   level: number,
   root: TreeModel.Node<NoteNodeData> | undefined = undefined,
 ) {
-  root = root || getNoteTree(note);
+  root = root || (await getNoteTree(note));
   return root.all(function (node) {
     return node.model.level === level;
   });
@@ -534,7 +446,7 @@ async function importImageToNote(
   }
 
   if (!blob) {
-    showHint("Failed to import image.");
+    ztoolkit.log("Failed to import image.");
     return;
   }
 

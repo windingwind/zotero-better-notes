@@ -5,6 +5,8 @@ import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
 import { createZToolkit } from "./utils/ztoolkit";
+import { MessageHelper } from "zotero-plugin-toolkit/dist/helpers/message";
+import type { handlers } from "./extras/parsingWorker";
 
 class Addon {
   public data: {
@@ -70,6 +72,9 @@ class Addon {
     relation: {
       worker?: Worker;
     };
+    parsing: {
+      server?: MessageHelper<typeof handlers>;
+    };
     imageCache: Record<number, string>;
     hint: {
       silent: boolean;
@@ -117,6 +122,7 @@ class Addon {
       },
     },
     relation: {},
+    parsing: {},
     imageCache: {},
     hint: {
       silent: false,

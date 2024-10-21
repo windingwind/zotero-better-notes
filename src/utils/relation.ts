@@ -73,7 +73,7 @@ async function updateNoteLinkRelation(noteID: number) {
   const affectedNoteIDs = new Set([noteID]);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
-  const lines = addon.api.note.getLinesInNote(note);
+  const lines = await addon.api.note.getLinesInNote(note);
   const linkToData: LinkModel[] = [];
   for (let i = 0; i < lines.length; i++) {
     const linkMatches = lines[i].match(/href="zotero:\/\/note\/[^"]+"/g);

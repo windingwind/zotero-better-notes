@@ -46,6 +46,7 @@ import { closeRelationWorker } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
+import { closeParsingServer } from "./utils/parsing";
 
 async function onStartup() {
   await Promise.all([
@@ -109,6 +110,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 
 function onShutdown(): void {
   closeRelationWorker();
+  closeParsingServer();
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;

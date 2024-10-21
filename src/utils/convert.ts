@@ -212,13 +212,15 @@ async function link2html(
     let lineIndex = linkParams.lineIndex;
 
     if (typeof linkParams.sectionName === "string") {
-      const sectionTree = addon.api.note.getNoteTreeFlattened(item);
+      const sectionTree = await addon.api.note.getNoteTreeFlattened(item);
       const sectionNode = sectionTree.find(
         (node) => node.model.name.trim() === linkParams.sectionName!.trim(),
       );
       lineIndex = sectionNode?.model.lineIndex;
     }
-    html = addon.api.note.getLinesInNote(item).slice(lineIndex).join("\n");
+    html = (await addon.api.note.getLinesInNote(item))
+      .slice(lineIndex)
+      .join("\n");
   } else {
     html = addon.api.sync.getNoteStatus(linkParams.noteItem.id)?.content || "";
   }

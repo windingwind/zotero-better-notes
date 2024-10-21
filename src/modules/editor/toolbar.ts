@@ -71,7 +71,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
   const noteItem = editor._item;
 
   const currentLine = getLineAtCursor(editor);
-  const currentSection = getSectionAtCursor(editor) || "";
+  const currentSection = (await getSectionAtCursor(editor)) || "";
   const settingsMenuData: PopupData[] = [
     {
       id: makeId("settings-openAsTab"),

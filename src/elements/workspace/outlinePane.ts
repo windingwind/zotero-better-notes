@@ -211,12 +211,13 @@ export class OutlinePane extends PluginCEBase {
       "message",
       this.messageHandler,
     );
+    const nodes = await this._addon.api.note.getNoteTreeFlattened(this.item, {
+      keepLink: !!getPref("workspace.outline.keepLinks"),
+    });
     this._outlineContainer.contentWindow?.postMessage(
       {
         type: "setMindMapData",
-        nodes: this._addon.api.note.getNoteTreeFlattened(this.item, {
-          keepLink: !!getPref("workspace.outline.keepLinks"),
-        }),
+        nodes,
         expandLevel: getPref("workspace.outline.expandLevel"),
       },
       "*",
@@ -316,13 +317,13 @@ export class OutlinePane extends PluginCEBase {
       }
       case "moveNode": {
         if (!this.item) return;
-        const tree = this._addon.api.note.getNoteTree(this.item);
-        const fromNode = this._addon.api.note.getNoteTreeNodeById(
+        const tree = await this._addon.api.note.getNoteTree(this.item);
+        const fromNode = await this._addon.api.note.getNoteTreeNodeById(
           this.item,
           ev.data.fromID,
           tree,
         );
-        const toNode = this._addon.api.note.getNoteTreeNodeById(
+        const toNode = await this._addon.api.note.getNoteTreeNodeById(
           this.item,
           ev.data.toID,
           tree,

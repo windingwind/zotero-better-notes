@@ -15,7 +15,7 @@ async function note2mm(
   noteItem: Zotero.Item,
   options: { withContent?: boolean } = { withContent: true },
 ) {
-  const root = getNoteTree(noteItem, false);
+  const root = await getNoteTree(noteItem, false);
   const textNodeForEach = (e: Node, callbackfn: (e: any) => void) => {
     if (e.nodeType === Zotero.getMainWindow().document.TEXT_NODE) {
       callbackfn(e);
@@ -32,7 +32,7 @@ async function note2mm(
     textNodeForEach(doc.body, (e: Text) => {
       e.data = htmlEscape(doc, e.data);
     });
-    lines = parseHTMLLines(doc.body.innerHTML).map((line) =>
+    lines = (await parseHTMLLines(doc.body.innerHTML)).map((line) =>
       htmlUnescape(line),
     );
   }

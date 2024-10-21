@@ -136,9 +136,12 @@ function scroll(editor: Zotero.EditorInstance, lineIndex: number) {
   core.view.dom.parentElement?.scrollTo(0, offset);
 }
 
-function scrollToSection(editor: Zotero.EditorInstance, sectionName: string) {
+async function scrollToSection(
+  editor: Zotero.EditorInstance,
+  sectionName: string,
+) {
   const item = editor._item;
-  const sectionTree = getNoteTreeFlattened(item);
+  const sectionTree = await getNoteTreeFlattened(item);
   const sectionNode = sectionTree.find(
     (node) => node.model.name.trim() === sectionName.trim(),
   );
@@ -199,11 +202,13 @@ function getLineAtCursor(editor: Zotero.EditorInstance) {
   return i;
 }
 
-function getSectionAtCursor(editor: Zotero.EditorInstance): string | undefined {
+async function getSectionAtCursor(
+  editor: Zotero.EditorInstance,
+): Promise<string | undefined> {
   const lineIndex = getLineAtCursor(editor);
   if (lineIndex < 0) return undefined;
   const item = editor._item;
-  const sectionTree = getNoteTreeFlattened(item);
+  const sectionTree = await getNoteTreeFlattened(item);
   let sectionNode;
   for (let i = 0; i < sectionTree.length; i++) {
     if (
