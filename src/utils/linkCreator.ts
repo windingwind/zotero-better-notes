@@ -16,9 +16,13 @@ async function openLinkCreator(
     return;
   }
   const io = {
-    openedNoteIDs: Zotero_Tabs._tabs
-      .map((tab) => tab.data?.itemID)
-      .filter((id) => id && id != currentNote.id),
+    openedNoteIDs: Array.from(
+      new Set(
+        Zotero.Notes._editorInstances
+          .map((editor) => editor._item?.id)
+          .filter((id) => id),
+      ),
+    ),
     currentNoteID: currentNote.id,
     currentLineIndex: options?.lineIndex,
     deferred: Zotero.Promise.defer(),
