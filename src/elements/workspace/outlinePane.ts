@@ -148,7 +148,7 @@ export class OutlinePane extends PluginCEBase {
     this._notifierID = Zotero.Notifier.registerObserver(
       this,
       ["item"],
-      "attachmentsBox",
+      "bn-outline",
     );
 
     this._prefObserverID = registerPrefObserver(
