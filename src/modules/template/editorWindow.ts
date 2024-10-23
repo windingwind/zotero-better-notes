@@ -191,7 +191,7 @@ export async function showTemplateEditor() {
     _window.document
       .querySelector("#editor-type")
       ?.addEventListener("command", (ev) => {
-        updateSnippets((ev.target as XUL.MenuList)?.value);
+        updateSnippets((ev.target as XULMenuListElement)?.value);
       });
     addon.data.template.editor.window?.focus();
     const editorWin = (_window.document.querySelector("#editor") as any)
@@ -278,15 +278,15 @@ function updateEditor() {
 
   const templateType = win.document.querySelector(
     "#editor-type",
-  ) as XUL.MenuList;
+  ) as XULMenuListElement;
   const templateName = win.document.querySelector(
     "#editor-name",
   ) as HTMLInputElement;
   const editor = win?.document.getElementById("editor") as HTMLIFrameElement;
-  const saveTemplate = win?.document.getElementById("save") as XUL.Button;
-  const deleteTemplate = win?.document.getElementById("delete") as XUL.Button;
-  const resetTemplate = win?.document.getElementById("reset") as XUL.Button;
-  const shareTemplate = win?.document.getElementById("share") as XUL.Button;
+  const saveTemplate = win?.document.getElementById("save") as XULButtonElement | null;
+  const deleteTemplate = win?.document.getElementById("delete") as XULButtonElement | null;
+  const resetTemplate = win?.document.getElementById("reset") as XULButtonElement | null;
+  const shareTemplate = win?.document.getElementById("share") as XULButtonElement | null;
   const formats = win?.document.getElementById(
     "formats-container",
   ) as HTMLDivElement;
@@ -299,11 +299,11 @@ function updateEditor() {
     templateName.value = "";
     templateName.setAttribute("disabled", "true");
     editor.hidden = true;
-    saveTemplate.setAttribute("disabled", "true");
-    deleteTemplate.setAttribute("disabled", "true");
-    deleteTemplate.hidden = false;
-    shareTemplate.setAttribute("disabled", "true");
-    resetTemplate.hidden = true;
+    saveTemplate?.setAttribute("disabled", "true");
+    deleteTemplate?.setAttribute("disabled", "true");
+    deleteTemplate && (deleteTemplate.hidden = false);
+    shareTemplate?.setAttribute("disabled", "true");
+    resetTemplate && (resetTemplate.hidden = true);
     formats.hidden = true;
     snippets.hidden = true;
   } else {
@@ -312,20 +312,20 @@ function updateEditor() {
     if (!addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
       templateType.removeAttribute("disabled");
       templateName.removeAttribute("disabled");
-      deleteTemplate.hidden = false;
-      resetTemplate.hidden = true;
+      deleteTemplate && (deleteTemplate.hidden = false);
+      resetTemplate && (resetTemplate.hidden = true);
     } else {
       templateType.setAttribute("disabled", "true");
       templateName.setAttribute("disabled", "true");
-      deleteTemplate.setAttribute("disabled", "true");
-      deleteTemplate.hidden = true;
-      resetTemplate.hidden = false;
+      deleteTemplate?.setAttribute("disabled", "true");
+      deleteTemplate && (deleteTemplate.hidden = true);
+      resetTemplate && (resetTemplate.hidden = false);
     }
     addon.data.template.editor.editor.setValue(templateText);
     editor.hidden = false;
-    saveTemplate.removeAttribute("disabled");
-    deleteTemplate.removeAttribute("disabled");
-    shareTemplate.removeAttribute("disabled");
+    saveTemplate?.removeAttribute("disabled");
+    deleteTemplate?.removeAttribute("disabled");
+    shareTemplate?.removeAttribute("disabled");
     formats.hidden = false;
     snippets.hidden = false;
     updateSnippets(
@@ -534,7 +534,7 @@ function saveSelectedTemplate() {
 
   const templateType = win.document.querySelector(
     "#editor-type",
-  ) as XUL.MenuList;
+  ) as XULMenuListElement;
   const templateName = win.document.querySelector(
     "#editor-name",
   ) as HTMLInputElement;
@@ -608,7 +608,7 @@ function resetSelectedTemplate() {
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
     addon.data.template.editor.editor.setValue(
       addon.api.template.DEFAULT_TEMPLATES.find((t) => t.name === name)?.text ||
-        "",
+      "",
     );
     showHint(`Template ${name} is reset. Please save before leaving.`);
   }
@@ -631,9 +631,9 @@ pluginVersion: "${version}"
 savedAt: "${new Date().toISOString()}"
 content: |-
 ${content
-  .split("\n")
-  .map((line) => `  ${line}`)
-  .join("\n")}
+      .split("\n")
+      .map((line) => `  ${line}`)
+      .join("\n")}
 `;
   new ztoolkit.Clipboard().addText(yaml, "text/plain").copy();
   showHint(

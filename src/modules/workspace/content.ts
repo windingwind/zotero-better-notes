@@ -1,7 +1,7 @@
 import { Workspace } from "../../elements/workspace/workspace";
 import { waitUtilAsync } from "../../utils/wait";
 
-export async function initWorkspace(container: XUL.Box, item: Zotero.Item) {
+export async function initWorkspace(container: XULBoxElement, item: Zotero.Item) {
   if (!container) {
     return;
   }

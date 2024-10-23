@@ -153,7 +153,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
     linkPopup?.append(insertButton, updateButton, openButton);
   } else {
     Array.from(_window.document.querySelectorAll(".link-popup-extra")).forEach(
-      (elem) => elem.remove(),
+      (elem) => (elem as HTMLElement)?.remove(),
     );
   }
 }
@@ -184,7 +184,7 @@ function updateEditorImagePopup(editor: Zotero.EditorInstance) {
                 }
                 const imageList = Array.from(imgs);
                 addon.hooks.onShowImageViewer(
-                  imageList.map((elem) => elem.src),
+                  imageList.map((elem) => (elem as HTMLImageElement)?.src),
                   imageList.indexOf(
                     editor._iframeWindow.document
                       .querySelector(".primary-editor")

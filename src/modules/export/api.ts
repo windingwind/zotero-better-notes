@@ -221,9 +221,9 @@ async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
   for (const i in noteLines) {
     newLines.push(noteLines[i]);
     const doc = parser.parseFromString(noteLines[i], "text/html");
-    const linkParams = Array.from(doc.querySelectorAll("a"))
-      .filter((a) => a.href.startsWith("zotero://note/"))
-      .map((a) => getNoteLinkParams(a.href))
+    const linkParams = (Array.from(doc.querySelectorAll("a")) as HTMLAnchorElement[])
+      .filter((a) => a?.href.startsWith("zotero://note/"))
+      .map((a) => getNoteLinkParams(a?.href))
       .filter((p) => p.noteItem && !p.ignore);
     for (const linkParam of linkParams) {
       const html = await addon.api.template.runTemplate(
@@ -248,11 +248,10 @@ async function embedLinkedNotes(noteItem: Zotero.Item): Promise<string> {
       seenCitationItemIDs.push(currentID);
     }
   }
-  return `<div data-schema-version="${
-    globalCitationData.schemaVersion
-  }" data-citation-items="${encodeURIComponent(
-    JSON.stringify(finalCitationItems),
-  )}">${newLines.join("\n")}</div>`;
+  return `<div data-schema-version="${globalCitationData.schemaVersion
+    }" data-citation-items="${encodeURIComponent(
+      JSON.stringify(finalCitationItems),
+    )}">${newLines.join("\n")}</div>`;
 }
 
 function getNoteCitationData(noteItem: Zotero.Item) {

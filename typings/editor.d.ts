@@ -43,7 +43,7 @@ declare interface EditorCore {
 declare type EditorAPI =
   typeof import("../src/extras/editorScript").BetterNotesEditorAPI;
 
-declare interface EditorElement extends XUL.Box {
+declare interface EditorElement extends XULBoxElement {
   _iframe: HTMLIFrameElement;
   _editorInstance: Zotero.EditorInstance;
   _initialized?: boolean;

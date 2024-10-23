@@ -17,7 +17,7 @@ export async function openWorkspaceWindow(
 
   const container = win.document.querySelector(
     "#workspace-container",
-  ) as XUL.Box;
+  ) as XULBoxElement;
   const workspace = await addon.hooks.onInitWorkspace(container, item);
   workspace?.scrollEditorTo(options);
 

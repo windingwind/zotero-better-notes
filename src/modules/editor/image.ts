@@ -5,12 +5,12 @@ export function initEditorImagePreviewer(editor: Zotero.EditorInstance) {
     const imgs = editor._iframeWindow.document
       .querySelector(".primary-editor")
       ?.querySelectorAll("img");
-    if (!imgs) {
+    if (!imgs?.length) {
       return;
     }
     const imageList = Array.from(imgs);
     addon.hooks.onShowImageViewer(
-      imageList.map((elem) => elem.src),
+      imageList.map((elem) => (elem as HTMLImageElement)?.src),
       imageList.indexOf(e.target as HTMLImageElement),
       editor._item.getNoteTitle(),
     );

@@ -95,13 +95,13 @@ export function getLinkedNotesRecursively(
     return [];
   }
   const doc = new DOMParser().parseFromString(noteItem.getNote(), "text/html");
-  const links = Array.from(doc.querySelectorAll("a"));
+  const links = Array.from(doc.querySelectorAll("a")) as HTMLAnchorElement[];
   return links.reduce(
     (acc, link) => {
-      const linkParams = getNoteLinkParams(link.href);
+      const linkParams = getNoteLinkParams(link?.href);
       if (linkParams.noteItem) {
         acc.push(linkParams.noteItem.id);
-        acc.push(...getLinkedNotesRecursively(link.href, acc));
+        acc.push(...getLinkedNotesRecursively(link?.href, acc));
       }
       return acc;
     },

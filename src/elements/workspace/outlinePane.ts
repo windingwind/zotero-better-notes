@@ -236,7 +236,7 @@ export class OutlinePane extends PluginCEBase {
 
     // Update set outline menu
     this._queryID("setOutlinePopup")?.childNodes.forEach((elem) =>
-      (elem as XUL.MenuItem).removeAttribute("checked"),
+      (elem as XULMenuItemElement).removeAttribute("checked"),
     );
     this._queryID(
       Object.keys(OutlinePane.outlineMenuIDs)[this.outlineType],
@@ -268,7 +268,7 @@ export class OutlinePane extends PluginCEBase {
 
   toolbarButtonCommandHandler = async (ev: Event) => {
     if (!this.item) return;
-    const type = this._unwrapID((ev.target as XUL.ToolBarButton).id);
+    const type = this._unwrapID((ev.target as XULToolBarButtonElement).id);
     switch (type) {
       case "useTreeView":
       case "useMindMap":

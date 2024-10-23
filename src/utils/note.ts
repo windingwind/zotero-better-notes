@@ -58,8 +58,7 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   } else {
     const noteHead = noteText.substring(0, containerIndex);
     note.setNote(
-      `${noteHead}data-schema-version="${
-        config.dataSchemaVersion
+      `${noteHead}data-schema-version="${config.dataSchemaVersion
       }">${lines.join("\n")}</div>`,
     );
   }
@@ -167,7 +166,7 @@ async function renderNoteHTML(
   const bgNodes = doc.querySelectorAll(
     "span[style]",
   ) as NodeListOf<HTMLElement>;
-  for (const node of Array.from(bgNodes)) {
+  for (const node of Array.from(bgNodes) as HTMLSpanElement[]) {
     // Browser converts #RRGGBBAA hex color to rgba function, and we convert it to rgb function,
     // because word processors don't understand colors with alpha channel
     if (
@@ -359,7 +358,7 @@ async function copyEmbeddedImagesInHTML(
     if (await attachment.fileExists()) {
       const nodes = Array.from(
         doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
-      );
+      ) as HTMLImageElement[];
       if (nodes.length) {
         let copiedAttachment: Zotero.Item;
         await Zotero.DB.executeTransaction(async () => {
@@ -370,7 +369,7 @@ async function copyEmbeddedImagesInHTML(
           });
         });
         nodes.forEach((node) =>
-          node.setAttribute("data-attachment-key", copiedAttachment.key),
+          node?.setAttribute("data-attachment-key", copiedAttachment.key), Node
         );
       }
     }

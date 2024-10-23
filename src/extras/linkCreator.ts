@@ -2,7 +2,7 @@ import { getPref, setPref } from "../utils/prefs";
 import { InboundCreator } from "../elements/linkCreator/inboundCreator";
 import { OutboundCreator } from "../elements/linkCreator/outboundCreator";
 
-let tabbox: XUL.TabBox;
+let tabbox: XULTabBoxElement;
 let inboundCreator: InboundCreator;
 let outboundCreator: OutboundCreator;
 

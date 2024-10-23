@@ -45,7 +45,7 @@ export function registerMenus(win: Window) {
   // menuFile
   const menuFileAnchor = win.document.querySelector(
     "#menu_newCollection",
-  ) as XUL.MenuItem;
+  ) as XULMenuItemElement;
 
   ztoolkit.Menu.register(
     "menuFile",
@@ -105,7 +105,7 @@ export function registerMenus(win: Window) {
   // create note menu in library
   const newNoteMenu = win.document
     .querySelector("#zotero-tb-note-add")
-    ?.querySelector("menupopup") as XUL.MenuPopup;
+    ?.querySelector("menupopup") as XULMenuPopupElement;
   ztoolkit.Menu.register(newNoteMenu, {
     tag: "menuitem",
     label: getString("menuAddNote.newTemplateStandaloneNote"),
@@ -130,7 +130,7 @@ export function registerMenus(win: Window) {
   ztoolkit.Menu.register(
     win.document.querySelector(
       "#context-pane-add-child-note-button-popup",
-    ) as XUL.MenuPopup,
+    ) as XULMenuPopupElement,
     {
       tag: "menuitem",
       label: getString("menuAddReaderNote.newTemplateNote"),

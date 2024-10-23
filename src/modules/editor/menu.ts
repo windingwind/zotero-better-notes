@@ -14,10 +14,10 @@ export function initEditorMenu(editor: Zotero.EditorInstance) {
     return;
   }
   editor._popup.setAttribute("bn-init", addon.data.uid);
-  (editor._popup as XUL.Menu).addEventListener("popupshowing", (ev) => {
+  (editor._popup as XULMenuElement).addEventListener("popupshowing", (ev) => {
     const menuitemID = makeId("resizeImage");
     if (
-      !(editor._popup as XUL.Menu).querySelector(`#${menuitemID}`) &&
+      !(editor._popup as XULMenuElement).querySelector(`#${menuitemID}`) &&
       isImageAtCursor(editor)
     ) {
       ztoolkit.Menu.register(editor._popup, {

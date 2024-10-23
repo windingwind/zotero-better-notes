@@ -22,7 +22,7 @@ export class NotePicker extends PluginCEBase {
   openedNotesView!: VirtualizedTableHelper;
   recentNotesView!: VirtualizedTableHelper;
 
-  _collectionsList!: XUL.Box;
+  _collectionsList!: XULBoxElement;
 
   openedNotes: Zotero.Item[] = [];
 
@@ -101,7 +101,7 @@ export class NotePicker extends PluginCEBase {
 
     this._collectionsList = this.querySelector(
       "#zotero-collections-tree-container",
-    ) as XUL.Box;
+    ) as XULBoxElement;
 
     this._restoreState();
 
@@ -459,7 +459,7 @@ export class NotePicker extends PluginCEBase {
   _persistState() {
     let state = getPrefJSON(persistKey);
 
-    const collectionsListWidth = getComputedStyle(this._collectionsList).width;
+    const collectionsListWidth = getComputedStyle(this._collectionsList)?.width;
     if (state?.collectionsListWidth === collectionsListWidth) {
       return;
     }
@@ -477,7 +477,7 @@ export class NotePicker extends PluginCEBase {
     if (
       typeof state.collectionsListWidth === "string" &&
       state.collectionsListWidth !==
-        Number(getComputedStyle(this._collectionsList).width)
+        Number(getComputedStyle(this._collectionsList)?.width)
     ) {
       this._collectionsList.style.width = state.collectionsListWidth;
     }

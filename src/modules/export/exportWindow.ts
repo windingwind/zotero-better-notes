@@ -59,7 +59,7 @@ export async function showExportNoteOptions(
       }
     }
     Array.from(doc.querySelectorAll('input[name="linkMode"]')).forEach((elem) =>
-      elem.addEventListener("change", updateSyncCheckbox),
+      (elem as HTMLInputElement).addEventListener("change", updateSyncCheckbox),
     );
     updateSyncCheckbox();
   };
@@ -177,11 +177,11 @@ function makeCheckboxLine(dataKey: string, callback?: (ev: Event) => void) {
         },
         listeners: callback
           ? [
-              {
-                type: "change",
-                listener: callback,
-              },
-            ]
+            {
+              type: "change",
+              listener: callback,
+            },
+          ]
           : [],
       },
     ],
@@ -223,11 +223,11 @@ function makeRadioLine(
         },
         listeners: callback
           ? [
-              {
-                type: "change",
-                listener: callback,
-              },
-            ]
+            {
+              type: "change",
+              listener: callback,
+            },
+          ]
           : [],
       },
     ],

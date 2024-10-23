@@ -21,11 +21,11 @@ export class Workspace extends PluginCEBase {
 
   _editorElement!: EditorElement;
   _outline!: OutlinePane;
-  _editorContainer!: XUL.Box;
+  _editorContainer!: XULBoxElement;
   _context!: ContextPane;
 
-  _leftSplitter!: XUL.Splitter;
-  _rightSplitter!: XUL.Splitter;
+  _leftSplitter!: XULSplitterElement;
+  _rightSplitter!: XULSplitterElement;
 
   resizeOb!: ResizeObserver;
 
@@ -93,14 +93,14 @@ export class Workspace extends PluginCEBase {
 
     this._outline = this._queryID("left-container") as unknown as OutlinePane;
 
-    this._editorContainer = this._queryID("center-container") as XUL.Box;
+    this._editorContainer = this._queryID("center-container") as XULBoxElement;
     this._editorElement = this._queryID("editor-main") as EditorElement;
     this._outline._editorElement = this._editorElement;
 
     this._context = this._queryID("right-container") as unknown as ContextPane;
 
-    this._leftSplitter = this._queryID("left-splitter") as XUL.Splitter;
-    this._rightSplitter = this._queryID("right-splitter") as XUL.Splitter;
+    this._leftSplitter = this._queryID("left-splitter") as XULSplitterElement;
+    this._rightSplitter = this._queryID("right-splitter") as XULSplitterElement;
 
     this._leftSplitter.addEventListener("mouseup", () => {
       this._persistState();
