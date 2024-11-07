@@ -49,7 +49,9 @@ async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
 
   const mathCache = {} as MathCache;
 
-  for (const elem of (Array.from(doc.querySelectorAll("math")) as MathMLElement[])) {
+  for (const elem of Array.from(
+    doc.querySelectorAll("math"),
+  ) as MathMLElement[]) {
     let str = (await sendWorkerTask(
       worker,
       "parseMML",
@@ -122,8 +124,9 @@ async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
       citationItems.push(item);
     }
     const properties = citation.properties;
-    const formattedCitation = `${elem.textContent || "Zotero Citation"
-      } - Please click Zotero - Refresh in Word/LibreOffice to update all fields.`;
+    const formattedCitation = `${
+      elem.textContent || "Zotero Citation"
+    } - Please click Zotero - Refresh in Word/LibreOffice to update all fields.`;
     properties.formattedCitation = formattedCitation;
     properties.plainCitation = formattedCitation + " ";
     properties.noteIndex = 0;

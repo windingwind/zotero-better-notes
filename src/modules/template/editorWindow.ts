@@ -283,10 +283,18 @@ function updateEditor() {
     "#editor-name",
   ) as HTMLInputElement;
   const editor = win?.document.getElementById("editor") as HTMLIFrameElement;
-  const saveTemplate = win?.document.getElementById("save") as XULButtonElement | null;
-  const deleteTemplate = win?.document.getElementById("delete") as XULButtonElement | null;
-  const resetTemplate = win?.document.getElementById("reset") as XULButtonElement | null;
-  const shareTemplate = win?.document.getElementById("share") as XULButtonElement | null;
+  const saveTemplate = win?.document.getElementById(
+    "save",
+  ) as XULButtonElement | null;
+  const deleteTemplate = win?.document.getElementById(
+    "delete",
+  ) as XULButtonElement | null;
+  const resetTemplate = win?.document.getElementById(
+    "reset",
+  ) as XULButtonElement | null;
+  const shareTemplate = win?.document.getElementById(
+    "share",
+  ) as XULButtonElement | null;
   const formats = win?.document.getElementById(
     "formats-container",
   ) as HTMLDivElement;
@@ -608,7 +616,7 @@ function resetSelectedTemplate() {
   if (addon.api.template.SYSTEM_TEMPLATE_NAMES.includes(name)) {
     addon.data.template.editor.editor.setValue(
       addon.api.template.DEFAULT_TEMPLATES.find((t) => t.name === name)?.text ||
-      "",
+        "",
     );
     showHint(`Template ${name} is reset. Please save before leaving.`);
   }
@@ -631,9 +639,9 @@ pluginVersion: "${version}"
 savedAt: "${new Date().toISOString()}"
 content: |-
 ${content
-      .split("\n")
-      .map((line) => `  ${line}`)
-      .join("\n")}
+  .split("\n")
+  .map((line) => `  ${line}`)
+  .join("\n")}
 `;
   new ztoolkit.Clipboard().addText(yaml, "text/plain").copy();
   showHint(

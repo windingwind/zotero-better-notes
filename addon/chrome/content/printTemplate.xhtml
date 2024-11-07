@@ -23,6 +23,10 @@
           var parser = new DOMParser();
           var serializer = new XMLSerializer();
           var htmlString = e.data.html;
+          const styleString = e.data.style;
+          const style = document.createElement("style");
+          style.innerHTML = styleString;
+          document.head.appendChild(style);
           var htmlDoc = parser.parseFromString(htmlString, "text/html");
           var xhtmlString = serializer.serializeToString(htmlDoc);
           document.querySelector(".markdown-body").innerHTML = xhtmlString;

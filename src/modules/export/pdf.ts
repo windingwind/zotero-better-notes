@@ -17,7 +17,10 @@ export async function savePDF(noteId: number) {
     args,
   )!;
   await args._initPromise.promise;
-  args.browser?.contentWindow.postMessage({ type: "print", html }, "*");
+  args.browser?.contentWindow.postMessage(
+    { type: "print", html, style: Zotero.Prefs.get("note.css") || "" },
+    "*",
+  );
   win.print();
   showHint("Note Saved as PDF");
 }

@@ -177,11 +177,11 @@ function makeCheckboxLine(dataKey: string, callback?: (ev: Event) => void) {
         },
         listeners: callback
           ? [
-            {
-              type: "change",
-              listener: callback,
-            },
-          ]
+              {
+                type: "change",
+                listener: callback,
+              },
+            ]
           : [],
       },
     ],
@@ -223,11 +223,11 @@ function makeRadioLine(
         },
         listeners: callback
           ? [
-            {
-              type: "change",
-              listener: callback,
-            },
-          ]
+              {
+                type: "change",
+                listener: callback,
+              },
+            ]
           : [],
       },
     ],

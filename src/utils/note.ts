@@ -58,7 +58,8 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   } else {
     const noteHead = noteText.substring(0, containerIndex);
     note.setNote(
-      `${noteHead}data-schema-version="${config.dataSchemaVersion
+      `${noteHead}data-schema-version="${
+        config.dataSchemaVersion
       }">${lines.join("\n")}</div>`,
     );
   }
@@ -368,8 +369,10 @@ async function copyEmbeddedImagesInHTML(
             note: targetNote,
           });
         });
-        nodes.forEach((node) =>
-          node?.setAttribute("data-attachment-key", copiedAttachment.key), Node
+        nodes.forEach(
+          (node) =>
+            node?.setAttribute("data-attachment-key", copiedAttachment.key),
+          Node,
         );
       }
     }
