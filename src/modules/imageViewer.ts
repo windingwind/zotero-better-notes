@@ -81,7 +81,7 @@ export async function showImageViewer(
           return;
         }
         const mime = parts[0].match(/:(.*?);/)![1];
-        const bstr = ztoolkit.getGlobal("atob")(parts[1]);
+        const bstr = atob(parts[1]);
         let n = bstr.length;
         const u8arr = new Uint8Array(n);
         while (n--) {
@@ -92,7 +92,7 @@ export async function showImageViewer(
           Zotero.getString("noteEditor.saveImageAs"),
           "save",
           [[`Image(*.${ext})`, `*.${ext}`]],
-          `${Zotero.getString("fileTypes.image").toLowerCase()}.${ext}`,
+          `Image.${ext}`,
           addon.data.imageViewer.window,
           "images",
         ).open();
@@ -119,7 +119,11 @@ export async function showImageViewer(
     });
     addon.data.imageViewer.window.addEventListener("keydown", (e) => {
       // ctrl+w or esc
-      if ((e.key === "w" && e.ctrlKey) || e.keyCode === 27) {
+      if (
+        (e.key === "w" && Zotero.isMac && e.metaKey) ||
+        (!Zotero.isMac && e.ctrlKey) ||
+        e.keyCode === 27
+      ) {
         addon.data.imageViewer.window?.close();
       }
       addon.data.imageViewer.anchorPosition = {
@@ -205,12 +209,12 @@ function setImage() {
   setTitle();
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#left-container",
+      "#left",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.idx === 0 ? "0.5" : "1";
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#right-container",
+      "#right",
     ) as HTMLButtonElement
   ).style.opacity =
     addon.data.imageViewer.idx === addon.data.imageViewer.srcList.length - 1
@@ -259,12 +263,12 @@ function setScale(scaling: number) {
   }
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#bigger-container",
+      "#bigger",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.scaling === 10 ? "0.5" : "1";
   (
     addon.data.imageViewer.window?.document.querySelector(
-      "#smaller-container",
+      "#smaller",
     ) as HTMLButtonElement
   ).style.opacity = addon.data.imageViewer.scaling === 0.1 ? "0.5" : "1";
   // (
