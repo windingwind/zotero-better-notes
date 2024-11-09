@@ -1,7 +1,4 @@
 {
-  // 使用 IntelliSense 了解相关属性。
-  // 悬停以查看现有属性的描述。
-  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
@@ -9,28 +6,14 @@
       "request": "launch",
       "name": "StartDev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start-watch"]
+      "runtimeArgs": ["run", "start"]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Restart",
+      "name": "Lint",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "restart"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Reload",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "reload"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Restart in Prod Mode",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "restart-prod"]
+      "runtimeArgs": ["run", "lint"]
     }
   ]
 }
