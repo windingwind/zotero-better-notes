@@ -20,7 +20,7 @@ export {
 
 async function parseHTMLLines(html: string) {
   const server = await getParsingServer();
-  return await server.exec("parseHTMLLines", [html]);
+  return await server.proxy.parseHTMLLines(html);
 }
 
 async function getLinesInNote(
@@ -58,8 +58,7 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   } else {
     const noteHead = noteText.substring(0, containerIndex);
     note.setNote(
-      `${noteHead}data-schema-version="${
-        config.dataSchemaVersion
+      `${noteHead}data-schema-version="${config.dataSchemaVersion
       }">${lines.join("\n")}</div>`,
     );
   }

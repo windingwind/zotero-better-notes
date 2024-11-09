@@ -97,11 +97,9 @@ function parseHTMLLines(html: string): string[] {
   return parsedLines;
 }
 
-const funcs = {
+const handlers = {
   parseHTMLLines,
 };
-
-const handlers = MessageHelper.wrapHandlers(funcs);
 
 const messageServer = new MessageHelper({
   canBeDestroyed: true,

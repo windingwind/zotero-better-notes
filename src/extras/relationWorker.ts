@@ -15,7 +15,7 @@ db.version(2).stores({
 
 log("Using Dexie v" + Dexie.semVer, db);
 
-const funcs = {
+const handlers = {
   addLink,
   bulkAddLink,
   rebuildLinkForNote,
@@ -25,8 +25,6 @@ const funcs = {
   getLinkTargetByAnnotation,
   getAnnotationByLinkTarget,
 };
-
-const handlers = MessageHelper.wrapHandlers(funcs);
 
 const messageServer = new MessageHelper({
   canBeDestroyed: true,

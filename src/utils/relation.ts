@@ -73,9 +73,7 @@ async function updateNoteLinkRelation(noteID: number) {
       }
     }
   }
-  const result = await (
-    await getRelationServer()
-  ).exec("rebuildLinkForNote", [fromLibID, fromKey, linkToData]);
+  const result = await (await getRelationServer()).proxy.rebuildLinkForNote(fromLibID, fromKey, linkToData);
 
   for (const link of result.oldOutboundLinks as LinkModel[]) {
     const item = Zotero.Items.getByLibraryAndKey(link.toLibID, link.toKey);
@@ -98,17 +96,14 @@ async function getNoteLinkOutboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
-  return (await getRelationServer()).exec("getOutboundLinks", [
-    fromLibID,
-    fromKey,
-  ]);
+  return await (await getRelationServer()).proxy.getOutboundLinks(fromLibID, fromKey);
 }
 
 async function getNoteLinkInboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const toLibID = note.libraryID;
   const toKey = note.key;
-  return (await getRelationServer()).exec("getInboundLinks", [toLibID, toKey]);
+  return await (await getRelationServer()).proxy.getInboundLinks(toLibID, toKey);
 }
 
 function decodeHTMLEntities(text: string) {
@@ -130,21 +125,15 @@ interface LinkModel {
 }
 
 async function linkAnnotationToTarget(model: AnnotationModel) {
-  return (await getRelationServer()).exec("linkAnnotationToTarget", [model]);
+  return await (await getRelationServer()).proxy.linkAnnotationToTarget(model);
 }
 
 async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
-  return (await getRelationServer()).exec("getLinkTargetByAnnotation", [
-    fromLibID,
-    fromKey,
-  ]);
+  return await (await getRelationServer()).proxy.getLinkTargetByAnnotation(fromLibID, fromKey);
 }
 
 async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
-  return (await getRelationServer()).exec("getAnnotationByLinkTarget", [
-    toLibID,
-    toKey,
-  ]);
+  return await (await getRelationServer()).proxy.getAnnotationByLinkTarget(toLibID, toKey);
 }
 
 interface AnnotationModel {

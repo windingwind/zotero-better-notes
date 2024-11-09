@@ -25,7 +25,7 @@ async function getParsingServer() {
     handlers: {},
   });
   server.start();
-  await server.exec("_ping");
+  await server.proxy._ping();
   addon.data.parsing.server = server;
   return server;
 }
