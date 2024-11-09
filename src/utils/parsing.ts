@@ -19,7 +19,7 @@ async function getParsingServer() {
   );
   const server = new MessageHelper<typeof handlers>({
     canBeDestroyed: false,
-    dev: true,
+    dev: __env__ === "development",
     name: "parsingWorkerMain",
     target: worker,
     handlers: {},

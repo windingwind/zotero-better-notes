@@ -18,7 +18,7 @@ async function getRelationServer() {
     );
     const server = new MessageHelper<typeof handlers>({
       canBeDestroyed: false,
-      dev: true,
+      dev: __env__ === "development",
       name: "relationWorkerMain",
       target: worker,
       handlers: {},
