@@ -6,7 +6,8 @@ import hooks from "./hooks";
 import api from "./api";
 import { createZToolkit } from "./utils/ztoolkit";
 import { MessageHelper } from "zotero-plugin-toolkit/dist/helpers/message";
-import type { handlers } from "./extras/parsingWorker";
+import type { handlers as parsingHandlers } from "./extras/parsingWorker";
+import type { handlers as relationHandlers } from "./extras/relationWorker";
 
 class Addon {
   public data: {
@@ -71,9 +72,10 @@ class Addon {
     };
     relation: {
       worker?: Worker;
+      server?: MessageHelper<typeof relationHandlers>;
     };
     parsing: {
-      server?: MessageHelper<typeof handlers>;
+      server?: MessageHelper<typeof parsingHandlers>;
     };
     imageCache: Record<number, string>;
     hint: {

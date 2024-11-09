@@ -42,7 +42,7 @@ import { patchViewItems } from "./modules/viewItems";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref, setPref } from "./utils/prefs";
-import { closeRelationWorker } from "./utils/relation";
+import { closeRelationServer } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
@@ -109,7 +109,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 }
 
 function onShutdown(): void {
-  closeRelationWorker();
+  closeRelationServer();
   closeParsingServer();
   ztoolkit.unregisterAll();
   // Remove addon object

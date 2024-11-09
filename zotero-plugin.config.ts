@@ -40,6 +40,9 @@ export default defineConfig({
       },
       {
         entryPoints: ["src/extras/*.*"],
+        define: {
+          __env__: `"${process.env.NODE_ENV}"`,
+        },
         outdir: "build/addon/chrome/content/scripts",
         bundle: true,
         target: ["firefox115"],

@@ -1,4 +1,7 @@
 import Dexie from "dexie";
+import { MessageHelper } from "zotero-plugin-toolkit";
+
+export { handlers };
 
 const db = new Dexie("BN_Two_Way_Relation") as Dexie & {
   link: Dexie.Table<LinkModel>;
@@ -10,11 +13,30 @@ db.version(2).stores({
   annotation: "++id, fromLibID, fromKey, toLibID, toKey, url",
 });
 
-console.log("Using Dexie v" + Dexie.semVer, db);
+log("Using Dexie v" + Dexie.semVer, db);
 
-postMessage({
-  type: "ready",
+const funcs = {
+  addLink,
+  bulkAddLink,
+  rebuildLinkForNote,
+  getOutboundLinks,
+  getInboundLinks,
+  linkAnnotationToTarget,
+  getLinkTargetByAnnotation,
+  getAnnotationByLinkTarget,
+};
+
+const handlers = MessageHelper.wrapHandlers(funcs);
+
+const messageServer = new MessageHelper({
+  canBeDestroyed: true,
+  dev: true,
+  name: "parsingWorker",
+  target: self,
+  handlers,
 });
+
+messageServer.start();
 
 async function addLink(model: LinkModel) {
   await db.link.add(model);
@@ -29,12 +51,12 @@ async function rebuildLinkForNote(
   fromKey: string,
   links: LinkModel[],
 ) {
-  console.log("rebuildLinkForNote", fromLibID, fromKey, links);
+  log("rebuildLinkForNote", fromLibID, fromKey, links);
 
   const collection = db.link.where({ fromLibID, fromKey });
   const oldOutboundLinks = await collection.toArray();
   await collection.delete().then((deleteCount) => {
-    console.log("Deleted " + deleteCount + " objects");
+    log("Deleted " + deleteCount + " objects");
     return bulkAddLink(links);
   });
   return {
@@ -43,17 +65,17 @@ async function rebuildLinkForNote(
 }
 
 async function getOutboundLinks(fromLibID: number, fromKey: string) {
-  console.log("getOutboundLinks", fromLibID, fromKey);
+  log("getOutboundLinks", fromLibID, fromKey);
   return db.link.where({ fromLibID, fromKey }).toArray();
 }
 
 async function getInboundLinks(toLibID: number, toKey: string) {
-  console.log("getInboundLinks", toLibID, toKey);
+  log("getInboundLinks", toLibID, toKey);
   return db.link.where({ toLibID, toKey }).toArray();
 }
 
 async function linkAnnotationToTarget(model: AnnotationModel) {
-  console.log("linkAnnotationToTarget", model);
+  log("linkAnnotationToTarget", model);
   const collection = db.annotation.where({
     fromLibID: model.fromLibID,
     fromKey: model.fromKey,
@@ -64,13 +86,17 @@ async function linkAnnotationToTarget(model: AnnotationModel) {
 }
 
 async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
-  console.log("getLinkTargetByAnnotation", fromLibID, fromKey);
+  log("getLinkTargetByAnnotation", fromLibID, fromKey);
   return db.annotation.get({ fromLibID, fromKey });
 }
 
 async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
-  console.log("getAnnotationByLinkTarget", toLibID, toKey);
+  log("getAnnotationByLinkTarget", toLibID, toKey);
   return db.annotation.get({ toLibID, toKey });
+}
+
+function log(...args: any[]) {
+  if (__env__ === "development") console.log("[relationWorker]", ...args);
 }
 
 interface LinkModel {
@@ -91,73 +117,3 @@ interface AnnotationModel {
   toKey: string;
   url: string;
 }
-
-// Handle messages from the main thread and send responses back for await
-onmessage = async (event) => {
-  const { type, jobID, data } = event.data;
-  console.log("Worker received message", type, jobID, data);
-  switch (type) {
-    case "addLink":
-      postMessage({
-        type,
-        jobID,
-        result: await addLink(data),
-      });
-      break;
-    case "bulkAddLink":
-      postMessage({
-        type,
-        jobID,
-        result: await bulkAddLink(data),
-      });
-      break;
-    case "rebuildLinkForNote":
-      postMessage({
-        type,
-        jobID,
-        result: await rebuildLinkForNote(
-          data.fromLibID,
-          data.fromKey,
-          data.links,
-        ),
-      });
-      break;
-    case "getOutboundLinks":
-      postMessage({
-        type,
-        jobID,
-        result: await getOutboundLinks(data.fromLibID, data.fromKey),
-      });
-      break;
-    case "getInboundLinks":
-      postMessage({
-        type,
-        jobID,
-        result: await getInboundLinks(data.toLibID, data.toKey),
-      });
-      break;
-    case "linkAnnotationToTarget":
-      postMessage({
-        type,
-        jobID,
-        result: await linkAnnotationToTarget(data),
-      });
-      break;
-    case "getLinkTargetByAnnotation":
-      postMessage({
-        type,
-        jobID,
-        result: await getLinkTargetByAnnotation(data.fromLibID, data.fromKey),
-      });
-      break;
-    case "getAnnotationByLinkTarget":
-      postMessage({
-        type,
-        jobID,
-        result: await getAnnotationByLinkTarget(data.toLibID, data.toKey),
-      });
-      break;
-    default:
-      break;
-  }
-};

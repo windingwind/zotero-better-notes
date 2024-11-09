@@ -1,72 +1,46 @@
+import { MessageHelper } from "zotero-plugin-toolkit";
 import { config } from "../../package.json";
 import { getNoteLinkParams } from "./link";
+import type { handlers } from "../extras/relationWorker";
+
+function closeRelationServer() {
+  if (addon.data.relation.server) {
+    addon.data.relation.server.destroy();
+    addon.data.relation.server = undefined;
+  }
+}
+
+async function getRelationServer() {
+  if (!addon.data.relation.server) {
+    const worker = new Worker(
+      `chrome://${config.addonRef}/content/scripts/relationWorker.js`,
+      { name: "relationWorker" },
+    );
+    const server = new MessageHelper<typeof handlers>({
+      canBeDestroyed: false,
+      dev: true,
+      name: "relationWorkerMain",
+      target: worker,
+      handlers: {},
+    });
+    server.start();
+    await server.exec("_ping");
+    addon.data.relation.server = server;
+  }
+
+  return addon.data.relation.server!;
+}
+
+export { getRelationServer, closeRelationServer };
 
 export {
   updateNoteLinkRelation,
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
-  closeRelationWorker,
   linkAnnotationToTarget,
   getLinkTargetByAnnotation,
   getAnnotationByLinkTarget,
 };
-
-function closeRelationWorker() {
-  if (addon.data.relation.worker) {
-    addon.data.relation.worker.terminate();
-    addon.data.relation.worker = undefined;
-  }
-}
-
-async function getRelationWorker() {
-  if (addon.data.relation.worker) {
-    return addon.data.relation.worker;
-  }
-  const deferred = Zotero.Promise.defer();
-  const worker = new Worker(
-    `chrome://${config.addonRef}/content/scripts/relationWorker.js`,
-  );
-  addon.data.relation.worker = worker;
-  worker.addEventListener(
-    "message",
-    (e) => {
-      if (e.data === "ready") {
-        ztoolkit.log("Relation worker is ready.");
-        deferred.resolve();
-      }
-    },
-    { once: true },
-  );
-  await deferred.promise;
-  return worker;
-}
-
-async function executeRelationWorker(data: {
-  type: string;
-  data: any;
-}): Promise<any> {
-  const worker = await getRelationWorker();
-  const deferred = Zotero.Promise.defer();
-  const jobID = Zotero.Utilities.randomString(8);
-  let retData;
-  ztoolkit.log("executeRelationWorker", data, jobID);
-  const callback = (e: MessageEvent) => {
-    if (e.data.jobID === jobID) {
-      retData = e.data;
-      worker.removeEventListener("message", callback);
-      deferred.resolve();
-    }
-  };
-  worker.addEventListener("message", callback);
-  worker.postMessage({ ...data, jobID });
-  await Promise.race([deferred.promise, Zotero.Promise.delay(5000)]);
-  if (!retData) {
-    worker.removeEventListener("message", callback);
-    throw new Error(`Worker timeout: ${data.type}, ${jobID}`);
-  }
-  ztoolkit.log("executeRelationWorker return", retData);
-  return (retData as { result: any }).result;
-}
 
 async function updateNoteLinkRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
@@ -99,10 +73,10 @@ async function updateNoteLinkRelation(noteID: number) {
       }
     }
   }
-  const result = await executeRelationWorker({
-    type: "rebuildLinkForNote",
-    data: { fromLibID, fromKey, links: linkToData },
-  });
+  const result = await (
+    await getRelationServer()
+  ).exec("rebuildLinkForNote", [fromLibID, fromKey, linkToData]);
+
   for (const link of result.oldOutboundLinks as LinkModel[]) {
     const item = Zotero.Items.getByLibraryAndKey(link.toLibID, link.toKey);
     if (!item) {
@@ -120,28 +94,21 @@ async function updateNoteLinkRelation(noteID: number) {
   );
 }
 
-async function getNoteLinkOutboundRelation(
-  noteID: number,
-): Promise<LinkModel[]> {
+async function getNoteLinkOutboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
-  return executeRelationWorker({
-    type: "getOutboundLinks",
-    data: { fromLibID, fromKey },
-  });
+  return (await getRelationServer()).exec("getOutboundLinks", [
+    fromLibID,
+    fromKey,
+  ]);
 }
 
-async function getNoteLinkInboundRelation(
-  noteID: number,
-): Promise<LinkModel[]> {
+async function getNoteLinkInboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const toLibID = note.libraryID;
   const toKey = note.key;
-  return executeRelationWorker({
-    type: "getInboundLinks",
-    data: { toLibID, toKey },
-  });
+  return (await getRelationServer()).exec("getInboundLinks", [toLibID, toKey]);
 }
 
 function decodeHTMLEntities(text: string) {
@@ -162,31 +129,22 @@ interface LinkModel {
   url: string;
 }
 
-async function linkAnnotationToTarget(model: AnnotationModel): Promise<void> {
-  return executeRelationWorker({
-    type: "linkAnnotationToTarget",
-    data: model,
-  });
+async function linkAnnotationToTarget(model: AnnotationModel) {
+  return (await getRelationServer()).exec("linkAnnotationToTarget", [model]);
 }
 
-async function getLinkTargetByAnnotation(
-  fromLibID: number,
-  fromKey: string,
-): Promise<AnnotationModel> {
-  return executeRelationWorker({
-    type: "getLinkTargetByAnnotation",
-    data: { fromLibID, fromKey },
-  });
+async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
+  return (await getRelationServer()).exec("getLinkTargetByAnnotation", [
+    fromLibID,
+    fromKey,
+  ]);
 }
 
-async function getAnnotationByLinkTarget(
-  toLibID: number,
-  toKey: string,
-): Promise<AnnotationModel> {
-  return executeRelationWorker({
-    type: "getAnnotationByLinkTarget",
-    data: { toLibID, toKey },
-  });
+async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
+  return (await getRelationServer()).exec("getAnnotationByLinkTarget", [
+    toLibID,
+    toKey,
+  ]);
 }
 
 interface AnnotationModel {
