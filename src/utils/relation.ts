@@ -73,7 +73,9 @@ async function updateNoteLinkRelation(noteID: number) {
       }
     }
   }
-  const result = await (await getRelationServer()).proxy.rebuildLinkForNote(fromLibID, fromKey, linkToData);
+  const result = await (
+    await getRelationServer()
+  ).proxy.rebuildLinkForNote(fromLibID, fromKey, linkToData);
 
   for (const link of result.oldOutboundLinks as LinkModel[]) {
     const item = Zotero.Items.getByLibraryAndKey(link.toLibID, link.toKey);
@@ -96,14 +98,18 @@ async function getNoteLinkOutboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
-  return await (await getRelationServer()).proxy.getOutboundLinks(fromLibID, fromKey);
+  return await (
+    await getRelationServer()
+  ).proxy.getOutboundLinks(fromLibID, fromKey);
 }
 
 async function getNoteLinkInboundRelation(noteID: number) {
   const note = Zotero.Items.get(noteID);
   const toLibID = note.libraryID;
   const toKey = note.key;
-  return await (await getRelationServer()).proxy.getInboundLinks(toLibID, toKey);
+  return await (
+    await getRelationServer()
+  ).proxy.getInboundLinks(toLibID, toKey);
 }
 
 function decodeHTMLEntities(text: string) {
@@ -129,11 +135,15 @@ async function linkAnnotationToTarget(model: AnnotationModel) {
 }
 
 async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
-  return await (await getRelationServer()).proxy.getLinkTargetByAnnotation(fromLibID, fromKey);
+  return await (
+    await getRelationServer()
+  ).proxy.getLinkTargetByAnnotation(fromLibID, fromKey);
 }
 
 async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
-  return await (await getRelationServer()).proxy.getAnnotationByLinkTarget(toLibID, toKey);
+  return await (
+    await getRelationServer()
+  ).proxy.getAnnotationByLinkTarget(toLibID, toKey);
 }
 
 interface AnnotationModel {

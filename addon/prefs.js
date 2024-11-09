@@ -25,5 +25,6 @@ pref("__prefsPrefix__.editor.noteLinkPreviewType", "hover");
 
 pref("__prefsPrefix__.openNote.takeover", true);
 pref("__prefsPrefix__.openNote.defaultAsWindow", false);
+pref("__prefsPrefix__.exportNotes.takeover", true);
 
 pref("__prefsPrefix__.annotationNote.enableTagSync", true);

@@ -47,6 +47,7 @@ import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
+import { patchExportItems } from "./modules/exportItems";
 
 async function onStartup() {
   await Promise.all([
@@ -81,7 +82,7 @@ async function onStartup() {
   await onMainWindowLoad(Zotero.getMainWindow());
 }
 
-async function onMainWindowLoad(win: Window): Promise<void> {
+async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   await waitUtilAsync(() => win.document.readyState === "complete");
 
   Services.scriptloader.loadSubScript(
@@ -98,6 +99,8 @@ async function onMainWindowLoad(win: Window): Promise<void> {
   initTemplates();
 
   patchViewItems(win);
+
+  patchExportItems(win);
 
   restoreNoteTabs();
 

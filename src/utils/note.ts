@@ -58,7 +58,8 @@ async function setLinesToNote(note: Zotero.Item, lines: string[]) {
   } else {
     const noteHead = noteText.substring(0, containerIndex);
     note.setNote(
-      `${noteHead}data-schema-version="${config.dataSchemaVersion
+      `${noteHead}data-schema-version="${
+        config.dataSchemaVersion
       }">${lines.join("\n")}</div>`,
     );
   }

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css" type="text/css"?>
+<!-- prettier-ignore -->
+<?xml-stylesheet href="chrome://__addonRef__/content/styles/exportNotes.css" type="text/css"?>
+<!-- prettier-ignore -->
+<!DOCTYPE window>
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="bn-export-notes"
+  data-l10n-id="title"
+  windowtype="__addonRef__-export-notes"
+  persist="screenX screenY width height sizemode"
+  style="min-width: 10em"
+  drawintitlebar-platforms="mac"
+>
+  <xul:linkset>
+    <html:link rel="localization" href="browser/menubar.ftl" />
+    <html:link rel="localization" href="browser/browserSets.ftl" />
+    <html:link rel="localization" href="toolkit/global/textActions.ftl" />
+    <html:link rel="localization" href="zotero.ftl" />
+    <html:link rel="localization" href="__addonRef__-exportNotes.ftl" />
+  </xul:linkset>
+
+  <xul:commandset id="mainCommandSet">
+    <xul:command id="cmd_close" oncommand="window.close();" />
+  </xul:commandset>
+  <xul:keyset id="mainKeyset">
+    <xul:key
+      id="key_close"
+      data-l10n-id="close-shortcut"
+      command="cmd_close"
+      modifiers="accel"
+      reserved="true"
+    />
+  </xul:keyset>
+
+  <script src="chrome://zotero/content/include.js"></script>
+  <script src="chrome://zotero/content/titlebar.js"></script>
+  <script src="chrome://zotero/content/customElements.js"></script>
+  <script src="chrome://__addonRef__/content/scripts/exportNotes.js"></script>
+
+  <dialog
+    buttons="accept, cancel, extra1"
+    buttonlabelextra1="Use System Export..."
+  >
+    <vbox>
+      <hbox>
+        <label id="target" data-l10n-id="target"></label>
+      </hbox>
+      <hbox align="center">
+        <label data-l10n-id="format" for="format"></label>
+        <menulist id="format" native="true">
+          <menupopup>
+            <menuitem
+              value="markdown"
+              data-l10n-id="format-markdown"
+            ></menuitem>
+            <menuitem value="msword" data-l10n-id="format-msword"></menuitem>
+            <menuitem value="pdf" data-l10n-id="format-pdf"></menuitem>
+            <menuitem
+              value="freemind"
+              data-l10n-id="format-freemind"
+            ></menuitem>
+            <menuitem value="note" data-l10n-id="format-note"></menuitem>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <vbox>
+        <radiogroup id="linkMode" orient="vertical">
+          <radio value="keep" data-l10n-id="links-keep"></radio>
+          <radio value="embed" data-l10n-id="links-embed"></radio>
+          <radio value="standalone" data-l10n-id="links-standalone"></radio>
+          <!-- <radio value="remove" data-l10n-id="links-remove"></radio> -->
+        </radiogroup>
+      </vbox>
+      <vbox id="markdown-options">
+        <checkbox
+          id="markdown-autoSync"
+          data-l10n-id="markdown-autoSync"
+          native="true"
+        ></checkbox>
+        <checkbox
+          id="markdown-withYAMLHeader"
+          data-l10n-id="markdown-withYAMLHeader"
+          native="true"
+        ></checkbox>
+        <checkbox
+          id="markdown-autoFilename"
+          data-l10n-id="markdown-autoFilename"
+          native="true"
+        ></checkbox>
+      </vbox>
+    </vbox>
+  </dialog>
+</window>

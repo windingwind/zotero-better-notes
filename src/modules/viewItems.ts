@@ -1,7 +1,7 @@
 import { PatchHelper } from "zotero-plugin-toolkit";
 import { getPref } from "../utils/prefs";
 
-export function patchViewItems(win: Window) {
+export function patchViewItems(win: _ZoteroTypes.MainWindow) {
   // @ts-ignore
   const ZoteroPane = win.ZoteroPane;
   new PatchHelper().setData({

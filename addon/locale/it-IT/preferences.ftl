@@ -3,6 +3,8 @@ basic-openNote-takeover =
     .label = Gestisci l'apertura delle note
 basic-openNote-defaultAsWindow =
     .label = Apri note come finestra per impostazione predefinita
+basic-exportNotes-takeover =
+    .label = Take over exporting notes
 
 editor-title = Editor delle note
 editor-expandLevel-label = Espansione dello schema al livello delle intestazioni

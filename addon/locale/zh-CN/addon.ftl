@@ -1,7 +1,5 @@
 pref-title=Better Notes
 
-menuItem-exportNote=导出笔记
-
 menuEdit-exportTemplate=运行模板并导出为文件...
 menuEdit-templateEditor=模板编辑器
 menuEdit-importTemplate=从剪贴板导入笔记模板

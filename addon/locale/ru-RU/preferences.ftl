@@ -3,6 +3,8 @@ basic-openNote-takeover =
     .label = Take over opening note
 basic-openNote-defaultAsWindow =
     .label = Open note as window by default
+basic-exportNotes-takeover =
+    .label = Take over exporting notes
 
 editor-title = Note Editor
 editor-expandLevel-label = Outline расширить до уровня заголовка

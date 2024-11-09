@@ -2,19 +2,6 @@ import { config } from "../../package.json";
 import { getString } from "../utils/locale";
 
 export function registerMenus(win: Window) {
-  // item
-  ztoolkit.Menu.register("item", { tag: "menuseparator" });
-  ztoolkit.Menu.register("item", {
-    tag: "menuitem",
-    label: getString("menuItem.exportNote"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: (ev) => {
-      addon.hooks.onShowExportNoteOptions(
-        ZoteroPane.getSelectedItems().map((item) => item.id),
-      );
-    },
-  });
-
   // menuTools
   ztoolkit.Menu.register("menuTools", { tag: "menuseparator" });
   ztoolkit.Menu.register("menuTools", {
