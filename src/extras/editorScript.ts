@@ -12,6 +12,7 @@ import {
 import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { initLinkPreviewPlugin } from "./editor/linkPreview";
+import { initPasteMarkdownPlugin } from "./editor/pasteMarkdown";
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -378,6 +379,7 @@ export const BetterNotesEditorAPI = {
   getNodeFromHTML,
   setSelection,
   initLinkPreviewPlugin,
+  initPasteMarkdownPlugin,
 };
 
 // @ts-ignore

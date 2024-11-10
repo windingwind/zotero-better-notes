@@ -452,33 +452,46 @@ function initLinkPreview(editor: Zotero.EditorInstance) {
     return;
   }
   const EditorAPI = getEditorAPI(editor);
-  EditorAPI.initLinkPreviewPlugin(
-    Components.utils.cloneInto(
-      {
-        setPreviewContent: (
-          link: string,
-          setContent: (content: string) => void,
-        ) => {
-          const note = addon.api.convert.link2note(link);
-          if (!note) {
-            setContent(`<p style="color: red;">Invalid note link: ${link}</p>`);
-            return;
-          }
-          addon.api.convert
-            .link2html(link, {
-              noteItem: note,
-              dryRun: true,
-              usePosition: true,
-            })
-            .then((content) => setContent(content));
+  safeCall(() =>
+    EditorAPI.initLinkPreviewPlugin(
+      Components.utils.cloneInto(
+        {
+          setPreviewContent: (
+            link: string,
+            setContent: (content: string) => void,
+          ) => {
+            const note = addon.api.convert.link2note(link);
+            if (!note) {
+              setContent(
+                `<p style="color: red;">Invalid note link: ${link}</p>`,
+              );
+              return;
+            }
+            addon.api.convert
+              .link2html(link, {
+                noteItem: note,
+                dryRun: true,
+                usePosition: true,
+              })
+              .then((content) => setContent(content));
+          },
+          openURL: (url: string) => {
+            Zotero.getActiveZoteroPane().loadURI(url);
+          },
+          requireCtrl: previewType === "ctrl",
         },
-        openURL: (url: string) => {
-          Zotero.getActiveZoteroPane().loadURI(url);
-        },
-        requireCtrl: previewType === "ctrl",
-      },
-      editor._iframeWindow,
-      { wrapReflectors: true, cloneFunctions: true },
+        editor._iframeWindow,
+        { wrapReflectors: true, cloneFunctions: true },
+      ),
     ),
   );
+  safeCall(() => EditorAPI.initPasteMarkdownPlugin());
+}
+
+function safeCall(callback: () => void) {
+  try {
+    callback();
+  } catch (e) {
+    ztoolkit.log(e as Error);
+  }
 }
