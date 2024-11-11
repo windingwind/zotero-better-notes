@@ -18,7 +18,11 @@ export async function openTemplatePicker(
     selected: [] as string[],
     _initPromise: Zotero.Promise.defer(),
   };
-  Zotero.getMainWindow().openDialog(
+  // @ts-ignore
+  // args.wrappedJSObject = args;
+  Services.ww.openWindow(
+    // @ts-ignore
+    null,
     `chrome://${config.addonRef}/content/templatePicker.xhtml`,
     "_blank",
     "chrome,modal,centerscreen,resizable=yes",

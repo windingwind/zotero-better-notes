@@ -1,6 +1,6 @@
 import { initEditorImagePreviewer } from "./image";
 import { injectEditorCSS, injectEditorScripts } from "./inject";
-import { initEditorLinkPreview } from "./linkPreview";
+import { initEditorPlugins } from "./plugins";
 import { initEditorMenu } from "./menu";
 import { initEditorPopup } from "./popup";
 import { initEditorToolbar } from "./toolbar";
@@ -38,5 +38,5 @@ async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
   await initEditorToolbar(editor);
   initEditorPopup(editor);
   initEditorMenu(editor);
-  initEditorLinkPreview(editor);
+  initEditorPlugins(editor);
 }

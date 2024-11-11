@@ -2,6 +2,7 @@ import TreeModel = require("tree-model");
 import { TextSelection } from "prosemirror-state";
 import { getNoteTreeFlattened } from "./note";
 import { getPref } from "./prefs";
+import { openLinkCreator } from "./linkCreator";
 
 export {
   insert,
@@ -26,7 +27,7 @@ export {
   getTextBetween,
   getTextBetweenLines,
   isImageAtCursor,
-  initLinkPreview,
+  initEditorPlugins,
 };
 
 function insert(
@@ -446,7 +447,7 @@ function getTextBetweenLines(
   return core.view.state.doc.textBetween(from, to);
 }
 
-function initLinkPreview(editor: Zotero.EditorInstance) {
+function initEditorPlugins(editor: Zotero.EditorInstance) {
   const previewType = getPref("editor.noteLinkPreviewType") as string;
   if (!["hover", "ctrl"].includes(previewType)) {
     return;
@@ -456,29 +457,49 @@ function initLinkPreview(editor: Zotero.EditorInstance) {
     EditorAPI.initPlugins(
       Components.utils.cloneInto(
         {
-          setPreviewContent: (
-            link: string,
-            setContent: (content: string) => void,
-          ) => {
-            const note = addon.api.convert.link2note(link);
-            if (!note) {
-              setContent(
-                `<p style="color: red;">Invalid note link: ${link}</p>`,
-              );
-              return;
-            }
-            addon.api.convert
-              .link2html(link, {
-                noteItem: note,
-                dryRun: true,
-                usePosition: true,
-              })
-              .then((content) => setContent(content));
+          linkPreview: {
+            setPreviewContent: (
+              link: string,
+              setContent: (content: string) => void,
+            ) => {
+              const note = addon.api.convert.link2note(link);
+              if (!note) {
+                setContent(
+                  `<p style="color: red;">Invalid note link: ${link}</p>`,
+                );
+                return;
+              }
+              addon.api.convert
+                .link2html(link, {
+                  noteItem: note,
+                  dryRun: true,
+                  usePosition: true,
+                })
+                .then((content) => setContent(content));
+            },
+            openURL: (url: string) => {
+              Zotero.getActiveZoteroPane().loadURI(url);
+            },
+            previewType,
           },
-          openURL: (url: string) => {
-            Zotero.getActiveZoteroPane().loadURI(url);
+          magicKey: {
+            insertTemplate: () => {
+              addon.hooks.onShowTemplatePicker("insert", {
+                noteId: editor._item.id,
+                lineIndex: getLineAtCursor(editor),
+              });
+            },
+            insertLink: (mode: "inbound" | "outbound") => {
+              openLinkCreator(editor._item, {
+                lineIndex: getLineAtCursor(editor),
+                mode,
+              });
+            },
+            enable: getPref("editor.useMagicKey") as boolean,
           },
-          requireCtrl: previewType === "ctrl",
+          markdownPaste: {
+            enable: getPref("editor.useMarkdownPaste") as boolean,
+          },
         },
         editor._iframeWindow,
         { wrapReflectors: true, cloneFunctions: true },

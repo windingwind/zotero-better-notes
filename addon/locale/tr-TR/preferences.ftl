@@ -20,6 +20,10 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = Never
+editor-useMagicKey =
+    .label = Komut panelini göstermek için sihirli tuş "/" kullan
+editor-useMarkdownPaste =
+    .label = Gelişmiş markdown yapıştırma kullan
 
 sync-title = Eşitle
 sync-period-label = Otomatik Eşitleme Sıklığı (saniye)

@@ -20,6 +20,10 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = Never
+editor-useMagicKey = 
+    .label = Usa il tasto magico "/" per mostrare il pannello dei comandi
+editor-useMarkdownPaste = 
+    .label = Usa l'incolla markdown avanzato
 
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)

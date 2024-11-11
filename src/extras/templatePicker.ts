@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", (ev) => {
 
 document.addEventListener("dialogaccept", () => accept());
 
-const args = window.arguments[0] as any;
+let args = window.arguments[0] as any;
+if (!args._initPromise) {
+  args = args.wrappedJSObject;
+}
 const templateData = args.templates;
 const multiSelect = args.multiSelect;
 let tableHelper: VirtualizedTableHelper;

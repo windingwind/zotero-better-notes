@@ -43,6 +43,7 @@ export {
 };
 
 async function updateNoteLinkRelation(noteID: number) {
+  ztoolkit.log("updateNoteLinkRelation", noteID);
   const note = Zotero.Items.get(noteID);
   const affectedNoteIDs = new Set([noteID]);
   const fromLibID = note.libraryID;

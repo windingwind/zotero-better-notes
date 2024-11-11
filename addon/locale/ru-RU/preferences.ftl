@@ -20,6 +20,10 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = Never
+editor-useMagicKey =
+    .label = Использовать магическую клавишу "/" для отображения панели команд
+editor-useMarkdownPaste = 
+    .label = Использовать расширенное вставление Markdown
 
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)

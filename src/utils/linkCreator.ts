@@ -8,7 +8,8 @@ export { openLinkCreator };
 async function openLinkCreator(
   currentNote: Zotero.Item,
   options?: {
-    lineIndex: number;
+    mode?: "inbound" | "outbound";
+    lineIndex?: number;
   },
 ) {
   if (!currentNote.id) {
@@ -25,9 +26,13 @@ async function openLinkCreator(
     ),
     currentNoteID: currentNote.id,
     currentLineIndex: options?.lineIndex,
+    mode: options?.mode,
     deferred: Zotero.Promise.defer(),
   } as any;
-  Zotero.getMainWindow().openDialog(
+
+  Services.ww.openWindow(
+    // @ts-ignore
+    null,
     `chrome://${config.addonRef}/content/linkCreator.xhtml`,
     `${config.addonRef}-linkCreator`,
     "chrome,modal,centerscreen,resizable=yes",
@@ -42,6 +47,4 @@ async function openLinkCreator(
   if (!targetNote || !content) return;
 
   await addLineToNote(targetNote, content, lineIndex);
-
-  await addon.api.relation.updateNoteLinkRelation(targetNote.id);
 }

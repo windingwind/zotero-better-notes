@@ -5,6 +5,8 @@ class Popup {
 
   hasHover = false;
 
+  className: string;
+
   get container() {
     return this._popup;
   }
@@ -18,6 +20,7 @@ class Popup {
     className?: string,
     children: (HTMLElement | DocumentFragment)[] = [],
   ) {
+    this.className = className || "";
     this._popup = doc.createElement("div");
     this._popup.className = `popup-container ${className}`;
     this._popup.innerHTML = `
@@ -58,7 +61,7 @@ class Popup {
       // Bottom
       const otherPopupHeight = Array.from(
         popupParent.querySelectorAll(
-          ".popup-container:not(.link-preview) > .popup.popup-bottom",
+          `.popup-container:not(.${this.className}) > .popup.popup-bottom`,
         ),
       ).reduce((acc, el) => acc + (el as HTMLElement).offsetHeight, 0);
       top =
@@ -72,7 +75,7 @@ class Popup {
       // Top
       const otherPopupHeight = Array.from(
         popupParent.querySelectorAll(
-          ".popup-container:not(.link-preview) > .popup.popup-top",
+          `.popup-container:not(.${this.className}) > .popup.popup-top`,
         ),
       ).reduce((acc, el) => acc + (el as HTMLElement).offsetHeight, 0);
       top =

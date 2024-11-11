@@ -38,10 +38,12 @@ messageServer.start();
 
 async function addLink(model: LinkModel) {
   await db.link.add(model);
+  log("addLink", model);
 }
 
 async function bulkAddLink(models: LinkModel[]) {
   await db.link.bulkAdd(models);
+  log("bulkAddLink", models);
 }
 
 async function rebuildLinkForNote(
@@ -51,15 +53,17 @@ async function rebuildLinkForNote(
 ) {
   log("rebuildLinkForNote", fromLibID, fromKey, links);
 
-  const collection = db.link.where({ fromLibID, fromKey });
-  const oldOutboundLinks = await collection.toArray();
-  await collection.delete().then((deleteCount) => {
-    log("Deleted " + deleteCount + " objects");
-    return bulkAddLink(links);
+  return db.transaction("rw", db.link, async () => {
+    const collection = db.link.where({ fromLibID, fromKey });
+    const oldOutboundLinks = await collection.toArray();
+    await collection.delete().then((deleteCount) => {
+      log("Deleted " + deleteCount + " objects");
+      return bulkAddLink(links);
+    });
+    return {
+      oldOutboundLinks,
+    };
   });
-  return {
-    oldOutboundLinks,
-  };
 }
 
 async function getOutboundLinks(fromLibID: number, fromKey: string) {

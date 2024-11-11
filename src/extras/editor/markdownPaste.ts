@@ -1,15 +1,19 @@
 import { Plugin, PluginKey } from "prosemirror-state";
 import { md2html } from "../../utils/convert";
 
-export { initPasteMarkdownPlugin };
+export { initMarkdownPastePlugin, MarkdownPasteOptions };
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
 };
 
-function initPasteMarkdownPlugin(plugins: readonly Plugin[]) {
+interface MarkdownPasteOptions {
+  enable: boolean;
+}
+
+function initMarkdownPastePlugin(plugins: readonly Plugin[]) {
   const core = _currentEditorInstance._editorCore;
-  console.log("Init BN Paste Markdown Plugin");
+  console.log("Init BN Markdown Paste Plugin");
   const key = new PluginKey("pasteDropPlugin");
   const oldPastePluginIndex = plugins.findIndex(
     (plugin) => plugin.props.handlePaste && plugin.props.handleDrop,

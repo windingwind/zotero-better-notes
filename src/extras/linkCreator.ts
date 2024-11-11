@@ -15,6 +15,7 @@ let io: {
   targetNoteID?: number;
   content?: string;
   lineIndex?: number;
+  mode?: "inbound" | "outbound";
 };
 
 window.onload = async function () {
@@ -50,9 +51,20 @@ function init() {
 
   io = window.arguments[0];
 
+  if (!io.deferred) {
+    // @ts-ignore
+    io = io.wrappedJSObject;
+  }
+
   tabbox = document.querySelector("#top-container")!;
-  tabbox.selectedIndex =
-    (getPref("windows.linkCreator.tabIndex") as number) || 0;
+
+  if (io.mode) {
+    tabbox.selectedIndex = io.mode === "inbound" ? 0 : 1;
+  } else {
+    tabbox.selectedIndex =
+      (getPref("windows.linkCreator.tabIndex") as number) || 0;
+  }
+
   tabbox.addEventListener("select", loadSelectedPanel);
 
   inboundCreator = document.querySelector(

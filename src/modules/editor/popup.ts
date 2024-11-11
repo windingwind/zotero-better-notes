@@ -19,14 +19,16 @@ export function initEditorPopup(editor: Zotero.EditorInstance) {
       ztoolkit.log(mut);
       if (
         (mut.addedNodes.length &&
-          (mut.addedNodes[0] as HTMLElement).querySelector(".link-popup")) ||
+          mut.addedNodes[0]?.hasChildNodes() &&
+          (mut.addedNodes[0] as HTMLElement)?.querySelector(".link-popup")) ||
         (mut.attributeName === "href" &&
           mut.target.parentElement?.classList.contains("link"))
       ) {
         updateEditorLinkPopup(editor);
       } else if (
         mut.addedNodes.length &&
-        (mut.addedNodes[0] as HTMLElement).querySelector(".image-popup")
+        mut.addedNodes[0]?.hasChildNodes() &&
+        (mut.addedNodes[0] as HTMLElement)?.querySelector(".image-popup")
       ) {
         updateEditorImagePopup(editor);
       }

@@ -20,6 +20,10 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = Never
+editor-useMagicKey = 
+    .label = Use magic key "/" to show command palette
+editor-useMarkdownPaste = 
+    .label = Use enhanced markdown paste
 
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)

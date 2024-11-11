@@ -83,7 +83,7 @@ export class OutboundCreator extends PluginCEBase {
     await this.notePicker.load();
 
     this.notePicker.addEventListener("selectionchange", (event: any) => {
-      this.targetNotes = event.detail.selectedNotes;
+      this.targetNotes = this.notePicker.getSelectedNotes();
       this.updatePickerTitle(this.targetNotes);
       this.updateNotePreview();
       if (this.targetNotes) this.scrollToSection("outline");

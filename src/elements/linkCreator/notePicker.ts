@@ -34,6 +34,8 @@ export class NotePicker extends PluginCEBase {
 
   _prefObserverID!: symbol;
 
+  _cachedLibraryIDs: number[] = [];
+
   get content() {
     return MozXULElement.parseXULToFragment(`
 <linkset>
@@ -394,6 +396,12 @@ export class NotePicker extends PluginCEBase {
 
   onItemSelected() {
     this.activeSelectionType = "library";
+    const selectedIDs = this.itemsView.getSelectedItems(true) as number[];
+    // Compare the selected IDs with the cached IDs
+    // Since the library selection change can be triggered multiple times or with no change
+    if (arraysEqual(this._cachedLibraryIDs, selectedIDs)) {
+      return;
+    }
     this.dispatchSelectionChange();
   }
 
@@ -482,4 +490,19 @@ export class NotePicker extends PluginCEBase {
       this._collectionsList.style.width = state.collectionsListWidth;
     }
   }
+}
+
+function arraysEqual(arr1: number[], arr2: number[]): boolean {
+  if (arr1.length !== arr2.length) return false;
+
+  const set1 = new Set(arr1);
+  const set2 = new Set(arr2);
+
+  if (set1.size !== set2.size) return false;
+
+  for (const item of set1) {
+    if (!set2.has(item)) return false;
+  }
+
+  return true;
 }

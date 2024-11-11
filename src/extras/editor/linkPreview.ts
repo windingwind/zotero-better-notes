@@ -15,10 +15,10 @@ interface LinkPreviewOptions {
 
   openURL: (url: string) => void;
 
-  requireCtrl: boolean;
+  previewType: "hover" | "ctrl" | "disable";
 }
 
-class LinkPreviewState {
+class PluginState {
   state: EditorState;
 
   options: LinkPreviewOptions;
@@ -40,6 +40,10 @@ class LinkPreviewState {
   update(state: EditorState, prevState?: EditorState) {
     this.state = state;
 
+    if (this.options.previewType === "disable") {
+      return;
+    }
+
     if (
       prevState &&
       prevState.doc.eq(state.doc) &&
@@ -58,6 +62,10 @@ class LinkPreviewState {
   }
 
   handleMouseMove = async (event: MouseEvent) => {
+    if (this.options.previewType === "disable") {
+      return;
+    }
+
     const { target } = event;
 
     let isValid = false;
@@ -82,9 +90,10 @@ class LinkPreviewState {
   };
 
   handleKeydown = async (event: KeyboardEvent) => {
-    if (!this.options.requireCtrl) {
+    if (this.options.previewType !== "ctrl") {
       return;
     }
+
     if (!this.hasHover || !this.currentLink) {
       return;
     }
@@ -96,9 +105,10 @@ class LinkPreviewState {
   };
 
   tryOpenPopupByHover() {
-    if (this.options.requireCtrl) {
+    if (this.options.previewType !== "hover") {
       return;
     }
+
     const href = this.currentLink!;
     setTimeout(() => {
       if (this.currentLink === href) {
@@ -204,7 +214,7 @@ function initLinkPreviewPlugin(
       key,
       state: {
         init(config, state) {
-          return new LinkPreviewState(state, options);
+          return new PluginState(state, options);
         },
         apply: (tr, pluginState, oldState, newState) => {
           pluginState.update(newState, oldState);
@@ -214,16 +224,16 @@ function initLinkPreviewPlugin(
       props: {
         handleDOMEvents: {
           mousemove: (view, event) => {
-            const pluginState = key.getState(view.state) as LinkPreviewState;
+            const pluginState = key.getState(view.state) as PluginState;
             pluginState.update(view.state);
             pluginState.handleMouseMove(event);
           },
           keydown: (view, event) => {
-            const pluginState = key.getState(view.state) as LinkPreviewState;
+            const pluginState = key.getState(view.state) as PluginState;
             pluginState.handleKeydown(event);
           },
           wheel: (view, event) => {
-            const pluginState = key.getState(view.state) as LinkPreviewState;
+            const pluginState = key.getState(view.state) as PluginState;
             pluginState.popup?.layoutPopup(pluginState);
           },
         },
@@ -231,13 +241,11 @@ function initLinkPreviewPlugin(
       view: (editorView) => {
         return {
           update(view, prevState) {
-            const pluginState = key.getState(view.state) as LinkPreviewState;
+            const pluginState = key.getState(view.state) as PluginState;
             pluginState.update(view.state, prevState);
           },
           destroy() {
-            const pluginState = key.getState(
-              editorView.state,
-            ) as LinkPreviewState;
+            const pluginState = key.getState(editorView.state) as PluginState;
             pluginState.destroy();
           },
         };
