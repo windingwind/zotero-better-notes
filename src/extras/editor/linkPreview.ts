@@ -1,7 +1,7 @@
 import { EditorState, Plugin, PluginKey } from "prosemirror-state";
 import { Popup } from "./popup";
 
-export { initLinkPreviewPlugin };
+export { initLinkPreviewPlugin, LinkPreviewOptions };
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -191,43 +191,57 @@ class LinkPreviewState {
   }
 }
 
-function initLinkPreviewPlugin(options: LinkPreviewOptions) {
+function initLinkPreviewPlugin(
+  plugins: readonly Plugin[],
+  options: LinkPreviewOptions,
+) {
   const core = _currentEditorInstance._editorCore;
   console.log("Init BN Link Preview Plugin");
   const key = new PluginKey("linkPreviewPlugin");
-  const newState = core.view.state.reconfigure({
-    plugins: [
-      ...core.view.state.plugins,
-      new Plugin({
-        key,
-        state: {
-          init(config, state) {
-            return new LinkPreviewState(state, options);
+  return [
+    ...plugins,
+    new Plugin({
+      key,
+      state: {
+        init(config, state) {
+          return new LinkPreviewState(state, options);
+        },
+        apply: (tr, pluginState, oldState, newState) => {
+          pluginState.update(newState, oldState);
+          return pluginState;
+        },
+      },
+      props: {
+        handleDOMEvents: {
+          mousemove: (view, event) => {
+            const pluginState = key.getState(view.state) as LinkPreviewState;
+            pluginState.update(view.state);
+            pluginState.handleMouseMove(event);
           },
-          apply: (tr, pluginState, oldState, newState) => {
-            pluginState.update(newState, oldState);
-            return pluginState;
+          keydown: (view, event) => {
+            const pluginState = key.getState(view.state) as LinkPreviewState;
+            pluginState.handleKeydown(event);
+          },
+          wheel: (view, event) => {
+            const pluginState = key.getState(view.state) as LinkPreviewState;
+            pluginState.popup?.layoutPopup(pluginState);
           },
         },
-        props: {
-          handleDOMEvents: {
-            mousemove: (view, event) => {
-              const pluginState = key.getState(view.state) as LinkPreviewState;
-              pluginState.update(view.state);
-              pluginState.handleMouseMove(event);
-            },
-            keydown: (view, event) => {
-              const pluginState = key.getState(view.state) as LinkPreviewState;
-              pluginState.handleKeydown(event);
-            },
-            wheel: (view, event) => {
-              const pluginState = key.getState(view.state) as LinkPreviewState;
-              pluginState.popup?.layoutPopup(pluginState);
-            },
+      },
+      view: (editorView) => {
+        return {
+          update(view, prevState) {
+            const pluginState = key.getState(view.state) as LinkPreviewState;
+            pluginState.update(view.state, prevState);
           },
-        },
-      }),
-    ],
-  });
-  core.view.updateState(newState);
+          destroy() {
+            const pluginState = key.getState(
+              editorView.state,
+            ) as LinkPreviewState;
+            pluginState.destroy();
+          },
+        };
+      },
+    }),
+  ];
 }

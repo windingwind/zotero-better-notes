@@ -453,7 +453,7 @@ function initLinkPreview(editor: Zotero.EditorInstance) {
   }
   const EditorAPI = getEditorAPI(editor);
   safeCall(() =>
-    EditorAPI.initLinkPreviewPlugin(
+    EditorAPI.initPlugins(
       Components.utils.cloneInto(
         {
           setPreviewContent: (
@@ -485,7 +485,6 @@ function initLinkPreview(editor: Zotero.EditorInstance) {
       ),
     ),
   );
-  safeCall(() => EditorAPI.initPasteMarkdownPlugin());
 }
 
 function safeCall(callback: () => void) {
