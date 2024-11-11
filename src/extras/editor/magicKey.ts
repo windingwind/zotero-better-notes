@@ -295,10 +295,6 @@ class PluginState {
 
     this.popup.layoutPopup(this);
 
-    this.popup.container.scrollIntoView({
-      block: "nearest",
-    });
-
     // Focus the input
     const input = this.popup.container.querySelector(
       ".popup-input",
