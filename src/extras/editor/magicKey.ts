@@ -13,6 +13,8 @@ interface MagicKeyOptions {
   insertTemplate?: () => void;
   insertLink?: (type: "inbound" | "outbound") => void;
   copyLink?: (mode: "section" | "line") => void;
+  openAttachment?: () => void;
+  canOpenAttachment?: () => boolean;
   enable?: boolean;
 }
 
@@ -21,6 +23,7 @@ interface MagicCommand {
   title?: string;
   icon?: string;
   command: (state: EditorState) => void | Transaction;
+  enabled?: (state: EditorState) => boolean;
 }
 
 class PluginState {
@@ -28,7 +31,7 @@ class PluginState {
 
   options: MagicKeyOptions;
 
-  commands: MagicCommand[] = [
+  _commands: MagicCommand[] = [
     {
       messageId: "insertTemplate",
       command: (state) => {
@@ -51,6 +54,15 @@ class PluginState {
       messageId: "insertCitation",
       command: (state) => {
         getPlugin("citation")?.insertCitation();
+      },
+    },
+    {
+      messageId: "openAttachment",
+      command: (state) => {
+        this.options.openAttachment?.();
+      },
+      enabled: (state) => {
+        return this.options.canOpenAttachment?.() || false;
       },
     },
     {
@@ -165,6 +177,15 @@ class PluginState {
       },
     },
   ];
+
+  get commands() {
+    return this._commands.filter((command) => {
+      if (command.enabled) {
+        return command.enabled(this.state);
+      }
+      return true;
+    });
+  }
 
   popup: Popup | null = null;
 

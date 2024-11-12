@@ -530,6 +530,26 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
             copyLink: (mode: "section" | "line") => {
               copyNoteLink(editor, mode);
             },
+            openAttachment: () => {
+              editor._item.parentItem
+                ?.getBestAttachment()
+                .then((attachment) => {
+                  if (!attachment) {
+                    return;
+                  }
+                  Zotero.getActiveZoteroPane().viewAttachment([attachment.id]);
+                  Zotero.Notifier.trigger("open", "file", attachment.id);
+                });
+            },
+            canOpenAttachment: () => {
+              const parentItem = editor._item.parentItem;
+              if (!parentItem) {
+                return false;
+              }
+              return (
+                (editor._item.parentItem as Zotero.Item).numAttachments() > 0
+              );
+            },
             enable: getPref("editor.useMagicKey") as boolean,
           },
           markdownPaste: {

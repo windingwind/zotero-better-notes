@@ -28,6 +28,10 @@ const editorStrings = {
     "en-US": "Insert Citation",
     "zh-CN": "插入引用",
   },
+  openAttachment: {
+    "en-US": "Open attachment of parent item",
+    "zh-CN": "打开父条目的附件",
+  },
   copySectionLink: {
     "en-US": "Copy Section Link",
     "zh-CN": "复制章节链接",
