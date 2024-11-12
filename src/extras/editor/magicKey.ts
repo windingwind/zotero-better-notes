@@ -313,7 +313,7 @@ class PluginState {
 </style>
 <div class="popup-content">
   <input type="text" class="popup-input" placeholder="Search commands" />
-  <div class="popup-list">
+  <div class="popup-list" tabindex="-1">
     ${Object.entries(this.commands)
       .map(
         ([id, command]) => `
@@ -375,6 +375,38 @@ class PluginState {
       } else if (event.key === "ArrowDown") {
         this._selectCommand(this.selectedCommandIndex + 1, "down");
         event.preventDefault();
+      } else if (event.key === "ArrowLeft") {
+        // Select the first command
+        this._selectCommand(this.commands.length, "up");
+        event.preventDefault();
+      } else if (event.key === "ArrowRight") {
+        // Select the last command
+        this._selectCommand(-1, "down");
+        event.preventDefault();
+      } else if (event.key === "Tab") {
+        // If has input, autocomplete the selected command to the first space
+        const command = this.commands[this.selectedCommandIndex];
+        if (!command) {
+          return;
+        }
+        if (!input.value) {
+          return;
+        }
+        const title = command.title!;
+        // Compute after the matched part
+        const matchedIndex = title
+          .toLowerCase()
+          .indexOf(input.value.toLowerCase());
+        const spaceIndex = title.indexOf(
+          " ",
+          matchedIndex + input.value.length,
+        );
+        if (spaceIndex >= 0) {
+          input.value = title.slice(0, spaceIndex);
+        } else {
+          input.value = title;
+        }
+        event.preventDefault();
       } else if (event.key === "Enter") {
         event.preventDefault();
         const command = this.commands[this.selectedCommandIndex];
@@ -384,6 +416,7 @@ class PluginState {
         }
         this._executeCommand(this.selectedCommandIndex, state);
       } else if (event.key === "Escape") {
+        event.preventDefault();
         this._closePopup();
       } else if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
         this._closePopup();
