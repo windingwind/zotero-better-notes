@@ -136,6 +136,23 @@ To open a note in a tab, double-click/press `Enter` on the item in the library, 
 
 <div align=center><img src="https://github.com/user-attachments/assets/ec2ba415-8ec9-450d-9d73-d24d177ccd13" width="400px"></img></div>
 
+#### Magic Key
+
+BN enhances the note editor with a _Magic Key_ command palette, which can be opened by typing `/` in the editor. You can type or use the arrow keys to navigate the commands, and press `Enter` to execute.
+
+<div align=center><img src="https://github.com/user-attachments/assets/bdbe244e-c120-4d9b-aa28-5285a25a723a" width="800px"></img></div>
+
+#### Note Link Preview
+
+BN enhances the note editor with link preview. Hover+Ctrl/Cmd or click the link to preview the linked note without leaving the current note.
+
+<div align=center><img width="400px" alt="image" src="https://github.com/user-attachments/assets/b29769a1-3436-42bd-8481-eee1c0b4896a"></div>
+
+
+#### Direct Markdown Paste
+
+BN supports direct markdown paste. You can paste markdown content into the note editor, and it will be converted to the rich text format automatically.
+
 ### Note Link
 
 To create a _note link_ between the note you are editing and another note, click the <img src="addon/chrome/content/icons/favicon.png" width="20px"></img> button in the title bar of the note editor.
