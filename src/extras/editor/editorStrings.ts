@@ -28,6 +28,14 @@ const editorStrings = {
     "en-US": "Insert Citation",
     "zh-CN": "插入引用",
   },
+  copySectionLink: {
+    "en-US": "Copy Section Link",
+    "zh-CN": "复制章节链接",
+  },
+  copyLineLink: {
+    "en-US": "Copy Line Link",
+    "zh-CN": "复制行链接",
+  },
   heading1: {
     "en-US": "Heading 1",
     "zh-CN": "一级标题",

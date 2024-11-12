@@ -1,8 +1,10 @@
 import { config } from "../../../package.json";
 import { ICONS } from "../../utils/config";
-import { getLineAtCursor, getSectionAtCursor } from "../../utils/editor";
-import { showHint } from "../../utils/hint";
-import { getNoteLink } from "../../utils/link";
+import {
+  copyNoteLink,
+  getLineAtCursor,
+  getSectionAtCursor,
+} from "../../utils/editor";
 import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
@@ -144,20 +146,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
             },
           }),
           callback: (e) => {
-            const link =
-              getNoteLink(e.editor._item, {
-                lineIndex: currentLine,
-              }) || "";
-            new ztoolkit.Clipboard()
-              .addText(link, "text/plain")
-              .addText(
-                `<a href="${link}">${
-                  e.editor._item.getNoteTitle().trim() || link
-                }</a>`,
-                "text/html",
-              )
-              .copy();
-            showHint(`Link ${link} copied`);
+            copyNoteLink(e.editor, "line");
           },
         },
         {
@@ -168,20 +157,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
             },
           }),
           callback: (e) => {
-            const link =
-              getNoteLink(e.editor._item, {
-                sectionName: currentSection,
-              }) || "";
-            new ztoolkit.Clipboard()
-              .addText(link, "text/plain")
-              .addText(
-                `<a href="${link}#${currentSection}">${
-                  e.editor._item.getNoteTitle().trim() || link
-                }</a>`,
-                "text/html",
-              )
-              .copy();
-            showHint(`Link ${link} copied`);
+            copyNoteLink(e.editor, "section");
           },
         },
         {

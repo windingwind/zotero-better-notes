@@ -3,6 +3,8 @@ import { TextSelection } from "prosemirror-state";
 import { getNoteTreeFlattened } from "./note";
 import { getPref } from "./prefs";
 import { openLinkCreator } from "./linkCreator";
+import { getNoteLink } from "./link";
+import { showHint } from "./hint";
 
 export {
   insert,
@@ -12,6 +14,7 @@ export {
   scroll,
   scrollToSection,
   getEditorInstance,
+  copyNoteLink,
   moveHeading,
   updateHeadingTextAtLine,
   getEditorCore,
@@ -447,6 +450,35 @@ function getTextBetweenLines(
   return core.view.state.doc.textBetween(from, to);
 }
 
+async function copyNoteLink(
+  editor: Zotero.EditorInstance,
+  mode: "section" | "line",
+) {
+  const currentLine = getLineAtCursor(editor);
+  const currentSection = (await getSectionAtCursor(editor)) || "";
+
+  let link =
+    getNoteLink(editor._item, {
+      sectionName: mode === "section" ? currentSection : undefined,
+      lineIndex: mode === "line" ? currentLine : undefined,
+    }) || "";
+  if (!link) {
+    showHint("No note link found");
+    return;
+  }
+  if (mode === "section") {
+    link += `#${currentSection}`;
+  }
+  new ztoolkit.Clipboard()
+    .addText(link, "text/plain")
+    .addText(
+      `<a href="${link}">${editor._item.getNoteTitle().trim() || link}</a>`,
+      "text/html",
+    )
+    .copy();
+  showHint(`Link ${link} copied`);
+}
+
 function initEditorPlugins(editor: Zotero.EditorInstance) {
   const previewType = getPref("editor.noteLinkPreviewType") as string;
   if (!["hover", "ctrl"].includes(previewType)) {
@@ -494,6 +526,9 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
                 lineIndex: getLineAtCursor(editor),
                 mode,
               });
+            },
+            copyLink: (mode: "section" | "line") => {
+              copyNoteLink(editor, mode);
             },
             enable: getPref("editor.useMagicKey") as boolean,
           },

@@ -12,6 +12,7 @@ declare const _currentEditorInstance: {
 interface MagicKeyOptions {
   insertTemplate?: () => void;
   insertLink?: (type: "inbound" | "outbound") => void;
+  copyLink?: (mode: "section" | "line") => void;
   enable?: boolean;
 }
 
@@ -50,6 +51,18 @@ class PluginState {
       messageId: "insertCitation",
       command: (state) => {
         getPlugin("citation")?.insertCitation();
+      },
+    },
+    {
+      messageId: "copySectionLink",
+      command: (state) => {
+        this.options.copyLink?.("section");
+      },
+    },
+    {
+      messageId: "copyLineLink",
+      command: (state) => {
+        this.options.copyLink?.("line");
       },
     },
     {
