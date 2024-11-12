@@ -370,10 +370,10 @@ class PluginState {
 
     input.addEventListener("keydown", (event) => {
       if (event.key === "ArrowUp") {
-        this._selectCommand(this.selectedCommandIndex - 1);
+        this._selectCommand(this.selectedCommandIndex - 1, "up");
         event.preventDefault();
       } else if (event.key === "ArrowDown") {
-        this._selectCommand(this.selectedCommandIndex + 1);
+        this._selectCommand(this.selectedCommandIndex + 1, "down");
         event.preventDefault();
       } else if (event.key === "Enter") {
         event.preventDefault();
@@ -423,7 +423,7 @@ class PluginState {
     return !!document.querySelector(`.${this.popupClass}`);
   }
 
-  _selectCommand(index?: number) {
+  _selectCommand(index?: number, direction: "up" | "down" = "down") {
     if (typeof index === "undefined") {
       index = this.selectedCommandIndex;
     }
@@ -441,8 +441,22 @@ class PluginState {
       ".popup-item",
     ) as NodeListOf<HTMLElement>;
     if (items[index]?.hidden) {
-      // Will find the first visible item
-      index = items.length;
+      // Will find the next visible item in the specified direction
+      if (direction === "up") {
+        for (let i = index - 1; i >= 0; i--) {
+          if (!items[i].hidden) {
+            index = i;
+            break;
+          }
+        }
+      } else if (direction === "down") {
+        for (let i = index + 1; i < items.length; i++) {
+          if (!items[i].hidden) {
+            index = i;
+            break;
+          }
+        }
+      }
     }
     if (index >= items.length) {
       // Find the first visible item with :first-of-type
