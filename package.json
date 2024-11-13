@@ -14,6 +14,7 @@
   "scripts": {
     "start": "zotero-plugin serve",
     "build": "tsc --noEmit && zotero-plugin build",
+    "build-dev": "tsc --noEmit && zotero-plugin build --dev && cd build/addon && zip -r ../zotero-better-notes-dev.xpi .",
     "release": "zotero-plugin release",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
