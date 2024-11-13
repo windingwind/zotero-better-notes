@@ -221,9 +221,20 @@ class PluginState {
   update(state: EditorState, prevState?: EditorState) {
     this.state = state;
 
-    if (!prevState || prevState.doc.eq(state.doc)) {
+    if (!prevState) {
       return;
     }
+
+    // Check if the selection has changed, then try to close the popup
+    if (!prevState.selection.eq(state.selection)) {
+      this._closePopup();
+    }
+
+    // If the document hasn't changed, we don't need to do anything
+    if (prevState.doc.eq(state.doc)) {
+      return;
+    }
+
     // When `/` is pressed, we should open the command palette
     const selectionText = state.doc.textBetween(
       state.selection.from,
@@ -361,13 +372,6 @@ class PluginState {
       this._selectCommand();
     });
 
-    input.addEventListener("blur", () => {
-      if (__env__ === "development") {
-        return;
-      }
-      this._closePopup();
-    });
-
     input.addEventListener("keydown", (event) => {
       if (event.key === "ArrowUp") {
         this._selectCommand(this.selectedCommandIndex - 1, "up");
@@ -429,11 +433,11 @@ class PluginState {
       event.stopPropagation();
       const target = event.target as HTMLElement;
       // Find the command
-      const item = target.closest(".popup-item");
+      const item = target.closest(".popup-item") as HTMLElement;
       if (!item) {
         return;
       }
-      const index = Array.from(item.parentElement!.children).indexOf(item);
+      const index = parseInt(item.dataset.commandId || "-1", 10);
 
       this._executeCommand(index, state);
     });
