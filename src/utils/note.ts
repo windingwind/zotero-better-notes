@@ -372,7 +372,6 @@ async function copyEmbeddedImagesInHTML(
         nodes.forEach(
           (node) =>
             node?.setAttribute("data-attachment-key", copiedAttachment.key),
-          Node,
         );
       }
     }
