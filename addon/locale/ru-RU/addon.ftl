@@ -101,6 +101,7 @@ alert-notValidParentItemError=Нет валидного родительског
 alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами MarkDown?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
 alert-templateEditor-shouldImport = Вы пытаетесь сохранить код шаблона заметки. Хотите импортировать его как шаблон?
+alert-templateEditor-unsaved = You have unsaved changes in the template editor. Do you want to save them?
 
 userGuide-start-title = Welcome to Better Notes!
 userGuide-start-desc = Better Notes is a powerful note-taking tool that helps you organize your thoughts and ideas while reading papers. This guide will help you get started with Better Notes and show you how to make the most of its features.

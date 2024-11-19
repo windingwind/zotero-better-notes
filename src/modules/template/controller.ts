@@ -88,4 +88,7 @@ function importTemplateFromClipboard(text?: string) {
   }
   setTemplate({ name: template.name, text: template.content });
   showHint(`Template ${template.name} saved.`);
+  if (addon.data.template.editor.window) {
+    addon.data.template.editor.window.refresh();
+  }
 }

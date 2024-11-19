@@ -97,6 +97,7 @@ alert-notValidParentItemError = Nessun elemento genitore valido.
 alert-syncImportedNotes = Si desidera sincronizzare le note importate con i file markdown?
 alert-linkCreator-emptyNote = Non è possibile creare un link da/a una nota vuota. 
 alert-templateEditor-shouldImport = Sembra che tu stia cercando di salvare direttamente un codice di condivisione di un template di nota. Vuoi importarlo come template?
+alert-templateEditor-unsaved = You have unsaved changes in the template editor. Do you want to save them?
 
 userGuide-start-title = Questo è Better Notes!
 userGuide-start-desc = Better Notes è un potente strumento di gestione delle note che ti può aiutare a organizzare pensieri e idee durante la lettura di articoli scientifici. Questa guida ti aiuterà a prendere confidenza con Better Notes e ti mostrerà come usare al meglio le sue funzioni.

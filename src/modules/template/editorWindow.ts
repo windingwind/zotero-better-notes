@@ -65,7 +65,7 @@ export async function showTemplateEditor() {
           (Zotero.isMac && event.key == "Backspace")
         ) {
           addon.api.template.removeTemplate(getSelectedTemplateName());
-          refresh();
+          refresh(true);
           return false;
         }
         return true;
@@ -193,6 +193,8 @@ export async function showTemplateEditor() {
       ?.addEventListener("command", (ev) => {
         updateSnippets((ev.target as XULMenuListElement)?.value);
       });
+    // An ugly hack to make the editor refresh exposed
+    _window.refresh = refresh;
     addon.data.template.editor.window?.focus();
     const editorWin = (_window.document.querySelector("#editor") as any)
       .contentWindow;
@@ -209,7 +211,18 @@ export async function showTemplateEditor() {
   }
 }
 
-async function refresh() {
+async function refresh(force = false) {
+  const win = addon.data.template.editor.window;
+  if (!win) {
+    return;
+  }
+  if (!force && isTemplateNotSaved()) {
+    const save = win.confirm(getString("alert-templateEditor-unsaved"));
+    if (save) {
+      saveSelectedTemplate();
+      return;
+    }
+  }
   updateData();
   updateTable();
   updateEditor();
@@ -257,6 +270,28 @@ function getRowLabelColor(type: string) {
     default:
       return "var(--accent-red)";
   }
+}
+
+function isTemplateNotSaved() {
+  const name = getSelectedTemplateName();
+  if (!name) {
+    return false;
+  }
+  const text = addon.data.template.editor.editor?.getValue() as string;
+  const savedText = addon.api.template.getTemplateText(name);
+  if (text !== savedText) {
+    return true;
+  }
+  const { type, name: displayName } = getRowData(getSelectedIndex());
+  const templateType =
+    addon.data.template.editor.window?.document.querySelector(
+      "#editor-type",
+    ) as XULMenuListElement;
+  const templateName =
+    addon.data.template.editor.window?.document.querySelector(
+      "#editor-name",
+    ) as HTMLInputElement;
+  return type !== templateType.value || displayName !== templateName.value;
 }
 
 function updateData() {
@@ -582,7 +617,7 @@ function saveSelectedTemplate() {
     );
     if (useImport) {
       addon.hooks.onImportTemplateFromClipboard(template.text);
-      refresh();
+      refresh(true);
       return;
     }
   }
@@ -596,7 +631,7 @@ function saveSelectedTemplate() {
     addon.data.template.editor.tableHelper?.treeInstance.selection.selected
       .values()
       .next().value;
-  refresh().then(() => updateTable(selectedId));
+  refresh(true).then(() => updateTable(selectedId));
 }
 
 function deleteSelectedTemplate() {
@@ -608,7 +643,7 @@ function deleteSelectedTemplate() {
     return;
   }
   addon.api.template.removeTemplate(name);
-  refresh();
+  refresh(true);
 }
 
 function resetSelectedTemplate() {
@@ -698,7 +733,7 @@ async function restoreTemplates(win: Window) {
     }
     addon.api.template.setTemplate(t);
   }
-  await refresh();
+  await refresh(true);
 }
 
 const formatStore = [

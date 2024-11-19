@@ -101,6 +101,7 @@ alert-notValidParentItemError=无效的父条目。
 alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？
 alert-linkCreator-emptyNote = 无法从/向空笔记创建链接。
 alert-templateEditor-shouldImport = 似乎您正在尝试直接保存一个笔记模板分享代码。您想要将其导入为模板吗？
+alert-templateEditor-unsaved = 您在模板编辑器中有未保存的更改。您想要保存它们吗？
 
 userGuide-start-title = 欢迎使用Better Notes！
 userGuide-start-desc = Better Notes是一个强大的笔记工具，帮助您组织阅读论文时的概念和想法。本指南将帮助您开始使用Better Notes，并向您展示如何充分利用其功能。

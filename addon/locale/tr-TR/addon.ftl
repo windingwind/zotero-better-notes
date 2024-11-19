@@ -101,6 +101,7 @@ alert-notValidParentItemError = Geçerli ana eser yok.
 alert-syncImportedNotes = İçe aktarılmış notları Markdown dosyalarıyla eşitlemede tutmak ister misiniz?
 alert-linkCreator-emptyNote = Boş bir nota/nottan bağlantı oluşturulamaz. note. 
 alert-templateEditor-shouldImport = Şablon kodunu doğrudan kaydetmeye çalışıyorsunuz gibi görünüyor. Şablon olarak içe aktarmak ister misiniz?
+alert-templateEditor-unsaved = You have unsaved changes in the template editor. Do you want to save them?
 
 userGuide-start-title = Better Notes'a hoş geldiniz!
 userGuide-start-desc = Better Notes düşüncelerinizi ve tasarılarınızı düzenlemenize yardımcı olan güçlü bir not alma aracıdır. Kullanımı kolay ve yalın biçimde tasarlanmış olsa da karmaşık not alma işlerini görebilecek kadar da esnektir. Bu rehber size Better Notes'u kullanmaya başlamanıza ve ileri düzey işlevleri verimli kullanmanıza yardımcı olacaktır.
