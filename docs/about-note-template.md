@@ -304,10 +304,10 @@ ${{
     }
     key = att.key;
     if (att.libraryID === 1) {
-      return `zotero://open-pdf/library/items/${key}`;
+      return `zotero://open/library/items/${key}`;
     } else {
       groupID = Zotero.Libraries.get(att.libraryID).id;
-      return `zotero://open-pdf/groups/${groupID}/items/${key}`;
+      return `zotero://open/groups/${groupID}/items/${key}`;
     }
   }
   sharedObj.getPDFLink = getPDFLink;
