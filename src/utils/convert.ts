@@ -417,24 +417,34 @@ async function rehype2remark(rehype: HRoot) {
          * ```
          */
         li: (h, node) => {
-          const mnode = defaultHandlers.li(h, node) as ListContent;
+          const mNode = defaultHandlers.li(h, node) as ListContent;
           // If no more than 1 children, skip
-          if (!mnode || mnode.children.length < 2) {
-            return mnode;
+          if (!mNode || mNode.children.length < 2) {
+            return mNode;
           }
           const children: any[] = [];
           // Merge none-list nodes inside li into the previous paragraph node to avoid line break
-          while (mnode.children.length > 0) {
-            const current = mnode.children.shift();
+          while (mNode.children.length > 0) {
+            const current = mNode.children.shift();
             const cached = children[children.length - 1];
-            if (cached?.type === "paragraph" && current?.type !== "list") {
-              cached.children.push(current);
+            if (current?.type !== "list") {
+              if (cached?.type === "paragraph") {
+                cached.children.push(current);
+              } else {
+                // https://github.com/windingwind/zotero-better-notes/issues/1207
+                // Create a new paragraph node
+                const paragraph = {
+                  type: "paragraph",
+                  children: [current],
+                };
+                children.push(paragraph);
+              }
             } else {
               children.push(current);
             }
           }
-          mnode.children.push(...children);
-          return mnode;
+          mNode.children.push(...children);
+          return mNode;
         },
         wrapper: (h, node) => {
           return h(node, "wrapper", toText(node));
@@ -803,12 +813,12 @@ function processN2MRehypeHighlightNodes(
       const libraryType = uriParts[3];
       const key = uriParts[uriParts.length - 1];
       if (libraryType === "users") {
-        openURI = "zotero://open-pdf/library/items/" + key;
+        openURI = "zotero://open/library/items/" + key;
       }
       // groups
       else {
         const groupID = uriParts[4];
-        openURI = "zotero://open-pdf/groups/" + groupID + "/items/" + key;
+        openURI = "zotero://open/groups/" + groupID + "/items/" + key;
       }
 
       openURI +=
