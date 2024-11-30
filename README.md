@@ -148,7 +148,6 @@ BN enhances the note editor with link preview. Hover+Ctrl/Cmd or click the link 
 
 <div align=center><img width="400px" alt="image" src="https://github.com/user-attachments/assets/b29769a1-3436-42bd-8481-eee1c0b4896a"></div>
 
-
 #### Direct Markdown Paste
 
 BN supports direct markdown paste. You can paste markdown content into the note editor, and it will be converted to the rich text format automatically.
