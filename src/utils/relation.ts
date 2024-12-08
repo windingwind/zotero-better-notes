@@ -10,7 +10,7 @@ function closeRelationServer() {
   }
 }
 
-async function getRelationServer() {
+async function getRelationServer(): Promise<MessageHelper<typeof handlers>> {
   if (!addon.data.relation.server) {
     const worker = new Worker(
       `chrome://${config.addonRef}/content/scripts/relationWorker.js`,
@@ -95,7 +95,9 @@ async function updateNoteLinkRelation(noteID: number) {
   );
 }
 
-async function getNoteLinkOutboundRelation(noteID: number) {
+async function getNoteLinkOutboundRelation(
+  noteID: number,
+): Promise<LinkModel[]> {
   const note = Zotero.Items.get(noteID);
   const fromLibID = note.libraryID;
   const fromKey = note.key;
@@ -104,7 +106,9 @@ async function getNoteLinkOutboundRelation(noteID: number) {
   ).proxy.getOutboundLinks(fromLibID, fromKey);
 }
 
-async function getNoteLinkInboundRelation(noteID: number) {
+async function getNoteLinkInboundRelation(
+  noteID: number,
+): Promise<LinkModel[]> {
   const note = Zotero.Items.get(noteID);
   const toLibID = note.libraryID;
   const toKey = note.key;
@@ -135,13 +139,19 @@ async function linkAnnotationToTarget(model: AnnotationModel) {
   return await (await getRelationServer()).proxy.linkAnnotationToTarget(model);
 }
 
-async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
+async function getLinkTargetByAnnotation(
+  fromLibID: number,
+  fromKey: string,
+): Promise<AnnotationModel | undefined> {
   return await (
     await getRelationServer()
   ).proxy.getLinkTargetByAnnotation(fromLibID, fromKey);
 }
 
-async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
+async function getAnnotationByLinkTarget(
+  toLibID: number,
+  toKey: string,
+): Promise<AnnotationModel | undefined> {
   return await (
     await getRelationServer()
   ).proxy.getAnnotationByLinkTarget(toLibID, toKey);

@@ -8,11 +8,7 @@
     "skipLibCheck": true,
     "alwaysStrict": false,
     "strict": true,
-    "composite": true
   },
   "include": ["src", "typings", "node_modules/zotero-types"],
   "exclude": ["build", "addon", "test"],
-  "references": [
-    { "path": "./test" }
-  ]
 }
