@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test
+          npx zotero-plugin test --abortOnFail --exitOnFinish
         env:
           ZOTERO_PLUGIN_ZOTERO_BIN_PATH: ${{ env.ZOTERO_PLUGIN_ZOTERO_BIN_PATH }}
 
