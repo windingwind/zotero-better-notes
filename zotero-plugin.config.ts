@@ -69,7 +69,8 @@ export default defineConfig({
     entries: ["test/"],
     prefs: {},
     abortOnFail: true,
-    exitOnFinish: true,
+    exitOnFinish: false,
+    hooks: {},
   },
 
   // If you need to see a more detailed build log, uncomment the following line:

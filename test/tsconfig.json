@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  },
+  "include": ["./**/*.spec.ts", "typings", "../node_modules/zotero-types"],
+  "exclude": []
+}
