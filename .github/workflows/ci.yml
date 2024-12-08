@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - add-tests
+      - master
   pull_request:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Use the appropriate version for your project
+          node-version: '20' # Use the appropriate version for your project
 
       - name: Clone Zotero Plugin Scaffold # TEMP: Use the official repository once the PR is merged
         run: |
