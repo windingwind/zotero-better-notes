@@ -28,8 +28,8 @@ jobs:
 
       - name: Download and Extract Zotero Beta
         run: |
-          wget -O zotero.tar.bz2 https://www.zotero.org/download/client/dl?platform=linux-x86_64&channel=beta
-          tar -xjf zotero.tar.bz2
+          wget -O zotero.tar.bz2 "https://www.zotero.org/download/client/dl?platform=linux-x86_64&channel=beta"
+          tar -xvf zotero.tar.bz2
           echo "Zotero extracted successfully"
 
       - name: Set Environment Variable for Zotero Bin Path
