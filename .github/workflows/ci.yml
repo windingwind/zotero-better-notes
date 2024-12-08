@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Zotero Plugin Scaffold Locally
         run: |
-          npm install ../zotero-plugin-scaffold
+          npm install ./zotero-plugin-scaffold
 
       - name: Run Tests
         run: |
