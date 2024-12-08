@@ -57,7 +57,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "file:../zotero-plugin-toolkit"
+    "zotero-plugin-toolkit": "^4.0.11"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -85,7 +85,6 @@
     "replace-in-file": "^7.2.0",
     "typescript": "^5.3.3",
     "xslt3": "^2.6.0",
-    "zotero-plugin-scaffold": "file:../zotero-plugin-scaffold",
     "zotero-types": "^3.0.2"
   },
   "eslintConfig": {
