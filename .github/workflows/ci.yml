@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          xvfb-run npx zotero-plugin test --abortOnFail --exitOnFinish
+          xvfb-run npx zotero-plugin test --abort-on-fail --exit-on-finish
         env:
           ZOTERO_PLUGIN_ZOTERO_BIN_PATH: ${{ env.ZOTERO_PLUGIN_ZOTERO_BIN_PATH }}
 
