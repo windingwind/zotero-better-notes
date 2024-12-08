@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - add-tests
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Current Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Use the appropriate version for your project
+
+      - name: Clone Zotero Plugin Scaffold # TEMP: Use the official repository once the PR is merged
+        run: |
+          git clone --branch add-test https://github.com/windingwind/zotero-plugin-scaffold.git zotero-plugin-scaffold
+          cd zotero-plugin-scaffold
+          npm install
+          npm run build
+
+      - name: Download and Extract Zotero Beta
+        run: |
+          wget -O zotero.tar.bz2 https://www.zotero.org/download/client/dl?platform=linux-x86_64&channel=beta
+          tar -xjf zotero.tar.bz2
+          echo "Zotero extracted successfully"
+
+      - name: Set Environment Variable for Zotero Bin Path
+        run: echo "ZOTERO_PLUGIN_ZOTERO_BIN_PATH=$PWD/Zotero_linux-x86_64/zotero" >> $GITHUB_ENV
+
+      - name: Initialize Current Repository
+        run: |
+          npm install
+
+      - name: Install Zotero Plugin Scaffold Locally
+        run: |
+          npm install ../zotero-plugin-scaffold
+
+      - name: Run Tests
+        run: |
+          npm run test
+        env:
+          ZOTERO_PLUGIN_ZOTERO_BIN_PATH: ${{ env.ZOTERO_PLUGIN_ZOTERO_BIN_PATH }}
+
+      - name: Check Test Results
+        if: failure()
+        run: |
+          echo "Tests failed. CI is marked as failed."
+          exit 1
