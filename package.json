@@ -17,7 +17,7 @@
     "build-dev": "tsc --noEmit && zotero-plugin build --dev && cd build/addon && zip -r ../zotero-better-notes-dev.xpi .",
     "release": "zotero-plugin release",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "zotero-plugin test",
     "update-deps": "npm update --save"
   },
   "repository": {
@@ -57,7 +57,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^4.0.9"
+    "zotero-plugin-toolkit": "file:../zotero-plugin-toolkit"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -85,7 +85,7 @@
     "replace-in-file": "^7.2.0",
     "typescript": "^5.3.3",
     "xslt3": "^2.6.0",
-    "zotero-plugin-scaffold": "^0.1.6",
+    "zotero-plugin-scaffold": "file:../zotero-plugin-scaffold",
     "zotero-types": "^3.0.2"
   },
   "eslintConfig": {

@@ -64,6 +64,13 @@ export default defineConfig({
       all: true,
     },
   },
+  test: {
+    resourceDir: "test/",
+    entries: ["test/"],
+    prefs: {},
+    abortOnFail: true,
+    exitOnFinish: true,
+  },
 
   // If you need to see a more detailed build log, uncomment the following line:
   // logLevel: "trace",

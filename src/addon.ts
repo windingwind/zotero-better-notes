@@ -13,8 +13,7 @@ class Addon {
   public data: {
     uid: string;
     alive: boolean;
-    // Env type, see build.js
-    env: "development" | "production";
+    env: "development" | "production" | "test";
     ztoolkit: ZToolkit;
     // ztoolkit: ZoteroToolkit;
     locale?: {
