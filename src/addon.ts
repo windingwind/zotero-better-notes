@@ -14,6 +14,7 @@ class Addon {
     uid: string;
     alive: boolean;
     env: "development" | "production" | "test";
+    initialized?: boolean;
     ztoolkit: ZToolkit;
     // ztoolkit: ZoteroToolkit;
     locale?: {
