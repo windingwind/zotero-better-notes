@@ -2,6 +2,10 @@ import pkg from "./package.json";
 import { defineConfig } from "zotero-plugin-scaffold";
 import { replaceInFile } from "replace-in-file";
 
+const TEST_PREFS = {};
+// Disable user guide, keep in sync with src/modules/userGuide.ts
+TEST_PREFS[`${pkg.config.prefsPrefix}.latestTourVersion`] = 1;
+
 export default defineConfig({
   source: ["src", "addon"],
   dist: "build",
@@ -63,6 +67,14 @@ export default defineConfig({
       execute: "npm run build",
       all: true,
     },
+  },
+  test: {
+    entries: ["test/"],
+    prefs: TEST_PREFS,
+    abortOnFail: true,
+    exitOnFinish: false,
+    hooks: {},
+    waitForPlugin: `() => Zotero.${pkg.config.addonRef}.data.initialized`,
   },
 
   // If you need to see a more detailed build log, uncomment the following line:

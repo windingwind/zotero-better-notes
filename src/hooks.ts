@@ -80,6 +80,9 @@ async function onStartup() {
   setSyncing();
 
   await onMainWindowLoad(Zotero.getMainWindow());
+
+  // For testing
+  addon.data.initialized = true;
 }
 
 async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {

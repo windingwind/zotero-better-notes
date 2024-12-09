@@ -17,7 +17,7 @@
     "build-dev": "tsc --noEmit && zotero-plugin build --dev && cd build/addon && zip -r ../zotero-better-notes-dev.xpi .",
     "release": "zotero-plugin release",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "zotero-plugin test  --abort-on-fail --exit-on-finish",
     "update-deps": "npm update --save"
   },
   "repository": {
@@ -57,15 +57,18 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^4.0.9"
+    "zotero-plugin-scaffold": "^0.1.8-beta.3",
+    "zotero-plugin-toolkit": "^4.0.11"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@prettier/plugin-xml": "^3.2.2",
     "@types/browser-or-node": "^1.3.2",
+    "@types/chai": "^5.0.1",
     "@types/diff": "^5.0.9",
     "@types/html-docx-js": "^0.3.4",
     "@types/katex": "^0.16.7",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.10.4",
     "@types/path-browserify": "^1.0.2",
     "@types/seedrandom": "^3.0.8",
@@ -85,7 +88,6 @@
     "replace-in-file": "^7.2.0",
     "typescript": "^5.3.3",
     "xslt3": "^2.6.0",
-    "zotero-plugin-scaffold": "^0.1.6",
     "zotero-types": "^3.0.2"
   },
   "eslintConfig": {
