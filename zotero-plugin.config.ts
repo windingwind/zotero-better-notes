@@ -65,7 +65,6 @@ export default defineConfig({
     },
   },
   test: {
-    resourceDir: "test/",
     entries: ["test/"],
     prefs: {},
     abortOnFail: true,
