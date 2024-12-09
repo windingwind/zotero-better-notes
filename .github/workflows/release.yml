@@ -11,9 +11,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  test:
-    uses: windingwind/zotero-plugin-scaffold/.github/workflows/plugin-test.yml@add-test
-
   release:
     runs-on: ubuntu-latest
     env:
@@ -32,6 +29,20 @@ jobs:
 
       - name: Install deps
         run: npm install -f
+
+      - name: Clone Zotero Plugin Scaffold # TEMP: Use the official repository once the PR is merged
+        run: |
+          git clone --branch add-test https://github.com/windingwind/zotero-plugin-scaffold.git zotero-plugin-scaffold
+          cd zotero-plugin-scaffold
+          npm install
+          npm run build
+
+      - name: Install Zotero Plugin Scaffold Locally # TEMP: Use the official repository once the PR is merged
+        run: |
+          npm install ./zotero-plugin-scaffold
+
+      - name: Test
+        run: npm test
 
       - name: Build
         run: |
