@@ -17,7 +17,7 @@
     "build-dev": "tsc --noEmit && zotero-plugin build --dev && cd build/addon && zip -r ../zotero-better-notes-dev.xpi .",
     "release": "zotero-plugin release",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
-    "test": "zotero-plugin test",
+    "test": "zotero-plugin test  --abort-on-fail --exit-on-finish",
     "update-deps": "npm update --save"
   },
   "repository": {

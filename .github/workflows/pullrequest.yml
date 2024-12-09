@@ -1,0 +1,8 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    uses: windingwind/zotero-plugin-scaffold/.github/workflows/plugin-test.yml@add-test
