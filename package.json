@@ -57,7 +57,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-scaffold": "file:../zotero-plugin-scaffold",
+    "zotero-plugin-scaffold": "^0.1.8-beta.1",
     "zotero-plugin-toolkit": "^4.0.11"
   },
   "devDependencies": {
