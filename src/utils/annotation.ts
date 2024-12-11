@@ -161,11 +161,11 @@ function serializeAnnotations(
     }
 
     let template: string = "";
-    if (annotation.type === "highlight") {
+    if (["highlight", "underline"].includes(annotation.type)) {
       template = Zotero.Prefs.get(
         "annotations.noteTemplates.highlight",
       ) as string;
-    } else if (annotation.type === "note") {
+    } else if (["note", "text"].includes(annotation.type)) {
       template = Zotero.Prefs.get("annotations.noteTemplates.note") as string;
     } else if (annotation.type === "image") {
       template = "<p>{{image}}<br/>{{citation}} {{comment}}</p>";
