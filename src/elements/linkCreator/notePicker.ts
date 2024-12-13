@@ -36,6 +36,10 @@ export class NotePicker extends PluginCEBase {
 
   _cachedLibraryIDs: number[] = [];
 
+  _cachedSelectedNoteIDs: number[] = [];
+
+  _disableSelectionChange = false;
+
   get content() {
     return MozXULElement.parseXULToFragment(`
 <linkset>
@@ -121,8 +125,8 @@ export class NotePicker extends PluginCEBase {
   }
 
   destroy(): void {
-    this.collectionsView.unregister();
-    if (this.itemsView) this.itemsView.unregister();
+    this.collectionsView?.unregister();
+    this.itemsView?.unregister();
     unregisterPrefObserver(this._prefObserverID);
   }
 
@@ -395,6 +399,9 @@ export class NotePicker extends PluginCEBase {
   }
 
   onItemSelected() {
+    if (this._disableSelectionChange) {
+      return;
+    }
     this.activeSelectionType = "library";
     const selectedIDs = this.itemsView.getSelectedItems(true) as number[];
     // Compare the selected IDs with the cached IDs
@@ -402,17 +409,46 @@ export class NotePicker extends PluginCEBase {
     if (arraysEqual(this._cachedLibraryIDs, selectedIDs)) {
       return;
     }
+    this.deselectOtherPanes();
     this.dispatchSelectionChange();
   }
 
   onOpenedNoteSelected(selection: { selected: Set<number> }) {
+    if (this._disableSelectionChange) {
+      return;
+    }
     this.activeSelectionType = "tabs";
+    this.deselectOtherPanes();
     this.dispatchSelectionChange(selection);
   }
 
   onRecentNoteSelected(selection: { selected: Set<number> }) {
+    if (this._disableSelectionChange) {
+      return;
+    }
     this.activeSelectionType = "recent";
+    this.deselectOtherPanes();
     this.dispatchSelectionChange(selection);
+  }
+
+  deselectItemsPane() {
+    this.itemsView?.selection?.clearSelection();
+  }
+
+  deselectOpenedNotePane() {
+    this.openedNotesView?.treeInstance?.selection?.clearSelection();
+  }
+
+  deselectRecentNotePane() {
+    this.recentNotesView?.treeInstance?.selection?.clearSelection();
+  }
+
+  deselectOtherPanes() {
+    this._disableSelectionChange = true;
+    if (this.activeSelectionType !== "library") this.deselectItemsPane();
+    if (this.activeSelectionType !== "tabs") this.deselectOpenedNotePane();
+    if (this.activeSelectionType !== "recent") this.deselectRecentNotePane();
+    this._disableSelectionChange = false;
   }
 
   getRecentNotes() {
@@ -438,13 +474,23 @@ export class NotePicker extends PluginCEBase {
   }
 
   dispatchSelectionChange(selection?: { selected: Set<number> }) {
+    if (this._disableSelectionChange) {
+      return false;
+    }
+    const selectedNotes = this.getSelectedNotes(selection);
+    const selectedNoteIDs = selectedNotes.map((n) => n.id);
+    if (arraysEqual(this._cachedSelectedNoteIDs, selectedNoteIDs)) {
+      return false;
+    }
+    this._cachedSelectedNoteIDs = selectedNoteIDs;
     this.dispatchEvent(
       new CustomEvent("selectionchange", {
         detail: {
-          selectedNotes: this.getSelectedNotes(selection),
+          selectedNotes,
         },
       }),
     );
+    return true;
   }
 
   getSelectedNotes(selection?: { selected: Set<number> }): Zotero.Item[] {
