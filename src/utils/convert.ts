@@ -262,18 +262,23 @@ function annotations2html(
 
 async function note2html(
   noteItems: Zotero.Item | Zotero.Item[],
-  options: { targetNoteItem?: Zotero.Item; html?: string } = {},
+  options: {
+    targetNoteItem?: Zotero.Item;
+    html?: string;
+    dryRun?: boolean;
+  } = {},
 ) {
   if (!Array.isArray(noteItems)) {
     noteItems = [noteItems];
   }
-  const { targetNoteItem } = options;
+  const { targetNoteItem, dryRun } = options;
   let html = options.html;
   if (!html) {
     html = noteItems.map((item) => item.getNote()).join("\n");
   }
-  if (targetNoteItem?.isNote()) {
-    return await copyEmbeddedImagesInHTML(html, targetNoteItem, noteItems);
+  if (!dryRun && targetNoteItem?.isNote()) {
+    const str = await copyEmbeddedImagesInHTML(html, targetNoteItem, noteItems);
+    return str;
   }
   return await renderNoteHTML(html, noteItems);
 }
