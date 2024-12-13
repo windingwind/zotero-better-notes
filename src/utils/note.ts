@@ -322,6 +322,10 @@ async function copyEmbeddedImagesFromNote(
 ) {
   await Zotero.DB.executeTransaction(async () => {
     for (const fromNote of sourceNotes) {
+      // Do not copy to itself, otherwise the note may break the DB
+      if (!fromNote.id || !targetNote.id || fromNote.id === targetNote.id) {
+        continue;
+      }
       await Zotero.Notes.copyEmbeddedImages(fromNote, targetNote);
     }
   });
@@ -361,17 +365,28 @@ async function copyEmbeddedImagesInHTML(
         doc.querySelectorAll(`img[data-attachment-key="${attachment.key}"]`),
       ) as HTMLImageElement[];
       if (nodes.length) {
-        let copiedAttachment: Zotero.Item;
+        let copiedAttachment: Zotero.Item | undefined;
         await Zotero.DB.executeTransaction(async () => {
           Zotero.DB.requireTransaction();
+          // Do not copy to itself, otherwise the note may break the DB
+          if (
+            !attachment.parentID ||
+            !targetNote.id ||
+            attachment.parentID === targetNote.id
+          ) {
+            return;
+          }
           copiedAttachment = await Zotero.Attachments.copyEmbeddedImage({
             attachment,
             note: targetNote,
           });
         });
+        if (!copiedAttachment) {
+          continue;
+        }
         nodes.forEach(
           (node) =>
-            node?.setAttribute("data-attachment-key", copiedAttachment.key),
+            node?.setAttribute("data-attachment-key", copiedAttachment!.key),
         );
       }
     }

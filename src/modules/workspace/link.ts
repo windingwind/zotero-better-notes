@@ -114,7 +114,7 @@ async function renderSection(
     if (!targetItem) {
       continue;
     }
-    count ++;
+    count++;
 
     const linkParams = {
       workspaceUID: (body.closest("bn-workspace") as Workspace)?.dataset.uid,
