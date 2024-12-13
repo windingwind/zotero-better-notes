@@ -3,7 +3,12 @@ import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
 import { fill, slice } from "../../utils/str";
 
-export { runTemplate, runTextTemplate, runItemTemplate };
+export {
+  runTemplate,
+  runTextTemplate,
+  runItemTemplate,
+  runQuickInsertTemplate,
+};
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
@@ -235,6 +240,26 @@ async function runItemTemplate(
     });
   }
   return renderedString;
+}
+
+async function runQuickInsertTemplate(
+  noteItem: Zotero.Item,
+  targetNoteItem: Zotero.Item,
+  options: {
+    dryRun?: boolean;
+  } = {},
+) {
+  if (!noteItem || !targetNoteItem) return "";
+  const link = addon.api.convert.note2link(noteItem, {});
+  const content = await runTemplate(
+    "[QuickInsertV2]",
+    "link, linkText, subNoteItem, noteItem",
+    [link, noteItem.getNoteTitle().trim() || link, noteItem, targetNoteItem],
+    {
+      dryRun: options.dryRun,
+    },
+  );
+  return content;
 }
 
 async function getItemTemplateData() {

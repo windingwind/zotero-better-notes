@@ -34,6 +34,7 @@ import {
   runTemplate,
   runTextTemplate,
   runItemTemplate,
+  runQuickInsertTemplate,
 } from "./modules/template/api";
 import {
   getTemplateKeys,
@@ -124,6 +125,7 @@ const template = {
   runTemplate,
   runTextTemplate,
   runItemTemplate,
+  runQuickInsertTemplate,
   getTemplateKeys,
   getTemplateText,
   setTemplate,
