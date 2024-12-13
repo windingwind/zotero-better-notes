@@ -98,6 +98,7 @@ async function renderSection(
     outbound: addon.api.relation.getNoteLinkOutboundRelation,
   };
   const inLinks = await api[type](item.id);
+  let count = 0;
   for (const linkData of inLinks) {
     const targetItem = (await Zotero.Items.getByLibraryAndKeyAsync(
       linkData[
@@ -108,7 +109,12 @@ async function renderSection(
       linkData[
         { inbound: "fromKey", outbound: "toKey" }[type] as "fromKey" | "toKey"
       ],
-    )) as Zotero.Item;
+    )) as Zotero.Item | false;
+
+    if (!targetItem) {
+      continue;
+    }
+    count ++;
 
     const linkParams = {
       workspaceUID: (body.closest("bn-workspace") as Workspace)?.dataset.uid,
@@ -160,7 +166,6 @@ async function renderSection(
     body.append(row);
   }
 
-  const count = inLinks.length;
   setCount(count);
 }
 
