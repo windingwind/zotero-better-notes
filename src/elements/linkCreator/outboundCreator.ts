@@ -69,10 +69,10 @@ export class OutboundCreator extends PluginCEBase {
 
   async accept(io: any) {
     if (!this.targetNotes) return;
-    const content = await this.getContentToInsert();
     this.notePicker.saveRecentNotes();
 
     io.targetNoteID = this.currentNote!.id;
+    io.sourceNoteIDs = this.targetNotes.map((item) => item.id).filter(Boolean);
     io.content = content;
     io.lineIndex = this.getIndexToInsert();
   }
@@ -240,19 +240,10 @@ export class OutboundCreator extends PluginCEBase {
     if (!this.currentNote || !this.targetNotes?.length) return "";
     let content = "";
     for (const note of this.targetNotes) {
-      const forwardLink = this._addon.api.convert.note2link(note, {});
-      content += await this._addon.api.template.runTemplate(
-        "[QuickInsertV2]",
-        "link, linkText, subNoteItem, noteItem",
-        [
-          forwardLink,
-          note.getNoteTitle().trim() || forwardLink,
-          note,
-          this.currentNote,
-        ],
-        {
-          dryRun: true,
-        },
+      content += await this._addon.api.template.runQuickInsertTemplate(
+        note,
+        this.currentNote,
+        { dryRun: true },
       );
       content += "\n";
     }

@@ -41,10 +41,20 @@ async function openLinkCreator(
   await io.deferred.promise;
 
   const targetNote = Zotero.Items.get(io.targetNoteID);
-  const content = io.content;
-  const lineIndex = io.lineIndex;
 
-  if (!targetNote || !content) return;
+  if (!targetNote) return;
+
+  const sourceNotes = Zotero.Items.get(io.sourceNoteIDs as number[]);
+  let content = "";
+  for (const note of sourceNotes) {
+    content += await addon.api.template.runQuickInsertTemplate(
+      note,
+      targetNote,
+      { dryRun: false },
+    );
+    content += "\n";
+  }
+  const lineIndex = io.lineIndex;
 
   await addLineToNote(targetNote, content, lineIndex);
 }
