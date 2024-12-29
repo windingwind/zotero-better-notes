@@ -106,7 +106,8 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
   patchExportItems(win);
 
-  patchOpenTabMenu(win);
+  // TEMP: This doesn't work, maybe better to wait for the support from Zotero
+  // patchOpenTabMenu(win);
 
   await restoreNoteTabs();
 
