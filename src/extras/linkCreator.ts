@@ -10,7 +10,7 @@ let io: {
   currentNoteID: number;
   currentLineIndex?: number;
   openedNoteIDs?: number[];
-  deferred: _ZoteroTypes.DeferredPromise<void>;
+  deferred: _ZoteroTypes.Promise.DeferredPromise<void>;
 
   targetNoteID?: number;
   content?: string;
@@ -40,7 +40,7 @@ window.onunload = function () {
 function init() {
   // Set font size from pref
   const sbc = document.getElementById("top-container");
-  Zotero.UIProperties.registerRoot(sbc);
+  Zotero.UIProperties.registerRoot(sbc!);
 
   setTimeout(() => {
     const size = ((getPref("windows.linkCreator.size") as string) || "").split(

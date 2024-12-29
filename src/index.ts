@@ -4,6 +4,7 @@ import { config } from "../package.json";
 
 const basicTool = new BasicTool();
 
+// @ts-ignore - plugin instance
 if (!basicTool.getGlobal("Zotero")[config.addonInstance]) {
   // Set global variables
   defineGlobal("window");
@@ -16,6 +17,7 @@ if (!basicTool.getGlobal("Zotero")[config.addonInstance]) {
       return _globalThis.addon.data.ztoolkit;
     },
   });
+  // @ts-ignore - plugin instance
   Zotero[config.addonInstance] = addon;
 }
 

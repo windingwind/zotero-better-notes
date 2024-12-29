@@ -7,7 +7,7 @@ let io: {
   };
   accepted: boolean;
   useBuiltInExport: boolean;
-  deferred: _ZoteroTypes.DeferredPromise<void>;
+  deferred: _ZoteroTypes.Promise.DeferredPromise<void>;
   embedLink: boolean;
   standaloneLink: boolean;
   exportNote: boolean;

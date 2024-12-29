@@ -27,6 +27,7 @@ function accept() {
   );
 }
 
+// @ts-ignore - plugin instance
 const getString = (Zotero[config.addonRef] as typeof addon).api.utils.getString;
 
 function initTable() {

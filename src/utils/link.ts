@@ -8,7 +8,11 @@ export function getNoteLinkParams(link: string) {
     if (id === "u") {
       libraryID = Zotero.Libraries.userLibraryID;
     } else {
-      libraryID = Zotero.Groups.getLibraryIDFromGroupID(id);
+      const libID = Zotero.Groups.getLibraryIDFromGroupID(Number(id));
+      if (!libID) {
+        throw new Error("Invalid group ID");
+      }
+      libraryID = libID;
     }
     const line = url.searchParams.get("line");
     return {

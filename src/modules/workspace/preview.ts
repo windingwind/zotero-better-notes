@@ -30,6 +30,7 @@ export function openNotePreview(
         l10nID: `${config.addonRef}-note-preview-open`,
         onClick: ({ event }) => {
           const position = (event as MouseEvent).shiftKey ? "window" : "tab";
+          // @ts-ignore - plugin instance
           Zotero[config.addonRef].hooks.onOpenNote(noteItem.id, position);
         },
       },

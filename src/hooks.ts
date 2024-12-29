@@ -48,6 +48,7 @@ import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/exportItems";
+import { patchOpenTabMenu } from "./modules/openTabMenu";
 
 async function onStartup() {
   await Promise.all([
@@ -79,7 +80,7 @@ async function onStartup() {
 
   setSyncing();
 
-  await onMainWindowLoad(Zotero.getMainWindow());
+  await Promise.all(Zotero.getMainWindows().map(onMainWindowLoad));
 
   // For testing
   addon.data.initialized = true;
@@ -105,7 +106,9 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
   patchExportItems(win);
 
-  restoreNoteTabs();
+  patchOpenTabMenu(win);
+
+  await restoreNoteTabs();
 
   showUserGuide(win);
 }
@@ -120,6 +123,7 @@ function onShutdown(): void {
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;
+  // @ts-ignore plugin instance
   delete Zotero[config.addonInstance];
 }
 
@@ -300,6 +304,5 @@ export default {
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
   onCreateNote,
-  restoreNoteTabs,
   onShowUserGuide,
 };

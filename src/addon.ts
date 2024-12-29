@@ -24,7 +24,7 @@ class Addon {
       window: Window;
     };
     export: {
-      pdf: { promise?: _ZoteroTypes.PromiseObject };
+      pdf: { promise?: _ZoteroTypes.Promise.PromiseObject };
     };
     sync: {
       data?: LargePrefHelper;

@@ -60,13 +60,13 @@ export function onTabSelect(tabType: string) {
   ZoteroContextPane.update();
 }
 
-export function restoreNoteTabs() {
+export async function restoreNoteTabs() {
   const tabsCache: _ZoteroTypes.TabInstance[] =
     Zotero.Session.state.windows.find((x: any) => x.type == "pane")?.tabs;
   for (const i in tabsCache) {
     const tab = tabsCache[i];
     if (tab.type !== TAB_TYPE) continue;
-    openWorkspaceTab(Zotero.Items.get(tab.data.itemID), {
+    openWorkspaceTab(await Zotero.Items.getAsync(tab.data.itemID), {
       select: !!tab.selected,
     });
   }
