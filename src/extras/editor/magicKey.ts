@@ -11,6 +11,7 @@ declare const _currentEditorInstance: {
 
 interface MagicKeyOptions {
   insertTemplate?: () => void;
+  refreshTemplates?: () => void;
   insertLink?: (type: "inbound" | "outbound") => void;
   copyLink?: (mode: "section" | "line") => void;
   openAttachment?: () => void;
@@ -20,6 +21,7 @@ interface MagicKeyOptions {
 
 interface MagicCommand {
   messageId?: string;
+  searchParts?: string[];
   title?: string;
   icon?: string;
   command: (state: EditorState) => void | Transaction;
@@ -34,30 +36,35 @@ class PluginState {
   _commands: MagicCommand[] = [
     {
       messageId: "insertTemplate",
+      searchParts: ["it", "insertTemplate"],
       command: (state) => {
         this.options.insertTemplate?.();
       },
     },
     {
       messageId: "outboundLink",
+      searchParts: ["ol", "obl", "outboundLink"],
       command: (state) => {
         this.options.insertLink?.("outbound");
       },
     },
     {
       messageId: "inboundLink",
+      searchParts: ["il", "ibl", "inboundLink"],
       command: (state) => {
         this.options.insertLink?.("inbound");
       },
     },
     {
       messageId: "insertCitation",
+      searchParts: ["ic", "insertCitation"],
       command: (state) => {
         getPlugin("citation")?.insertCitation();
       },
     },
     {
       messageId: "openAttachment",
+      searchParts: ["oa", "openAttachment"],
       command: (state) => {
         this.options.openAttachment?.();
       },
@@ -67,18 +74,28 @@ class PluginState {
     },
     {
       messageId: "copySectionLink",
+      searchParts: ["csl", "copySectionLink"],
       command: (state) => {
         this.options.copyLink?.("section");
       },
     },
     {
       messageId: "copyLineLink",
+      searchParts: ["cll", "copyLineLink"],
       command: (state) => {
         this.options.copyLink?.("line");
       },
     },
     {
+      messageId: "refreshTemplates",
+      searchParts: ["rt", "refreshTemplates"],
+      command: (state) => {
+        this.options.refreshTemplates?.();
+      },
+    },
+    {
       messageId: "table",
+      searchParts: ["t", "tb", "table"],
       command: (state) => {
         const input = prompt(
           "Enter the number of rows and columns, separated by a comma (e.g., 3,3)",
@@ -118,60 +135,70 @@ class PluginState {
     },
     {
       messageId: "heading1",
+      searchParts: ["h1", "heading1"],
       command: (state) => {
         getPlugin()?.heading1.run();
       },
     },
     {
       messageId: "heading2",
+      searchParts: ["h2", "heading2"],
       command: (state) => {
         getPlugin()?.heading2.run();
       },
     },
     {
       messageId: "heading3",
+      searchParts: ["h3", "heading3"],
       command: (state) => {
         getPlugin()?.heading3.run();
       },
     },
     {
       messageId: "paragraph",
+      searchParts: ["p", "paragraph"],
       command: (state) => {
         getPlugin()?.paragraph.run();
       },
     },
     {
       messageId: "monospaced",
+      searchParts: ["m", "monospaced"],
       command: (state) => {
         getPlugin()?.codeBlock.run();
       },
     },
     {
       messageId: "bulletList",
+      searchParts: ["ul", "bulletList", "unorderedList"],
       command: (state) => {
         getPlugin()?.bulletList.run();
       },
     },
     {
       messageId: "orderedList",
+      searchParts: ["ol", "orderedList"],
       command: (state) => {
         getPlugin()?.orderedList.run();
       },
     },
     {
       messageId: "blockquote",
+      searchParts: ["bq", "blockquote"],
       command: (state) => {
         getPlugin()?.blockquote.run();
       },
     },
     {
       messageId: "mathBlock",
+      searchParts: ["mb", "mathBlock"],
       command: (state) => {
         getPlugin()?.math_display.run();
       },
     },
     {
       messageId: "clearFormatting",
+      searchParts: ["cf", "clearFormatting"],
       command: (state) => {
         getPlugin()?.clearFormatting.run();
       },
@@ -354,9 +381,24 @@ class PluginState {
         const item = this.popup!.container.querySelector(
           `.popup-item[data-command-id="${id}"]`,
         ) as HTMLElement;
+        if (!value) {
+          item.hidden = false;
+          continue;
+        }
         const matchedIndex = command
           .title!.toLowerCase()
           .indexOf(value.toLowerCase());
+        if (
+          matchedIndex < 0 &&
+          // Try to match the search parts
+          !command.searchParts?.some((part) =>
+            part.toLowerCase().includes(value.toLowerCase()),
+          )
+        ) {
+          item.hidden = true;
+        } else {
+          item.hidden = false;
+        }
         if (matchedIndex >= 0) {
           // Change the matched part to bold
           const title = command.title!;
@@ -364,9 +406,6 @@ class PluginState {
             title.slice(0, matchedIndex) +
             `<b>${title.slice(matchedIndex, matchedIndex + value.length)}</b>` +
             title.slice(matchedIndex + value.length);
-          item.hidden = false;
-        } else {
-          item.hidden = true;
         }
       }
       this._selectCommand();

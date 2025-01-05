@@ -521,6 +521,9 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
                 lineIndex: getLineAtCursor(editor),
               });
             },
+            refreshTemplates: () => {
+              addon.hooks.onRefreshTemplatesInNote(editor);
+            },
             insertLink: (mode: "inbound" | "outbound") => {
               openLinkCreator(editor._item, {
                 lineIndex: getLineAtCursor(editor),
