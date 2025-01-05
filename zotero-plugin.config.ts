@@ -52,8 +52,12 @@ export default defineConfig({
         target: ["firefox115"],
       },
     ],
+    // prefs: {
+    //   prefix: pkg.config.prefsPrefix,
+    //   dts: false,
+    // },
     hooks: {
-      "build:replace": (ctx) => {
+      "build:bundle": (ctx) => {
         return replaceInFile({
           files: ["README.md"],
           from: /^ {2}- \[Latest Version.*/gm,
