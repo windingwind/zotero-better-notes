@@ -77,7 +77,8 @@ async function addLineToNote(
     return;
   }
   const noteLines = await getLinesInNote(note);
-  if (lineIndex < 0 || lineIndex >= noteLines.length) {
+  // No need to handle the case when lineIndex is out of range, as it will always be inserted at the very end
+  if (lineIndex < 0) {
     lineIndex = noteLines.length;
   }
   ztoolkit.log(`insert to ${lineIndex}, it used to be ${noteLines[lineIndex]}`);
@@ -86,7 +87,8 @@ async function addLineToNote(
   const editor = getEditorInstance(note.id);
   if (editor && !forceMetadata) {
     // The note is opened. Add line via note editor
-    const pos = getPositionAtLine(editor, lineIndex, "start");
+    // If the lineIndex is out of range, the line will be inserted at the end (after the last line)
+    const pos = getPositionAtLine(editor, lineIndex, lineIndex >= noteLines.length ? "end" : "start");
     ztoolkit.log("Add note line via note editor", pos);
     insert(editor, html, pos);
     // The selection is automatically moved to the next line
