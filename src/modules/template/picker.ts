@@ -68,11 +68,12 @@ async function insertTemplateCallback(name: string) {
       targetNoteId: targetNoteItem.id,
     });
   }
-  await addLineToNote(
-    targetNoteItem,
-    html,
-    addon.data.template.picker.data.lineIndex,
-  );
+  let lineIndex = addon.data.template.picker.data.lineIndex;
+  // Insert to the end of the line
+  if (lineIndex >= 0) {
+    lineIndex += 1;
+  }
+  await addLineToNote(targetNoteItem, html, lineIndex);
 }
 
 async function createTemplateNoteCallback(name: string) {
