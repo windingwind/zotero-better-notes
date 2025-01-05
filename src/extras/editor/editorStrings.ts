@@ -40,6 +40,10 @@ const editorStrings = {
     "en-US": "Copy Line Link",
     "zh-CN": "复制行链接",
   },
+  refreshTemplates: {
+    "en-US": "Update content from templates",
+    "zh-CN": "更新模板生成内容",
+  },
   heading1: {
     "en-US": "Heading 1",
     "zh-CN": "一级标题",
