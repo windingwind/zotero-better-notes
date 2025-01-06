@@ -66,7 +66,7 @@ class Addon {
         templates: string[];
       };
       picker: {
-        mode: "insert" | "create" | "export";
+        mode: "insert" | "create" | "export" | "pick";
         data: Record<string, any>;
       };
     };

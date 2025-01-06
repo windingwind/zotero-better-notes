@@ -20,14 +20,19 @@ async function showTemplatePicker(
   mode: "export",
   data?: Record<string, never>,
 ): Promise<void>;
-async function showTemplatePicker(): Promise<void>;
+async function showTemplatePicker(mode: "pick"): Promise<string[]>;
+async function showTemplatePicker(): Promise<any>;
 async function showTemplatePicker(
   mode: typeof addon.data.template.picker.mode = "insert",
   data: Record<string, any> = {},
-) {
+): Promise<unknown> {
   addon.data.template.picker.mode = mode;
   addon.data.template.picker.data = data;
   const selected = await openTemplatePicker();
+  // For pick mode, return selected templates
+  if (mode === "pick") {
+    return selected;
+  }
   if (!selected.length) {
     return;
   }
