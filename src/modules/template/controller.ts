@@ -62,7 +62,12 @@ function removeTemplate(keyName: string | undefined): void {
   addon.data.template.data?.deleteKey(keyName);
 }
 
-function importTemplateFromClipboard(text?: string) {
+function importTemplateFromClipboard(
+  text?: string,
+  options: {
+    quiet?: boolean;
+  } = {},
+) {
   if (!text) {
     text = Zotero.Utilities.Internal.getClipboard("text/plain") || "";
   }
@@ -83,7 +88,10 @@ function importTemplateFromClipboard(text?: string) {
     showHint("The copied template is invalid");
     return;
   }
-  if (!window.confirm(`Import template "${template.name}"?`)) {
+  if (
+    !options.quiet &&
+    !window.confirm(`Import template "${template.name}"?`)
+  ) {
     return;
   }
   setTemplate({ name: template.name, text: template.content });
@@ -91,4 +99,5 @@ function importTemplateFromClipboard(text?: string) {
   if (addon.data.template.editor.window) {
     addon.data.template.editor.window.refresh();
   }
+  return template.name;
 }
