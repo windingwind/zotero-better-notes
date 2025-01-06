@@ -12,51 +12,99 @@ function registerReaderAnnotationButton() {
     (event) => {
       const { doc, append, params, reader } = event;
       const annotationData = params.annotation;
-      append(
-        ztoolkit.UI.createElement(doc, "div", {
-          classList: ["icon"],
-          properties: {
-            innerHTML: ICONS.readerQuickNote,
-            title: "Create note from annotation",
+      const button = ztoolkit.UI.createElement(doc, "div", {
+        classList: ["icon"],
+        properties: {
+          innerHTML: getAnnotationNoteButtonInnerHTML(false),
+          title: getAnnotationNoteButtonTitle(false),
+        },
+        listeners: [
+          {
+            type: "click",
+            listener: (e) => {
+              const button = e.currentTarget as HTMLElement;
+              createNoteFromAnnotation(
+                reader._item.libraryID,
+                annotationData.id,
+                (e as MouseEvent).shiftKey ? "window" : "builtin",
+              );
+              button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
+              e.preventDefault();
+            },
           },
-          children: [
-            {
-              tag: "style",
-              properties: {
-                innerHTML: `
-              .icon {
-                border-radius: 4px;
-              }
-              .icon:hover {
-                background-color: var(--fill-quinary);
-                outline: 2px solid var(--fill-quinary);
-              }
-              .icon:active {
-                background-color: var(--fill-quarternary);
-              }
-              `,
-              },
-            },
-          ],
-          listeners: [
-            {
-              type: "click",
-              listener: (e) => {
-                createNoteFromAnnotation(
-                  reader._item.libraryID,
-                  annotationData.id,
-                  (e as MouseEvent).shiftKey ? "window" : "builtin",
-                );
-                e.preventDefault();
-              },
-            },
-          ],
-          enableElementRecord: false,
-        }),
+        ],
+        enableElementRecord: false,
+      });
+      updateAnnotationNoteButton(
+        button,
+        reader._item.libraryID,
+        annotationData.id,
       );
+      append(button);
     },
     config.addonID,
   );
+}
+
+function getAnnotationNoteButtonInnerHTML(hasNote: boolean) {
+  return `${hasNote ? ICONS.openInNewWindow : ICONS.readerQuickNote}
+<style>
+  .icon {
+    border-radius: 4px;
+    color: #ffd400;
+  }
+  .icon:hover {
+    background-color: var(--fill-quinary);
+    outline: 2px solid var(--fill-quinary);
+  }
+  .icon:active {
+    background-color: var(--fill-quarternary);
+  }
+</style>
+  `;
+}
+
+function getAnnotationNoteButtonTitle(hasNote: boolean) {
+  return hasNote ? "Open note" : "Create note from annotation";
+}
+
+function updateAnnotationNoteButton(
+  button: HTMLElement,
+  libraryID: number,
+  itemKey: string,
+) {
+  hasNoteFromAnnotation(libraryID, itemKey).then((hasNote) => {
+    button.innerHTML = getAnnotationNoteButtonInnerHTML(hasNote);
+    button.title = getAnnotationNoteButtonTitle(hasNote);
+  });
+}
+
+async function hasNoteFromAnnotation(
+  libraryID: number,
+  itemKey: string,
+): Promise<boolean> {
+  const annotationItem = Zotero.Items.getByLibraryAndKey(
+    libraryID,
+    itemKey,
+  ) as Zotero.Item;
+  if (!annotationItem) {
+    return false;
+  }
+
+  const linkTarget = await addon.api.relation.getLinkTargetByAnnotation(
+    annotationItem.libraryID,
+    annotationItem.key,
+  );
+  if (linkTarget) {
+    const targetItem = Zotero.Items.getByLibraryAndKey(
+      linkTarget.toLibID,
+      linkTarget.toKey,
+    );
+    if (targetItem) {
+      return true;
+    }
+  }
+  return false;
 }
 
 async function createNoteFromAnnotation(
