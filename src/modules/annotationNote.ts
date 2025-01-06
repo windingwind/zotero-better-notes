@@ -14,11 +14,30 @@ function registerReaderAnnotationButton() {
       const annotationData = params.annotation;
       append(
         ztoolkit.UI.createElement(doc, "div", {
-          tag: "div",
           classList: ["icon"],
           properties: {
             innerHTML: ICONS.readerQuickNote,
+            title: "Create note from annotation",
           },
+          children: [
+            {
+              tag: "style",
+              properties: {
+                innerHTML: `
+              .icon {
+                border-radius: 4px;
+              }
+              .icon:hover {
+                background-color: var(--fill-quinary);
+                outline: 2px solid var(--fill-quinary);
+              }
+              .icon:active {
+                background-color: var(--fill-quarternary);
+              }
+              `,
+              },
+            },
+          ],
           listeners: [
             {
               type: "click",
@@ -29,20 +48,6 @@ function registerReaderAnnotationButton() {
                   (e as MouseEvent).shiftKey ? "window" : "builtin",
                 );
                 e.preventDefault();
-              },
-            },
-            {
-              type: "mouseover",
-              listener: (e) => {
-                (e.target as HTMLElement).style.backgroundColor = "#F0F0F0";
-              },
-            },
-            {
-              type: "mouseout",
-              listener: (e) => {
-                (e.target as HTMLElement).style.removeProperty(
-                  "background-color",
-                );
               },
             },
           ],
