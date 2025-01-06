@@ -18,6 +18,7 @@
     "release": "zotero-plugin release",
     "lint": "prettier --write . && eslint . --ext .ts --fix",
     "test": "zotero-plugin test  --abort-on-fail --exit-on-finish",
+    "test-dev": "zotero-plugin test  --abort-on-fail",
     "update-deps": "npm update --save"
   },
   "repository": {
@@ -87,7 +88,7 @@
     "replace-in-file": "^7.2.0",
     "typescript": "^5.7.2",
     "xslt3": "^2.7.0",
-    "zotero-plugin-scaffold": "0.2.0-beta.5",
+    "zotero-plugin-scaffold": "^0.2.0-beta.17",
     "zotero-types": "^3.1.0"
   },
   "eslintConfig": {
