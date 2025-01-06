@@ -247,6 +247,13 @@ function getPositionAtLine(
   type: "start" | "end" = "end",
 ): number {
   const core = getEditorCore(editor);
+  const lineCount = getLineCount(editor);
+  if (lineIndex < 0) {
+    return 0;
+  }
+  if (lineIndex >= lineCount) {
+    return core.view.state.doc.content.size;
+  }
   const lineNodeDesc =
     core.view.docView.children[
       Math.max(0, Math.min(core.view.docView.children.length - 1, lineIndex))
