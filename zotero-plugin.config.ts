@@ -52,10 +52,9 @@ export default defineConfig({
         target: ["firefox115"],
       },
     ],
-    // prefs: {
-    //   prefix: pkg.config.prefsPrefix,
-    //   dts: false,
-    // },
+    prefs: {
+      prefix: pkg.config.prefsPrefix,
+    },
     hooks: {
       "build:bundle": (ctx) => {
         return replaceInFile({

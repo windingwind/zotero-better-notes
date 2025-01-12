@@ -9,7 +9,7 @@ export {
   unregisterPrefObserver,
 };
 
-type _PluginPrefsMap = object;
+type _PluginPrefsMap = _ZoteroTypes.Prefs["PluginPrefsMap"];
 
 function getPref<K extends keyof _PluginPrefsMap>(key: K): _PluginPrefsMap[K];
 function getPref(key: string): string | number | boolean;
