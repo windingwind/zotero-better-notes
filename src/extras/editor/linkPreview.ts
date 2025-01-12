@@ -144,7 +144,7 @@ class PluginState {
     height: auto;
   }
   .link-preview .primary-editor li {
-    white-space: nowrap;
+    white-space: normal;
   }
 </style>`),
     ]);
