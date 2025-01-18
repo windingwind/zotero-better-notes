@@ -13,7 +13,7 @@ One-click to import.
 ```yaml
 # This template is specifically for importing/sharing, using better
 # notes 'import from clipboard': copy the content and
-# goto Zotero menu bar, click Edit->New Template from Clipboard.
+# goto Zotero menu bar, click Tools->New Template from Clipboard.
 # Do not copy-paste this to better notes template editor directly.
 name: "[Text] Current Time"
 content: |-
@@ -32,7 +32,7 @@ content: |-
 
 </details>
 
-2. Goto Zotero menubar, click `Edit`->`New Template from Clipboard`.
+2. Goto Zotero menubar, click `Tools`->`New Template from Clipboard`.
 3. Click OK.
 
 Now you can open a note/the workspace and in editor toolbar, click `Insert Template to cursor line`. Select the template, it is inserted to the note.
@@ -88,7 +88,9 @@ Let the compiler know you are using markdown. Otherwise the template will be pro
 Allow the generated content to be updated using the `Update content from templates` in the note editor.
 The generated content will be wrapped in separators with a YAML metadata section for update.
 
-> The template with this pragma should not contain any separator (`---` or `<hr>`) in the content.
+The template with this pragma should not contain any separator (`---` or `<hr>`) in the content.
+
+> Since the first line of the content is a separator, the note generated from a template with this pragma will have a blank note title. See the solution [here](https://github.com/windingwind/zotero-better-notes/issues/1247#issuecomment-2573739339).
 
 ### `// @author`
 
@@ -148,7 +150,7 @@ If no stage pragma is given, the whole template will be processed on the default
 ```yaml
 # This template is specifically for importing/sharing, using better
 # notes 'import from clipboard': copy the content and
-# goto Zotero menu bar, click Edit->New Template from Clipboard.
+# goto Zotero menu bar, click Tools->New Template from Clipboard.
 # Do not copy-paste this to better notes template editor directly.
 name: "[Item] Example Item Template"
 content: |-
@@ -214,7 +216,6 @@ The name of builtin templates are not allowed to be modified.
 | Name                | Description                                              | Variables                             |
 | ------------------- | -------------------------------------------------------- | ------------------------------------- |
 | QuickInsert         | For forward link.                                        | link, linkText, subNoteItem, noteItem |
-| QuickBackLink       | For back link.                                           | link, linkText, subNoteItem, noteItem |
 | QuickImport         | For importing note link content.                         | link, noteItem                        |
 | QuickNote           | For generating note from annotation.                     | annotationItem, topItem, noteItem     |
 | ExportMDFileName    | For generating Markdown file name when exporting.        | noteItem                              |
@@ -408,7 +409,7 @@ A template snippet should be in YAML format (YAML has better support for multi-l
 ```yaml
 # This template is specifically for importing/sharing, using better
 # notes 'import from clipboard': copy the content and
-# goto Zotero menu bar, click Edit->New Template from Clipboard.
+# goto Zotero menu bar, click Tools->New Template from Clipboard.
 # Do not copy-paste this to better notes template editor directly.
 name: "[TYPE] TEMPLATE NAME"
 content: |-

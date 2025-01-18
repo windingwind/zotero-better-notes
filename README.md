@@ -240,6 +240,17 @@ BN provides APIs for other plugin developers in `Zotero.BetterNotes.api.${API_MO
 - `$export`: Export note
 - `$import`: Import note
 - `editor`: Note editor APIs. Give your script full control of contents in the note editor.
+- `note`: Note APIs. Parse and manipulate note content.
+- `relation`: Note relation APIs. Get and set note relations.
+- `utils`: Utility functions.
+
+### Concepts about Note-Related APIs
+
+In Zotero, the content of a note is stored as rich text, while when a note is opened in the note editor, it is rendered by ProseMirror as HTML.
+
+Most of the time, it is recommended to use the `editor` API to interact with the content of the note, as it supports undo/redo and other features provided by editor. The `editor` API provides a set of powerful functions to analyze and manipulate the content in the note editor. Most of them needs an `editor` instance as the input, you can get the instance by calling `Zotero.BetterNotes.api.editor.getEditorInstance(noteId)`.
+
+However, if note is not opened in the editor, you cannot get the `editor` instance. In this case, you can use the `note` API to interact with the content of the note.
 
 ## 🔧 Development
 
@@ -256,14 +267,31 @@ npm run build
 
 The plugin is built to `./builds/*.xpi`.
 
+To debug, run
+
+```bash
+npm run start
+```
+
+This will open a new Zotero instance with the plugin installed.
+
+To test the plugin, run
+
+```bash
+npm run test
+```
+
+This will run the tests in the `./test` directory.
+
 ## 🔔 Disclaimer
 
 Use this code under AGPL. No warranties are provided. Keep the laws of your locality in mind!
 
 ## 🔎 My Zotero Plugins
 
-- [Translate for Zotero](https://github.com/windingwind/zotero-pdf-translate): PDF translation for Zotero
+- [Translate for Zotero](https://github.com/windingwind/zotero-pdf-translate): Translate PDF, EPub, webpage, metadata, annotations, notes to the target language.
 - [Actions & Tags for Zotero](https://github.com/windingwind/zotero-tag): Customize your Zotero workflow.
+- [Bionic for Zotero](https://github.com/windingwind/bionic-for-zotero): Bionic reading experience with Zotero.
 
 ## 🙌 Sponsors
 

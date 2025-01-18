@@ -93,25 +93,6 @@ async function renderTemplatePreview(
           },
         );
       }
-    } else if (templateName.includes("QuickBackLink")) {
-      // link, linkText, subNoteItem, noteItem
-      const data = inputItems?.find((item) => item.isNote());
-      if (!data) {
-        html = messages.noNoteItem;
-      } else {
-        const link = getNoteLink(data);
-        const noteItem = new Zotero.Item("note");
-        const linkText = noteItem.getNoteTitle().trim() || "Workspace Note";
-        const subNoteItem = data;
-        html = await addon.api.template.runTemplate(
-          templateName,
-          "link, linkText, subNoteItem, noteItem",
-          [link, linkText, subNoteItem, noteItem],
-          {
-            dryRun: true,
-          },
-        );
-      }
     } else if (templateName.includes("QuickImport")) {
       // link, noteItem
       const data = inputItems?.find((item) => item.isNote());

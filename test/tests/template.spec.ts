@@ -357,7 +357,7 @@ This should not be italic.
 <p>Title: <span style="color: #ffcb00">]Title 2</span></p>
 <p>6</p>
 > Done! But Markdown is not rendered correctly. Try to add 
-`
+`;
     assert.equal(html, expected);
     for (const item of items) {
       await Zotero.Items.erase(item.id);

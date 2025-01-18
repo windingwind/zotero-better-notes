@@ -88,7 +88,11 @@ async function addLineToNote(
   if (editor && !forceMetadata) {
     // The note is opened. Add line via note editor
     // If the lineIndex is out of range, the line will be inserted at the end (after the last line)
-    const pos = getPositionAtLine(editor, lineIndex, lineIndex >= noteLines.length ? "end" : "start");
+    const pos = getPositionAtLine(
+      editor,
+      lineIndex,
+      lineIndex >= noteLines.length ? "end" : "start",
+    );
     ztoolkit.log("Add note line via note editor", pos);
     insert(editor, html, pos);
     // The selection is automatically moved to the next line
@@ -386,9 +390,8 @@ async function copyEmbeddedImagesInHTML(
         if (!copiedAttachment) {
           continue;
         }
-        nodes.forEach(
-          (node) =>
-            node?.setAttribute("data-attachment-key", copiedAttachment!.key),
+        nodes.forEach((node) =>
+          node?.setAttribute("data-attachment-key", copiedAttachment!.key),
         );
       }
     }

@@ -43,7 +43,6 @@ body:
         - Item
         - Text
         - QuickInsert
-        - QuickBackLink
         - QuickImport
         - QuickNote
         - ExportMDFileName
