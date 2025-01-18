@@ -428,11 +428,12 @@ async function rehype2remark(rehype: HRoot) {
             return mNode;
           }
           const children: any[] = [];
+          const paragraphNodes = ["list", "code", "math", "table"];
           // Merge none-list nodes inside li into the previous paragraph node to avoid line break
           while (mNode.children.length > 0) {
             const current = mNode.children.shift();
             const cached = children[children.length - 1];
-            if (current?.type !== "list") {
+            if (current?.type && !paragraphNodes.includes(current?.type)) {
               if (cached?.type === "paragraph") {
                 cached.children.push(current);
               } else {
