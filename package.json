@@ -33,7 +33,7 @@
   "homepage": "https://github.com/windingwind/zotero-better-notes#readme",
   "dependencies": {
     "asciidoctor": "^3.0.4",
-    "dexie": "^4.0.10",
+    "dexie": "^4.0.11",
     "diff": "^5.2.0",
     "hast-util-to-html": "^9.0.4",
     "hast-util-to-mdast": "^8.4.1",
@@ -41,7 +41,7 @@
     "hastscript": "^8.0.0",
     "html-docx-js": "^0.3.1",
     "html-docx-js-typescript": "^0.1.5",
-    "katex": "^0.16.19",
+    "katex": "^0.16.21",
     "path-browserify": "^1.0.1",
     "rehype-format": "^4.0.1",
     "rehype-parse": "^8.0.5",
@@ -58,7 +58,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^4.1.0"
+    "zotero-plugin-toolkit": "^4.1.1"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -69,7 +69,7 @@
     "@types/html-docx-js": "^0.3.4",
     "@types/katex": "^0.16.7",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.17.10",
+    "@types/node": "^20.17.14",
     "@types/path-browserify": "^1.0.3",
     "@types/seedrandom": "^3.0.8",
     "@types/yamljs": "^0.2.34",
@@ -86,10 +86,10 @@
     "prosemirror-transform": "^1.10.2",
     "prosemirror-view": "^1.37.1",
     "replace-in-file": "^7.2.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "xslt3": "^2.7.0",
     "zotero-plugin-scaffold": "^0.2.0-beta.20",
-    "zotero-types": "^3.1.0"
+    "zotero-types": "^3.1.6"
   },
   "eslintConfig": {
     "env": {
