@@ -14,7 +14,7 @@ describe("Export", function () {
 
   this.afterEach(async function () {});
 
-  it("api.saveMD", async function () {
+  it("api.$export.saveMD", async function () {
     const note = new Zotero.Item("note");
     note.setNote(getNoteContent());
     await note.saveTx();
