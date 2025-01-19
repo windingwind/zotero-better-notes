@@ -141,6 +141,13 @@ async function onNotify(
   if (extraData?.skipBN) {
     return;
   }
+  if (
+    ["add", "close"].includes(event) &&
+    type === "tab" &&
+    extraData[ids[0]]?.type === "note"
+  ) {
+    Zotero.Session.debounceSave();
+  }
   if (event === "select" && type === "tab") {
     onTabSelect(extraData[ids[0]].type);
   }

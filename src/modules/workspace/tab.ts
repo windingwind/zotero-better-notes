@@ -70,6 +70,7 @@ export async function restoreNoteTabs() {
       select: !!tab.selected,
     });
   }
+  Zotero.Session.debounceSave();
 }
 
 export function onUpdateNoteTabsTitle(noteItems: Zotero.Item[]) {
