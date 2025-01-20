@@ -355,10 +355,10 @@ This should not be italic.
 > Done! But Markdown is not rendered correctly. Try to add 
 `;
 
-    new ClipboardHelper()
-      .addText(parseTemplateString(html), "text/plain")
-      .addText(parseTemplateString(expected), "text/html")
-      .copy();
+    // new ClipboardHelper()
+    //   .addText(parseTemplateString(html), "text/plain")
+    //   .addText(parseTemplateString(expected), "text/html")
+    //   .copy();
 
     assert.equal(html, expected);
     for (const item of items) {
