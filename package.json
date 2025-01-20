@@ -8,7 +8,7 @@
     "addonRef": "BetterNotes",
     "prefsPrefix": "extensions.zotero.Knowledge4Zotero",
     "addonInstance": "BetterNotes",
-    "dataSchemaVersion": "8"
+    "dataSchemaVersion": "9"
   },
   "main": "src/index.ts",
   "scripts": {

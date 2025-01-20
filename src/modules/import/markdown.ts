@@ -25,7 +25,7 @@ export async function fromMD(
     mdStatus.meta?.$version < noteItem?.version
   ) {
     if (
-      !window.confirm(
+      !Zotero.getMainWindow().confirm(
         `The target note seems to be newer than the file ${filepath}. Are you sure you want to import it anyway?`,
       )
     ) {

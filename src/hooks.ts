@@ -194,6 +194,46 @@ async function onPrefsEvent(type: string, data: { [key: string]: any }) {
 
 async function onOpenNote(
   noteId: number,
+  mode: "auto",
+  options?: {
+    workspaceUID?: string;
+    lineIndex?: number;
+    sectionName?: string;
+    forceTakeover?: boolean;
+  },
+): Promise<Window | string | void>;
+async function onOpenNote(
+  noteId: number,
+  mode: "preview" | "builtin",
+  options?: {
+    workspaceUID?: string;
+    lineIndex?: number;
+    sectionName?: string;
+    forceTakeover?: boolean;
+  },
+): Promise<void>;
+async function onOpenNote(
+  noteId: number,
+  mode: "tab",
+  options?: {
+    workspaceUID?: string;
+    lineIndex?: number;
+    sectionName?: string;
+    forceTakeover?: boolean;
+  },
+): Promise<string | void>;
+async function onOpenNote(
+  noteId: number,
+  mode: "window",
+  options?: {
+    workspaceUID?: string;
+    lineIndex?: number;
+    sectionName?: string;
+    forceTakeover?: boolean;
+  },
+): Promise<Window | void>;
+async function onOpenNote(
+  noteId: number,
   mode: "auto" | "preview" | "tab" | "window" | "builtin" = "auto",
   options: {
     workspaceUID?: string;
@@ -201,7 +241,7 @@ async function onOpenNote(
     sectionName?: string;
     forceTakeover?: boolean;
   } = {},
-) {
+): Promise<Window | string | void> {
   if (!options.forceTakeover && !getPref("openNote.takeover")) {
     ZoteroPane.openNoteWindow(noteId);
     return;
