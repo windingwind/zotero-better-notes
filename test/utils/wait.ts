@@ -20,9 +20,18 @@ export async function waitNoMoreThan<T>(
 export async function waitForNotifierEvent(
   event: _ZoteroTypes.Notifier.Event,
   type: _ZoteroTypes.Notifier.Type,
-  timeout: number = 3000,
+  options: {
+    timeout?: number;
+    customCallback?: (
+      ev: _ZoteroTypes.Notifier.Event,
+      type: _ZoteroTypes.Notifier.Type,
+      ids: Array<number | string>,
+      extraData: any,
+    ) => boolean;
+  } = {},
 ) {
   if (!event) throw new Error("event not provided");
+  const { timeout, customCallback } = options;
   let resolved = false;
 
   return waitNoMoreThan(
@@ -30,7 +39,10 @@ export async function waitForNotifierEvent(
       const notifierID = Zotero.Notifier.registerObserver(
         {
           notify: function (ev, type, ids, extraData) {
-            if (ev == event) {
+            if (
+              ev == event &&
+              (customCallback ? customCallback(ev, type, ids, extraData) : true)
+            ) {
               Zotero.Notifier.unregisterObserver(notifierID);
               resolved = true;
 
@@ -51,7 +63,16 @@ export async function waitForNotifierEvent(
 }
 
 export function waitForTabSelectEvent(timeout: number = 3000) {
-  return waitForNotifierEvent("select", "tab", timeout);
+  return waitForNotifierEvent("select", "tab", { timeout });
+}
+
+export function waitForItemModifyEvent(itemID: number, timeout: number = 3000) {
+  return waitForNotifierEvent("modify", "item", {
+    timeout,
+    customCallback(ev, type, ids, extraData) {
+      return ids.includes(itemID);
+    },
+  });
 }
 
 /**

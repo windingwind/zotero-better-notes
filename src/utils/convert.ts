@@ -5,7 +5,9 @@ import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
-import { defaultHandlers } from "hast-util-to-mdast";
+import { defaultHandlers as rehype2remarkDefaultHandlers } from "hast-util-to-mdast";
+import { toMarkdown } from "mdast-util-to-markdown";
+import { gfmTableToMarkdown } from "mdast-util-gfm-table";
 import { toHtml } from "hast-util-to-html";
 import { toText } from "hast-util-to-text";
 import remarkGfm from "remark-gfm";
@@ -19,7 +21,7 @@ import { h } from "hastscript";
 import YAML = require("yamljs");
 
 import { Root as HRoot, RootContent } from "hast";
-import { ListContent, Root as MRoot } from "mdast";
+import { ListContent, Root as MRoot, TableContent } from "mdast";
 import { Nodes } from "hast-util-to-text/lib";
 import { fileExists, formatPath, jointPath, randomString } from "./str";
 import {
@@ -371,7 +373,8 @@ async function rehype2remark(rehype: HRoot) {
           if (node.properties?.className?.includes("math")) {
             return h(node, "math", toText(node).slice(2, -2));
           } else {
-            return h(node, "code", toText(node));
+            const ret = rehype2remarkDefaultHandlers.pre(h, node);
+            return ret;
           }
         },
         u: (h, node) => {
@@ -385,6 +388,7 @@ async function rehype2remark(rehype: HRoot) {
         },
         table: (h, node) => {
           let hasStyle = false;
+          let hasHeader = false;
           visit(
             node,
             (_n) =>
@@ -394,12 +398,26 @@ async function rehype2remark(rehype: HRoot) {
               if (node.properties.style) {
                 hasStyle = true;
               }
+              if (!hasHeader && node.tagName === "th") {
+                hasHeader = true;
+              }
             },
           );
           // if (0 && hasStyle) {
           //   return h(node, "styleTable", toHtml(node));
           // } else {
-          return defaultHandlers.table(h, node);
+          const tableNode = rehype2remarkDefaultHandlers.table(
+            h,
+            node,
+          ) as TableContent;
+          // Remove empty thead
+          if (!hasHeader) {
+            if (!tableNode.data) {
+              tableNode.data = {};
+            }
+            tableNode.data.bnRemove = true;
+          }
+          return tableNode;
           // }
         },
         /*
@@ -422,7 +440,7 @@ async function rehype2remark(rehype: HRoot) {
          * ```
          */
         li: (h, node) => {
-          const mNode = defaultHandlers.li(h, node) as ListContent;
+          const mNode = rehype2remarkDefaultHandlers.li(h, node) as ListContent;
           // If no more than 1 children, skip
           if (!mNode || mNode.children.length < 2) {
             return mNode;
@@ -485,7 +503,7 @@ function remark2md(remark: MRoot) {
       .use(remarkMath)
       .use(remarkStringify, {
         handlers: {
-          pre: (node: { value: string }) => {
+          code: (node: { value: string }) => {
             return "```\n" + node.value + "\n```";
           },
           u: (node: { value: string }) => {
@@ -499,6 +517,23 @@ function remark2md(remark: MRoot) {
           },
           styleTable: (node: { value: any }) => {
             return node.value;
+          },
+          table: (node: any) => {
+            const tbl = gfmTableToMarkdown();
+            // table must use same handlers as rest of pipeline
+            const txt = toMarkdown(node, {
+              extensions: [tbl],
+            });
+
+            if (node.data?.bnRemove) {
+              const lines = txt.split("\n");
+              // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
+              lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
+                return s.replace(/ +/g, " <!-- --> ");
+              });
+              return lines.join("\n");
+            }
+            return txt;
           },
           wrapper: (node: { value: string }) => {
             return "\n<!-- " + node.value + " -->\n";
@@ -561,6 +596,11 @@ async function remark2rehype(remark: any) {
   return await unified()
     .use(remarkRehype, {
       allowDangerousHtml: true,
+      // handlers: {
+      //   code: (h, node) => {
+      //     return h(node, "pre", [h(node, "text", node.value)]);
+      //   },
+      // },
     })
     .run(remark);
 }
@@ -586,6 +626,10 @@ function rehype2note(rehype: HRoot) {
         : undefined;
       if (parent?.type == "element" && parent?.tagName === "pre") {
         node.value = toText(node, { whitespace: "pre-wrap" });
+        // Remove \n at the end of code block, which is redundant
+        if (node.value.endsWith("\n")) {
+          node.value = node.value.slice(0, -1);
+        }
         node.type = "text";
       }
     },
@@ -597,6 +641,7 @@ function rehype2note(rehype: HRoot) {
     (node: any) => node.type === "element" && (node as any).tagName === "table",
     (node: any) => {
       let hasStyle = false;
+      let hasHeader = false;
       visit(
         node,
         (_n: any) =>
@@ -606,12 +651,28 @@ function rehype2note(rehype: HRoot) {
           if (node.properties.style) {
             hasStyle = true;
           }
+          if (
+            !hasHeader &&
+            node.tagName === "th" &&
+            node.children[0]?.value !== "<!-- -->"
+          ) {
+            hasHeader = true;
+          }
         },
       );
       if (hasStyle) {
         node.value = toHtml(node).replace(/[\r\n]/g, "");
         node.children = [];
         node.type = "raw";
+      }
+      if (!hasHeader) {
+        const index = node.children.findIndex(
+          (_n: any) => _n.tagName === "thead",
+        );
+        // Remove children before thead
+        if (index > -1) {
+          node.children = node.children.slice(index + 1);
+        }
       }
     },
   );

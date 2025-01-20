@@ -78,7 +78,7 @@ function getNoteStatus(noteId: number) {
   const metaRegex = /^<div[^>]*>/;
   // Not wrapped inside div
   if (!metaRegex.test(fullContent)) {
-    ret.meta = `<div "data-schema-version"="${config.dataSchemaVersion}">`;
+    ret.meta = `<div data-schema-version="${config.dataSchemaVersion}">`;
     ret.content = fullContent || "";
     return ret;
   }
