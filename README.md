@@ -90,7 +90,7 @@ and:
 
 - Download the plugin (.xpi file) from below.
 
-  - [Latest Version: 2.2.5](https://github.com/windingwind/zotero-better-notes/releases/download/v2.2.5/better-notes-for-zotero.xpi)
+  - [Latest Version: 2.2.6-beta.1](https://github.com/windingwind/zotero-better-notes/releases/download/v2.2.6-beta.1/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
 
