@@ -25,6 +25,7 @@ export function getNoteLinkParams(link: string) {
       ignore: Boolean(url.searchParams.get("ignore")) || undefined,
       lineIndex: typeof line === "string" ? parseInt(line) : undefined,
       sectionName: url.searchParams.get("section") || undefined,
+      selectionText: url.hash.slice(1) || undefined,
     };
   } catch (e: unknown) {
     return {
@@ -35,6 +36,7 @@ export function getNoteLinkParams(link: string) {
       ignore: undefined,
       lineIndex: undefined,
       sectionName: undefined,
+      selectionText: undefined,
     };
   }
 }
@@ -45,6 +47,7 @@ export function getNoteLink(
     ignore?: boolean;
     lineIndex?: number;
     sectionName?: string;
+    selectionText?: string;
   } = {},
 ) {
   const libraryID = noteItem.libraryID;
@@ -83,6 +86,9 @@ export function getNoteLink(
         link,
         `section=${encodeURIComponent(options.sectionName)}`,
       );
+    }
+    if (options.selectionText) {
+      link = `${link}#${encodeURIComponent(options.selectionText)}`;
     }
   }
   return link;

@@ -20,7 +20,7 @@ templateEditor-templateType = Tipo
 templateEditor-templateName = Nome
 
 templateEditor-templateDisplayName =
-    .QuickInsertV2 = Inserimento rapido (Link)
+    .QuickInsertV3 = Inserimento rapido (Link)
     .QuickImportV2 = Importazione rapida (Inserisci)
     .QuickNoteV5 = Nota rapida (Da annotazione)
     .ExportMDFileNameV2 = Esporta il nome del file MD

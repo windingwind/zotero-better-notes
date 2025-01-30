@@ -464,24 +464,35 @@ async function copyNoteLink(
   const currentLine = getLineAtCursor(editor);
   const currentSection = (await getSectionAtCursor(editor)) || "";
 
-  let link =
-    getNoteLink(editor._item, {
-      sectionName: mode === "section" ? currentSection : undefined,
-      lineIndex: mode === "line" ? currentLine : undefined,
-    }) || "";
+  const sectionName = mode === "section" ? currentSection : undefined;
+  const lineIndex = mode === "line" ? currentLine : undefined;
+
+  // Hack to get the link
+  const _internal = {
+    link: "",
+  };
+
+  const html = await addon.api.template.runQuickInsertTemplate(
+    editor._item,
+    undefined,
+    {
+      lineIndex,
+      sectionName,
+      dryRun: false,
+      _internal,
+    },
+  );
+
+  const link = _internal.link;
+
   if (!link) {
     showHint("No note link found");
     return;
   }
-  if (mode === "section") {
-    link += `#${currentSection}`;
-  }
+
   new ztoolkit.Clipboard()
     .addText(link, "text/plain")
-    .addText(
-      `<a href="${link}">${editor._item.getNoteTitle().trim() || link}</a>`,
-      "text/html",
-    )
+    .addText(html, "text/html")
     .copy();
   showHint(`Link ${link} copied`);
 }

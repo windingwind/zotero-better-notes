@@ -244,17 +244,54 @@ async function runItemTemplate(
 
 async function runQuickInsertTemplate(
   noteItem: Zotero.Item,
-  targetNoteItem: Zotero.Item,
+  targetNoteItem: Zotero.Item | undefined,
   options: {
+    lineIndex?: number;
+    sectionName?: string;
+    selectionText?: string;
+    // For internal use, store the link result
+    _internal?: any;
     dryRun?: boolean;
   } = {},
 ) {
-  if (!noteItem || !targetNoteItem) return "";
-  const link = addon.api.convert.note2link(noteItem, {});
+  if (!noteItem) return "";
+  const link = addon.api.convert.note2link(noteItem, {
+    lineIndex: options.lineIndex,
+    sectionName: options.sectionName,
+    selectionText: options.selectionText,
+  });
+  if (!link) {
+    ztoolkit.log("No link found");
+    return "";
+  }
+
+  if (options._internal) {
+    options._internal.link = link;
+  }
+  const noteTitle = noteItem.getNoteTitle().trim();
+  let linkText: string;
+  if (options.selectionText) {
+    linkText = noteTitle ? `#${options.selectionText} - ${noteTitle}` : link;
+  } else if (options.sectionName) {
+    linkText = noteTitle ? `${options.sectionName} - ${noteTitle}` : link;
+  } else if (options.lineIndex) {
+    linkText = noteTitle ? `L${options.lineIndex} - ${noteTitle}` : link;
+  } else {
+    linkText = noteTitle || link;
+  }
+
   const content = await runTemplate(
-    "[QuickInsertV2]",
-    "link, linkText, subNoteItem, noteItem",
-    [link, noteItem.getNoteTitle().trim() || link, noteItem, targetNoteItem],
+    "[QuickInsertV3]",
+    "link, linkText, subNoteItem, noteItem, lineIndex, sectionName, selectionText",
+    [
+      link,
+      linkText,
+      noteItem,
+      targetNoteItem,
+      options.lineIndex,
+      options.sectionName,
+      options.selectionText,
+    ],
     {
       dryRun: options.dryRun,
     },

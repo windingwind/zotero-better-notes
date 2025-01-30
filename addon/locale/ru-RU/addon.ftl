@@ -20,7 +20,7 @@ templateEditor-templateType = Type
 templateEditor-templateName = Name
 
 templateEditor-templateDisplayName =
-    .QuickInsertV2 = Quick Insert (Link)
+    .QuickInsertV3 = Quick Insert (Link)
     .QuickImportV2 = Quick Import (Embed)
     .QuickNoteV5 = Quick Note (From Annotation)
     .ExportMDFileNameV2 = Export MD File Name

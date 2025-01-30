@@ -20,7 +20,7 @@ templateEditor-templateType = 类型
 templateEditor-templateName = 名称
 
 templateEditor-templateDisplayName =
-    .QuickInsertV2 = Quick Insert (插入链接)
+    .QuickInsertV3 = Quick Insert (插入链接)
     .QuickImportV2 = Quick Import (嵌入链接笔记)
     .QuickNoteV5 = Quick Note (从批注创建笔记)
     .ExportMDFileNameV2 = Export MD File Name (导出MD文件名)

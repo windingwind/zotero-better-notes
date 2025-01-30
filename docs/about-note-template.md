@@ -213,14 +213,14 @@ The name of builtin templates are not allowed to be modified.
 >
 > For example, the builtin template `[ExportMDFileNameV2]` may be renamed to `[ExportMDFileNameV3]` in the future.
 
-| Name                | Description                                              | Variables                             |
-| ------------------- | -------------------------------------------------------- | ------------------------------------- |
-| QuickInsert         | For forward link.                                        | link, linkText, subNoteItem, noteItem |
-| QuickImport         | For importing note link content.                         | link, noteItem                        |
-| QuickNote           | For generating note from annotation.                     | annotationItem, topItem, noteItem     |
-| ExportMDFileName    | For generating Markdown file name when exporting.        | noteItem                              |
-| ExportMDFileHeader  | For generating Markdown file yaml header when exporting. | noteItem                              |
-| ExportMDFileContent | For processing Markdown file content when exporting.     | noteItem, mdContent                   |
+| Name                | Description                                              | Variables                                                     |
+| ------------------- | -------------------------------------------------------- | ------------------------------------------------------------- |
+| QuickInsert         | For note link generation.                                | link, linkText, subNoteItem, noteItem, lineIndex, sectionName |
+| QuickImport         | For importing note link content.                         | link, noteItem                                                |
+| QuickNote           | For generating note from annotation.                     | annotationItem, topItem, noteItem                             |
+| ExportMDFileName    | For generating Markdown file name when exporting.        | noteItem                                                      |
+| ExportMDFileHeader  | For generating Markdown file yaml header when exporting. | noteItem                                                      |
+| ExportMDFileContent | For processing Markdown file content when exporting.     | noteItem, mdContent                                           |
 
 ## Style Syntax
 

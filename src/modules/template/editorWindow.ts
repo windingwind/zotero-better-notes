@@ -957,7 +957,7 @@ if (doi) {
       type: "variable",
     },
   ],
-  QuickInsertV2: [
+  QuickInsertV3: [
     {
       name: "quickInsertLink",
       code: "link",

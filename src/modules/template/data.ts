@@ -2,7 +2,7 @@
 export { SYSTEM_TEMPLATE_NAMES, DEFAULT_TEMPLATES };
 
 const SYSTEM_TEMPLATE_NAMES = [
-  "[QuickInsertV2]",
+  "[QuickInsertV3]",
   "[QuickImportV2]",
   "[QuickNoteV5]",
   "[ExportMDFileNameV2]",
@@ -13,12 +13,9 @@ const SYSTEM_TEMPLATE_NAMES = [
 // Non-system templates are removed from default templates
 const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   {
-    name: "[QuickInsertV2]",
-    text: `<p>
-  <a href="\${link}">
-    \${linkText}
-  </a>
-</p>`,
+    name: "[QuickInsertV3]",
+    text: `// @use-markdown
+[\${linkText}](\${link})`,
   },
   {
     name: "[QuickImportV2]",
