@@ -192,56 +192,24 @@ async function onPrefsEvent(type: string, data: { [key: string]: any }) {
   }
 }
 
-async function onOpenNote(
+interface OpenNoteReturns {
+  auto: Window | string | void;
+  preview: void;
+  tab: string | void;
+  window: Window | void;
+  builtin: void;
+}
+
+async function onOpenNote<K extends keyof OpenNoteReturns>(
   noteId: number,
-  mode: "auto",
-  options?: {
-    workspaceUID?: string;
-    lineIndex?: number;
-    sectionName?: string;
-    forceTakeover?: boolean;
-  },
-): Promise<Window | string | void>;
-async function onOpenNote(
-  noteId: number,
-  mode: "preview" | "builtin",
-  options?: {
-    workspaceUID?: string;
-    lineIndex?: number;
-    sectionName?: string;
-    forceTakeover?: boolean;
-  },
-): Promise<void>;
-async function onOpenNote(
-  noteId: number,
-  mode: "tab",
-  options?: {
-    workspaceUID?: string;
-    lineIndex?: number;
-    sectionName?: string;
-    forceTakeover?: boolean;
-  },
-): Promise<string | void>;
-async function onOpenNote(
-  noteId: number,
-  mode: "window",
-  options?: {
-    workspaceUID?: string;
-    lineIndex?: number;
-    sectionName?: string;
-    forceTakeover?: boolean;
-  },
-): Promise<Window | void>;
-async function onOpenNote(
-  noteId: number,
-  mode: "auto" | "preview" | "tab" | "window" | "builtin" = "auto",
+  mode: K = "auto" as K,
   options: {
     workspaceUID?: string;
     lineIndex?: number;
     sectionName?: string;
     forceTakeover?: boolean;
   } = {},
-): Promise<Window | string | void> {
+): Promise<OpenNoteReturns[K]> {
   if (!options.forceTakeover && !getPref("openNote.takeover")) {
     ZoteroPane.openNoteWindow(noteId);
     return;
@@ -256,21 +224,21 @@ async function onOpenNote(
     const currentWindow = getFocusedWindow();
 
     if ((currentWindow as any)?.Zotero_Tabs?.selectedType === "note") {
-      mode = "preview";
+      mode = "preview" as K;
       workspaceUID = (
         currentWindow?.document.querySelector(
           `#${Zotero_Tabs.selectedID} bn-workspace`,
         ) as HTMLElement | undefined
       )?.dataset.uid;
     } else if (currentWindow?.document.querySelector("body.workspace-window")) {
-      mode = "preview";
+      mode = "preview" as K;
       workspaceUID = (
         currentWindow.document.querySelector("bn-workspace") as
           | HTMLElement
           | undefined
       )?.dataset.uid;
     } else {
-      mode = "tab";
+      mode = "tab" as K;
     }
   }
   switch (mode) {
@@ -283,10 +251,10 @@ async function onOpenNote(
       openNotePreview(noteItem, workspaceUID, options);
       break;
     case "tab":
-      return await openWorkspaceTab(noteItem, options);
+      return (await openWorkspaceTab(noteItem, options)) as any;
       break;
     case "window":
-      return await openWorkspaceWindow(noteItem, options);
+      return (await openWorkspaceWindow(noteItem, options)) as any;
       break;
     case "builtin":
       ZoteroPane.openNoteWindow(noteId);
