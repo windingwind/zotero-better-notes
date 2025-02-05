@@ -35,3 +35,7 @@ markdown-withYAMLHeader =
     .label = С YAML заголовком
 markdown-autoFilename =
     .label = Автоматически генерировать имя файла
+
+useDefaultExport =
+    .label = Использовать стандартный экспорт Zotero
+    .tooltiptext = Экспортировать заметки без расширенных опций, предоставленных Better Notes.

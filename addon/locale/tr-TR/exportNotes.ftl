@@ -35,3 +35,7 @@ markdown-withYAMLHeader =
     .label = YAML başlığı ile
 markdown-autoFilename =
     .label = Dosya adını otomatik oluştur
+
+useDefaultExport =
+    .label = Zotero'nun varsayılan dışa aktarımını kullan
+    .tooltiptext = Better Notes tarafından sağlanan gelişmiş seçenekler olmadan notları dışa aktar.

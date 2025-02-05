@@ -53,6 +53,12 @@ function init() {
     .querySelector("#markdown-autoSync")!
     .addEventListener("command", updateMarkdownOptions);
 
+  document
+    .querySelector("#useDefaultExport")!
+    .addEventListener("command", () => {
+      doUseBuiltInExport();
+    });
+
   (document.querySelector("#target") as XULElement).dataset.l10nArgs =
     JSON.stringify(io.targetData);
 

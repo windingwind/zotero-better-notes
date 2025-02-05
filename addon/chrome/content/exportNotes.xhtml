@@ -46,10 +46,7 @@
   <script src="chrome://zotero/content/customElements.js"></script>
   <script src="chrome://__addonRef__/content/scripts/exportNotes.js"></script>
 
-  <dialog
-    buttons="accept, cancel, extra1"
-    buttonlabelextra1="Use System Export..."
-  >
+  <dialog buttons="accept, cancel">
     <vbox>
       <hbox>
         <label id="target" data-l10n-id="target"></label>
@@ -96,6 +93,14 @@
           data-l10n-id="markdown-autoFilename"
           native="true"
         ></checkbox>
+      </vbox>
+      <vbox id="buttons">
+        <hbox>
+          <button
+            id="useDefaultExport"
+            data-l10n-id="useDefaultExport"
+          ></button>
+        </hbox>
       </vbox>
     </vbox>
   </dialog>

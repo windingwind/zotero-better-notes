@@ -35,3 +35,7 @@ markdown-withYAMLHeader =
     .label = 包含 YAML 头
 markdown-autoFilename =
     .label = 自动生成文件名
+
+useDefaultExport =
+    .label = 使用 Zotero 的默认导出
+    .tooltiptext = 导出笔记时不使用 Better Notes 提供的高级选项。
