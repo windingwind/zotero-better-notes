@@ -497,66 +497,70 @@ async function rehype2remark(rehype: HRoot) {
 }
 
 function remark2md(remark: MRoot) {
+  const handlers = {
+    code: (node: { value: string }) => {
+      return "```\n" + node.value + "\n```";
+    },
+    u: (node: { value: string }) => {
+      return "<u>" + node.value + "</u>";
+    },
+    sub: (node: { value: string }) => {
+      return "<sub>" + node.value + "</sub>";
+    },
+    sup: (node: { value: string }) => {
+      return "<sup>" + node.value + "</sup>";
+    },
+    styleTable: (node: { value: any }) => {
+      return node.value;
+    },
+    wrapper: (node: { value: string }) => {
+      return "\n<!-- " + node.value + " -->\n";
+    },
+    wrapperleft: (node: { value: string }) => {
+      return "<!-- " + node.value + " -->\n";
+    },
+    wrapperright: (node: { value: string }) => {
+      return "\n<!-- " + node.value + " -->";
+    },
+    zhighlight: (node: { value: string }) => {
+      return node.value.replace(/(^<zhighlight>|<\/zhighlight>$)/g, "");
+    },
+    zcitation: (node: { value: string }) => {
+      return node.value.replace(/(^<zcitation>|<\/zcitation>$)/g, "");
+    },
+    znotelink: (node: { value: string }) => {
+      return node.value.replace(/(^<znotelink>|<\/znotelink>$)/g, "");
+    },
+    zimage: (node: { value: string }) => {
+      return node.value.replace(/(^<zimage>|<\/zimage>$)/g, "");
+    },
+  };
+  const tableHandler = (node: any) => {
+    const tbl = gfmTableToMarkdown();
+    // table must use same handlers as rest of pipeline
+    const txt = toMarkdown(node, {
+      extensions: [tbl],
+      handlers,
+    });
+
+    if (node.data?.bnRemove) {
+      const lines = txt.split("\n");
+      // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
+      lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
+        return s.replace(/ +/g, " <!-- --> ");
+      });
+      return lines.join("\n");
+    }
+    return txt;
+  };
   return String(
     unified()
       .use(remarkGfm)
       .use(remarkMath)
       .use(remarkStringify, {
-        handlers: {
-          code: (node: { value: string }) => {
-            return "```\n" + node.value + "\n```";
-          },
-          u: (node: { value: string }) => {
-            return "<u>" + node.value + "</u>";
-          },
-          sub: (node: { value: string }) => {
-            return "<sub>" + node.value + "</sub>";
-          },
-          sup: (node: { value: string }) => {
-            return "<sup>" + node.value + "</sup>";
-          },
-          styleTable: (node: { value: any }) => {
-            return node.value;
-          },
-          table: (node: any) => {
-            const tbl = gfmTableToMarkdown();
-            // table must use same handlers as rest of pipeline
-            const txt = toMarkdown(node, {
-              extensions: [tbl],
-            });
-
-            if (node.data?.bnRemove) {
-              const lines = txt.split("\n");
-              // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
-              lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
-                return s.replace(/ +/g, " <!-- --> ");
-              });
-              return lines.join("\n");
-            }
-            return txt;
-          },
-          wrapper: (node: { value: string }) => {
-            return "\n<!-- " + node.value + " -->\n";
-          },
-          wrapperleft: (node: { value: string }) => {
-            return "<!-- " + node.value + " -->\n";
-          },
-          wrapperright: (node: { value: string }) => {
-            return "\n<!-- " + node.value + " -->";
-          },
-          zhighlight: (node: { value: string }) => {
-            return node.value.replace(/(^<zhighlight>|<\/zhighlight>$)/g, "");
-          },
-          zcitation: (node: { value: string }) => {
-            return node.value.replace(/(^<zcitation>|<\/zcitation>$)/g, "");
-          },
-          znotelink: (node: { value: string }) => {
-            return node.value.replace(/(^<znotelink>|<\/znotelink>$)/g, "");
-          },
-          zimage: (node: { value: string }) => {
-            return node.value.replace(/(^<zimage>|<\/zimage>$)/g, "");
-          },
-        },
+        handlers: Object.assign({}, handlers, {
+          table: tableHandler,
+        }),
       } as any)
       .stringify(remark as any),
   );
