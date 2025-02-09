@@ -11,11 +11,23 @@ import { slice } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
+  if (editor._disableUI) {
+    return;
+  }
+
   const noteItem = editor._item;
 
   const _document = editor._iframeWindow.document;
-  await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
+  try {
+    await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
+  } catch (e) {
+    ztoolkit.log("Editor toolbar not found");
+  }
   const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
+  if (!toolbar) {
+    ztoolkit.log("Editor toolbar not found");
+    return;
+  }
   // Link creator
   registerEditorToolbarElement(
     editor,

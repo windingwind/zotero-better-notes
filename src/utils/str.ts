@@ -146,3 +146,11 @@ export function htmlUnescape(
     return map[match as keyof typeof map];
   });
 }
+
+export function xhtmlEscape(str: string) {
+  return str
+    .replace(/&nbsp;/g, "#160;")
+    .replace(/<br>/g, "<br/>")
+    .replace(/<hr>/g, "<hr/>")
+    .replace(/<img([^>]+)>/g, "<img$1/>");
+}
