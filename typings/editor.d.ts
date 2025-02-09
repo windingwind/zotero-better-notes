@@ -47,7 +47,7 @@ declare interface EditorElement extends XULBoxElement {
   _iframe: HTMLIFrameElement;
   _editorInstance: Zotero.EditorInstance;
   _initialized?: boolean;
-  mode?: "edit" | "view";
+  mode?: "edit" | "view" | "merge";
   viewMode?: string;
   parent?: Zotero.Item;
   item?: Zotero.Item;

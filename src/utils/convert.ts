@@ -540,6 +540,7 @@ function remark2md(remark: MRoot) {
     // table must use same handlers as rest of pipeline
     const txt = toMarkdown(node, {
       extensions: [tbl],
+      // Use the same handlers as the rest of the pipeline
       handlers,
     });
 
@@ -558,6 +559,7 @@ function remark2md(remark: MRoot) {
       .use(remarkGfm)
       .use(remarkMath)
       .use(remarkStringify, {
+        // Prevent recursive call
         handlers: Object.assign({}, handlers, {
           table: tableHandler,
         }),
