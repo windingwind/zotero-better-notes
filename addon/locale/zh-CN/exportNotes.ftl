@@ -18,6 +18,8 @@ format-freemind =
     .label = 思维导图
 format-note = 
     .label = Zotero 笔记
+format-latex =
+    .label = LaTeX(.tex)
 
 links-keep =
     .label = 保留笔记链接(zotero://note/)
