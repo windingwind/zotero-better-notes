@@ -257,6 +257,10 @@ class PluginState {
       this._closePopup();
     }
 
+    if (!this.options.enable) {
+      return;
+    }
+
     // If the document hasn't changed, we don't need to do anything
     if (prevState.doc.eq(state.doc)) {
       return;
@@ -288,12 +292,26 @@ class PluginState {
   }
 
   handleKeydown = async (event: KeyboardEvent) => {
-    if (!this._hasPopup()) {
+    if (event.key === "Escape") {
+      if (this._hasPopup()) {
+        this._closePopup();
+      }
       return;
     }
 
-    if (event.key === "Escape") {
-      this._closePopup();
+    const isMac =
+      typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
+    if (
+      ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) &&
+      event.key === "/"
+    ) {
+      if (!this._hasPopup()) {
+        this._openPopup(this.state);
+      } else {
+        this._closePopup();
+      }
+      event.preventDefault();
+      return;
     }
   };
 
