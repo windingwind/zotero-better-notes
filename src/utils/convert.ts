@@ -450,19 +450,36 @@ async function rehype2remark(rehype: HRoot) {
           // Merge none-list nodes inside li into the previous paragraph node to avoid line break
           while (mNode.children.length > 0) {
             const current = mNode.children.shift();
-            const cached = children[children.length - 1];
-            if (current?.type && !paragraphNodes.includes(current?.type)) {
-              if (cached?.type === "paragraph") {
-                cached.children.push(current);
-              } else {
-                // https://github.com/windingwind/zotero-better-notes/issues/1207
-                // Create a new paragraph node
-                const paragraph = {
-                  type: "paragraph",
-                  children: [current],
-                };
-                children.push(paragraph);
-              }
+            let cached = children[children.length - 1];
+            // https://github.com/windingwind/zotero-better-notes/issues/1207
+            // Create a new paragraph node
+            if (cached?.type !== "paragraph") {
+              cached = {
+                type: "paragraph",
+                children: [],
+              };
+              children.push(cached);
+            }
+            if (current?.type === "paragraph") {
+              cached.children.push(...current.children);
+            }
+            // https://github.com/windingwind/zotero-better-notes/issues/1300
+            // @ts-ignore inlineMath is not in mdast
+            else if (current?.type === "inlineMath") {
+              cached.children.push({
+                type: "text",
+                value: " ",
+              });
+              cached.children.push(current);
+              cached.children.push({
+                type: "text",
+                value: " ",
+              });
+            } else if (
+              current?.type &&
+              !paragraphNodes.includes(current?.type)
+            ) {
+              cached.children.push(current);
             } else {
               children.push(current);
             }
@@ -725,6 +742,30 @@ function rehype2note(rehype: HRoot) {
           _n.type === "element" ||
           (_n.type === "text" && _n.value.replace(/[\r\n]/g, "")),
       );
+
+      // https://github.com/windingwind/zotero-better-notes/issues/1300
+      // For all math-inline node in list, remove 1 space from its sibling text node
+      if (node.tagName === "li") {
+        for (const p of node.children) {
+          for (let idx = 0; idx < p.children.length; idx++) {
+            const _n = p.children[idx];
+            if (_n.properties?.className?.includes("math-inline")) {
+              if (idx > 0) {
+                const prev = p.children[idx - 1];
+                if (prev.type === "text" && prev.value.endsWith(" ")) {
+                  prev.value = prev.value.slice(0, -1);
+                }
+              }
+              if (idx < p.children.length - 1) {
+                const next = p.children[idx + 1];
+                if (next.type === "text" && next.value.startsWith(" ")) {
+                  next.value = next.value.slice(1);
+                }
+              }
+            }
+          }
+        }
+      }
     },
   );
 

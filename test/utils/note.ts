@@ -138,7 +138,7 @@ Second item
 <pre class="math">$$y=x^2$$</pre>
 </li>
 <li>
-This is a inline math<span class="math">$123$</span>
+This is a inline math<span class="math">$123$</span> with space in list item test
 </li>
 <li>
 <p>This is a line table</p>
@@ -370,7 +370,7 @@ x = \\\\frac\{-b \\\\pm \\\\sqrt\{b^2 - 4ac\}\}\{2a\}
     y=x^2
     \$\$
 
-3.  This is a inline math\$123\$
+3.  This is a inline math \$123\$  with space in list item test
 
 4.  This is a line table
 
