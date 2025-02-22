@@ -1103,7 +1103,13 @@ async function processN2MRehypeNoteLinkNodes(
       newChild.properties.zhref = node.properties.href;
       newChild.properties.href = link;
       newChild.properties.ztype = "znotelink";
-      newChild.properties.class = "internal-link"; // required for obsidian compatibility
+      // required for obsidian compatibility
+      if (!newChild.properties.className?.includes("internal-link")) {
+        if (!newChild.properties.className) {
+          newChild.properties.className = [];
+        }
+        newChild.properties.className.push("internal-link");
+      }
       const newNode = h("znotelink", [newChild]);
       replace(node, newNode);
     }
