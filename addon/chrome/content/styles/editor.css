@@ -75,8 +75,9 @@
 .tableWrapper tbody tr td:first-child {
   position: sticky;
   left: 0;
-  background: var(--material-tabbar);
   z-index: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background-color: var(--material-background);
 }
 
 /* Fixed header row (active when .fixed-first-row is applied) */
@@ -84,10 +85,12 @@
 .tableWrapper tbody tr:first-child td {
   position: sticky;
   top: 0;
-  background: var(--material-tabbar);
   z-index: 2;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  background-color: var(--material-background);
 }
 
+/* Top left cell: highest z-index */
 .tableWrapper tbody tr:first-child td:first-child {
   z-index: 3;
 }

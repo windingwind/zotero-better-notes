@@ -585,6 +585,7 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
       ),
     ),
   );
+  EditorAPI.updateTableSize();
 }
 
 function safeCall(callback: () => void) {

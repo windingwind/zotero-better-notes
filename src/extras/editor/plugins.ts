@@ -1,10 +1,9 @@
 import { initLinkPreviewPlugin, LinkPreviewOptions } from "./linkPreview";
 import { initMagicKeyPlugin, MagicKeyOptions } from "./magicKey";
 import { initMarkdownPastePlugin, MarkdownPasteOptions } from "./markdownPaste";
-import { EditorView } from "prosemirror-view";
 // Use custom column resizing plugin, since the original one breaks
 import { columnResizing } from "./columnResizing";
-import { TableView } from "prosemirror-tables";
+import { initNodeViews } from "./nodeViews";
 
 export { initPlugins };
 
@@ -37,16 +36,4 @@ function initPlugins(options: {
   initNodeViews(core.view);
 
   core.view.updateState(newState);
-  // Rerender the view
-  core.view.dispatch(core.view.state.tr.setMeta("force-update", true));
-}
-
-function initNodeViews(view: EditorView) {
-  // @ts-ignore
-  const tableNodeViewProto = view.nodeViews.table().__proto__;
-
-  // Patch the prototype to use the table node view from prosemirror-tables
-  tableNodeViewProto.update = TableView.prototype.update;
-  tableNodeViewProto.ignoreMutation = TableView.prototype.ignoreMutation;
-  tableNodeViewProto.constructor = TableView;
 }

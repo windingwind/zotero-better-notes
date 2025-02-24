@@ -361,6 +361,16 @@ function updateImageDimensions(
   });
 }
 
+function updateTableSize() {
+  const view = _currentEditorInstance._editorCore.view;
+  console.log("Update table size");
+  // Get document height and store in CSS variable
+  const height = view.dom.parentElement?.clientHeight;
+  document.body.style.setProperty("--editor-max-height", `${height}px`);
+}
+
+window.addEventListener("resize", () => updateTableSize());
+
 export const BetterNotesEditorAPI = {
   deleteRange,
   deleteRangeAtCursor,
@@ -378,6 +388,7 @@ export const BetterNotesEditorAPI = {
   getNodeFromHTML,
   setSelection,
   initPlugins,
+  updateTableSize,
 };
 
 // @ts-ignore
