@@ -585,7 +585,10 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
       ),
     ),
   );
-  EditorAPI.updateTableSize();
+  EditorAPI.updateTableSize(
+    getPref("editor.pinTableLeft"),
+    getPref("editor.pinTableTop"),
+  );
 }
 
 function safeCall(callback: () => void) {

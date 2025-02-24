@@ -361,12 +361,18 @@ function updateImageDimensions(
   });
 }
 
-function updateTableSize() {
+function updateTableSize(pinLeft?: boolean, pinTop?: boolean) {
   const view = _currentEditorInstance._editorCore.view;
   console.log("Update table size");
   // Get document height and store in CSS variable
   const height = view.dom.parentElement?.clientHeight;
   document.body.style.setProperty("--editor-max-height", `${height}px`);
+  if (typeof pinLeft === "boolean") {
+    document.body.classList.toggle("pin-table-left", pinLeft);
+  }
+  if (typeof pinTop === "boolean") {
+    document.body.classList.toggle("pin-table-top", pinTop);
+  }
 }
 
 window.addEventListener("resize", () => updateTableSize());

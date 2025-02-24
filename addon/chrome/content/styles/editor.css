@@ -72,7 +72,7 @@
 }
 
 /* Fixed first column (active when .fixed-first-column is applied) */
-.tableWrapper tbody tr td:first-child {
+body.pin-table-left .tableWrapper tbody tr td:first-child {
   position: sticky;
   left: 0;
   z-index: 1;
@@ -81,8 +81,8 @@
 }
 
 /* Fixed header row (active when .fixed-first-row is applied) */
-.tableWrapper thead th,
-.tableWrapper tbody tr:first-child td {
+body.pin-table-top .tableWrapper thead th,
+body.pin-table-top .tableWrapper tbody tr:first-child td {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -91,7 +91,11 @@
 }
 
 /* Top left cell: highest z-index */
-.tableWrapper tbody tr:first-child td:first-child {
+body.pin-table-left.pin-table-top
+  .tableWrapper
+  tbody
+  tr:first-child
+  td:first-child {
   z-index: 3;
 }
 
