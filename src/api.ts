@@ -10,12 +10,14 @@ import {
   annotations2html,
   note2html,
   link2params,
+  note2latex,
 } from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
 import { saveFreeMind } from "./modules/export/freemind";
 import { saveMD, syncMDBatch } from "./modules/export/markdown";
 import { savePDF } from "./modules/export/pdf";
+import { saveLatex } from "./modules/export/latex";
 import { fromMD } from "./modules/import/markdown";
 import {
   isSyncNote,
@@ -117,6 +119,7 @@ const convert = {
   annotations2html,
   note2html,
   item2citation: parseCitationHTML,
+  note2latex,
 };
 
 const template = {
@@ -140,6 +143,7 @@ const $export = {
   saveFreeMind,
   saveDocx,
   savePDF,
+  saveLatex,
 };
 
 const $import = {
