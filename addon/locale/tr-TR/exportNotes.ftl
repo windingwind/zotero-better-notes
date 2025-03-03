@@ -18,6 +18,8 @@ format-freemind =
     .label = Zihin Haritası
 format-note = 
     .label = Zotero Notu
+format-latex =
+    .label = LaTeX(.tex)
 
 links-keep =
     .label = Not bağlantılarını koru(zotero://note/)
