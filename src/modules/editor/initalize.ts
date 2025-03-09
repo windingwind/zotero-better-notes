@@ -5,6 +5,8 @@ import { initEditorMenu } from "./menu";
 import { initEditorPopup } from "./popup";
 import { initEditorToolbar } from "./toolbar";
 
+let prefsObserver = Symbol();
+
 export function registerEditorInstanceHook() {
   Zotero.Notes.registerEditorInstance = new Proxy(
     Zotero.Notes.registerEditorInstance,
@@ -20,6 +22,17 @@ export function registerEditorInstanceHook() {
     },
   );
   Zotero.Notes._editorInstances.forEach(onEditorInstanceCreated);
+
+  // For unknown reasons, the css becomes undefined after font size change
+  prefsObserver = Zotero.Prefs.registerObserver("note.fontSize", () => {
+    Zotero.Notes._editorInstances.forEach((editor) => {
+      injectEditorCSS(editor._iframeWindow);
+    });
+  });
+}
+
+export function unregisterEditorInstanceHook() {
+  Zotero.Prefs.unregisterObserver(prefsObserver);
 }
 
 async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
