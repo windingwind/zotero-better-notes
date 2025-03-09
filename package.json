@@ -43,7 +43,7 @@
     "html-docx-js-typescript": "^0.1.5",
     "katex": "^0.16.21",
     "path-browserify": "^1.0.1",
-    "prosemirror-tables": "^1.4.0",
+    "prosemirror-tables": "^1.6.4",
     "rehype-format": "^4.0.1",
     "rehype-parse": "^8.0.5",
     "rehype-remark": "^9.1.2",
