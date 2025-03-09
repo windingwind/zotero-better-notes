@@ -100,11 +100,6 @@ function initMarkdownPastePlugin(plugins: readonly Plugin[]) {
 }
 
 function getMarkdown(clipboardData: DataTransfer) {
-  // If the clipboard contains HTML, don't handle it
-  if (clipboardData.types.includes("text/html")) {
-    return false;
-  }
-
   if (clipboardData.types.includes("text/markdown")) {
     return clipboardData.getData("text/markdown");
   }
