@@ -35,7 +35,7 @@
     "asciidoctor": "^3.0.4",
     "dexie": "^4.0.11",
     "diff": "^5.2.0",
-    "hast-util-to-html": "^9.0.4",
+    "hast-util-to-html": "^9.0.5",
     "hast-util-to-mdast": "^8.4.1",
     "hast-util-to-text": "^4.0.2",
     "hastscript": "^8.0.0",
@@ -58,18 +58,18 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^4.1.1"
+    "zotero-plugin-toolkit": "^4.1.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@prettier/plugin-xml": "^3.4.1",
     "@types/browser-or-node": "^1.3.2",
-    "@types/chai": "^5.0.1",
+    "@types/chai": "^5.2.0",
     "@types/diff": "^5.2.3",
     "@types/html-docx-js": "^0.3.4",
     "@types/katex": "^0.16.7",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.17.14",
+    "@types/node": "^20.17.24",
     "@types/path-browserify": "^1.0.3",
     "@types/seedrandom": "^3.0.8",
     "@types/yamljs": "^0.2.34",
@@ -80,16 +80,16 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.3",
     "prosemirror-model": "^1.24.1",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-transform": "^1.10.2",
-    "prosemirror-view": "^1.37.1",
+    "prosemirror-transform": "^1.10.3",
+    "prosemirror-view": "^1.38.1",
     "replace-in-file": "^7.2.0",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "xslt3": "^2.7.0",
-    "zotero-plugin-scaffold": "^0.2.0-beta.20",
-    "zotero-types": "^3.1.6"
+    "zotero-plugin-scaffold": "^0.2.11",
+    "zotero-types": "^3.1.7"
   },
   "eslintConfig": {
     "env": {
