@@ -527,6 +527,9 @@ function remark2md(remark: MRoot) {
     sup: (node: { value: string }) => {
       return "<sup>" + node.value + "</sup>";
     },
+    inlineMath: (node: { value: string }) => {
+      return "$" + node.value + "$";
+    },
     styleTable: (node: { value: any }) => {
       return node.value;
     },
