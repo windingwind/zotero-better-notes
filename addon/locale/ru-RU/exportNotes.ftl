@@ -18,6 +18,8 @@ format-freemind =
     .label = Карта разума
 format-note = 
     .label = Заметка Zotero
+format-latex =
+    .label = LaTeX(.tex)
 
 links-keep =
     .label = Сохранить ссылки на заметки(zotero://note/)
