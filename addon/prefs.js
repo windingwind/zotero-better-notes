@@ -12,6 +12,8 @@ pref("__prefsPrefix__.workspace.outline.keepLinks", true);
 pref("__prefsPrefix__.editor.noteLinkPreviewType", "hover");
 pref("__prefsPrefix__.editor.useMagicKey", true);
 pref("__prefsPrefix__.editor.useMarkdownPaste", true);
+pref("__prefsPrefix__.editor.pinTableLeft", true);
+pref("__prefsPrefix__.editor.pinTableTop", true);
 
 pref("__prefsPrefix__.openNote.takeover", true);
 pref("__prefsPrefix__.openNote.defaultAsWindow", false);
