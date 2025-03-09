@@ -81,7 +81,7 @@ body.pin-table-left .tableWrapper tbody tr td:first-child {
 }
 
 /* Fixed header row (active when .fixed-first-row is applied) */
-body.pin-table-top .tableWrapper thead th,
+body.pin-table-top .tableWrapper tbody tr:first-child th,
 body.pin-table-top .tableWrapper tbody tr:first-child td {
   position: sticky;
   top: 0;
@@ -95,7 +95,12 @@ body.pin-table-left.pin-table-top
   .tableWrapper
   tbody
   tr:first-child
-  td:first-child {
+  td:first-child,
+body.pin-table-left.pin-table-top
+  .tableWrapper
+  tbody
+  tr:first-child
+  th:first-child {
   z-index: 3;
 }
 
