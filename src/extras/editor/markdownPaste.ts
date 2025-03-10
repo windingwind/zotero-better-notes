@@ -100,6 +100,11 @@ function initMarkdownPastePlugin(plugins: readonly Plugin[]) {
 }
 
 function getMarkdown(clipboardData: DataTransfer) {
+  // Skip Zotero internal data
+  if (clipboardData.types.some((type) => type.startsWith("zotero/"))) {
+    return false;
+  }
+
   if (clipboardData.types.includes("text/markdown")) {
     return clipboardData.getData("text/markdown");
   }
