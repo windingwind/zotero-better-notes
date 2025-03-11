@@ -14,13 +14,16 @@ export async function showImageViewer(
     Components.utils.isDeadWrapper(addon.data.imageViewer.window) ||
     addon.data.imageViewer.window.closed
   ) {
-    addon.data.imageViewer.window = Zotero.getMainWindow().openDialog(
+    addon.data.imageViewer.window = Services.ww.openWindow(
+      // @ts-ignore
+      null,
       `chrome://${config.addonRef}/content/imageViewer.html`,
       `${config.addonRef}-imageViewer`,
       `chrome,centerscreen,resizable,status,width=500,height=550,dialog=no${
         addon.data.imageViewer.pined ? ",alwaysRaised=yes" : ""
       }`,
-    )!;
+      {},
+    ) as Window;
     await waitUtilAsync(
       () => addon.data.imageViewer.window?.document.readyState === "complete",
     );
