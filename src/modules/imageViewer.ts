@@ -198,34 +198,29 @@ export async function showImageViewer(
   addon.data.imageViewer.srcList = srcList;
   addon.data.imageViewer.idx = idx;
   addon.data.imageViewer.title = title || "Note";
-  setImage();
+  await setImage();
   setScale(1);
   addon.data.imageViewer.window.focus();
 }
 
-function setImage() {
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#image",
-    ) as HTMLImageElement
-  ).src = addon.data.imageViewer.srcList[addon.data.imageViewer.idx];
+async function setImage() {
+  const doc = addon.data.imageViewer.window?.document;
+  if (!doc) {
+    return;
+  }
+  await waitUtilAsync(() => doc.readyState === "complete");
+  (doc.querySelector("#image") as HTMLImageElement).src =
+    addon.data.imageViewer.srcList[addon.data.imageViewer.idx];
   setTitle();
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#left",
-    ) as HTMLButtonElement
-  ).style.opacity = addon.data.imageViewer.idx === 0 ? "0.5" : "1";
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#right",
-    ) as HTMLButtonElement
-  ).style.opacity =
+  (doc.querySelector("#left") as HTMLButtonElement).style.opacity =
+    addon.data.imageViewer.idx === 0 ? "0.5" : "1";
+  (doc.querySelector("#right") as HTMLButtonElement).style.opacity =
     addon.data.imageViewer.idx === addon.data.imageViewer.srcList.length - 1
       ? "0.5"
       : "1";
 }
 
-function setIndex(type: "left" | "right") {
+async function setIndex(type: "left" | "right") {
   if (type === "left") {
     addon.data.imageViewer.idx > 0
       ? (addon.data.imageViewer.idx -= 1)
@@ -236,7 +231,7 @@ function setIndex(type: "left" | "right") {
       ? (addon.data.imageViewer.idx += 1)
       : undefined;
   }
-  setImage();
+  await setImage();
 }
 
 function setScale(scaling: number) {
