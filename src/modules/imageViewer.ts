@@ -121,12 +121,10 @@ export async function showImageViewer(
       setPin();
     });
     addon.data.imageViewer.window.addEventListener("keydown", (e) => {
+      const isCtrl =
+        (Zotero.isMac && e.metaKey) || (!Zotero.isMac && e.ctrlKey);
       // ctrl+w or esc
-      if (
-        (e.key === "w" && Zotero.isMac && e.metaKey) ||
-        (!Zotero.isMac && e.ctrlKey) ||
-        e.keyCode === 27
-      ) {
+      if ((e.key === "w" && isCtrl) || e.keyCode === 27) {
         addon.data.imageViewer.window?.close();
       }
       addon.data.imageViewer.anchorPosition = {
