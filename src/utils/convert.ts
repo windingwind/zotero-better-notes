@@ -36,6 +36,7 @@ import {
 } from "./link";
 import { parseAnnotationHTML } from "./annotation";
 import { getPref } from "./prefs";
+import { showHint, showHintWithLink } from "./hint";
 
 export {
   md2note,
@@ -176,11 +177,28 @@ async function note2latex(
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = note2rehype(noteStatus.content);
+  // Zotero.debug("====== origin node ======")
+  // visit(
+  //   rehype,
+  //   (node) => {
+  //     Zotero.debug(node);
+  //   },
+  // );
+  
   await processN2LRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype as HRoot),
   );
   await processN2LRehypeHeaderNodes(
     getN2LRehypeHeaderNodes(rehype as HRoot),
+  );
+  await processN2LRehypeLinkNodes(
+    getN2LRehypeLinkNodes(rehype as HRoot),
+  );
+  await processN2LRehypeListNodes(
+    getN2LRehypeListNodes(rehype as HRoot),
+  );
+  await processN2LRehypeTableNodes(
+    getN2LRehypeTableNodes(rehype as HRoot),
   );
   await processN2LRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
@@ -190,6 +208,13 @@ async function note2latex(
     false,
     NodeMode.direct,
   );
+  // Zotero.debug("====== after node ======")
+  // visit(
+  //   rehype,
+  //   (node) => {
+  //     Zotero.debug(node);
+  //   },
+  // );
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
     return "Parsing Error: Rehype2Remark";
@@ -908,7 +933,10 @@ function getN2MRehypeImageNodes(rehype: any) {
       node.type === "element" &&
       node.tagName === "img" &&
       node.properties?.dataAttachmentKey,
-    (node) => nodes.push(node),
+    (node) => {
+      // Zotero.debug(node);
+      nodes.push(node)
+    },
   );
   return new Array(...new Set(nodes));
 }
@@ -1389,7 +1417,49 @@ function getN2LRehypeHeaderNodes(rehype: HRoot) {
     rehype,
     (node: any) =>
       node.type === "element" &&
-      (node.tagName === "h1" || node.tagName === "h2" || node.tagName === "h3" || node.tagName === "strong"),
+      ["h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "span"].includes(node.tagName),
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeLinkNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) =>
+      node.type === "element" &&
+      node.tagName === "a",
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeListNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) =>
+      node.type === "element" &&
+      (node.tagName === "ul" || node.tagName === "ol"),
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeTableNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) =>
+      node.type === "element" &&
+      node.tagName === "table",
     (node) => {
       nodes.push(node);
     },
@@ -1418,33 +1488,24 @@ async function processN2LRehypeCitationNodes(
       continue;
     }
 
-    const uris: any[] = [];
     const citationKeys: string[] = [];
     for (const citationItem of citation.citationItems) {
       const uri = citationItem.uris[0];
       if (typeof uri === "string") {
         const uriParts = uri.split("/");
-        const libraryType = uriParts[3];
         const key = uriParts[uriParts.length - 1];
         const item_ = Zotero.Items.getByLibraryAndKey(Zotero.Libraries.userLibraryID, key);
         if (!item_) {
-          Zotero.debug("=== item not found, key = " + key);
+          Zotero.debug("[Bid Export] Item not found, key = " + key);
           continue;
         }
         items.push(item_);
         const citationKey = item_.getField("citationKey");
-        // Zotero.debug("=== citationKey = " + citationKey);
-        // Zotero.debug("=== libraryType = " + libraryType);
-        if (libraryType === "users") {
-          uris.push("zotero://select/library/items/" + key);
-          citationKeys.push(citationKey);
+        if (citationKey === "") {
+          Zotero.debug("[Bid Export] Detect empty citationKey.");
+          continue;
         }
-        // groups
-        else {
-          const groupID = uriParts[4];
-          uris.push("zotero://select/groups/" + groupID + "/items/" + key);
-          citationKeys.push(citationKey);
-        }
+        citationKeys.push(citationKey);
       }
     }
     citationAllKeys.push(...citationKeys);
@@ -1459,6 +1520,15 @@ async function processN2LRehypeCitationNodes(
 }
 
 async function saveToBibFile(citationAllKeys: string[]) {
+  const BBT = "Better BibTex for Zotero";
+  const installedExtensions = await Zotero.getInstalledExtensions();
+  const installedAndEnabled = installedExtensions.some(item => item.includes(BBT) && !item.includes("disabled"));
+  if (!installedAndEnabled) {
+    Zotero.debug("Better BibTex for Zotero is not installed.");
+    showHint("Export Error: Better BibTex for Zotero is needed for exporting the .bib file. Please install and enable it first.");
+    return;
+  }
+
   const uniqueCitationKeys = Array.from(new Set(citationAllKeys));
   const res = await exportToBibtex(uniqueCitationKeys);
   const raw = await new ztoolkit.FilePicker(
@@ -1467,23 +1537,30 @@ async function saveToBibFile(citationAllKeys: string[]) {
     [["Bibtex File(*.bib)", "*.bib"]],
     `notegeneration.bib`,
   ).open();
-  if (!raw) return;
+  if (!raw) {
+    Zotero.debug("[Bib Export] Bib file export canceled.");
+    return;
+  };
   const filename = formatPath(raw, ".bib");
   await Zotero.File.putContentsAsync(
     filename,
     res,
   );
+  showHintWithLink(`Bibliographic Saved to ${filename}`, "Show in Folder", (ev) => {
+    Zotero.File.reveal(filename);
+  });
 }
 
 function exportToBibtex(citationKeys: string[]): Promise<string> {
-  // 要发送的 JSON 数据
   const data = {
     "jsonrpc": "2.0",
     "method": "item.export",
     "params": [citationKeys, "bibtex"]
   };
 
-  return fetch('http://localhost:23119/better-bibtex/json-rpc', {
+  const port = Services.prefs.getIntPref('extensions.zotero.httpServer.port'); 
+
+  return fetch(`http://localhost:${port}/better-bibtex/json-rpc`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -1493,17 +1570,17 @@ function exportToBibtex(citationKeys: string[]): Promise<string> {
   })
   .then(response => {
     if (!response.ok) {
-        Zotero.debug('Network response was not ok');
+        Zotero.debug('[Bib Export] Network response was not ok');
         throw new Error('Network response was not ok');
     }
     return response.json();
   })
   .then(result => {
-    // Zotero.debug('Response data: ' + JSON.stringify(result));
+    Zotero.debug('[Bib Export] Response data: ' + JSON.stringify(result));
     return "result" in result ? result.result as string : "";
   })
   .catch(error => {
-    Zotero.debug('Fetch error: ' + error.message);
+    Zotero.debug('[Bib Export] Fetch error: ' + error.message);
     return "";
   });
 }
@@ -1516,22 +1593,135 @@ async function processN2LRehypeHeaderNodes(
   }
   for (const node of nodes) {
     let hx = "";
-    const text_ = node.children[0].value
-    if (node.tagName === "h1"){
-      hx = "\\section{" + text_ + "}";
-    }else if (node.tagName === "h2") {
-      hx = "\\subsection{" + text_ + "}";
-    }else if (node.tagName === "h3"){
-      hx = "\\subsubsection{" + text_ + "}";
-    }else if (node.tagName === "strong"){
-      hx = "\\textbf{" + text_ + "}";
-    }else{
-      hx = text_;
+    if (node.tagName === "h1") {
+      hx = "\\section{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "h2") {
+      hx = "\\subsection{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "h3") {
+      hx = "\\subsubsection{" + getTextFromNode(node) + "}\n";
+    } else if (["h4", "h5", "h6"].includes(node.tagName)) {
+      hx = "\\textbf{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "strong"){
+      hx = "\\textbf{" + getTextFromNode(node) + "}";
+    } else if (node.tagName === "em"){
+      hx = "\\textit{" + getTextFromNode(node) + "}";
+    } else if (node.tagName === "span"){
+      hx = getTextFromNode(node);
+    } else {
+      hx = getTextFromNode(node);
     }
 
     node.type = "text";
     node.value = hx;
   }
+}
+
+async function processN2LRehypeLinkNodes(
+  nodes: string | any[],
+) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {    
+    node.type = "text";
+    node.value = `\\href{${node.properties.href}}{${getTextFromNode(node)}}`;
+  }
+}
+
+async function processN2LRehypeListNodes(
+  nodes: string | any[],
+) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    const item_str: string[] = [];
+    for (const itemKey in node.children){
+      const itemNode = node.children[itemKey];
+      if (itemNode.type === "element" && itemNode.tagName === "li"){
+        item_str.push(getTextFromNode(itemNode));
+      }
+    }
+    // Zotero.debug(item_str);
+    const join_str = item_str.join("\n\\item");
+    let listTemplate;
+    if (node.tagName === "ul") {
+      const ulTemplate = `\\begin{itemize}\n\\item ${join_str} \n\\end{itemize}`;
+      listTemplate = ulTemplate;
+    } else if (node.tagName === "ol") {
+      const olTemplate = `\\begin{enumerate}\n\\item ${join_str} \n\\end{enumerate}`;
+      listTemplate = olTemplate;
+    }
+    
+    node.type = "text";
+    node.value = listTemplate;
+  }
+}
+
+async function processN2LRehypeTableNodes(
+  nodes: any[],
+) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    if (node.type === "element" && node.tagName === "table") {
+      const latexTable = convertHtmlTableToLatex(node.children[1]);
+      node.type = "text";
+      node.value = latexTable;
+    }
+  }
+}
+
+function convertHtmlTableToLatex(tableNode: any): string {
+  let colCount = 0;
+  let rowCount = 0;
+  const tableData: string[][] = [];
+
+  for (const child of tableNode.children) {
+    if (child.type === "element" && child.tagName === "tr") {
+      rowCount++;
+      const rowData: string[] = [];
+      for (const td of child.children) {
+        if (td.type === "element" && (td.tagName === "td" || td.tagName === "th")) {
+          colCount = Math.max(colCount, rowData.length + 1);
+          rowData.push(getTextFromNode(td));
+        }
+      }
+      tableData.push(rowData);
+    }
+  }
+
+  let columnFormat = "|";
+  for (let i = 0; i < colCount; i++) {
+    columnFormat += "l|"; // Assuming left alignment for all columns
+  }
+
+  const latexRows: string[] = [];
+  latexRows.push("\\hline");
+  for (const row of tableData) {
+    const rowContent = row.map(cell => cell.replace(/_/g, "\\_").replace(/&/g, "\\&")).join(" & ");
+    latexRows.push(rowContent + " \\\\");
+    latexRows.push("\\hline");
+  }
+
+  const latexTableTemplate = `\\begin{table}[htbp]\n\\centering\n\\caption{Caption}\n\\label{tab:simple_table}\n\\begin{tabular}{${columnFormat}}
+${latexRows.join("\n")}
+\\end{tabular}\n\\end{table}`;
+
+  return latexTableTemplate;
+}
+
+function getTextFromNode(node: any): string {
+  let text = "";
+  for (const child of node.children) {
+    if (child.type === "text") {
+      text += child.value === "\n " ? "" : child.value;
+    } else if (child.children) {
+      text += getTextFromNode(child);
+    }
+  }
+  return text;
 }
 
 async function processN2LRehypeImageNodes(
