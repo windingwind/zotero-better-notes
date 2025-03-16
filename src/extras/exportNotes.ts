@@ -71,7 +71,9 @@ function init() {
 
 function restore() {
   let format = getPref("export.format") as string;
-  if (!["markdown", "msword", "pdf", "freemind", "note", "latex"].includes(format)) {
+  if (
+    !["markdown", "msword", "pdf", "freemind", "note", "latex"].includes(format)
+  ) {
     format = "markdown";
   }
   (document.querySelector("#format") as XULMenuListElement).value = format;

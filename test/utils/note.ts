@@ -457,7 +457,7 @@ This document contains a wide range of Markdown elements, including headers, lis
 }
 
 export function getNoteLatexContent() {
-    return `<div data-schema-version="9"><h1>LaTeX Test Document</h1>
+  return `<div data-schema-version="9"><h1>LaTeX Test Document</h1>
   <h2>Headers</h2>
   <h1>H1 Header</h1>
   <h2>H2 Header</h2>
@@ -553,7 +553,7 @@ export function getNoteLatexContent() {
   <h2>Conclusion</h2>
   <p>This document contains a wide range of LaTeX elements, including headers, lists, tables, images, citations, links and math.</p>
   </div>`;
-  }
+}
 
 export function getNoteLatex() {
   return `\\section{LaTeX Test Document}
