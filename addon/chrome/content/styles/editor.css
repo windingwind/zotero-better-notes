@@ -49,3 +49,78 @@
   width: auto;
   gap: 4px;
 }
+
+.tableWrapper {
+  overflow-x: auto;
+  position: relative; /* Needed for sticky positioning */
+  max-height: var(--editor-max-height);
+}
+
+.tableWrapper table {
+  width: 100%;
+  table-layout: fixed; /* Enforces fixed layout */
+}
+
+.tableWrapper td,
+.tableWrapper th {
+  min-width: 80px !important;
+  min-height: 30px !important;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  position: relative; /* So that sticky children work properly */
+}
+
+/* Fixed first column (active when .fixed-first-column is applied) */
+body.pin-table-left .tableWrapper tbody tr td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background-color: var(--material-background);
+}
+
+/* Fixed header row (active when .fixed-first-row is applied) */
+body.pin-table-top .tableWrapper tbody tr:first-child th,
+body.pin-table-top .tableWrapper tbody tr:first-child td {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  background-color: var(--material-background);
+}
+
+/* Top left cell: highest z-index */
+body.pin-table-left.pin-table-top
+  .tableWrapper
+  tbody
+  tr:first-child
+  td:first-child,
+body.pin-table-left.pin-table-top
+  .tableWrapper
+  tbody
+  tr:first-child
+  th:first-child {
+  z-index: 3;
+}
+
+.ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
+.ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
+  /* if there's no explicit width set and the column is not being resized, set a default width */
+  min-width: var(--default-cell-min-width);
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  z-index: 20;
+  background-color: #adf;
+  pointer-events: none;
+}
+.ProseMirror.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}

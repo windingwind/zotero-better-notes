@@ -521,19 +521,36 @@ async function rehype2remark(rehype: HRoot) {
           // Merge none-list nodes inside li into the previous paragraph node to avoid line break
           while (mNode.children.length > 0) {
             const current = mNode.children.shift();
-            const cached = children[children.length - 1];
-            if (current?.type && !paragraphNodes.includes(current?.type)) {
-              if (cached?.type === "paragraph") {
-                cached.children.push(current);
-              } else {
-                // https://github.com/windingwind/zotero-better-notes/issues/1207
-                // Create a new paragraph node
-                const paragraph = {
-                  type: "paragraph",
-                  children: [current],
-                };
-                children.push(paragraph);
-              }
+            let cached = children[children.length - 1];
+            // https://github.com/windingwind/zotero-better-notes/issues/1207
+            // Create a new paragraph node
+            if (cached?.type !== "paragraph") {
+              cached = {
+                type: "paragraph",
+                children: [],
+              };
+              children.push(cached);
+            }
+            if (current?.type === "paragraph") {
+              cached.children.push(...current.children);
+            }
+            // https://github.com/windingwind/zotero-better-notes/issues/1300
+            // @ts-ignore inlineMath is not in mdast
+            else if (current?.type === "inlineMath") {
+              cached.children.push({
+                type: "text",
+                value: " ",
+              });
+              cached.children.push(current);
+              cached.children.push({
+                type: "text",
+                value: " ",
+              });
+            } else if (
+              current?.type &&
+              !paragraphNodes.includes(current?.type)
+            ) {
+              cached.children.push(current);
             } else {
               children.push(current);
             }
@@ -568,66 +585,75 @@ async function rehype2remark(rehype: HRoot) {
 }
 
 function remark2md(remark: MRoot) {
+  const handlers = {
+    code: (node: { value: string }) => {
+      return "```\n" + node.value + "\n```";
+    },
+    u: (node: { value: string }) => {
+      return "<u>" + node.value + "</u>";
+    },
+    sub: (node: { value: string }) => {
+      return "<sub>" + node.value + "</sub>";
+    },
+    sup: (node: { value: string }) => {
+      return "<sup>" + node.value + "</sup>";
+    },
+    inlineMath: (node: { value: string }) => {
+      return "$" + node.value + "$";
+    },
+    styleTable: (node: { value: any }) => {
+      return node.value;
+    },
+    wrapper: (node: { value: string }) => {
+      return "\n<!-- " + node.value + " -->\n";
+    },
+    wrapperleft: (node: { value: string }) => {
+      return "<!-- " + node.value + " -->\n";
+    },
+    wrapperright: (node: { value: string }) => {
+      return "\n<!-- " + node.value + " -->";
+    },
+    zhighlight: (node: { value: string }) => {
+      return node.value.replace(/(^<zhighlight>|<\/zhighlight>$)/g, "");
+    },
+    zcitation: (node: { value: string }) => {
+      return node.value.replace(/(^<zcitation>|<\/zcitation>$)/g, "");
+    },
+    znotelink: (node: { value: string }) => {
+      return node.value.replace(/(^<znotelink>|<\/znotelink>$)/g, "");
+    },
+    zimage: (node: { value: string }) => {
+      return node.value.replace(/(^<zimage>|<\/zimage>$)/g, "");
+    },
+  };
+  const tableHandler = (node: any) => {
+    const tbl = gfmTableToMarkdown();
+    // table must use same handlers as rest of pipeline
+    const txt = toMarkdown(node, {
+      extensions: [tbl],
+      // Use the same handlers as the rest of the pipeline
+      handlers,
+    });
+
+    if (node.data?.bnRemove) {
+      const lines = txt.split("\n");
+      // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
+      lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
+        return s.replace(/ +/g, " <!-- --> ");
+      });
+      return lines.join("\n");
+    }
+    return txt;
+  };
   return String(
     unified()
       .use(remarkGfm)
       .use(remarkMath)
       .use(remarkStringify, {
-        handlers: {
-          code: (node: { value: string }) => {
-            return "```\n" + node.value + "\n```";
-          },
-          u: (node: { value: string }) => {
-            return "<u>" + node.value + "</u>";
-          },
-          sub: (node: { value: string }) => {
-            return "<sub>" + node.value + "</sub>";
-          },
-          sup: (node: { value: string }) => {
-            return "<sup>" + node.value + "</sup>";
-          },
-          styleTable: (node: { value: any }) => {
-            return node.value;
-          },
-          table: (node: any) => {
-            const tbl = gfmTableToMarkdown();
-            // table must use same handlers as rest of pipeline
-            const txt = toMarkdown(node, {
-              extensions: [tbl],
-            });
-
-            if (node.data?.bnRemove) {
-              const lines = txt.split("\n");
-              // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
-              lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
-                return s.replace(/ +/g, " <!-- --> ");
-              });
-              return lines.join("\n");
-            }
-            return txt;
-          },
-          wrapper: (node: { value: string }) => {
-            return "\n<!-- " + node.value + " -->\n";
-          },
-          wrapperleft: (node: { value: string }) => {
-            return "<!-- " + node.value + " -->\n";
-          },
-          wrapperright: (node: { value: string }) => {
-            return "\n<!-- " + node.value + " -->";
-          },
-          zhighlight: (node: { value: string }) => {
-            return node.value.replace(/(^<zhighlight>|<\/zhighlight>$)/g, "");
-          },
-          zcitation: (node: { value: string }) => {
-            return node.value.replace(/(^<zcitation>|<\/zcitation>$)/g, "");
-          },
-          znotelink: (node: { value: string }) => {
-            return node.value.replace(/(^<znotelink>|<\/znotelink>$)/g, "");
-          },
-          zimage: (node: { value: string }) => {
-            return node.value.replace(/(^<zimage>|<\/zimage>$)/g, "");
-          },
-        },
+        // Prevent recursive call
+        handlers: Object.assign({}, handlers, {
+          table: tableHandler,
+        }),
       } as any)
       .stringify(remark as any),
   );
@@ -806,6 +832,30 @@ function rehype2note(rehype: HRoot) {
           _n.type === "element" ||
           (_n.type === "text" && _n.value.replace(/[\r\n]/g, "")),
       );
+
+      // https://github.com/windingwind/zotero-better-notes/issues/1300
+      // For all math-inline node in list, remove 1 space from its sibling text node
+      if (node.tagName === "li") {
+        for (const p of node.children) {
+          for (let idx = 0; idx < p.children.length; idx++) {
+            const _n = p.children[idx];
+            if (_n.properties?.className?.includes("math-inline")) {
+              if (idx > 0) {
+                const prev = p.children[idx - 1];
+                if (prev.type === "text" && prev.value.endsWith(" ")) {
+                  prev.value = prev.value.slice(0, -1);
+                }
+              }
+              if (idx < p.children.length - 1) {
+                const next = p.children[idx + 1];
+                if (next.type === "text" && next.value.startsWith(" ")) {
+                  next.value = next.value.slice(1);
+                }
+              }
+            }
+          }
+        }
+      }
     },
   );
 
@@ -1146,7 +1196,13 @@ async function processN2MRehypeNoteLinkNodes(
       newChild.properties.zhref = node.properties.href;
       newChild.properties.href = link;
       newChild.properties.ztype = "znotelink";
-      newChild.properties.class = "internal-link"; // required for obsidian compatibility
+      // required for obsidian compatibility
+      if (!newChild.properties.className?.includes("internal-link")) {
+        if (!newChild.properties.className) {
+          newChild.properties.className = [];
+        }
+        newChild.properties.className.push("internal-link");
+      }
       const newNode = h("znotelink", [newChild]);
       replace(node, newNode);
     }

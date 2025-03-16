@@ -26,7 +26,7 @@ export async function injectEditorCSS(win: Window) {
           rootURI + "chrome/content/styles/editor.css",
         ),
       },
-      ignoreIfExists: true,
+      removeIfExists: true,
     },
     win.document.head,
   );

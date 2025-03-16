@@ -24,6 +24,11 @@ editor-useMagicKey =
     .label = Komut panelini göstermek için sihirli tuş "/" kullan
 editor-useMarkdownPaste =
     .label = Gelişmiş markdown yapıştırma kullan
+editor-pinTable-label = Pin table's
+editor-pinTableLeft =
+    .label = Fist column
+editor-pinTableTop =
+    .label = First row when scrolling
 
 sync-title = Eşitle
 sync-period-label = Otomatik Eşitleme Sıklığı (saniye)

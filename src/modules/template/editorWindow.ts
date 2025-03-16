@@ -4,6 +4,7 @@ import { showHint } from "../../utils/hint";
 import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
 import { waitUtilAsync } from "../../utils/wait";
+import { xhtmlEscape } from "../../utils/str";
 
 export async function showTemplateEditor() {
   if (
@@ -519,11 +520,10 @@ async function updateSnippets(type: string) {
 
 async function updatePreview() {
   const name = getSelectedTemplateName();
-  const html = (await addon.api.template.renderTemplatePreview(name))
-    .replace(/&nbsp;/g, "#160;")
-    .replace(/<br>/g, "<br/>")
-    .replace(/<hr>/g, "<hr/>")
-    .replace(/<img([^>]+)>/g, "<img$1/>");
+  const html = xhtmlEscape(
+    await addon.api.template.renderTemplatePreview(name),
+  );
+
   const win = addon.data.template.editor.window;
   const container = win?.document.getElementById("preview-container");
   if (container) {

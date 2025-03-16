@@ -1,0 +1,216 @@
+:root {
+  --footer-height: 45px;
+  --header-height: 45px;
+  --panel-header-height: 30px;
+}
+html,
+body,
+.viewport {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.top-container {
+  padding: 0;
+  margin: 0;
+  height: calc(100% - var(--footer-height));
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-container {
+  margin: 0;
+  height: var(--header-height);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.body-container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - var(--header-height));
+  background: var(--material-background);
+}
+.panel-container {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: var(--material-panedivider);
+}
+.panel-header {
+  height: var(--panel-header-height);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  padding-inline: 8px;
+  background: var(--material-background);
+  border-bottom: var(--material-panedivider);
+}
+.panel-content {
+  display: flex;
+  height: calc(100% - var(--panel-header-height));
+  display: flex;
+  flex-direction: column;
+}
+.footer-container {
+  justify-content: flex-start;
+  padding-inline: 16px;
+  gap: 8px;
+  margin: 0;
+  height: calc(var(--footer-height));
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+.added {
+  background-color: rgb(230, 255, 236);
+  color: green;
+}
+.removed {
+  background-color: rgb(255, 235, 233);
+  color: red;
+}
+.added-list-item {
+  background-color: rgb(230, 255, 236);
+}
+.removed-list-item {
+  background-color: rgb(255, 235, 233);
+}
+.normal {
+  color: darkgray;
+}
+.selected-data,
+.options {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: rgba(191, 191, 191, 0.15);
+}
+
+.selected-data .caption {
+  font-weight: bold;
+  font-size: 115%;
+}
+
+.options .caption {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.option {
+  margin-top: 10px;
+}
+
+.option > span {
+  width: 120px;
+  display: inline-block;
+}
+
+img {
+  width: auto !important;
+}
+a {
+  color: blue;
+  text-decoration: underline;
+}
+
+#table-container {
+  height: 100%;
+}
+
+.virtualized-table {
+  height: 100%;
+}
+
+.virtualized-table-body .cell {
+  pointer-events: initial;
+  user-select: none;
+}
+
+.virtualized-table-body .row.diff-added {
+  color: var(--accent-green);
+}
+
+.virtualized-table-body .row.diff-removed {
+  color: var(--accent-red);
+}
+
+.list-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 8px;
+  padding-inline-start: 8px;
+}
+
+.list-header #added-count {
+  color: var(--accent-green);
+}
+
+.list-header #removed-count {
+  color: var(--accent-red);
+}
+
+.diff-viewport {
+  padding: 8px;
+}
+
+#diff-status {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.diff-btn {
+  min-width: 0;
+}
+
+.diff-btn.selected {
+  color: var(--accent-green);
+}
+
+.diff-btn .diff-btn-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 19px;
+  gap: 4px;
+}
+
+.diff-btn .diff-btn-img {
+  flex-shrink: 0;
+}
+
+.diff-btn .diff-btn-img.md-icon {
+  background-image: url("chrome://__addonRef__/content/icons/markdown-16.svg");
+}
+
+.diff-btn .diff-btn-inner-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.diff-btn#diff-both-btn {
+  flex-shrink: 0;
+}

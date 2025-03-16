@@ -24,6 +24,11 @@ editor-useMagicKey =
     .label = Usa il tasto magico "/" per mostrare il pannello dei comandi
 editor-useMarkdownPaste = 
     .label = Usa l'incolla markdown avanzato
+editor-pinTable-label = Pin table's
+editor-pinTableLeft =
+    .label = Fist column
+editor-pinTableTop =
+    .label = First row when scrolling
 
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)

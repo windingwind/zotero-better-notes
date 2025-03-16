@@ -14,13 +14,16 @@ export async function showImageViewer(
     Components.utils.isDeadWrapper(addon.data.imageViewer.window) ||
     addon.data.imageViewer.window.closed
   ) {
-    addon.data.imageViewer.window = Zotero.getMainWindow().openDialog(
+    addon.data.imageViewer.window = Services.ww.openWindow(
+      // @ts-ignore
+      null,
       `chrome://${config.addonRef}/content/imageViewer.html`,
       `${config.addonRef}-imageViewer`,
       `chrome,centerscreen,resizable,status,width=500,height=550,dialog=no${
         addon.data.imageViewer.pined ? ",alwaysRaised=yes" : ""
       }`,
-    )!;
+      {},
+    ) as Window;
     await waitUtilAsync(
       () => addon.data.imageViewer.window?.document.readyState === "complete",
     );
@@ -118,12 +121,10 @@ export async function showImageViewer(
       setPin();
     });
     addon.data.imageViewer.window.addEventListener("keydown", (e) => {
+      const isCtrl =
+        (Zotero.isMac && e.metaKey) || (!Zotero.isMac && e.ctrlKey);
       // ctrl+w or esc
-      if (
-        (e.key === "w" && Zotero.isMac && e.metaKey) ||
-        (!Zotero.isMac && e.ctrlKey) ||
-        e.keyCode === 27
-      ) {
+      if ((e.key === "w" && isCtrl) || e.keyCode === 27) {
         addon.data.imageViewer.window?.close();
       }
       addon.data.imageViewer.anchorPosition = {
@@ -195,34 +196,29 @@ export async function showImageViewer(
   addon.data.imageViewer.srcList = srcList;
   addon.data.imageViewer.idx = idx;
   addon.data.imageViewer.title = title || "Note";
-  setImage();
+  await setImage();
   setScale(1);
   addon.data.imageViewer.window.focus();
 }
 
-function setImage() {
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#image",
-    ) as HTMLImageElement
-  ).src = addon.data.imageViewer.srcList[addon.data.imageViewer.idx];
+async function setImage() {
+  const doc = addon.data.imageViewer.window?.document;
+  if (!doc) {
+    return;
+  }
+  await waitUtilAsync(() => doc.readyState === "complete");
+  (doc.querySelector("#image") as HTMLImageElement).src =
+    addon.data.imageViewer.srcList[addon.data.imageViewer.idx];
   setTitle();
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#left",
-    ) as HTMLButtonElement
-  ).style.opacity = addon.data.imageViewer.idx === 0 ? "0.5" : "1";
-  (
-    addon.data.imageViewer.window?.document.querySelector(
-      "#right",
-    ) as HTMLButtonElement
-  ).style.opacity =
+  (doc.querySelector("#left") as HTMLButtonElement).style.opacity =
+    addon.data.imageViewer.idx === 0 ? "0.5" : "1";
+  (doc.querySelector("#right") as HTMLButtonElement).style.opacity =
     addon.data.imageViewer.idx === addon.data.imageViewer.srcList.length - 1
       ? "0.5"
       : "1";
 }
 
-function setIndex(type: "left" | "right") {
+async function setIndex(type: "left" | "right") {
   if (type === "left") {
     addon.data.imageViewer.idx > 0
       ? (addon.data.imageViewer.idx -= 1)
@@ -233,7 +229,7 @@ function setIndex(type: "left" | "right") {
       ? (addon.data.imageViewer.idx += 1)
       : undefined;
   }
-  setImage();
+  await setImage();
 }
 
 function setScale(scaling: number) {

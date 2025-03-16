@@ -24,6 +24,11 @@ editor-useMagicKey =
     .label = Использовать магическую клавишу "/" для отображения панели команд
 editor-useMarkdownPaste = 
     .label = Использовать расширенное вставление Markdown
+editor-pinTable-label = Pin table's
+editor-pinTableLeft =
+    .label = Fist column
+editor-pinTableTop =
+    .label = First row when scrolling
 
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)

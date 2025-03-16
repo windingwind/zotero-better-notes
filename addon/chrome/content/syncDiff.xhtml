@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+>
+  <head>
+    <title data-l10n-id="title"></title>
+    <xul:linkset>
+      <html:link rel="localization" href="browser/menubar.ftl" />
+      <html:link rel="localization" href="browser/browserSets.ftl" />
+      <html:link rel="localization" href="toolkit/global/textActions.ftl" />
+      <html:link rel="localization" href="zotero.ftl" />
+      <html:link rel="localization" href="__addonRef__-syncDiff.ftl" />
+    </xul:linkset>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://global/skin/global.css"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://zotero/skin/zotero.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://zotero-platform/content/zotero.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="chrome://__addonRef__/content/styles/syncDiff.css"
+    />
+
+    <script src="chrome://zotero/content/include.js"></script>
+    <script src="chrome://zotero/content/customElements.js"></script>
+    <script src="chrome://__addonRef__/content/scripts/syncDiff.js"></script>
+  </head>
+  <body>
+    <div class="top-container">
+      <div class="header-container">
+        <div id="diff-status">
+          <span
+            id="diff-desc"
+            style="flex-shrink: 0"
+            data-l10n-id="diff-desc"
+          ></span>
+          <button id="diff-note-btn" class="diff-btn" data-l10n-id="diff-note">
+            <div class="diff-btn-inner">
+              <span class="diff-btn-img"></span>
+              <span class="diff-btn-inner-text"></span>
+            </div>
+          </button>
+          <button id="diff-md-btn" class="diff-btn" data-l10n-id="diff-md">
+            <div class="diff-btn-inner">
+              <span
+                class="icon icon-css icon-item-type diff-btn-img md-icon"
+              ></span>
+              <span class="diff-btn-inner-text"></span>
+            </div>
+          </button>
+          <button id="diff-both-btn" class="diff-btn" data-l10n-id="diff-both">
+            <div class="diff-btn-inner">
+              <span class="diff-btn-inner-text"></span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="body-container">
+        <div class="list-container viewport panel-container">
+          <div class="panel-header" data-l10n-id="list-header"></div>
+          <div class="panel-content">
+            <div class="list-header">
+              <input type="checkbox" id="select-all" />
+              <span data-l10n-id="list-selectAll"></span>
+              <div id="added-count" class="list-header-item"></div>
+              <div id="removed-count" class="list-header-item"></div>
+            </div>
+            <div class="viewport list-viewport">
+              <div id="table-container"></div>
+            </div>
+          </div>
+        </div>
+        <div class="diff-container viewport panel-container">
+          <div class="panel-header" data-l10n-id="diff-header"></div>
+          <div class="diff-viewport viewport panel-content"></div>
+        </div>
+        <div class="render-container viewport panel-container">
+          <div class="panel-header" data-l10n-id="rendered-header"></div>
+          <xul:note-editor
+            id="note-editor"
+            class="render-viewport viewport panel-content"
+            style="width: 100%; height: 100%"
+          ></xul:note-editor>
+        </div>
+      </div>
+    </div>
+    <div class="footer-container">
+      <xul:button
+        class="tool-button"
+        id="finish"
+        default="true"
+        data-l10n-id="finish"
+      >
+      </xul:button>
+      <xul:button class="tool-button" id="unsync" data-l10n-id="unsync">
+      </xul:button>
+      <xul:button class="tool-button" id="skip" data-l10n-id="skip">
+      </xul:button>
+    </div>
+  </body>
+</html>

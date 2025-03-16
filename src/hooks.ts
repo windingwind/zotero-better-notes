@@ -2,7 +2,10 @@ import { config } from "../package.json";
 import { initLocale } from "./utils/locale";
 import { registerPrefsWindow } from "./modules/preferenceWindow";
 import { registerNoteLinkProxyHandler } from "./modules/noteLink";
-import { registerEditorInstanceHook } from "./modules/editor/initalize";
+import {
+  registerEditorInstanceHook,
+  unregisterEditorInstanceHook,
+} from "./modules/editor/initalize";
 import {
   importTemplateFromClipboard,
   initTemplates,
@@ -121,6 +124,8 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 function onShutdown(): void {
   closeRelationServer();
   closeParsingServer();
+
+  unregisterEditorInstanceHook();
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;

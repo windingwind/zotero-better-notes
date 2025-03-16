@@ -1,4 +1,4 @@
-import { diffChars } from "diff";
+import { Change, diffChars } from "diff";
 import { config } from "../../../package.json";
 import { fileExists, formatPath, getItemDataURL } from "../../utils/str";
 import { isWindowAlive } from "../../utils/window";
@@ -24,13 +24,17 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
   const changes = diffChars(noteContent, mdNoteContent);
   ztoolkit.log("changes", changes);
 
+  const syncDate = new Date(syncStatus.lastsync);
+
   const io = {
     defer: Zotero.Promise.defer(),
     result: "",
     type: "skip",
+    syncInfo: {},
+    diffData: [] as Change[],
+    imageData: {},
   };
 
-  const syncDate = new Date(syncStatus.lastsync);
   if (!(noteStatus.lastmodify > syncDate && mdStatus.lastmodify > syncDate)) {
     // If only one kind of changes, merge automatically
     if (noteStatus.lastmodify >= mdStatus.lastmodify) {
@@ -62,61 +66,39 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
       }
     }
 
-    if (!isWindowAlive(addon.data.sync.diff.window)) {
-      addon.data.sync.diff.window = Zotero.getMainWindow().open(
-        `chrome://${config.addonRef}/content/syncDiff.html`,
-        `${config.addonRef}-syncDiff`,
-        `chrome,centerscreen,resizable,status,width=900,height=550`,
-      )!;
-      await waitUtilAsync(
-        () => addon.data.sync.diff.window?.document.readyState === "complete",
-      );
-    }
-    const win = addon.data.sync.diff.window as any;
-
-    win.document.title = `[Better Notes Sycing] Diff Merge of ${noteItem.getNoteTitle()}`;
-    win.syncInfo = {
+    io.syncInfo = {
       noteName: noteItem.getNoteTitle(),
       noteModify: noteStatus.lastmodify && noteStatus.lastmodify.toISOString(),
       mdName: mdPath,
       mdModify: mdStatus.lastmodify && mdStatus.lastmodify.toISOString(),
       syncTime: syncDate.toISOString(),
     };
-    win.diffData = changes.map((change, id) =>
+    io.diffData = changes.map((change, id) =>
       Object.assign(change, {
         id: id,
         text: change.value,
       }),
     );
-    win.imageData = imageData;
+    io.imageData = imageData;
 
-    win.io = io;
-    win.initSyncInfo();
-    win.initList();
-    win.initDiffViewer();
-    win.updateDiffRender([]);
-    const abort = () => {
-      ztoolkit.log("unloaded");
-      io.defer.resolve();
-    };
-    // If closed by user, abort syncing
-    win.addEventListener("beforeunload", abort);
-    win.addEventListener("unload", abort);
-    win.addEventListener("close", abort);
-    win.onclose = abort;
-    win.onbeforeunload = abort;
-    win.onunload = abort;
+    if (!isWindowAlive(addon.data.sync.diff.window)) {
+      addon.data.sync.diff.window = Services.ww.openWindow(
+        // @ts-ignore
+        null,
+        `chrome://${config.addonRef}/content/syncDiff.xhtml`,
+        `${config.addonRef}-syncDiff`,
+        `chrome,centerscreen,resizable,status,width=900,height=550`,
+        io,
+      )! as Window;
+      await waitUtilAsync(
+        () => addon.data.sync.diff.window?.document.readyState === "complete",
+      );
+    }
     await io.defer.promise;
-    win.removeEventListener("beforeunload", abort);
-    win.removeEventListener("unload", abort);
-    win.removeEventListener("close", abort);
   }
 
   switch (io.type) {
     case "skip":
-      Zotero.getMainWindow().alert(
-        `Syncing of "${noteItem.getNoteTitle()}" is skipped.\nTo sync manually, go to File->Better Notes Sync Manager.`,
-      );
       addon.data.sync.diff.window?.closed ||
         addon.data.sync.diff.window?.close();
       break;

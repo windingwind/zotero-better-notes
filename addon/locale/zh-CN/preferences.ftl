@@ -24,6 +24,11 @@ editor-useMagicKey =
     .label = 使用魔法键 "/" 显示命令面板
 editor-useMarkdownPaste = 
     .label = 使用增强的Markdown粘贴
+editor-pinTable-label = Pin table's
+editor-pinTableLeft =
+    .label = Fist column
+editor-pinTableTop =
+    .label = First row when scrolling
 
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)

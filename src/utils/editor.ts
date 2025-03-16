@@ -498,6 +498,9 @@ async function copyNoteLink(
 }
 
 function initEditorPlugins(editor: Zotero.EditorInstance) {
+  if (editor._disableUI) {
+    return;
+  }
   const previewType = getPref("editor.noteLinkPreviewType") as string;
   if (!["hover", "ctrl"].includes(previewType)) {
     return;
@@ -581,6 +584,10 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
         { wrapReflectors: true, cloneFunctions: true },
       ),
     ),
+  );
+  EditorAPI.updateTableSize(
+    getPref("editor.pinTableLeft"),
+    getPref("editor.pinTableTop"),
   );
 }
 
