@@ -11,39 +11,81 @@ function registerReaderAnnotationButton() {
     "renderSidebarAnnotationHeader",
     (event) => {
       const { doc, append, params, reader } = event;
+      // TEMP: If not many annotations, create the button immediately
+      if (reader._item.numAnnotations() < 1000) {
+        createNoteFromAnnotationButton(doc, reader, params.annotation, append);
+        return;
+      }
       const annotationData = params.annotation;
-      const button = ztoolkit.UI.createElement(doc, "div", {
-        classList: ["icon"],
-        properties: {
-          innerHTML: getAnnotationNoteButtonInnerHTML(false),
-          title: getAnnotationNoteButtonTitle(false),
-        },
-        listeners: [
-          {
-            type: "click",
-            listener: (e) => {
-              const button = e.currentTarget as HTMLElement;
-              createNoteFromAnnotation(
-                reader._item.libraryID,
-                annotationData.id,
-                (e as MouseEvent).shiftKey ? "window" : "builtin",
-              );
-              button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
-              e.preventDefault();
-            },
-          },
-        ],
-        enableElementRecord: false,
+      const placeholder = doc.createElement("img");
+      placeholder.src = "chrome://zotero/error.png";
+      placeholder.dataset.annotationId = annotationData.id;
+      placeholder.dataset.libraryId = reader._item.libraryID.toString();
+      // TEMP: Use error event to delay the button creation to avoid blocking the main thread
+      placeholder.addEventListener("error", (event) => {
+        const placeholder = event.currentTarget as HTMLElement;
+        placeholder.ownerGlobal?.requestIdleCallback(() => {
+          const annotationID = placeholder.dataset.annotationId;
+          const libraryID = parseInt(placeholder.dataset.libraryId || "");
+          const button = doc.createElement("div");
+          button.classList.add("icon");
+          button.innerHTML = getAnnotationNoteButtonInnerHTML(false);
+          button.title = getAnnotationNoteButtonTitle(false);
+          button.dataset.annotationId = annotationID;
+          button.dataset.libraryId = libraryID.toString();
+          button.addEventListener("click", (e) => {
+            const button = e.currentTarget as HTMLElement;
+            createNoteFromAnnotation(
+              reader._item.libraryID,
+              annotationID!,
+              (e as MouseEvent).shiftKey ? "window" : "builtin",
+            );
+            button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
+            e.preventDefault();
+          });
+          placeholder.replaceWith(button);
+          placeholder.ownerGlobal?.requestIdleCallback(() => {
+            updateAnnotationNoteButton(button, libraryID, annotationID!);
+          });
+        });
       });
-      updateAnnotationNoteButton(
-        button,
-        reader._item.libraryID,
-        annotationData.id,
-      );
-      append(button);
+      append(placeholder);
     },
     config.addonID,
   );
+}
+
+function createNoteFromAnnotationButton(
+  doc: Document,
+  reader: _ZoteroTypes.ReaderInstance,
+  annotationData: any,
+  append: (element: HTMLElement) => void,
+) {
+  const button = ztoolkit.UI.createElement(doc, "div", {
+    classList: ["icon"],
+    properties: {
+      innerHTML: getAnnotationNoteButtonInnerHTML(false),
+      title: getAnnotationNoteButtonTitle(false),
+    },
+    listeners: [
+      {
+        type: "click",
+        listener: (e) => {
+          const button = e.currentTarget as HTMLElement;
+          createNoteFromAnnotation(
+            reader._item.libraryID,
+            annotationData.id,
+            (e as MouseEvent).shiftKey ? "window" : "builtin",
+          );
+          button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
+          e.preventDefault();
+        },
+      },
+    ],
+    enableElementRecord: false,
+  });
+  updateAnnotationNoteButton(button, reader._item.libraryID, annotationData.id);
+  append(button);
 }
 
 function getAnnotationNoteButtonInnerHTML(hasNote: boolean) {

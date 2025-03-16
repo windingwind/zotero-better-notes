@@ -90,7 +90,7 @@ and:
 
 - Download the plugin (.xpi file) from below.
 
-  - [Latest Version: 2.2.6](https://github.com/windingwind/zotero-better-notes/releases/download/v2.2.6/better-notes-for-zotero.xpi)
+  - [Latest Version: 2.3.3-beta.2](https://github.com/windingwind/zotero-better-notes/releases/download/v2.3.3-beta.2/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
 
@@ -138,7 +138,7 @@ To open a note in a tab, double-click/press `Enter` on the item in the library, 
 
 #### Magic Key
 
-BN enhances the note editor with a _Magic Key_ command palette, which can be opened by typing `/` in the editor. You can type or use the arrow keys to navigate the commands, and press `Enter` to execute.
+BN enhances the note editor with a _Magic Key_ command palette, which can be opened by typing `/` in the editor or pressing `Ctrl/Cmd` + `/`. You can type or use the arrow keys to navigate the commands, and press `Enter` to execute.
 
 <div align=center><img src="https://github.com/user-attachments/assets/bdbe244e-c120-4d9b-aa28-5285a25a723a" width="800px"></img></div>
 

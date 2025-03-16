@@ -24,6 +24,11 @@ editor-useMagicKey =
     .label = Use magic key "/" to show command palette
 editor-useMarkdownPaste = 
     .label = Use enhanced markdown paste
+editor-pinTable-label = Pin table's
+editor-pinTableLeft =
+    .label = Fist column
+editor-pinTableTop =
+    .label = First row when scrolling
 
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)

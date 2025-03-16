@@ -7,8 +7,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "alwaysStrict": false,
-    "strict": true
+    "strict": true,
+    "types": ["zotero-types"]
   },
-  "include": ["src", "typings", "node_modules/zotero-types"],
+  "include": ["src", "typings"],
   "exclude": ["build", "addon", "test"]
 }

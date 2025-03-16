@@ -1,5 +1,8 @@
 {
+  "compilerOptions": {
+    "types": ["mocha", "chai", "zotero-types"]
+  },
   "extends": "../tsconfig.json",
-  "include": ["./**/*.ts", "typings", "../node_modules/zotero-types"],
+  "include": ["./**/*.ts", "typings"],
   "exclude": []
 }

@@ -14,6 +14,9 @@ import { getString } from "../../utils/locale";
 import { waitUtilAsync } from "../../utils/wait";
 
 export function initEditorPopup(editor: Zotero.EditorInstance) {
+  if (editor._disableUI) {
+    return;
+  }
   const ob = new (ztoolkit.getGlobal("MutationObserver"))((muts) => {
     for (const mut of muts) {
       ztoolkit.log(mut);
