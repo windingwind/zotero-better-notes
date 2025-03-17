@@ -177,13 +177,6 @@ async function note2latex(
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = note2rehype(noteStatus.content);
-  // Zotero.debug("====== origin node ======")
-  // visit(
-  //   rehype,
-  //   (node) => {
-  //     Zotero.debug(node);
-  //   },
-  // );
 
   await processN2LRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype as HRoot),
@@ -200,13 +193,7 @@ async function note2latex(
     false,
     NodeMode.direct,
   );
-  // Zotero.debug("====== after node ======")
-  // visit(
-  //   rehype,
-  //   (node) => {
-  //     Zotero.debug(node);
-  //   },
-  // );
+
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
     return "Parsing Error: Rehype2Remark";
@@ -977,10 +964,7 @@ function getN2MRehypeImageNodes(rehype: any) {
       node.type === "element" &&
       node.tagName === "img" &&
       node.properties?.dataAttachmentKey,
-    (node) => {
-      // Zotero.debug(node);
-      nodes.push(node);
-    },
+    (node) => nodes.push(node),
   );
   return new Array(...new Set(nodes));
 }
@@ -1689,19 +1673,19 @@ async function processN2LRehypeListNodes(nodes: string | any[]) {
         item_str.push(getTextFromNode(itemNode));
       }
     }
-    // Zotero.debug(item_str);
+
     const join_str = item_str.join("\n\\item");
-    let listTemplate;
+    let listStr;
     if (node.tagName === "ul") {
-      const ulTemplate = `\\begin{itemize}\n\\item ${join_str} \n\\end{itemize}`;
-      listTemplate = ulTemplate;
+      const ulStr = `\\begin{itemize}\n\\item ${join_str} \n\\end{itemize}`;
+      listStr = ulStr;
     } else if (node.tagName === "ol") {
-      const olTemplate = `\\begin{enumerate}\n\\item ${join_str} \n\\end{enumerate}`;
-      listTemplate = olTemplate;
+      const olStr = `\\begin{enumerate}\n\\item ${join_str} \n\\end{enumerate}`;
+      listStr = olStr;
     }
 
     node.type = "text";
-    node.value = listTemplate;
+    node.value = listStr;
   }
 }
 
@@ -1755,11 +1739,11 @@ function convertHtmlTableToLatex(tableNode: any): string {
     latexRows.push("\\hline");
   }
 
-  const latexTableTemplate = `\\begin{table}[htbp]\n\\centering\n\\caption{Caption}\n\\label{tab:simple_table}\n\\begin{tabular}{${columnFormat}}
+  const latexTableStr = `\\begin{table}[htbp]\n\\centering\n\\caption{Caption}\n\\label{tab:simple_table}\n\\begin{tabular}{${columnFormat}}
 ${latexRows.join("\n")}
 \\end{tabular}\n\\end{table}`;
 
-  return latexTableTemplate;
+  return latexTableStr;
 }
 
 function getTextFromNode(node: any): string {
@@ -1824,14 +1808,14 @@ async function processN2LRehypeImageNodes(
       filename = Zotero.File.normalizeToUnix(filename);
     }
 
-    const imgTemplate = `\\begin{figure}[!t]
+    const imgStr = `\\begin{figure}[!t]
 \\centering
 \\includegraphics[width=4.5in]{{./${filename}}}
 \\caption{}
 \\label{${imgKey}}
 \\end{figure}`;
     node.type = "text";
-    node.value = imgTemplate;
+    node.value = imgStr;
   }
 }
 
