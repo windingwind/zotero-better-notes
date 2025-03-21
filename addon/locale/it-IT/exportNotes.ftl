@@ -18,6 +18,8 @@ format-freemind =
     .label = Mappa Mentale
 format-note = 
     .label = Nota Zotero
+format-latex =
+    .label = LaTeX(.tex)
 
 links-keep =
     .label = Mantieni collegamenti alle note(zotero://note/)

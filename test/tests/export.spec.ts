@@ -3,7 +3,9 @@ import { getAddon } from "../utils/global";
 import { resetAll } from "../utils/status";
 import {
   getNoteContent,
+  getNoteLatexContent,
   getNoteMarkdown,
+  getNoteLatex,
   parseTemplateString,
 } from "../utils/note";
 import { getTempDirectory } from "../utils/io";
@@ -40,6 +42,28 @@ describe("Export", function () {
     //   .addText(parseTemplateString(content as string), "text/plain")
     //   .addText(parseTemplateString(expected), "text/html")
     //   .copy();
+
+    assert.equal(content, expected);
+
+    await Zotero.Items.erase(note.id);
+  });
+
+  it("api.$export.saveLatex", async function () {
+    const note = new Zotero.Item("note");
+    note.setNote(getNoteLatexContent());
+    await note.saveTx();
+
+    const tempDir = await getTempDirectory();
+
+    const filePath = PathUtils.join(tempDir, "test.tex");
+
+    await addon.api.$export.saveLatex(filePath, note.id);
+
+    debug("Note saved to", filePath);
+
+    const content = await Zotero.File.getContentsAsync(filePath);
+
+    const expected = getNoteLatex();
 
     assert.equal(content, expected);
 

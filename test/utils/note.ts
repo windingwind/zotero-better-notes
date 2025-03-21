@@ -456,6 +456,229 @@ This document contains a wide range of Markdown elements, including headers, lis
 `;
 }
 
+export function getNoteLatexContent() {
+  return `<div data-schema-version="9"><h1>LaTeX Test Document</h1>
+  <h2>Headers</h2>
+  <h1>H1 Header</h1>
+  <h2>H2 Header</h2>
+  <h3>H3 Header</h3>
+  <h4>H4 Header</h4>
+  <h5>H5 Header</h5>
+  <h6>H6 Header</h6>
+  <h2>Emphasis</h2>
+  <p><em>This text is italicized.</em> <em>This text is also italicized.</em></p>
+  <p><strong>This text is bold.</strong> <strong>This text is also bold.</strong></p>
+  <h2>Links</h2>
+  <p><a href="https://example.com" title="Title" rel="noopener noreferrer nofollow">Link with title</a> <a href="https://example.com" rel="noopener noreferrer nofollow">Link without title</a></p>
+  <h2>Images</h2>
+  <h2>Lists</h2>
+  <h3>Unordered List</h3>
+  <ul>
+  <li>
+  <p>Item 1</p>
+  </li>
+  <li>
+  <p>Item 2</p>
+  </li>
+  <li>
+  Item 3
+  </li>
+  </ul>
+  <h3>Ordered List</h3>
+  <ol>
+  <li>
+  <p>First item</p>
+  </li>
+  <li>
+  <p>Second item</p>
+  </li>
+  <li>
+  Third item
+  </li>
+  </ol>
+  <h2>Tables</h2>
+  <table>
+  <tbody>
+  <tr>
+  <th>
+  <p>Header 1</p>
+  </th>
+  <th>
+  <p>Header 2</p>
+  </th>
+  <th>
+  <p>Header 3</p>
+  </th>
+  </tr>
+  <tr>
+  <td>
+  <p>Row 1</p>
+  </td>
+  <td>
+  <p>Data 1.2</p>
+  </td>
+  <td>
+  <p>Data 1.3</p>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <p>Row 2</p>
+  </td>
+  <td>
+  <p>Data 2.2</p>
+  </td>
+  <td>
+  <p>Data 2.3</p>
+  </td>
+  </tr>
+  </tbody>
+  </table>
+  <h2>Math</h2>
+  <h3>Inline Math</h3>
+  <p>This is an inline math equation: <span class="math">$E = mc^2$</span>.</p>
+  <h3>Block Math</h3>
+  <p>Below is a block math equation:</p>
+  <pre class="math">$$\\int_a^b f(x) \\, dx = F(b) - F(a)$$</pre>
+  <h3>Complex Math</h3>
+  <p>Solve the quadratic equation:</p>
+  <pre class="math">$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$</pre>
+  <h2>Image</h2>
+  <p>IMAGE_PLACEHOLDER</p>
+  <h2>Citation</h2>
+  <p>CITATION_PLACEHOLDER</p>
+  <h2>Edge Cases</h2>
+  <h3>Long Text Wrapping</h3>
+  <p>This is a very long paragraph that does not have any line breaks and is intended to test how the LaTeX engine handles text wrapping when there are no explicit line breaks within the text.</p>
+  <h2>Conclusion</h2>
+  <p>This document contains a wide range of LaTeX elements, including headers, lists, tables, images, citations, links and math.</p>
+  </div>`;
+}
+
+export function getNoteLatex() {
+  return `\\section{LaTeX Test Document}
+\\subsection{Headers}
+ \\section{H1 Header}
+ \\subsection{H2 Header}
+ \\subsubsection{H3 Header}
+ \\textbf{H4 Header}
+ \\textbf{H5 Header}
+ \\textbf{H6 Header}
+ \\subsection{Emphasis}
+
+
+\\textit{This text is italicized.} \\textit{This text is also italicized.}
+
+\\textbf{This text is bold.} \\textbf{This text is also bold.}
+
+\\subsection{Links}
+
+
+\\href{https://example.com}{Link with title} \\href{https://example.com}{Link without title}
+
+\\subsection{Images}
+\\subsection{Lists}
+ \\subsubsection{Unordered List}
+ \\begin{itemize}
+\\item 
+  Item 1
+  
+\\item
+  Item 2
+  
+\\item
+  Item 3
+   
+\\end{itemize}\\subsubsection{Ordered List}
+ \\begin{enumerate}
+\\item 
+  First item
+  
+\\item
+  Second item
+  
+\\item
+  Third item
+   
+\\end{enumerate}\\subsection{Tables}
+ \\begin{table}[htbp]
+\\centering
+\\caption{Caption}
+\\label{tab:simple_table}
+\\begin{tabular}{|l|l|l|}
+\\hline
+
+  Header 1
+   & 
+  Header 2
+   & 
+  Header 3
+   \\\\
+\\hline
+
+  Row 1
+   & 
+  Data 1.2
+   & 
+  Data 1.3
+   \\\\
+\\hline
+
+  Row 2
+   & 
+  Data 2.2
+   & 
+  Data 2.3
+   \\\\
+\\hline
+\\end{tabular}
+\\end{table}\\subsection{Math}
+ \\subsubsection{Inline Math}
+
+
+This is an inline math equation: $E = mc^2$.
+
+\\subsubsection{Block Math}
+
+
+Below is a block math equation:
+
+$$
+\\int_a^b f(x) \\, dx = F(b) - F(a)
+$$
+
+\\subsubsection{Complex Math}
+
+
+Solve the quadratic equation:
+
+$$
+x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+$$
+
+\\subsection{Image}
+
+
+IMAGE_PLACEHOLDER
+
+\\subsection{Citation}
+
+
+CITATION_PLACEHOLDER
+
+\\subsection{Edge Cases}
+\\subsubsection{Long Text Wrapping}
+
+
+This is a very long paragraph that does not have any line breaks and is intended to test how the LaTeX engine handles text wrapping when there are no explicit line breaks within the text.
+
+\\subsection{Conclusion}
+
+
+This document contains a wide range of LaTeX elements, including headers, lists, tables, images, citations, links and math.
+`;
+}
+
 export function parseTemplateString(input: string): string {
   return input
     .replace(/\\/g, "\\\\") // Escape backslashes

@@ -18,6 +18,7 @@ let io: {
   exportDocx: boolean;
   exportPDF: boolean;
   exportFreeMind: boolean;
+  exportLatex: boolean;
 };
 
 window.onload = async function () {
@@ -70,7 +71,9 @@ function init() {
 
 function restore() {
   let format = getPref("export.format") as string;
-  if (!["markdown", "msword", "pdf", "freemind", "note"].includes(format)) {
+  if (
+    !["markdown", "msword", "pdf", "freemind", "note", "latex"].includes(format)
+  ) {
     format = "markdown";
   }
   (document.querySelector("#format") as XULMenuListElement).value = format;
@@ -164,6 +167,7 @@ function doAccept() {
   io.exportPDF = format === "pdf";
   io.exportFreeMind = format === "freemind";
   io.exportNote = format === "note";
+  io.exportLatex = format === "latex";
 
   // Markdown options
   io.autoMDFileName = (
