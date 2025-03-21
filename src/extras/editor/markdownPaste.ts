@@ -114,6 +114,20 @@ function getMarkdown(clipboardData: DataTransfer) {
     return clipboardData.getData("text/x-markdown");
   }
 
+  const html = clipboardData.getData("text/html");
+  if (html) {
+    // https://github.com/windingwind/zotero-better-notes/issues/1342
+    if (
+      // From ProseMirror
+      html.includes("data-pm-slice") ||
+      // From Zotero annotations or citations
+      html.includes("data-annotation") ||
+      html.includes("data-citation")
+    ) {
+      return false;
+    }
+  }
+
   // Match markdown patterns
   if (clipboardData.types.includes("text/plain")) {
     const text = clipboardData.getData("text/plain");
