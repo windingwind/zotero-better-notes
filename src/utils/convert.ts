@@ -1132,6 +1132,7 @@ async function processN2MRehypeImageNodes(
   }
   for (const node of nodes) {
     const imgKey = node.properties.dataAttachmentKey;
+    const width = node.properties.width;
 
     const attachmentItem = (await Zotero.Items.getByLibraryAndKeyAsync(
       libraryID,
@@ -1177,6 +1178,9 @@ async function processN2MRehypeImageNodes(
       // const newNode = h("zimage", [newChild]);
       // replace(node, newNode);
       node.properties.alt = toHtml(newChild);
+      if (width) {
+        node.properties.alt = `${node.properties.alt} | ${width}`;
+      }
     }
   }
 }
@@ -1241,16 +1245,27 @@ function processM2NRehypeMetaImageNodes(nodes: string | any[]) {
   }
 
   for (const node of nodes) {
-    if (/zimage/.test(node.properties.alt)) {
+    const alt = node.properties.alt as string;
+    if (/zimage/.test(alt)) {
+      // If alt.split("|")[last] can be parsed to number, it's width
+      const width = Number(alt.split("|").pop() || "");
+      let nodeRaw = alt;
+      if (width > 0) {
+        nodeRaw = alt.split("|").slice(0, -1).join("|");
+      }
+
       const newNode = unified()
         .use(remarkGfm)
         .use(remarkMath)
         .use(rehypeParse, { fragment: true })
-        .parse(node.properties.alt).children[0] as any;
+        .parse(nodeRaw).children[0] as any;
       if (!newNode) {
         continue;
       }
       newNode.properties.src = node.properties.src;
+      if (width > 0) {
+        newNode.properties.width = width;
+      }
       replace(node, newNode);
     }
   }
