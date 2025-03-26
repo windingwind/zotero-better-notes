@@ -88,7 +88,7 @@ async function note2md(
   );
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
-    return "Parsing Error: Rehype2Remark";
+    throw new Error("Parsing Error: Rehype2Remark");
   }
   let md = remark2md(remark as MRoot);
   try {
@@ -196,7 +196,7 @@ async function note2latex(
 
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
-    return "Parsing Error: Rehype2Remark";
+    throw new Error("Parsing Error: Rehype2Remark");
   }
   let latex = remark2latex(remark as MRoot);
   try {
@@ -299,7 +299,7 @@ async function html2md(html: string) {
   const rehype = note2rehype(html);
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
-    return "Parsing Error: HTML2MD";
+    throw new Error("Parsing Error: HTML2MD");
   }
   const md = remark2md(remark as MRoot);
   return md;
