@@ -36,6 +36,7 @@ import {
 } from "./link";
 import { parseAnnotationHTML } from "./annotation";
 import { getPref } from "./prefs";
+import { showHint, showHintWithLink } from "./hint";
 
 export {
   md2note,
@@ -49,6 +50,7 @@ export {
   html2md,
   annotations2html,
   note2html,
+  note2latex,
 };
 
 async function note2md(
@@ -86,7 +88,7 @@ async function note2md(
   );
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
-    return "Parsing Error: Rehype2Remark";
+    throw new Error("Parsing Error: Rehype2Remark");
   }
   let md = remark2md(remark as MRoot);
   try {
@@ -161,6 +163,54 @@ async function md2note(
   );
   const noteContent = rehype2note(rehype as HRoot);
   return noteContent;
+}
+
+async function note2latex(
+  noteItem: Zotero.Item,
+  dir: string,
+  options: {
+    keepNoteLink?: boolean;
+    withYAMLHeader?: boolean;
+    cachedYAMLHeader?: Record<string, any>;
+    skipSavingImages?: boolean;
+  } = {},
+) {
+  const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
+  const rehype = note2rehype(noteStatus.content);
+
+  await processN2LRehypeCitationNodes(
+    getN2MRehypeCitationNodes(rehype as HRoot),
+  );
+  await processN2LRehypeHeaderNodes(getN2LRehypeHeaderNodes(rehype as HRoot));
+  await processN2LRehypeLinkNodes(getN2LRehypeLinkNodes(rehype as HRoot));
+  await processN2LRehypeListNodes(getN2LRehypeListNodes(rehype as HRoot));
+  await processN2LRehypeTableNodes(getN2LRehypeTableNodes(rehype as HRoot));
+  await processN2LRehypeImageNodes(
+    getN2MRehypeImageNodes(rehype),
+    noteItem.libraryID,
+    jointPath(dir, getPref("syncAttachmentFolder") as string),
+    options.skipSavingImages,
+    false,
+    NodeMode.direct,
+  );
+
+  const remark = await rehype2remark(rehype as HRoot);
+  if (!remark) {
+    throw new Error("Parsing Error: Rehype2Remark");
+  }
+  let latex = remark2latex(remark as MRoot);
+  try {
+    latex =
+      (await addon.api.template.runTemplate(
+        "[ExportLatexFileContent]",
+        "noteItem, latexContent",
+        [noteItem, latex],
+      )) ?? latex;
+  } catch (e) {
+    ztoolkit.log(e);
+  }
+
+  return latex;
 }
 
 async function note2noteDiff(noteItem: Zotero.Item) {
@@ -249,7 +299,7 @@ async function html2md(html: string) {
   const rehype = note2rehype(html);
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
-    return "Parsing Error: HTML2MD";
+    throw new Error("Parsing Error: HTML2MD");
   }
   const md = remark2md(remark as MRoot);
   return md;
@@ -588,6 +638,22 @@ function remark2md(remark: MRoot) {
   );
 }
 
+function remark2latex(remark: MRoot) {
+  return String(
+    unified()
+      .use(remarkGfm)
+      .use(remarkMath)
+      .use(remarkStringify, {
+        handlers: {
+          text: (node: { value: string }) => {
+            return node.value;
+          },
+        },
+      } as any)
+      .stringify(remark as any),
+  );
+}
+
 function md2remark(str: string) {
   // Parse Obsidian-style image ![[xxx.png]]
   // Encode spaces in link, otherwise it cannot be parsed to image node
@@ -869,7 +935,9 @@ function getN2MRehypeCitationNodes(rehype: HRoot) {
     (node: any) =>
       node.type === "element" &&
       node.properties?.className?.includes("citation"),
-    (node) => nodes.push(node),
+    (node) => {
+      nodes.push(node);
+    },
   );
   return new Array(...new Set(nodes));
 }
@@ -1389,6 +1457,380 @@ async function processM2NRehypeImageNodes(
     }
     delete node.properties.src;
     node.properties.ztype && delete node.properties.ztype;
+  }
+}
+
+function getN2LRehypeHeaderNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) =>
+      node.type === "element" &&
+      ["h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "span"].includes(
+        node.tagName,
+      ),
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeLinkNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) => node.type === "element" && node.tagName === "a",
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeListNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) =>
+      node.type === "element" &&
+      (node.tagName === "ul" || node.tagName === "ol"),
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+function getN2LRehypeTableNodes(rehype: HRoot) {
+  const nodes: any[] | null | undefined = [];
+  visit(
+    rehype,
+    (node: any) => node.type === "element" && node.tagName === "table",
+    (node) => {
+      nodes.push(node);
+    },
+  );
+  return new Array(...new Set(nodes));
+}
+
+async function processN2LRehypeCitationNodes(nodes: string | any[]) {
+  if (!nodes.length) {
+    return;
+  }
+  const items: Zotero.Item[] = [];
+  const citationAllKeys: string[] = [];
+  for (const node of nodes) {
+    let citation;
+    try {
+      citation = JSON.parse(decodeURIComponent(node.properties.dataCitation));
+    } catch (e) {
+      Zotero.debug("citation parse error: " + e);
+      continue;
+    }
+    if (!citation?.citationItems?.length) {
+      Zotero.debug(citation?.citationItems);
+      continue;
+    }
+
+    const citationKeys: string[] = [];
+    for (const citationItem of citation.citationItems) {
+      const uri = citationItem.uris[0];
+      if (typeof uri === "string") {
+        const uriParts = uri.split("/");
+        const key = uriParts[uriParts.length - 1];
+        const item_ = Zotero.Items.getByLibraryAndKey(
+          Zotero.Libraries.userLibraryID,
+          key,
+        );
+        if (!item_) {
+          Zotero.debug("[Bid Export] Item not found, key = " + key);
+          continue;
+        }
+        items.push(item_);
+        const citationKey = item_.getField("citationKey");
+        if (citationKey === "") {
+          Zotero.debug("[Bid Export] Detect empty citationKey.");
+          continue;
+        }
+        citationKeys.push(citationKey);
+      }
+    }
+    citationAllKeys.push(...citationKeys);
+
+    node.type = "text";
+    node.value = "\\cite{" + citationKeys.join(",") + "}";
+  }
+
+  // save the citation as a .bib file
+  await saveToBibFile(citationAllKeys);
+}
+
+async function saveToBibFile(citationAllKeys: string[]) {
+  const BBT = "Better BibTex for Zotero";
+  const installedExtensions = await Zotero.getInstalledExtensions();
+  const installedAndEnabled = installedExtensions.some(
+    (item) => item.includes(BBT) && !item.includes("disabled"),
+  );
+  if (!installedAndEnabled) {
+    Zotero.debug("Better BibTex for Zotero is not installed.");
+    showHint(
+      "Export Error: Better BibTex for Zotero is needed for exporting the .bib file. Please install and enable it first.",
+    );
+    return;
+  }
+
+  const uniqueCitationKeys = Array.from(new Set(citationAllKeys));
+  const res = await exportToBibtex(uniqueCitationKeys);
+  const raw = await new ztoolkit.FilePicker(
+    `${Zotero.getString("fileInterface.export")} Bibtex File`,
+    "save",
+    [["Bibtex File(*.bib)", "*.bib"]],
+    `notegeneration.bib`,
+  ).open();
+  if (!raw) {
+    Zotero.debug("[Bib Export] Bib file export canceled.");
+    return;
+  }
+  const filename = formatPath(raw, ".bib");
+  await Zotero.File.putContentsAsync(filename, res);
+  showHintWithLink(
+    `Bibliographic Saved to ${filename}`,
+    "Show in Folder",
+    (ev) => {
+      Zotero.File.reveal(filename);
+    },
+  );
+}
+
+function exportToBibtex(citationKeys: string[]): Promise<string> {
+  const data = {
+    jsonrpc: "2.0",
+    method: "item.export",
+    params: [citationKeys, "bibtex"],
+  };
+
+  const port = Services.prefs.getIntPref("extensions.zotero.httpServer.port");
+
+  return fetch(`http://localhost:${port}/better-bibtex/json-rpc`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        Zotero.debug("[Bib Export] Network response was not ok");
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((result) => {
+      Zotero.debug("[Bib Export] Response data: " + JSON.stringify(result));
+      return "result" in result ? (result.result as string) : "";
+    })
+    .catch((error) => {
+      Zotero.debug("[Bib Export] Fetch error: " + error.message);
+      return "";
+    });
+}
+
+async function processN2LRehypeHeaderNodes(nodes: string | any[]) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    let hx = "";
+    if (node.tagName === "h1") {
+      hx = "\\section{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "h2") {
+      hx = "\\subsection{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "h3") {
+      hx = "\\subsubsection{" + getTextFromNode(node) + "}\n";
+    } else if (["h4", "h5", "h6"].includes(node.tagName)) {
+      hx = "\\textbf{" + getTextFromNode(node) + "}\n";
+    } else if (node.tagName === "strong") {
+      hx = "\\textbf{" + getTextFromNode(node) + "}";
+    } else if (node.tagName === "em") {
+      hx = "\\textit{" + getTextFromNode(node) + "}";
+    } else if (node.tagName === "span") {
+      hx = getTextFromNode(node);
+    } else {
+      hx = getTextFromNode(node);
+    }
+
+    node.type = "text";
+    node.value = hx;
+  }
+}
+
+async function processN2LRehypeLinkNodes(nodes: string | any[]) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    node.type = "text";
+    node.value = `\\href{${node.properties.href}}{${getTextFromNode(node)}}`;
+  }
+}
+
+async function processN2LRehypeListNodes(nodes: string | any[]) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    const item_str: string[] = [];
+    for (const itemKey in node.children) {
+      const itemNode = node.children[itemKey];
+      if (itemNode.type === "element" && itemNode.tagName === "li") {
+        item_str.push(getTextFromNode(itemNode));
+      }
+    }
+
+    const join_str = item_str.join("\n\\item");
+    let listStr;
+    if (node.tagName === "ul") {
+      const ulStr = `\\begin{itemize}\n\\item ${join_str} \n\\end{itemize}`;
+      listStr = ulStr;
+    } else if (node.tagName === "ol") {
+      const olStr = `\\begin{enumerate}\n\\item ${join_str} \n\\end{enumerate}`;
+      listStr = olStr;
+    }
+
+    node.type = "text";
+    node.value = listStr;
+  }
+}
+
+async function processN2LRehypeTableNodes(nodes: any[]) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    if (node.type === "element" && node.tagName === "table") {
+      const latexTable = convertHtmlTableToLatex(node.children[1]);
+      node.type = "text";
+      node.value = latexTable;
+    }
+  }
+}
+
+function convertHtmlTableToLatex(tableNode: any): string {
+  let colCount = 0;
+  let rowCount = 0;
+  const tableData: string[][] = [];
+
+  for (const child of tableNode.children) {
+    if (child.type === "element" && child.tagName === "tr") {
+      rowCount++;
+      const rowData: string[] = [];
+      for (const td of child.children) {
+        if (
+          td.type === "element" &&
+          (td.tagName === "td" || td.tagName === "th")
+        ) {
+          colCount = Math.max(colCount, rowData.length + 1);
+          rowData.push(getTextFromNode(td));
+        }
+      }
+      tableData.push(rowData);
+    }
+  }
+
+  let columnFormat = "|";
+  for (let i = 0; i < colCount; i++) {
+    columnFormat += "l|"; // Assuming left alignment for all columns
+  }
+
+  const latexRows: string[] = [];
+  latexRows.push("\\hline");
+  for (const row of tableData) {
+    const rowContent = row
+      .map((cell) => cell.replace(/_/g, "\\_").replace(/&/g, "\\&"))
+      .join(" & ");
+    latexRows.push(rowContent + " \\\\");
+    latexRows.push("\\hline");
+  }
+
+  const latexTableStr = `\\begin{table}[htbp]\n\\centering\n\\caption{Caption}\n\\label{tab:simple_table}\n\\begin{tabular}{${columnFormat}}
+${latexRows.join("\n")}
+\\end{tabular}\n\\end{table}`;
+
+  return latexTableStr;
+}
+
+function getTextFromNode(node: any): string {
+  let text = "";
+  for (const child of node.children) {
+    if (child.type === "text") {
+      text += child.value === "\n " ? "" : child.value;
+    } else if (child.children) {
+      text += getTextFromNode(child);
+    }
+  }
+  return text;
+}
+
+async function processN2LRehypeImageNodes(
+  nodes: string | any[],
+  libraryID: number,
+  dir: string,
+  skipSavingImages: boolean = false,
+  absolutePath: boolean = false,
+  mode: NodeMode = NodeMode.default,
+) {
+  if (!nodes.length) {
+    return;
+  }
+  for (const node of nodes) {
+    const imgKey = node.properties.dataAttachmentKey;
+    const attachmentItem = (await Zotero.Items.getByLibraryAndKeyAsync(
+      libraryID,
+      imgKey,
+    )) as Zotero.Item;
+    if (!attachmentItem) {
+      continue;
+    }
+
+    const oldFile = String(await attachmentItem.getFilePathAsync());
+    const ext = oldFile.split(".").pop();
+    const newAbsPath = formatPath(`${dir}/${imgKey}.${ext}`);
+    let newFile = oldFile;
+    try {
+      // Don't overwrite
+      if (skipSavingImages || (await fileExists(newAbsPath))) {
+        newFile = newAbsPath;
+      } else {
+        newFile = (await Zotero.File.copyToUnique(oldFile, newAbsPath)).path;
+      }
+      newFile = formatPath(
+        absolutePath
+          ? newFile
+          : jointPath(
+              getPref("syncAttachmentFolder") as string,
+              PathUtils.split(newFile).pop() || "",
+            ),
+      );
+    } catch (e) {
+      ztoolkit.log(e);
+    }
+
+    let filename = newFile ? newFile : oldFile;
+    // If on Windows, convert path to Unix style
+    if (Zotero.isWin) {
+      filename = Zotero.File.normalizeToUnix(filename);
+    }
+
+    const imgStr = `\\begin{figure}[!t]
+\\centering
+\\includegraphics[width=4.5in]{{./${filename}}}
+\\caption{}
+\\label{${imgKey}}
+\\end{figure}`;
+    node.type = "text";
+    node.value = imgStr;
   }
 }
 

@@ -23,9 +23,10 @@ templateEditor-templateDisplayName =
     .QuickInsertV3 = Quick Insert (Link)
     .QuickImportV2 = Quick Import (Embed)
     .QuickNoteV5 = Quick Note (From Annotation)
-    .ExportMDFileNameV2 = Export MD File Name
+    .ExportMDFileNameV2 = Export File Name
     .ExportMDFileHeaderV2 = Export MD File Header
     .ExportMDFileContent = Export MD File Content
+    .ExportLatexFileContent = Export Latex File Content
 
 templateEditor-templateDisplayType =
     .system = Builtin

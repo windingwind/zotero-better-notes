@@ -8,6 +8,7 @@ const SYSTEM_TEMPLATE_NAMES = [
   "[ExportMDFileNameV2]",
   "[ExportMDFileHeaderV2]",
   "[ExportMDFileContent]",
+  "[ExportLatexFileContent]",
 ];
 
 // Non-system templates are removed from default templates
@@ -62,6 +63,12 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     name: "[ExportMDFileContent]",
     text: `\${{
   return mdContent;
+}}$`,
+  },
+  {
+    name: "[ExportLatexFileContent]",
+    text: `\${{
+  return latexContent;
 }}$`,
   },
 ];
