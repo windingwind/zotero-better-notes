@@ -23,9 +23,10 @@ templateEditor-templateDisplayName =
     .QuickInsertV3 = Quick Insert (插入链接)
     .QuickImportV2 = Quick Import (嵌入链接笔记)
     .QuickNoteV5 = Quick Note (从批注创建笔记)
-    .ExportMDFileNameV2 = Export MD File Name (导出MD文件名)
+    .ExportMDFileNameV2 = Export File Name (导出文件名)
     .ExportMDFileHeaderV2 = Export MD File Header (导出MD头)
     .ExportMDFileContent = Export MD File Content (导出MD正文)
+    .ExportLatexFileContent = Export Latex File Content (导出Latex正文)
 
 templateEditor-templateDisplayType =
     .system = 内置

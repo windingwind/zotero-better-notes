@@ -48,6 +48,7 @@ body:
         - ExportMDFileName
         - ExportMDFileHeader
         - ExportMDFileContent
+        - ExportLatexFileContent
     validations:
       required: true
   - type: textarea

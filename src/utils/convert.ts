@@ -202,8 +202,8 @@ async function note2latex(
   try {
     latex =
       (await addon.api.template.runTemplate(
-        "[ExportMDFileContent]",
-        "noteItem, mdContent",
+        "[ExportLatexFileContent]",
+        "noteItem, latexContent",
         [noteItem, latex],
       )) ?? latex;
   } catch (e) {

@@ -169,3 +169,7 @@ snippet-exportMDFileContentNoteItem = 目标笔记
     .title = { -variable-type }：{ -variable-note }。要导出的笔记条目
 snippet-exportMDFileContentMDContent = markdown 内容
     .title = { -variable-type }：{ -variable-string }。要导出的 markdown 内容
+snippet-exportLatexFileContentNoteItem = target note
+    .title = { -variable-type }: { -variable-note }. The note item to be exported
+snippet-exportLatexFileContentLatexContent = latex content
+    .title = { -variable-type }: { -variable-string }. The latex content to be exported

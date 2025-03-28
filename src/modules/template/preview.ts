@@ -74,6 +74,19 @@ async function renderTemplatePreview(
           { withYAMLHeader: false, skipSavingImages: true, keepNoteLink: true },
         )}</pre>`;
       }
+    } else if (templateName.includes("ExportLatexFileContent")) {
+      // noteItem
+      const data = inputItems?.find((item) => item.isNote());
+      if (!data) {
+        html = messages.noNoteItem;
+      } else {
+        const latexContent = await addon.api.convert.note2latex(
+          data,
+          Zotero.getTempDirectory().path,
+          { withYAMLHeader: false, skipSavingImages: true, keepNoteLink: true },
+        );
+        html = `<pre>${latexContent}</pre>`;
+      }
     } else if (templateName.includes("QuickInsert")) {
       // link, linkText, subNoteItem, noteItem
       const data = inputItems?.find((item) => item.isNote());

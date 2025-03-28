@@ -1034,4 +1034,16 @@ if (doi) {
       type: "variable",
     },
   ],
+  ExportLatexFileContent: [
+    {
+      name: "exportLatexFileContentNoteItem",
+      code: "noteItem",
+      type: "variable",
+    },
+    {
+      name: "exportLatexFileContentLatexContent",
+      code: "latexContent",
+      type: "variable",
+    },
+  ],
 };
