@@ -215,8 +215,12 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
     forceTakeover?: boolean;
   } = {},
 ): Promise<OpenNoteReturns[K]> {
+  const win = Zotero.getMainWindow();
+  if (!win) {
+    return;
+  }
   if (!options.forceTakeover && !getPref("openNote.takeover")) {
-    ZoteroPane.openNoteWindow(noteId);
+    win.ZoteroPane.openNoteWindow(noteId);
     return;
   }
   let { workspaceUID } = options;
@@ -232,7 +236,7 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
       mode = "preview" as K;
       workspaceUID = (
         currentWindow?.document.querySelector(
-          `#${Zotero_Tabs.selectedID} bn-workspace`,
+          `#${win.Zotero_Tabs.selectedID} bn-workspace`,
         ) as HTMLElement | undefined
       )?.dataset.uid;
     } else if (currentWindow?.document.querySelector("body.workspace-window")) {
@@ -262,7 +266,7 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
       return (await openWorkspaceWindow(noteItem, options)) as any;
       break;
     case "builtin":
-      ZoteroPane.openNoteWindow(noteId);
+      win.ZoteroPane.openNoteWindow(noteId);
       break;
     default:
       break;

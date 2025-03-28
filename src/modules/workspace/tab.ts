@@ -11,6 +11,7 @@ export async function openWorkspaceTab(
 ) {
   const { select, lineIndex, sectionName } = options;
   if (!item) return;
+  const Zotero_Tabs = Zotero.getMainWindow().Zotero_Tabs;
   const currentTab = Zotero_Tabs._tabs.find(
     (tab) => tab.data?.itemID == item.id,
   );
@@ -74,6 +75,7 @@ export async function restoreNoteTabs() {
 }
 
 export function onUpdateNoteTabsTitle(noteItems: Zotero.Item[]) {
+  const Zotero_Tabs = Zotero.getMainWindow().Zotero_Tabs;
   const ids = noteItems.map((item) => item.id);
   for (const tab of Zotero_Tabs._tabs) {
     if (tab.type !== TAB_TYPE) continue;
@@ -94,9 +96,9 @@ function scrollTabEditorTo(
     sectionName?: string;
   } = {},
 ) {
-  const tab = ztoolkit
-    .getGlobal("Zotero_Tabs")
-    ._tabs.find((tab) => tab.data?.itemID == item.id);
+  const tab = Zotero.getMainWindow().Zotero_Tabs._tabs.find(
+    (tab) => tab.data?.itemID == item.id,
+  );
   if (!tab || tab.type !== TAB_TYPE) return;
   const workspace = Zotero.getMainWindow().document.querySelector(
     `#${tab.id} > bn-workspace`,

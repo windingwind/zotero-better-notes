@@ -105,7 +105,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
       id: makeId("settings-showInLibrary"),
       text: getString("editor.toolbar.settings.showInLibrary"),
       callback: (e) => {
-        ZoteroPane.selectItems([e.editor._item.id]);
+        Zotero.getMainWindow().ZoteroPane.selectItems([e.editor._item.id]);
       },
     },
   ];
@@ -194,7 +194,9 @@ async function getMenuData(editor: Zotero.EditorInstance) {
           id: makeId("settings-openParent"),
           text: getString("editor.toolbar.settings.openParent"),
           callback: (e) => {
-            ZoteroPane.viewAttachment([parentAttachment.id]);
+            Zotero.getMainWindow().ZoteroPane.viewAttachment([
+              parentAttachment.id,
+            ]);
             Zotero.Notifier.trigger("open", "file", parentAttachment.id);
           },
         },

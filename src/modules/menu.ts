@@ -1,7 +1,7 @@
 import { config } from "../../package.json";
 import { getString } from "../utils/locale";
 
-export function registerMenus(win: Window) {
+export function registerMenus(win: _ZoteroTypes.MainWindow) {
   // menuTools
   ztoolkit.Menu.register("menuTools", { tag: "menuseparator" });
   ztoolkit.Menu.register("menuTools", {

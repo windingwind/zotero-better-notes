@@ -83,7 +83,7 @@ async function insertTemplateCallback(name: string) {
 
 async function createTemplateNoteCallback(name: string) {
   addon.data.template.picker.data.librarySelectedIds =
-    ZoteroPane.getSelectedItems(true);
+    Zotero.getMainWindow().ZoteroPane.getSelectedItems(true);
   switch (addon.data.template.picker.data.noteType) {
     case "standalone": {
       const noteItem = await addon.hooks.onCreateNote();
@@ -110,7 +110,7 @@ async function createTemplateNoteCallback(name: string) {
 
 async function exportTemplateCallback(name: string) {
   addon.data.template.picker.data.librarySelectedIds =
-    ZoteroPane.getSelectedItems(true);
+    Zotero.getMainWindow().ZoteroPane.getSelectedItems(true);
   // Create temp note
   const noteItem = new Zotero.Item("note");
   noteItem.libraryID = Zotero.Libraries.userLibraryID;

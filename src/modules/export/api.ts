@@ -25,6 +25,7 @@ async function exportNotes(
     exportFreeMind?: boolean;
   },
 ) {
+  const ZoteroPane = Zotero.getMainWindow().ZoteroPane;
   let inputNoteItems = noteItems;
   // If embedLink or exportNote, create a new note item
   if ((options.embedLink || options.exportNote) && !options.setAutoSync) {

@@ -62,7 +62,7 @@ function openNoteTabMenu(
         if (item && item.parentItemID) {
           itemID = item.parentItemID;
         }
-        ZoteroPane_Local.selectItem(itemID);
+        Zotero.getMainWindow().ZoteroPane.selectItem(itemID);
       }
     });
     popup.appendChild(menuitem);

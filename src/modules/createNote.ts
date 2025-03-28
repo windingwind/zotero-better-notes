@@ -4,12 +4,15 @@ import { formatPath } from "../utils/str";
 export { createNoteFromTemplate, createNoteFromMD, createNote };
 
 function getLibraryParentId() {
-  return ZoteroPane.getSelectedItems().filter((item) => item.isRegularItem())[0]
-    ?.id;
+  return Zotero.getMainWindow()
+    .ZoteroPane.getSelectedItems()
+    .filter((item) => item.isRegularItem())[0]?.id;
 }
 
 function getReaderParentId() {
-  const currentReader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
+  const currentReader = Zotero.Reader.getByTabID(
+    Zotero.getMainWindow().Zotero_Tabs.selectedID,
+  );
   const parentItemId = Zotero.Items.get(
     currentReader?.itemID || -1,
   ).parentItemID;

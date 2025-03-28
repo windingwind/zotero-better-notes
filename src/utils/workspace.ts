@@ -21,9 +21,9 @@ function getWorkspaceByUID(uid: string): Workspace | undefined {
 function getWorkspaceByTabID(tabID?: string): Workspace | undefined {
   const win = Zotero.getMainWindow();
   if (!tabID) {
-    const _Zotero_Tabs = win.Zotero_Tabs as typeof Zotero_Tabs;
+    const _Zotero_Tabs = win.Zotero_Tabs;
     if (_Zotero_Tabs.selectedType !== "note") return;
-    tabID = Zotero_Tabs.selectedID;
+    tabID = _Zotero_Tabs.selectedID;
   }
   const workspace = Zotero.getMainWindow().document.querySelector(
     `#${tabID} > bn-workspace`,

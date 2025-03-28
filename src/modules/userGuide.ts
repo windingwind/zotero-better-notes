@@ -6,7 +6,7 @@ export { showUserGuide };
 
 const LATEST_TOUR_VERSION = 1;
 
-async function showUserGuide(win: Window, force = false) {
+async function showUserGuide(win: _ZoteroTypes.MainWindow, force = false) {
   const doc = win.document;
   if (!force && getPref("latestTourVersion") == LATEST_TOUR_VERSION) return;
   setPref("latestTourVersion", LATEST_TOUR_VERSION);
@@ -77,9 +77,10 @@ You can find more information in the following links:
       showButtons: ["prev", "next"],
       showProgress: true,
       onBeforeRender: async () => {
+        const Zotero_Tabs = Zotero.getMainWindow().Zotero_Tabs;
         Zotero_Tabs.select("zotero-pane");
-        // @ts-ignore
-        ZoteroPane.collectionsView.selectLibrary(1);
+        const collectionsView = win.ZoteroPane.collectionsView;
+        collectionsView && collectionsView.selectLibrary(1);
       },
     })
     .addStep({
@@ -91,7 +92,7 @@ You can find more information in the following links:
       onBeforeRender: async ({ state, config }) => {
         noteItem = (await Zotero.Items.getAll(1)).find((item) => item.isNote());
         if (noteItem) {
-          await ZoteroPane.selectItem(noteItem.id);
+          await win.ZoteroPane.selectItem(noteItem.id);
           config.description = getString("userGuide-createNoteFound-desc");
         }
       },

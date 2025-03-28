@@ -45,8 +45,8 @@ async function showHintWithLink(
 function showRestartHint() {
   const ps = Services.prompt;
   const buttonFlags =
-    ps.BUTTON_POS_0 * ps.BUTTON_TITLE_IS_STRING +
-    ps.BUTTON_POS_1 * ps.BUTTON_TITLE_IS_STRING;
+    ps.BUTTON_POS_0! * ps.BUTTON_TITLE_IS_STRING! +
+    ps.BUTTON_POS_1! * ps.BUTTON_TITLE_IS_STRING!;
   const index = ps.confirmEx(
     // @ts-ignore
     null,

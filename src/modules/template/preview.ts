@@ -10,7 +10,7 @@ async function renderTemplatePreview(
 ): Promise<string> {
   let html: string = generateWarning("Preview not available");
   if (!inputItems) {
-    inputItems = ZoteroPane.getSelectedItems();
+    inputItems = Zotero.getMainWindow().ZoteroPane.getSelectedItems();
   }
   try {
     if (templateName.toLowerCase().startsWith("[text]")) {

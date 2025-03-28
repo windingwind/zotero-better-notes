@@ -5,8 +5,10 @@ export function patchExportItems(win: _ZoteroTypes.MainWindow) {
   const Zotero_File_Interface = win.Zotero_File_Interface;
   new PatchHelper().setData({
     target: Zotero_File_Interface,
-    funcSign: "exportItems" as any,
+    // @ts-ignore
+    funcSign: "exportItems",
     patcher: (origin) =>
+      // @ts-ignore
       function () {
         if (!getPref("exportNotes.takeover")) {
           // @ts-ignore
