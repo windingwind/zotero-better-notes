@@ -22,7 +22,7 @@ editor-noteLinkPreview-disable =
     .label = 从不
 editor-useMagicKey =
     .label = 使用魔法键 "/" 显示命令面板
-editor-defaultMagicKey = 
+editor-useMagicKeyShortcut = 
     .label = 使用 { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl

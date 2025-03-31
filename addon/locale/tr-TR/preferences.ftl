@@ -22,7 +22,7 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey =
     .label = Komut panelini göstermek için sihirli tuş "/" kullan
-editor-defaultMagicKey = 
+editor-useMagicKeyShortcut = 
     .label = Komut panelini göstermek için { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl

@@ -22,7 +22,7 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey = 
     .label = Usa il tasto magico "/" per mostrare il pannello dei comandi
-editor-defaultMagicKey = 
+editor-useMagicKeyShortcut = 
     .label = Usa il tasto { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl

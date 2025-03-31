@@ -22,7 +22,7 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey =
     .label = Использовать магическую клавишу "/" для отображения панели команд
-editor-defaultMagicKey = 
+editor-useMagicKeyShortcut = 
     .label = Использовать клавишу { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl

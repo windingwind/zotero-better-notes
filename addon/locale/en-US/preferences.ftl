@@ -22,7 +22,7 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey = 
     .label = Use magic key "/" to show command palette
-editor-defaultMagicKey = 
+editor-useMagicKeyShortcut = 
     .label = Use { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl
