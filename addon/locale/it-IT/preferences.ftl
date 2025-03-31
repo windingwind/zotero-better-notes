@@ -22,11 +22,16 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey = 
     .label = Usa il tasto magico "/" per mostrare il pannello dei comandi
+editor-useMagicKeyShortcut = 
+    .label = Usa il tasto { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    } + "/" per mostrare il pannello dei comandi
 editor-useMarkdownPaste = 
     .label = Usa l'incolla markdown avanzato
 editor-pinTable-label = Pin table's
 editor-pinTableLeft =
-    .label = Fist column
+    .label = First column
 editor-pinTableTop =
     .label = First row when scrolling
 

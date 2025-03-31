@@ -22,13 +22,18 @@ editor-noteLinkPreview-disable =
     .label = 从不
 editor-useMagicKey =
     .label = 使用魔法键 "/" 显示命令面板
+editor-useMagicKeyShortcut = 
+    .label = 使用 { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    } + "/" 显示命令面板
 editor-useMarkdownPaste = 
     .label = 使用增强的Markdown粘贴
-editor-pinTable-label = Pin table's
+editor-pinTable-label = 鼠标滚动时固定表格的
 editor-pinTableLeft =
-    .label = Fist column
+    .label = 首列
 editor-pinTableTop =
-    .label = First row when scrolling
+    .label = 首行
 
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)
