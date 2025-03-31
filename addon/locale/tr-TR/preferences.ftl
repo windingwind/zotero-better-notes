@@ -22,11 +22,16 @@ editor-noteLinkPreview-disable =
     .label = Never
 editor-useMagicKey =
     .label = Komut panelini göstermek için sihirli tuş "/" kullan
+editor-defaultMagicKey = 
+    .label = Komut panelini göstermek için { PLATFORM() ->
+        [macos] ⌘
+       *[other] Ctrl
+    } + "/" kullan
 editor-useMarkdownPaste =
     .label = Gelişmiş markdown yapıştırma kullan
 editor-pinTable-label = Pin table's
 editor-pinTableLeft =
-    .label = Fist column
+    .label = First column
 editor-pinTableTop =
     .label = First row when scrolling
 
