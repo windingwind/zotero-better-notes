@@ -16,6 +16,7 @@ declare namespace _ZoteroTypes {
       "workspace.outline.keepLinks": boolean;
       "editor.noteLinkPreviewType": string;
       "editor.useMagicKey": boolean;
+      "editor.useMagicKeyShortcut": boolean;
       "editor.useMarkdownPaste": boolean;
       "editor.pinTableLeft": boolean;
       "editor.pinTableTop": boolean;
