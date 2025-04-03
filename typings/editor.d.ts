@@ -32,11 +32,12 @@ declare interface EditorCore {
     value: string;
   };
   pluginState: { [k: string]: any };
-  provider: import("react").Provider;
+  provider: typeof import("react").Provider;
   readOnly: boolean;
   reloaded: boolean;
   view: import("prosemirror-view").EditorView & {
-    docView: NodeViewDesc;
+    // TODO: fix this
+    docView: any;
   };
 }
 

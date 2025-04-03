@@ -1,10 +1,5 @@
 declare const _globalThis: {
   [key: string]: any;
-  Zotero: _ZoteroTypes.Zotero;
-  ZoteroPane: _ZoteroTypes.ZoteroPane;
-  Zotero_Tabs: typeof Zotero_Tabs;
-  window: Window;
-  document: Document;
   OS: typeof OS;
   Blob: typeof Blob;
   ztoolkit: ZToolkit;
@@ -32,8 +27,6 @@ declare const addon: import("../src/addon").default;
 
 declare const __env__: "production" | "development";
 
-declare class Localization {}
-
 declare class XULElementBase extends HTMLElement {
   get content(): DocumentFragment;
   init(): void;
@@ -49,6 +42,6 @@ declare class XULElementBase extends HTMLElement {
 }
 
 declare class MozXULElement {
-  static parseXULToFragment(xul: string): Fragment;
+  static parseXULToFragment(xul: string): DocumentFragment;
   static insertFTLIfNeeded(ftl: string): void;
 }
