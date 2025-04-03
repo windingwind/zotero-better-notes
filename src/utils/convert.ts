@@ -292,7 +292,8 @@ async function md2html(md: string) {
   const remark = md2remark(md);
   const rehype = await remark2rehype(remark);
   const html = rehype2note(rehype as HRoot);
-  return html;
+  const parsedHTML = await parseKatexHTML(html);
+  return parsedHTML;
 }
 
 async function html2md(html: string) {
@@ -900,6 +901,36 @@ function rehype2note(rehype: HRoot) {
       allowDangerousHtml: true,
     })
     .stringify(rehype as any);
+}
+
+async function parseKatexHTML(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+
+  // https://github.com/windingwind/zotero-better-notes/issues/1356
+  doc
+    .querySelectorAll("span.katex, span.katex-display")
+    .forEach((katexSpan) => {
+      // Look for the annotation element that holds the original TeX code.
+      const annotation = katexSpan.querySelector(
+        'annotation[encoding="application/x-tex"]',
+      );
+      if (annotation) {
+        const isBlock = !!katexSpan.querySelector("math[display=block");
+        let container: HTMLElement;
+
+        if (isBlock) {
+          container = doc.createElement("pre");
+          container.textContent = `$$${annotation.textContent}$$`;
+        } else {
+          container = doc.createElement("span");
+          container.textContent = `$${annotation.textContent}$`;
+        }
+        container.classList.add("math");
+        // Replace the entire KaTeX span with the inline math string.
+        katexSpan.parentNode?.replaceChild(container, katexSpan);
+      }
+    });
+  return doc.body.innerHTML;
 }
 
 async function rehype2rehype(rehype: HRoot) {

@@ -126,11 +126,13 @@ function getMarkdown(clipboardData: DataTransfer) {
     ) {
       return false;
     }
+
+    return html;
   }
 
-  // Match markdown patterns
-  if (clipboardData.types.includes("text/plain")) {
-    const text = clipboardData.getData("text/plain");
+  const text = clipboardData.getData("text/plain");
+  if (text) {
+    // Match markdown patterns
     const markdownPatterns = [
       /^#/m, // Headers: Lines starting with #
       /^\s*[-+*]\s/m, // Unordered lists: Lines starting with -, +, or *
