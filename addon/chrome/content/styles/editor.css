@@ -76,7 +76,7 @@ body.pin-table-left .tableWrapper tbody tr td:first-child {
   position: sticky;
   left: 0;
   z-index: 1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 5px var(--material-control);
   background-color: var(--material-background);
 }
 
@@ -86,7 +86,7 @@ body.pin-table-top .tableWrapper tbody tr:first-child td {
   position: sticky;
   top: 0;
   z-index: 2;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 0 5px var(--material-control);
   background-color: var(--material-background);
 }
 
