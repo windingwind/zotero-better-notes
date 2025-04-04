@@ -1,13 +1,6 @@
+import { config } from "../../package.json";
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
-import rehypeRemark, { all } from "rehype-remark";
-import remarkRehype from "remark-rehype";
-import rehypeStringify from "rehype-stringify";
-import remarkParse from "remark-parse";
-import remarkStringify from "remark-stringify";
-import { defaultHandlers as rehype2remarkDefaultHandlers } from "hast-util-to-mdast";
-import { toMarkdown } from "mdast-util-to-markdown";
-import { gfmTableToMarkdown } from "mdast-util-gfm-table";
 import { toHtml } from "hast-util-to-html";
 import { toText } from "hast-util-to-text";
 import remarkGfm from "remark-gfm";
@@ -15,14 +8,12 @@ import remarkMath from "remark-math";
 // visit may push nodes twice, use new Array(...new Set(nodes))
 // if the you want to process nodes outside visit
 import { visit } from "unist-util-visit";
-import { visitParents } from "unist-util-visit-parents";
 import rehypeFormat from "rehype-format";
 import { h } from "hastscript";
 import YAML = require("yamljs");
 
-import { Root as HRoot, RootContent } from "hast";
-import { ListContent, Root as MRoot, TableContent } from "mdast";
-import { Nodes } from "hast-util-to-text/lib";
+import { Root as HRoot } from "hast";
+import { Root as MRoot } from "mdast";
 import { fileExists, formatPath, jointPath, randomString } from "./str";
 import {
   copyEmbeddedImagesInHTML,
@@ -37,6 +28,8 @@ import {
 import { parseAnnotationHTML } from "./annotation";
 import { getPref } from "./prefs";
 import { showHint, showHintWithLink } from "./hint";
+import { MessageHelper, wait } from "zotero-plugin-toolkit";
+import { handlers } from "../extras/convertWorker";
 
 export {
   md2note,
@@ -51,7 +44,98 @@ export {
   annotations2html,
   note2html,
   note2latex,
+  closeConvertServer,
 };
+
+function closeConvertServer(win: Window) {
+  if (addon.data.convert.server) {
+    addon.data.convert.server.destroy();
+    addon.data.convert.server = undefined;
+    win.document.querySelector(`#${config.addonRef}-convertWorker`)?.remove();
+  }
+}
+
+async function getConvertServer() {
+  if (addon.data.convert.server) {
+    return addon.data.convert.server;
+  }
+  const worker = ztoolkit.UI.appendElement(
+    {
+      tag: "iframe",
+      namespace: "html",
+      id: `${config.addonRef}-convertWorker`,
+      properties: {
+        src: `chrome://${config.addonRef}/content/convertWorker.html`,
+      },
+      styles: {
+        width: "0",
+        height: "0",
+        border: "0",
+        position: "absolute",
+      },
+    },
+    Zotero.getMainWindow().document.documentElement,
+  ) as HTMLIFrameElement;
+  await wait.waitUtilAsync(
+    () => worker.contentDocument?.readyState === "complete",
+  );
+  const server = new MessageHelper<typeof handlers>({
+    canBeDestroyed: false,
+    dev: __env__ === "development",
+    name: "convertWorkerMain",
+    target: worker.contentWindow!,
+    handlers: {},
+  });
+  server.start();
+  await server.proxy._ping();
+  addon.data.convert.server = server;
+  return server;
+}
+
+async function note2rehype(
+  ...args: Parameters<(typeof handlers)["note2rehype"]>
+) {
+  const server = await getConvertServer();
+  return await server.proxy.note2rehype(...args);
+}
+
+async function rehype2remark(
+  ...args: Parameters<(typeof handlers)["rehype2remark"]>
+) {
+  const server = await getConvertServer();
+  return await server.proxy.rehype2remark(...args);
+}
+
+async function rehype2note(
+  ...args: Parameters<(typeof handlers)["rehype2note"]>
+) {
+  const server = await getConvertServer();
+  return await server.proxy.rehype2note(...args);
+}
+
+async function remark2rehype(
+  ...args: Parameters<(typeof handlers)["remark2rehype"]>
+) {
+  const server = await getConvertServer();
+  return await server.proxy.remark2rehype(...args);
+}
+
+async function md2remark(...args: Parameters<(typeof handlers)["md2remark"]>) {
+  const server = await getConvertServer();
+  return await server.proxy.md2remark(...args);
+}
+
+async function remark2md(...args: Parameters<(typeof handlers)["remark2md"]>) {
+  const server = await getConvertServer();
+  return await server.proxy.remark2md(...args);
+}
+
+async function remark2latex(
+  ...args: Parameters<(typeof handlers)["remark2latex"]>
+) {
+  const server = await getConvertServer();
+  return await server.proxy.remark2latex(...args);
+}
 
 async function note2md(
   noteItem: Zotero.Item,
@@ -64,7 +148,7 @@ async function note2md(
   } = {},
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
-  const rehype = note2rehype(noteStatus.content);
+  const rehype = await note2rehype(noteStatus.content);
   processN2MRehypeHighlightNodes(
     getN2MRehypeHighlightNodes(rehype as HRoot),
     NodeMode.direct,
@@ -90,7 +174,7 @@ async function note2md(
   if (!remark) {
     throw new Error("Parsing Error: Rehype2Remark");
   }
-  let md = remark2md(remark as MRoot);
+  let md = await remark2md(remark as MRoot);
   try {
     md =
       (await addon.api.template.runTemplate(
@@ -141,10 +225,10 @@ async function md2note(
   noteItem: Zotero.Item,
   options: { isImport?: boolean } = {},
 ) {
-  const remark = md2remark(mdStatus.content);
+  const remark = await md2remark(mdStatus.content);
   const _rehype = await remark2rehype(remark);
-  const _note = rehype2note(_rehype as HRoot);
-  const rehype = note2rehype(_note);
+  const _note = await rehype2note(_rehype as HRoot);
+  const rehype = await note2rehype(_note);
 
   // Check if image citation already belongs to note
   processM2NRehypeMetaImageNodes(getM2NRehypeImageNodes(rehype));
@@ -161,7 +245,7 @@ async function md2note(
     mdStatus.filedir,
     options.isImport,
   );
-  const noteContent = rehype2note(rehype as HRoot);
+  const noteContent = await rehype2note(rehype as HRoot);
   return noteContent;
 }
 
@@ -176,7 +260,7 @@ async function note2latex(
   } = {},
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
-  const rehype = note2rehype(noteStatus.content);
+  const rehype = await note2rehype(noteStatus.content);
 
   await processN2LRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype as HRoot),
@@ -198,7 +282,7 @@ async function note2latex(
   if (!remark) {
     throw new Error("Parsing Error: Rehype2Remark");
   }
-  let latex = remark2latex(remark as MRoot);
+  let latex = await remark2latex(remark as MRoot);
   try {
     latex =
       (await addon.api.template.runTemplate(
@@ -215,10 +299,10 @@ async function note2latex(
 
 async function note2noteDiff(noteItem: Zotero.Item) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
-  const rehype = note2rehype(noteStatus.content);
+  const rehype = await note2rehype(noteStatus.content);
   await processM2NRehypeCitationNodes(getM2NRehypeCitationNodes(rehype), true);
   // Parse content like citations
-  return rehype2note(rehype as HRoot);
+  return await rehype2note(rehype as HRoot);
 }
 
 function note2link(
@@ -289,20 +373,20 @@ async function link2html(
 }
 
 async function md2html(md: string) {
-  const remark = md2remark(md);
+  const remark = await md2remark(md);
   const rehype = await remark2rehype(remark);
-  const html = rehype2note(rehype as HRoot);
+  const html = await rehype2note(rehype as HRoot);
   const parsedHTML = await parseKatexHTML(html);
   return parsedHTML;
 }
 
 async function html2md(html: string) {
-  const rehype = note2rehype(html);
+  const rehype = await note2rehype(html);
   const remark = await rehype2remark(rehype as HRoot);
   if (!remark) {
     throw new Error("Parsing Error: HTML2MD");
   }
-  const md = remark2md(remark as MRoot);
+  const md = await remark2md(remark as MRoot);
   return md;
 }
 
@@ -334,573 +418,6 @@ async function note2html(
     return str;
   }
   return await renderNoteHTML(html, noteItems);
-}
-
-function note2rehype(str: string) {
-  const rehype = unified()
-    .use(remarkGfm)
-    .use(remarkMath)
-    .use(rehypeParse, { fragment: true })
-    .parse(str);
-
-  // Make sure <br> is inline break. Remove \n before/after <br>
-  const removeBlank = (node: any, parentNode: any, offset: number) => {
-    const idx = parentNode.children.indexOf(node);
-    const target = parentNode.children[idx + offset];
-    if (
-      target &&
-      target.type === "text" &&
-      !target.value.replace(/[\r\n]/g, "")
-    ) {
-      (parentNode.children as any[]).splice(idx + offset, 1);
-    }
-  };
-  visitParents(
-    rehype,
-    (_n: any) => _n.type === "element" && _n.tagName === "br",
-    (_n: any, ancestors) => {
-      if (ancestors.length) {
-        const parentNode = ancestors[ancestors.length - 1];
-        removeBlank(_n, parentNode, -1);
-        removeBlank(_n, parentNode, 1);
-      }
-    },
-  );
-
-  // Make sure <span> and <img> wrapped by <p>
-  visitParents(
-    rehype,
-    (_n: any) =>
-      _n.type === "element" && (_n.tagName === "span" || _n.tagName === "img"),
-    (_n: any, ancestors) => {
-      if (ancestors.length) {
-        const parentNode = ancestors[ancestors.length - 1];
-        if (parentNode === rehype) {
-          const newChild = h("span");
-          replace(newChild, _n);
-          const p = h("p", [newChild]);
-          replace(_n, p);
-        }
-      }
-    },
-  );
-
-  // Make sure empty <p> under root node is removed
-  visitParents(
-    rehype,
-    (_n: any) => _n.type === "element" && _n.tagName === "p",
-    (_n: any, ancestors) => {
-      if (ancestors.length) {
-        const parentNode = ancestors[ancestors.length - 1];
-        if (parentNode === rehype && !_n.children.length && !toText(_n)) {
-          parentNode.children.splice(parentNode.children.indexOf(_n), 1);
-        }
-      }
-    },
-  );
-  return rehype;
-}
-
-async function rehype2remark(rehype: HRoot) {
-  return await unified()
-    .use(rehypeRemark, {
-      handlers: {
-        span: (h, node) => {
-          if (
-            node.properties?.style?.includes("text-decoration: line-through")
-          ) {
-            return h(node, "delete", all(h, node));
-          } else if (node.properties?.style?.includes("background-color")) {
-            return h(node, "html", toHtml(node));
-          } else if (node.properties?.style?.includes("color")) {
-            return h(node, "html", toHtml(node));
-          } else if (node.properties?.className?.includes("math")) {
-            return h(node, "inlineMath", toText(node).slice(1, -1));
-          } else {
-            return h(node, "paragraph", all(h, node));
-          }
-        },
-        pre: (h, node) => {
-          if (node.properties?.className?.includes("math")) {
-            return h(node, "math", toText(node).slice(2, -2));
-          } else {
-            const ret = rehype2remarkDefaultHandlers.pre(h, node);
-            return ret;
-          }
-        },
-        u: (h, node) => {
-          return h(node, "u", toText(node));
-        },
-        sub: (h, node) => {
-          return h(node, "sub", toText(node));
-        },
-        sup: (h, node) => {
-          return h(node, "sup", toText(node));
-        },
-        table: (h, node) => {
-          let hasStyle = false;
-          let hasHeader = false;
-          visit(
-            node,
-            (_n) =>
-              _n.type === "element" &&
-              ["tr", "td", "th"].includes((_n as any).tagName),
-            (node) => {
-              if (node.properties.style) {
-                hasStyle = true;
-              }
-              if (!hasHeader && node.tagName === "th") {
-                hasHeader = true;
-              }
-            },
-          );
-          // if (0 && hasStyle) {
-          //   return h(node, "styleTable", toHtml(node));
-          // } else {
-          const tableNode = rehype2remarkDefaultHandlers.table(
-            h,
-            node,
-          ) as TableContent;
-          // Remove empty thead
-          if (!hasHeader) {
-            if (!tableNode.data) {
-              tableNode.data = {};
-            }
-            tableNode.data.bnRemove = true;
-          }
-          return tableNode;
-          // }
-        },
-        /*
-         * See https://github.com/windingwind/zotero-better-notes/issues/820
-         * The text content separated by non-text content (e.g. inline math)
-         * inside `li`(rehype) will be converted to `paragraph`(remark),
-         * which will be turned to line with \n in MD:
-         * ```rehype
-         * li: [text, text, inline-math, text]
-         * ```
-         * to
-         * ```remark
-         * listitem: [paragraph, inline-math, paragraph]
-         * ```
-         * to
-         * ```md
-         *  * text text
-         *    inline-math
-         *    text
-         * ```
-         */
-        li: (h, node) => {
-          const mNode = rehype2remarkDefaultHandlers.li(h, node) as ListContent;
-          // If no more than 1 children, skip
-          if (!mNode || mNode.children.length < 2) {
-            return mNode;
-          }
-          const children: any[] = [];
-          const paragraphNodes = ["list", "code", "math", "table"];
-          // Merge none-list nodes inside li into the previous paragraph node to avoid line break
-          while (mNode.children.length > 0) {
-            const current = mNode.children.shift();
-            let cached = children[children.length - 1];
-            // https://github.com/windingwind/zotero-better-notes/issues/1207
-            // Create a new paragraph node
-            if (cached?.type !== "paragraph") {
-              cached = {
-                type: "paragraph",
-                children: [],
-              };
-              children.push(cached);
-            }
-            if (current?.type === "paragraph") {
-              cached.children.push(...current.children);
-            }
-            // https://github.com/windingwind/zotero-better-notes/issues/1300
-            // @ts-ignore inlineMath is not in mdast
-            else if (current?.type === "inlineMath") {
-              cached.children.push({
-                type: "text",
-                value: " ",
-              });
-              cached.children.push(current);
-              cached.children.push({
-                type: "text",
-                value: " ",
-              });
-            } else if (
-              current?.type &&
-              !paragraphNodes.includes(current?.type)
-            ) {
-              cached.children.push(current);
-            } else {
-              children.push(current);
-            }
-          }
-          mNode.children.push(...children);
-          return mNode;
-        },
-        wrapper: (h, node) => {
-          return h(node, "wrapper", toText(node));
-        },
-        wrapperleft: (h, node) => {
-          return h(node, "wrapperleft", toText(node));
-        },
-        wrapperright: (h, node) => {
-          return h(node, "wrapperright", toText(node));
-        },
-        zhighlight: (h, node) => {
-          return h(node, "zhighlight", toHtml(node));
-        },
-        zcitation: (h, node) => {
-          return h(node, "zcitation", toHtml(node));
-        },
-        znotelink: (h, node) => {
-          return h(node, "znotelink", toHtml(node));
-        },
-        zimage: (h, node) => {
-          return h(node, "zimage", toHtml(node));
-        },
-      },
-    })
-    .run(rehype as any);
-}
-
-function remark2md(remark: MRoot) {
-  const handlers = {
-    code: (node: { value: string }) => {
-      return "```\n" + node.value + "\n```";
-    },
-    u: (node: { value: string }) => {
-      return "<u>" + node.value + "</u>";
-    },
-    sub: (node: { value: string }) => {
-      return "<sub>" + node.value + "</sub>";
-    },
-    sup: (node: { value: string }) => {
-      return "<sup>" + node.value + "</sup>";
-    },
-    inlineMath: (node: { value: string }) => {
-      return "$" + node.value + "$";
-    },
-    styleTable: (node: { value: any }) => {
-      return node.value;
-    },
-    wrapper: (node: { value: string }) => {
-      return "\n<!-- " + node.value + " -->\n";
-    },
-    wrapperleft: (node: { value: string }) => {
-      return "<!-- " + node.value + " -->\n";
-    },
-    wrapperright: (node: { value: string }) => {
-      return "\n<!-- " + node.value + " -->";
-    },
-    zhighlight: (node: { value: string }) => {
-      return node.value.replace(/(^<zhighlight>|<\/zhighlight>$)/g, "");
-    },
-    zcitation: (node: { value: string }) => {
-      return node.value.replace(/(^<zcitation>|<\/zcitation>$)/g, "");
-    },
-    znotelink: (node: { value: string }) => {
-      return node.value.replace(/(^<znotelink>|<\/znotelink>$)/g, "");
-    },
-    zimage: (node: { value: string }) => {
-      return node.value.replace(/(^<zimage>|<\/zimage>$)/g, "");
-    },
-  };
-  const tableHandler = (node: any) => {
-    const tbl = gfmTableToMarkdown();
-    // table must use same handlers as rest of pipeline
-    const txt = toMarkdown(node, {
-      extensions: [tbl],
-      // Use the same handlers as the rest of the pipeline
-      handlers,
-    });
-
-    if (node.data?.bnRemove) {
-      const lines = txt.split("\n");
-      // Replace the first line cells from `|{multiple spaces}|{multiple spaces}|...` to `| <!-- --> | <!-- --> |...`
-      lines[0] = lines[0].replace(/(\| +)+/g, (s) => {
-        return s.replace(/ +/g, " <!-- --> ");
-      });
-      return lines.join("\n");
-    }
-    return txt;
-  };
-  return String(
-    unified()
-      .use(remarkGfm)
-      .use(remarkMath)
-      .use(remarkStringify, {
-        // Prevent recursive call
-        handlers: Object.assign({}, handlers, {
-          table: tableHandler,
-        }),
-      } as any)
-      .stringify(remark as any),
-  );
-}
-
-function remark2latex(remark: MRoot) {
-  return String(
-    unified()
-      .use(remarkGfm)
-      .use(remarkMath)
-      .use(remarkStringify, {
-        handlers: {
-          text: (node: { value: string }) => {
-            return node.value;
-          },
-        },
-      } as any)
-      .stringify(remark as any),
-  );
-}
-
-function md2remark(str: string) {
-  // Parse Obsidian-style image ![[xxx.png]]
-  // Encode spaces in link, otherwise it cannot be parsed to image node
-  str = str
-    .replace(/!\[\[(.*)\]\]/g, (s: string) => `![](${s.slice(3, -2)})`)
-    .replace(
-      /!\[(.*)\]\((.*)\)/g,
-      (match, altText, imageURL) =>
-        `![${altText}](${encodeURI(decodeURI(imageURL))})`,
-    );
-  const remark = unified()
-    .use(remarkGfm)
-    .use(remarkMath)
-    .use(remarkParse)
-    .parse(str);
-  // visit(
-  //   remark,
-  //   (_n) => _n.type === "image",
-  //   (_n: any) => {
-  //     _n.type = "html";
-  //     _n.value = toHtml(
-  //       h("img", {
-  //         src: _n.url,
-  //       })
-  //     );
-  //   }
-  // );
-  return remark;
-}
-
-async function remark2rehype(remark: any) {
-  return await unified()
-    .use(remarkRehype, {
-      allowDangerousHtml: true,
-      // handlers: {
-      //   code: (h, node) => {
-      //     return h(node, "pre", [h(node, "text", node.value)]);
-      //   },
-      // },
-    })
-    .run(remark);
-}
-
-function rehype2note(rehype: HRoot) {
-  // Del node
-  visit(
-    rehype,
-    (node: any) => node.type === "element" && (node as any).tagName === "del",
-    (node: any) => {
-      node.tagName = "span";
-      node.properties.style = "text-decoration: line-through";
-    },
-  );
-
-  // Code node
-  visitParents(
-    rehype,
-    (node: any) => node.type === "element" && (node as any).tagName === "code",
-    (node: any, ancestors) => {
-      const parent = ancestors.length
-        ? ancestors[ancestors.length - 1]
-        : undefined;
-      if (parent?.type == "element" && parent?.tagName === "pre") {
-        node.value = toText(node, { whitespace: "pre-wrap" });
-        // Remove \n at the end of code block, which is redundant
-        if (node.value.endsWith("\n")) {
-          node.value = node.value.slice(0, -1);
-        }
-        node.type = "text";
-      }
-    },
-  );
-
-  // Table node with style
-  visit(
-    rehype,
-    (node: any) => node.type === "element" && (node as any).tagName === "table",
-    (node: any) => {
-      let hasStyle = false;
-      let hasHeader = false;
-      visit(
-        node,
-        (_n: any) =>
-          _n.type === "element" &&
-          ["tr", "td", "th"].includes((_n as any).tagName),
-        (node: any) => {
-          if (node.properties.style) {
-            hasStyle = true;
-          }
-          if (
-            !hasHeader &&
-            node.tagName === "th" &&
-            node.children[0]?.value !== "<!-- -->"
-          ) {
-            hasHeader = true;
-          }
-        },
-      );
-      if (hasStyle) {
-        node.value = toHtml(node).replace(/[\r\n]/g, "");
-        node.children = [];
-        node.type = "raw";
-      }
-      if (!hasHeader) {
-        const index = node.children.findIndex(
-          (_n: any) => _n.tagName === "thead",
-        );
-        // Remove children before thead
-        if (index > -1) {
-          node.children = node.children.slice(index + 1);
-        }
-      }
-    },
-  );
-
-  // Convert thead to tbody
-  visit(
-    rehype,
-    (node: any) => node.type === "element" && (node as any).tagName === "thead",
-    (node: any) => {
-      node.value = toHtml(node).slice(7, -8);
-      node.children = [];
-      node.type = "raw";
-    },
-  );
-
-  // Wrap lines in list with <span> (for diff)
-  visitParents(rehype, "text", (node: any, ancestors) => {
-    const parent = ancestors.length
-      ? ancestors[ancestors.length - 1]
-      : undefined;
-    if (
-      parent?.type == "element" &&
-      ["li", "td"].includes(parent?.tagName) &&
-      node.value.replace(/[\r\n]/g, "")
-    ) {
-      node.type = "element";
-      node.tagName = "span";
-      node.children = [
-        { type: "text", value: node.value.replace(/[\r\n]/g, "") },
-      ];
-      node.value = undefined;
-    }
-  });
-
-  // No empty breakline text node in list (for diff)
-  visit(
-    rehype,
-    (node: any) =>
-      node.type === "element" &&
-      ((node as any).tagName === "li" || (node as any).tagName === "td"),
-    (node: any) => {
-      node.children = node.children.filter(
-        (_n: { type: string; value: string }) =>
-          _n.type === "element" ||
-          (_n.type === "text" && _n.value.replace(/[\r\n]/g, "")),
-      );
-
-      // https://github.com/windingwind/zotero-better-notes/issues/1300
-      // For all math-inline node in list, remove 1 space from its sibling text node
-      if (node.tagName === "li") {
-        for (const p of node.children) {
-          for (let idx = 0; idx < p.children.length; idx++) {
-            const _n = p.children[idx];
-            if (_n.properties?.className?.includes("math-inline")) {
-              if (idx > 0) {
-                const prev = p.children[idx - 1];
-                if (prev.type === "text" && prev.value.endsWith(" ")) {
-                  prev.value = prev.value.slice(0, -1);
-                }
-              }
-              if (idx < p.children.length - 1) {
-                const next = p.children[idx + 1];
-                if (next.type === "text" && next.value.startsWith(" ")) {
-                  next.value = next.value.slice(1);
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-  );
-
-  // Math node
-  visit(
-    rehype,
-    (node: any) =>
-      node.type === "element" &&
-      ((node as any).properties?.className?.includes("math-inline") ||
-        (node as any).properties?.className?.includes("math-display")),
-    (node: any) => {
-      if (node.properties.className.includes("math-inline")) {
-        node.children = [
-          { type: "text", value: "$" },
-          ...node.children,
-          { type: "text", value: "$" },
-        ];
-      } else if (node.properties.className.includes("math-display")) {
-        node.children = [
-          { type: "text", value: "$$" },
-          ...node.children,
-          { type: "text", value: "$$" },
-        ];
-        node.tagName = "pre";
-      }
-      node.properties.className = "math";
-    },
-  );
-
-  // Ignore link rel attribute, which exists in note
-  visit(
-    rehype,
-    (node: any) => node.type === "element" && (node as any).tagName === "a",
-    (node: any) => {
-      node.properties.rel = undefined;
-    },
-  );
-
-  // Ignore empty lines, as they are not parsed to md
-  const tempChildren: RootContent[] = [];
-  const isEmptyNode = (_n: Nodes) =>
-    (_n.type === "text" && !_n.value.trim()) ||
-    (_n.type === "element" &&
-      _n.tagName === "p" &&
-      !_n.children.length &&
-      !toText(_n).trim());
-  for (const child of rehype.children) {
-    if (
-      tempChildren.length &&
-      isEmptyNode(tempChildren[tempChildren.length - 1] as Nodes) &&
-      isEmptyNode(child as Nodes)
-    ) {
-      continue;
-    }
-    tempChildren.push(child);
-  }
-
-  rehype.children = tempChildren;
-
-  return unified()
-    .use(rehypeStringify, {
-      allowDangerousCharacters: true,
-      allowDangerousHtml: true,
-    })
-    .stringify(rehype as any);
 }
 
 async function parseKatexHTML(html: string) {
@@ -1410,7 +927,7 @@ async function processM2NRehypeCitationNodes(
         );
         const html = await addon.api.convert.item2citation(ids, dataCitation);
         if (html) {
-          const newNode = note2rehype(html);
+          const newNode = await note2rehype(html);
           // root -> p -> span(cite, this is what we actually want)
           replace(node, (newNode.children[0] as any).children[0]);
         } else {

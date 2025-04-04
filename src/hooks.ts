@@ -52,6 +52,7 @@ import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/exportItems";
 import { patchOpenTabMenu } from "./modules/openTabMenu";
+import { closeConvertServer } from "./utils/convert";
 
 async function onStartup() {
   await Promise.all([
@@ -119,6 +120,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
 async function onMainWindowUnload(win: Window): Promise<void> {
   ztoolkit.unregisterAll();
+  closeConvertServer(win);
 }
 
 function onShutdown(): void {
