@@ -42,6 +42,7 @@
     "html-docx-js": "^0.3.1",
     "html-docx-js-typescript": "^0.1.5",
     "katex": "^0.16.21",
+    "linkedom": "^0.18.9",
     "path-browserify": "^1.0.1",
     "prosemirror-tables": "^1.6.4",
     "rehype-format": "^4.0.1",

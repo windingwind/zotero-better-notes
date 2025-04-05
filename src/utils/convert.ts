@@ -29,7 +29,7 @@ import { parseAnnotationHTML } from "./annotation";
 import { getPref } from "./prefs";
 import { showHint, showHintWithLink } from "./hint";
 import { MessageHelper, wait } from "zotero-plugin-toolkit";
-import { handlers } from "../extras/convertWorker";
+import { handlers } from "../extras/convertWorker/main";
 
 export {
   md2note,
@@ -59,31 +59,16 @@ async function getConvertServer() {
   if (addon.data.convert.server) {
     return addon.data.convert.server;
   }
-  const worker = ztoolkit.UI.appendElement(
-    {
-      tag: "iframe",
-      namespace: "html",
-      id: `${config.addonRef}-convertWorker`,
-      properties: {
-        src: `chrome://${config.addonRef}/content/convertWorker.html`,
-      },
-      styles: {
-        width: "0",
-        height: "0",
-        border: "0",
-        position: "absolute",
-      },
-    },
-    Zotero.getMainWindow().document.documentElement,
-  ) as HTMLIFrameElement;
-  await wait.waitUtilAsync(
-    () => worker.contentDocument?.readyState === "complete",
+
+  const worker = new Worker(
+    `chrome://${config.addonRef}/content/scripts/convertWorker.js`,
+    { name: "convertWorker" },
   );
   const server = new MessageHelper<typeof handlers>({
     canBeDestroyed: false,
     dev: __env__ === "development",
     name: "convertWorkerMain",
-    target: worker.contentWindow!,
+    target: worker,
     handlers: {},
   });
   server.start();
