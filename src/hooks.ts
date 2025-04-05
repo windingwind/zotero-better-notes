@@ -120,12 +120,12 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
 async function onMainWindowUnload(win: Window): Promise<void> {
   ztoolkit.unregisterAll();
-  closeConvertServer(win);
 }
 
 function onShutdown(): void {
   closeRelationServer();
   closeParsingServer();
+  closeConvertServer();
 
   unregisterEditorInstanceHook();
   ztoolkit.unregisterAll();

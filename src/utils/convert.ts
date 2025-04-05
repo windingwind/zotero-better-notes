@@ -47,11 +47,10 @@ export {
   closeConvertServer,
 };
 
-function closeConvertServer(win: Window) {
+function closeConvertServer() {
   if (addon.data.convert.server) {
     addon.data.convert.server.destroy();
     addon.data.convert.server = undefined;
-    win.document.querySelector(`#${config.addonRef}-convertWorker`)?.remove();
   }
 }
 
