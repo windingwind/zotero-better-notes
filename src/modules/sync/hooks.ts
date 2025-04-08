@@ -2,6 +2,7 @@ import { showHint } from "../../utils/hint";
 import { getString } from "../../utils/locale";
 import { getPref } from "../../utils/prefs";
 import { jointPath } from "../../utils/str";
+import { isElementVisible } from "../../utils/window";
 
 export { setSyncing, callSyncing };
 
@@ -66,11 +67,12 @@ async function callSyncing(
     if (skipActive) {
       // Skip active note editors' targets
       const activeNoteIds = Zotero.Notes._editorInstances
-        // .filter(
-        //   (editor) =>
-        //     !Components.utils.isDeadWrapper(editor._iframeWindow) &&
-        //     editor._iframeWindow.document.hasFocus(),
-        // )
+        .filter((editor) => {
+          const elem = (editor._popup as XULPopupElement).closest(
+            "note-editor",
+          );
+          return elem && isElementVisible(elem);
+        })
         .map((editor) => editor._item.id);
       const filteredItems = items.filter(
         (item) => !activeNoteIds.includes(item.id),
