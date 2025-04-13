@@ -30,6 +30,7 @@ import { getPref } from "./prefs";
 import { showHint, showHintWithLink } from "./hint";
 import { MessageHelper, wait } from "zotero-plugin-toolkit";
 import { handlers } from "../extras/convertWorker/main";
+import { Change } from "diff";
 
 export {
   md2note,
@@ -44,6 +45,7 @@ export {
   annotations2html,
   note2html,
   note2latex,
+  content2diff,
   closeConvertServer,
 };
 
@@ -287,6 +289,12 @@ async function note2noteDiff(noteItem: Zotero.Item) {
   await processM2NRehypeCitationNodes(getM2NRehypeCitationNodes(rehype), true);
   // Parse content like citations
   return await rehype2note(rehype as HRoot);
+}
+
+async function content2diff(oldStr: string, newStr: string): Promise<Change[]> {
+  const server = await getConvertServer();
+  const diff = await server.proxy.content2diff(oldStr, newStr);
+  return diff;
 }
 
 function note2link(

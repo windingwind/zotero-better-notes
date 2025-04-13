@@ -11,6 +11,7 @@ import {
   note2html,
   link2params,
   note2latex,
+  content2diff,
 } from "./utils/convert";
 import { exportNotes } from "./modules/export/api";
 import { saveDocx } from "./modules/export/docx";
@@ -120,6 +121,7 @@ const convert = {
   note2html,
   item2citation: parseCitationHTML,
   note2latex,
+  content2diff,
 };
 
 const template = {

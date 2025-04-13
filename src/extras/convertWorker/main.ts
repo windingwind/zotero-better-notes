@@ -22,6 +22,8 @@ import { Root as HRoot, RootContent } from "hast";
 import { ListContent, Root as MRoot, TableContent } from "mdast";
 import { Nodes } from "hast-util-to-text/lib";
 
+import { diffChars } from "diff";
+
 import { MessageHelper } from "zotero-plugin-toolkit";
 
 export { handlers };
@@ -34,6 +36,7 @@ const handlers = {
   remark2md,
   remark2latex,
   md2remark,
+  content2diff,
 };
 
 const messageServer = new MessageHelper({
@@ -619,4 +622,8 @@ function rehype2note(rehype: HRoot) {
       allowDangerousHtml: true,
     })
     .stringify(rehype as any);
+}
+
+function content2diff(oldStr: string, newStr: string) {
+  return diffChars(oldStr, newStr);
 }
