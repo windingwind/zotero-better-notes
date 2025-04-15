@@ -22,8 +22,16 @@ export function waitUtilAsync(
 ) {
   return new Promise<void>((resolve, reject) => {
     const start = Date.now();
+    const _condition = () => {
+      try {
+        return condition();
+      } catch (e) {
+        ztoolkit.log(e);
+        return false;
+      }
+    };
     const intervalId = setInterval(() => {
-      if (condition()) {
+      if (_condition()) {
         clearInterval(intervalId);
         resolve();
       } else if (Date.now() - start > timeout) {

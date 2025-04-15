@@ -123,6 +123,11 @@ async function remark2latex(
   return await server.proxy.remark2latex(...args);
 }
 
+async function md2html(...args: Parameters<(typeof handlers)["md2html"]>) {
+  const server = await getConvertServer();
+  return await server.proxy.md2html(...args);
+}
+
 async function note2md(
   noteItem: Zotero.Item,
   dir: string,
@@ -364,14 +369,6 @@ async function link2html(
   }
 }
 
-async function md2html(md: string) {
-  const remark = await md2remark(md);
-  const rehype = await remark2rehype(remark);
-  const html = await rehype2note(rehype as HRoot);
-  const parsedHTML = await parseKatexHTML(html);
-  return parsedHTML;
-}
-
 async function html2md(html: string) {
   const rehype = await note2rehype(html);
   const remark = await rehype2remark(rehype as HRoot);
@@ -410,36 +407,6 @@ async function note2html(
     return str;
   }
   return await renderNoteHTML(html, noteItems);
-}
-
-async function parseKatexHTML(html: string) {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-
-  // https://github.com/windingwind/zotero-better-notes/issues/1356
-  doc
-    .querySelectorAll("span.katex, span.katex-display")
-    .forEach((katexSpan) => {
-      // Look for the annotation element that holds the original TeX code.
-      const annotation = katexSpan.querySelector(
-        'annotation[encoding="application/x-tex"]',
-      );
-      if (annotation) {
-        const isBlock = !!katexSpan.querySelector("math[display=block");
-        let container: HTMLElement;
-
-        if (isBlock) {
-          container = doc.createElement("pre");
-          container.textContent = `$$${annotation.textContent}$$`;
-        } else {
-          container = doc.createElement("span");
-          container.textContent = `$${annotation.textContent}$`;
-        }
-        container.classList.add("math");
-        // Replace the entire KaTeX span with the inline math string.
-        katexSpan.parentNode?.replaceChild(container, katexSpan);
-      }
-    });
-  return doc.body.innerHTML;
 }
 
 async function rehype2rehype(rehype: HRoot) {

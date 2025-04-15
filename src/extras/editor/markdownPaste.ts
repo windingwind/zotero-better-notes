@@ -1,5 +1,5 @@
 import { Plugin, PluginKey } from "prosemirror-state";
-import { md2html } from "../../utils/convert";
+import { md2html } from "../convert";
 
 export { initMarkdownPastePlugin, MarkdownPasteOptions };
 
