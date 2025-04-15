@@ -651,5 +651,6 @@ async function parseKatexHTML(html: string) {
       }
     });
   // linkedom does not support doc.body.innerHTML
-  return doc.toString();
+  // @ts-ignore
+  return globalThis._fakeDOM ? doc.toString() : doc.body.innerHTML;
 }
