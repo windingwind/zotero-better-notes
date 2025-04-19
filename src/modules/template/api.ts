@@ -47,7 +47,7 @@ async function runTemplate(
   if (!options.stage) {
     options.stage = "default";
   }
-  let templateLines = templateText.split("\n");
+  let templateLines = templateText.split(/\r?\n/);
   let startIndex = templateLines.indexOf(`// @${options.stage}-begin`),
     endIndex = templateLines.indexOf(`// @${options.stage}-end`);
   if (
