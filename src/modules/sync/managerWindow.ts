@@ -97,10 +97,11 @@ export async function showSyncManager() {
         "getRowString",
         (index) => addon.data.sync.manager?.data[index].noteName || "",
       )
-      .setProp("onColumnSort", (columnIndex, ascending) => {
+      .setProp("onColumnSort", async (columnIndex, ascending) => {
         addon.data.sync.manager.columnIndex = columnIndex;
         addon.data.sync.manager.columnAscending = ascending > 0;
-        refresh();
+        await updateData();
+        await refresh();
       })
       .render();
     const refreshButton = win.document.querySelector(
