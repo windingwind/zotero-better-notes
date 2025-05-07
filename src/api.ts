@@ -18,7 +18,7 @@ import { saveDocx } from "./modules/export/docx";
 import { saveFreeMind } from "./modules/export/freemind";
 import { saveMD, syncMDBatch } from "./modules/export/markdown";
 import { savePDF } from "./modules/export/pdf";
-import { saveLatex } from "./modules/export/latex";
+import { saveLatex, saveMultipleLatex } from "./modules/export/latex";
 import { fromMD } from "./modules/import/markdown";
 import {
   isSyncNote,
@@ -146,6 +146,7 @@ const $export = {
   saveDocx,
   savePDF,
   saveLatex,
+  saveMultipleLatex,
 };
 
 const $import = {

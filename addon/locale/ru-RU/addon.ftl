@@ -10,6 +10,8 @@ menuAddNote-newTemplateStandaloneNote=Новая отдельная Заметк
 menuAddNote-newTemplateItemNote=Новая элементная Заметка из шаблона
 menuAddNote-importMD = Импорт файла MarkDown в качестве примечания
 
+menuItem-exportLaTeX = Экспорт заметок в LaTeX
+
 menuAddReaderNote-newTemplateNote=Новая элементная Заметка из шаблона
 
 menuEditor-resizeImage=Изменить размер изображения
