@@ -10,6 +10,8 @@ menuAddNote-newTemplateStandaloneNote=从模板新建独立笔记
 menuAddNote-newTemplateItemNote=从模板新建条目子笔记
 menuAddNote-importMD = 导入MarkDown为笔记
 
+menuItem-exportLaTeX = 导出笔记为LaTeX
+
 menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
 
 menuEditor-resizeImage=缩放图片

@@ -253,7 +253,7 @@ async function note2latex(
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = await note2rehype(noteStatus.content);
 
-  await processN2LRehypeCitationNodes(
+  const bibString = await processN2LRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype as HRoot),
   );
   await processN2LRehypeHeaderNodes(getN2LRehypeHeaderNodes(rehype as HRoot));
@@ -285,7 +285,7 @@ async function note2latex(
     ztoolkit.log(e);
   }
 
-  return latex;
+  return [latex, bibString];
 }
 
 async function note2noteDiff(noteItem: Zotero.Item) {
@@ -1023,7 +1023,7 @@ function getN2LRehypeTableNodes(rehype: HRoot) {
 
 async function processN2LRehypeCitationNodes(nodes: string | any[]) {
   if (!nodes.length) {
-    return;
+    return "";
   }
   const items: Zotero.Item[] = [];
   const citationAllKeys: string[] = [];
@@ -1069,11 +1069,12 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
     node.value = "\\cite{" + citationKeys.join(",") + "}";
   }
 
-  // save the citation as a .bib file
-  await saveToBibFile(citationAllKeys);
+  // convert the citation into string using Better BibTex for Zotero
+  const bibString = await convertToBibString(citationAllKeys);
+  return bibString;
 }
 
-async function saveToBibFile(citationAllKeys: string[]) {
+async function convertToBibString(citationAllKeys: string[]) {
   const BBT = "Better BibTex for Zotero";
   const installedExtensions = await Zotero.getInstalledExtensions();
   const installedAndEnabled = installedExtensions.some(
@@ -1084,30 +1085,12 @@ async function saveToBibFile(citationAllKeys: string[]) {
     showHint(
       "Export Error: Better BibTex for Zotero is needed for exporting the .bib file. Please install and enable it first.",
     );
-    return;
+    return "";
   }
 
   const uniqueCitationKeys = Array.from(new Set(citationAllKeys));
   const res = await exportToBibtex(uniqueCitationKeys);
-  const raw = await new ztoolkit.FilePicker(
-    `${Zotero.getString("fileInterface.export")} Bibtex File`,
-    "save",
-    [["Bibtex File(*.bib)", "*.bib"]],
-    `notegeneration.bib`,
-  ).open();
-  if (!raw) {
-    Zotero.debug("[Bib Export] Bib file export canceled.");
-    return;
-  }
-  const filename = formatPath(raw, ".bib");
-  await Zotero.File.putContentsAsync(filename, res);
-  showHintWithLink(
-    `Bibliographic Saved to ${filename}`,
-    "Show in Folder",
-    (ev) => {
-      Zotero.File.reveal(filename);
-    },
-  );
+  return res;
 }
 
 function exportToBibtex(citationKeys: string[]): Promise<string> {

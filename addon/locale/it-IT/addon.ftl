@@ -10,6 +10,8 @@ menuAddNote-newTemplateStandaloneNote = Nuova nota indipendente da template
 menuAddNote-newTemplateItemNote = Nuova nota dell'elemento da template
 menuAddNote-importMD = Importa file MarkDown come nota
 
+menuItem-exportLaTeX = Esporta note in LaTeX
+
 menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
 
 menuEditor-resizeImage = Ridimensiona immagine
