@@ -133,12 +133,4 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: () => addon.hooks.onShowUserGuide(win, true),
   });
-
-  ztoolkit.Menu.register("item", {
-    tag: "menuitem",
-    id: "zotero-itemmenu-exportLaTeX",
-    label: getString("menuItem-exportLaTeX"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: () => addon.api.$export.saveMultipleLatex(),
-  });
 }

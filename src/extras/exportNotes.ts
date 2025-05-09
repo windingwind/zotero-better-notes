@@ -19,6 +19,7 @@ let io: {
   exportPDF: boolean;
   exportFreeMind: boolean;
   exportLatex: boolean;
+  mergeLatex: boolean;
 };
 
 window.onload = async function () {
@@ -117,8 +118,10 @@ function onFormatChange() {
   const format = (document.querySelector("#format") as XULMenuListElement)
     .value;
   const isMD = format === "markdown";
+  const isLaTeX = format === "latex";
 
   (document.querySelector("#markdown-options") as XULBoxElement).hidden = !isMD;
+  (document.querySelector("#latex-options") as XULBoxElement).hidden = !isLaTeX;
 
   window.sizeToContent();
 }
@@ -178,6 +181,11 @@ function doAccept() {
   ).checked;
   io.setAutoSync = (
     document.querySelector("#markdown-autoSync") as XULCheckboxElement
+  ).checked;
+
+  // LaTeX options
+  io.mergeLatex = (
+    document.querySelector("#latex-merge") as XULCheckboxElement
   ).checked;
 
   // Link mode
