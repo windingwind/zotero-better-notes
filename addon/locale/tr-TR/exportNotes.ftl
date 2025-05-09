@@ -41,3 +41,6 @@ markdown-autoFilename =
 useDefaultExport =
     .label = Zotero'nun varsayılan dışa aktarımını kullan
     .tooltiptext = Better Notes tarafından sağlanan gelişmiş seçenekler olmadan notları dışa aktar.
+
+latex-merge =
+    .label = Tek dosyada birleştir

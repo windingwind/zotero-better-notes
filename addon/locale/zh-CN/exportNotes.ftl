@@ -41,3 +41,6 @@ markdown-autoFilename =
 useDefaultExport =
     .label = 使用 Zotero 的默认导出
     .tooltiptext = 导出笔记时不使用 Better Notes 提供的高级选项。
+
+latex-merge =
+    .label = 合并为一个文件

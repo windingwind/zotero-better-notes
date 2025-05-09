@@ -4,13 +4,11 @@ import { formatPath, jointPath } from "../../utils/str";
 
 export async function saveLatex(
   filename: string,
-  noteId: number,
+  noteItem: Zotero.Item,
   options: {
     keepNoteLink?: boolean;
-    withYAMLHeader?: boolean;
   } = {},
 ) {
-  const noteItem = Zotero.Items.get(noteId);
   const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
   await IOUtils.makeDirectory(dir);
   const hasImage = noteItem.getNote().includes("<img");
@@ -55,29 +53,10 @@ export async function saveLatex(
   }
 }
 
-export async function saveMultipleLatex() {
-  const inputItems = Zotero.getMainWindow().ZoteroPane.getSelectedItems();
-
-  const noteIds = [];
-  for (const item of inputItems) {
-    if (item.isNote()) {
-      noteIds.push(item.id);
-    } else if (item.getNotes().length > 0) {
-      item.getNotes().forEach((noteId) => noteIds.push(noteId));
-    }
-  }
-  ztoolkit.log(noteIds);
-
-  const raw = await new ztoolkit.FilePicker(
-    `${Zotero.getString("fileInterface.export")} Latex File`,
-    "save",
-    [["Latex File(*.tex)", "*.tex"]],
-    `export-multiple-notes-to-latex.tex`,
-  ).open();
-  if (!raw) return;
-  const filename = formatPath(raw, ".tex");
-
-  const noteItems = noteIds.map((id) => Zotero.Items.get(id));
+export async function saveMultipleLatex(
+  filename: string,
+  noteItems: Zotero.Item[],
+) {
   const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
   await IOUtils.makeDirectory(dir);
   const hasImage = noteItems.some((item) => item.getNote().includes("<img"));
