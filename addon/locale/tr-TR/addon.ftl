@@ -10,8 +10,6 @@ menuAddNote-newTemplateStandaloneNote = Şablondan Yeni Bağımsız Not
 menuAddNote-newTemplateItemNote = Şablondan Yeni Eser Notu
 menuAddNote-importMD = Markdown Dosyasını Not Olarak İçe Aktar
 
-menuItem-exportLaTeX = Notları LaTeX olarak dışa aktar
-
 menuAddReaderNote-newTemplateNote = Şablondan Yeni Eser Notu
 
 menuEditor-resizeImage = Resmi Boyutlandır

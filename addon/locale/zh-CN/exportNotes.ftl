@@ -43,4 +43,4 @@ useDefaultExport =
     .tooltiptext = 导出笔记时不使用 Better Notes 提供的高级选项。
 
 latex-merge =
-    .label = 合并为一个文件
+    .label = 合并为一个tex文件

@@ -120,8 +120,11 @@ function onFormatChange() {
   const isMD = format === "markdown";
   const isLaTeX = format === "latex";
 
+  const noteItems = Zotero.getMainWindow().ZoteroPane.getSelectedItems();
+
   (document.querySelector("#markdown-options") as XULBoxElement).hidden = !isMD;
-  (document.querySelector("#latex-options") as XULBoxElement).hidden = !isLaTeX;
+  (document.querySelector("#latex-options") as XULBoxElement).hidden =
+    !isLaTeX || noteItems.length == 1;
 
   window.sizeToContent();
 }
