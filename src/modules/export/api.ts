@@ -121,7 +121,7 @@ async function exportNotes(
   }
   if (options.exportLatex) {
     if (allNoteItems.length > 1 && options.mergeLatex) {
-      await toMultipleLatex(allNoteItems);
+      await toMergedLatex(allNoteItems);
     } else {
       for (const noteItem of allNoteItems) {
         await toLatex(noteItem);
@@ -199,10 +199,10 @@ async function toLatex(
     if (!raw) return;
     filename = formatPath(raw, ".tex");
   }
-  await addon.api.$export.saveLatex(filename, noteItem, options);
+  await addon.api.$export.saveLatex(filename, noteItem.id, options);
 }
 
-async function toMultipleLatex(
+async function toMergedLatex(
   noteItems: Zotero.Item[],
   options: {
     filename?: string;
@@ -215,12 +215,13 @@ async function toMultipleLatex(
       `${Zotero.getString("fileInterface.export")} Latex File`,
       "save",
       [["Latex File(*.tex)", "*.tex"]],
-      `export-multiple-notes-to-latex.tex`,
+      `export-notes-to-one-latex.tex`,
     ).open();
     if (!raw) return;
     filename = formatPath(raw, ".tex");
   }
-  await addon.api.$export.saveMultipleLatex(filename, noteItems);
+  const noteIds = noteItems.map((item) => item.id);
+  await addon.api.$export.saveMergedLatex(filename, noteIds);
 }
 
 async function toSync(

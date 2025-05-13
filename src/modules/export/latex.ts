@@ -4,11 +4,12 @@ import { formatPath, jointPath } from "../../utils/str";
 
 export async function saveLatex(
   filename: string,
-  noteItem: Zotero.Item,
+  noteId: number,
   options: {
     keepNoteLink?: boolean;
   } = {},
 ) {
+  const noteItem = Zotero.Items.get(noteId);
   const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
   await IOUtils.makeDirectory(dir);
   const hasImage = noteItem.getNote().includes("<img");
@@ -35,28 +36,26 @@ export async function saveLatex(
       `${Zotero.getString("fileInterface.export")} Bibtex File`,
       "save",
       [["Bibtex File(*.bib)", "*.bib"]],
-      `notegeneration.bib`,
+      `references.bib`,
     ).open();
     if (!raw) {
-      Zotero.debug("[Bib Export] Bib file export canceled.");
+      ztoolkit.log("[Bib Export] Bib file export canceled.");
       return;
     }
-    const bibfilename = formatPath(raw, ".bib");
-    await Zotero.File.putContentsAsync(bibfilename, bibString);
+    const bibFilename = formatPath(raw, ".bib");
+    await Zotero.File.putContentsAsync(bibFilename, bibString);
     showHintWithLink(
-      `Bibliographic Saved to ${bibfilename}`,
+      `Bibliographic Saved to ${bibFilename}`,
       "Show in Folder",
       (ev) => {
-        Zotero.File.reveal(bibfilename);
+        Zotero.File.reveal(bibFilename);
       },
     );
   }
 }
 
-export async function saveMultipleLatex(
-  filename: string,
-  noteItems: Zotero.Item[],
-) {
+export async function saveMergedLatex(filename: string, noteIds: number[]) {
+  const noteItems = noteIds.map((noteId) => Zotero.Items.get(noteId));
   const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
   await IOUtils.makeDirectory(dir);
   const hasImage = noteItems.some((item) => item.getNote().includes("<img"));
@@ -95,19 +94,19 @@ export async function saveMultipleLatex(
       `${Zotero.getString("fileInterface.export")} Bibtex File`,
       "save",
       [["Bibtex File(*.bib)", "*.bib"]],
-      `notegeneration.bib`,
+      `references.bib`,
     ).open();
     if (!raw) {
-      Zotero.debug("[Bib Export] Bib file export canceled.");
+      ztoolkit.log("[Bib Export] Bib file export canceled.");
       return;
     }
-    const bibfilename = formatPath(raw, ".bib");
-    await Zotero.File.putContentsAsync(bibfilename, bibString);
+    const bibFilename = formatPath(raw, ".bib");
+    await Zotero.File.putContentsAsync(bibFilename, bibString);
     showHintWithLink(
-      `Bibliographic Saved to ${bibfilename}`,
+      `Bibliographic Saved to ${bibFilename}`,
       "Show in Folder",
       (ev) => {
-        Zotero.File.reveal(bibfilename);
+        Zotero.File.reveal(bibFilename);
       },
     );
   }

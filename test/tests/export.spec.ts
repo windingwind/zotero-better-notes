@@ -57,7 +57,7 @@ describe("Export", function () {
 
     const filePath = PathUtils.join(tempDir, "test.tex");
 
-    await addon.api.$export.saveLatex(filePath, note);
+    await addon.api.$export.saveLatex(filePath, note.id);
 
     debug("Note saved to", filePath);
 

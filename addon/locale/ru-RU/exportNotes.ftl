@@ -43,4 +43,4 @@ useDefaultExport =
     .tooltiptext = Экспортировать заметки без расширенных опций, предоставленных Better Notes.
 
 latex-merge =
-    .label = Объединить в один файл
+    .label = Объединить в один tex-файл

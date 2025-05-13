@@ -43,4 +43,4 @@ useDefaultExport =
     .tooltiptext = Better Notes tarafından sağlanan gelişmiş seçenekler olmadan notları dışa aktar.
 
 latex-merge =
-    .label = Tek dosyada birleştir
+    .label = Tek tex dosyasında birleştir
