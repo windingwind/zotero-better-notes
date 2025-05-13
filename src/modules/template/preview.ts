@@ -80,7 +80,7 @@ async function renderTemplatePreview(
       if (!data) {
         html = messages.noNoteItem;
       } else {
-        const latexContent = await addon.api.convert.note2latex(
+        const [latexContent, bibString] = await addon.api.convert.note2latex(
           data,
           Zotero.getTempDirectory().path,
           { withYAMLHeader: false, skipSavingImages: true, keepNoteLink: true },
