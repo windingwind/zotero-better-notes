@@ -195,7 +195,7 @@ To set up auto-sync, click `Set Auto-Sync` the first time you export your note. 
 
 Any changes made to your note or its corresponding Markdown file will be automatically synced. This feature makes it easy to keep all of your notes up to date and in one place.
 
-> 💡 Note: The note being edited will be synced after the editor is closed.
+> 💡 Note: Synchronisation takes place once the editor is closed and after the period of time you set in the `Auto-sync period` preference.
 
 ### Note Export
 
