@@ -80,11 +80,9 @@ async function runTemplate(
   templateText = templateLines.join("\n");
 
   function constructFunction(content: string) {
-    return `$\{await new Promise(async (_resolve) => {
-      const _call = async () => {
+    return `$\{await (async () => {
         ${content}
-      };
-      _resolve(await _call());})}`;
+      })()}`;
   }
 
   // Replace string inside ${{}}$ to async function
