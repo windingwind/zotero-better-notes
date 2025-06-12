@@ -481,7 +481,9 @@ class PluginState {
         this._closePopup();
       } else if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
         this._closePopup();
-        this.removeInputSlash(state);
+        if (this.options.enable) {
+          this.removeInputSlash(state);
+        }
       }
     });
 
@@ -587,8 +589,10 @@ class PluginState {
     if (!command) {
       return;
     }
-    // Remove the current input `/`
-    this.removeInputSlash(state);
+    if (this.options.enable) {
+      // Remove the current input `/`
+      this.removeInputSlash(state);
+    }
 
     const newState = _currentEditorInstance._editorCore.view.state;
 
@@ -607,9 +611,13 @@ class PluginState {
 
   removeInputSlash(state: EditorState) {
     const { $from } = state.selection;
+    const { parent } = $from;
+    const text = parent.textContent;
     const { pos } = $from;
-    const tr = state.tr.delete(pos - 1, pos);
-    _currentEditorInstance._editorCore.view.dispatch(tr);
+    if (text.endsWith("/") && !text.endsWith("//")) {
+      const tr = state.tr.delete(pos - 1, pos);
+      _currentEditorInstance._editorCore.view.dispatch(tr);
+    }
   }
 }
 
