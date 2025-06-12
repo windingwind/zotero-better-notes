@@ -481,7 +481,9 @@ class PluginState {
         this._closePopup();
       } else if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
         this._closePopup();
-        this.removeInputSlash(state);
+        if (this.options.enable) {
+          this.removeInputSlash(state);
+        }
       }
     });
 
@@ -587,8 +589,10 @@ class PluginState {
     if (!command) {
       return;
     }
-    // Remove the current input `/`
-    this.removeInputSlash(state);
+    if (this.options.enable) {
+      // Remove the current input `/`
+      this.removeInputSlash(state);
+    }
 
     const newState = _currentEditorInstance._editorCore.view.state;
 
