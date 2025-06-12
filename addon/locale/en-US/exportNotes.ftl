@@ -41,3 +41,6 @@ markdown-autoFilename =
 useDefaultExport =
     .label = Use Zotero's default export
     .tooltiptext = Export notes without advanced options provided by Better Notes.
+
+latex-merge =
+    .label = Merge into one tex file

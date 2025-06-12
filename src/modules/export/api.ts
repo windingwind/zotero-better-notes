@@ -24,6 +24,7 @@ async function exportNotes(
     exportPDF?: boolean;
     exportFreeMind?: boolean;
     exportLatex?: boolean;
+    mergeLatex?: boolean;
   },
 ) {
   const ZoteroPane = Zotero.getMainWindow().ZoteroPane;
@@ -119,8 +120,12 @@ async function exportNotes(
     }
   }
   if (options.exportLatex) {
-    for (const noteItem of allNoteItems) {
-      await toLatex(noteItem);
+    if (allNoteItems.length > 1 && options.mergeLatex) {
+      await toMergedLatex(allNoteItems);
+    } else {
+      for (const noteItem of allNoteItems) {
+        await toLatex(noteItem);
+      }
     }
   }
   if (options.exportDocx) {
@@ -181,7 +186,6 @@ async function toLatex(
   options: {
     filename?: string;
     keepNoteLink?: boolean;
-    withYAMLHeader?: boolean;
   } = {},
 ) {
   let filename = options.filename;
@@ -196,6 +200,28 @@ async function toLatex(
     filename = formatPath(raw, ".tex");
   }
   await addon.api.$export.saveLatex(filename, noteItem.id, options);
+}
+
+async function toMergedLatex(
+  noteItems: Zotero.Item[],
+  options: {
+    filename?: string;
+    keepNoteLink?: boolean;
+  } = {},
+) {
+  let filename = options.filename;
+  if (!filename) {
+    const raw = await new ztoolkit.FilePicker(
+      `${Zotero.getString("fileInterface.export")} Latex File`,
+      "save",
+      [["Latex File(*.tex)", "*.tex"]],
+      `export-notes-to-one-latex.tex`,
+    ).open();
+    if (!raw) return;
+    filename = formatPath(raw, ".tex");
+  }
+  const noteIds = noteItems.map((item) => item.id);
+  await addon.api.$export.saveMergedLatex(filename, noteIds);
 }
 
 async function toSync(
