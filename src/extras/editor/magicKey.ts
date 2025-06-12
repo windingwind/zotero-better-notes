@@ -611,9 +611,13 @@ class PluginState {
 
   removeInputSlash(state: EditorState) {
     const { $from } = state.selection;
+    const { parent } = $from;
+    const text = parent.textContent;
     const { pos } = $from;
-    const tr = state.tr.delete(pos - 1, pos);
-    _currentEditorInstance._editorCore.view.dispatch(tr);
+    if (text.endsWith("/") && !text.endsWith("//")) {
+      const tr = state.tr.delete(pos - 1, pos);
+      _currentEditorInstance._editorCore.view.dispatch(tr);
+    }
   }
 }
 
