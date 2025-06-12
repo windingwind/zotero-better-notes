@@ -72,7 +72,7 @@ async function exportNotes(
   if (options.exportMD) {
     if (options.setAutoSync) {
       const raw = await new ztoolkit.FilePicker(
-        `${getString("fileInterface.sync")} MarkDown File`,
+        `${getString("fileInterface-sync")} MarkDown File`,
         "folder",
       ).open();
       if (raw) {
@@ -97,7 +97,7 @@ async function exportNotes(
       let exportDir: string | false = false;
       if (options.autoMDFileName) {
         const raw = await new ztoolkit.FilePicker(
-          `${getString("fileInterface.export")} MarkDown File`,
+          `${getString("fileInterface-export")} MarkDown File`,
           "folder",
         ).open();
         exportDir = raw && formatPath(raw);

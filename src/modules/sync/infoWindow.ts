@@ -11,7 +11,7 @@ export async function showSyncInfo(noteId: number) {
     .addCell(0, 0, {
       tag: "h3",
       properties: {
-        innerHTML: getString("syncInfo.syncTo"),
+        innerHTML: getString("syncInfo-syncTo"),
       },
     })
     .addCell(1, 0, {
@@ -23,7 +23,7 @@ export async function showSyncInfo(noteId: number) {
     .addCell(2, 0, {
       tag: "h3",
       properties: {
-        innerHTML: getString("syncInfo.lastSync"),
+        innerHTML: getString("syncInfo-lastSync"),
       },
     })
     .addCell(3, 0, {
@@ -32,7 +32,7 @@ export async function showSyncInfo(noteId: number) {
         innerHTML: new Date(status.lastsync).toLocaleString(),
       },
     })
-    .addButton(getString("syncInfo.sync"), "sync", {
+    .addButton(getString("syncInfo-sync"), "sync", {
       noClose: true,
       callback: (ev) => {
         addon.hooks.onSyncing(undefined, {
@@ -42,7 +42,7 @@ export async function showSyncInfo(noteId: number) {
         });
       },
     })
-    .addButton(getString("syncInfo.unSync"), "unSync", {
+    .addButton(getString("syncInfo-unSync"), "unSync", {
       callback: async (ev) => {
         const outLink =
           await addon.api.relation.getNoteLinkOutboundRelation(noteId);
@@ -57,25 +57,25 @@ export async function showSyncInfo(noteId: number) {
         showHint(`Cancel sync of ${outLink.length} notes.`);
       },
     })
-    .addButton(getString("syncInfo.reveal"), "reveal", {
+    .addButton(getString("syncInfo-reveal"), "reveal", {
       noClose: true,
       callback: (ev) => {
         Zotero.File.reveal(jointPath(status.path, status.filename));
       },
     })
-    .addButton(getString("syncInfo.manager"), "manager", {
+    .addButton(getString("syncInfo-manager"), "manager", {
       noClose: true,
       callback: (ev) => {
         addon.hooks.onShowSyncManager();
       },
     })
-    .addButton(getString("syncInfo.export"), "export", {
+    .addButton(getString("syncInfo-export"), "export", {
       callback: (ev) => {
         addon.hooks.onShowExportNoteOptions([noteId]);
       },
     })
-    .addButton(getString("syncInfo.cancel"), "cancel")
-    .open(getString("export.title"), {
+    .addButton(getString("syncInfo-cancel"), "cancel")
+    .open(getString("export-title"), {
       resizable: true,
       centerscreen: true,
       fitContent: true,

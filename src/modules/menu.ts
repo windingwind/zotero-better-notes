@@ -6,7 +6,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
   ztoolkit.Menu.register("menuTools", { tag: "menuseparator" });
   ztoolkit.Menu.register("menuTools", {
     tag: "menuitem",
-    label: getString("menuTools.syncManager"),
+    label: getString("menuTools-syncManager"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
       addon.hooks.onShowSyncManager();
@@ -14,7 +14,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
   });
   ztoolkit.Menu.register("menuTools", {
     tag: "menuitem",
-    label: getString("menuEdit.templateEditor"),
+    label: getString("menuEdit-templateEditor"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
       addon.hooks.onShowTemplateEditor();
@@ -22,7 +22,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
   });
   ztoolkit.Menu.register("menuTools", {
     tag: "menuitem",
-    label: getString("menuEdit.importTemplate"),
+    label: getString("menuEdit-importTemplate"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: (ev) => {
       addon.hooks.onImportTemplateFromClipboard();
@@ -44,7 +44,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     "menuEdit",
     {
       tag: "menuitem",
-      label: getString("menuEdit.exportTemplate"),
+      label: getString("menuEdit-exportTemplate"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: (ev) => {
         addon.hooks.onShowTemplatePicker("export");
@@ -69,7 +69,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     "menuFile",
     {
       tag: "menuitem",
-      label: getString("menuAddNote.newTemplateItemNote"),
+      label: getString("menuAddNote-newTemplateItemNote"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: () =>
         addon.hooks.onCreateNoteFromTemplate("item", "library"),
@@ -81,7 +81,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     "menuFile",
     {
       tag: "menuitem",
-      label: getString("menuAddNote.newTemplateStandaloneNote"),
+      label: getString("menuAddNote-newTemplateStandaloneNote"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
     },
@@ -95,13 +95,13 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     ?.querySelector("menupopup") as XULMenuPopupElement;
   ztoolkit.Menu.register(newNoteMenu, {
     tag: "menuitem",
-    label: getString("menuAddNote.newTemplateStandaloneNote"),
+    label: getString("menuAddNote-newTemplateStandaloneNote"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
   });
   ztoolkit.Menu.register(newNoteMenu, {
     tag: "menuitem",
-    label: getString("menuAddNote.newTemplateItemNote"),
+    label: getString("menuAddNote-newTemplateItemNote"),
     icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
     commandListener: () =>
       addon.hooks.onCreateNoteFromTemplate("item", "library"),
@@ -120,7 +120,7 @@ export function registerMenus(win: _ZoteroTypes.MainWindow) {
     ) as XULMenuPopupElement,
     {
       tag: "menuitem",
-      label: getString("menuAddReaderNote.newTemplateNote"),
+      label: getString("menuAddReaderNote-newTemplateNote"),
       icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
       commandListener: () =>
         addon.hooks.onCreateNoteFromTemplate("item", "reader"),

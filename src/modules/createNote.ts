@@ -32,7 +32,7 @@ async function createNoteFromTemplate(
     const parentItemId =
       parentType === "reader" ? getReaderParentId() : getLibraryParentId();
     if (!parentItemId) {
-      Zotero.getMainWindow().alert(getString("alert.notValidParentItemError"));
+      Zotero.getMainWindow().alert(getString("alert-notValidParentItemError"));
       return;
     }
     addon.hooks.onShowTemplatePicker("create", {
@@ -108,7 +108,7 @@ async function createNote(
 
   const cView = ZoteroPane.collectionsView;
   if (!cView) {
-    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
+    Zotero.getMainWindow().alert(getString("alert-notValidCollectionError"));
     return false;
   }
   const cRow = cView.selectedTreeRow;
@@ -122,7 +122,7 @@ async function createNote(
       noteItem.addToCollection(cRow.ref.id);
     }
   } else {
-    Zotero.getMainWindow().alert(getString("alert.notValidCollectionError"));
+    Zotero.getMainWindow().alert(getString("alert-notValidCollectionError"));
     return false;
   }
 

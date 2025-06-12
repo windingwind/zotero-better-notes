@@ -327,12 +327,12 @@ async function getItemTemplateData() {
             librarySelectedIds.length > 1
               ? `and ${librarySelectedIds.length - 1} more`
               : ""
-          } ${getString("templatePicker.itemData.info")}`,
+          } ${getString("templatePicker-itemData-info")}`,
         },
       })
-      .addButton(getString("templatePicker.itemData.useLibrary"), "useLibrary")
-      .addButton(getString("templatePicker.itemData.useCustom"), "useCustom")
-      .open(getString("templatePicker.itemData.title"));
+      .addButton(getString("templatePicker-itemData-useLibrary"), "useLibrary")
+      .addButton(getString("templatePicker-itemData-useCustom"), "useCustom")
+      .open(getString("templatePicker-itemData-title"));
     await data.unloadLock.promise;
     if (data._lastButtonId === "useLibrary") {
       return librarySelectedIds;

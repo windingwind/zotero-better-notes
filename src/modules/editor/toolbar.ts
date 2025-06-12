@@ -89,21 +89,21 @@ async function getMenuData(editor: Zotero.EditorInstance) {
   const settingsMenuData: PopupData[] = [
     {
       id: makeId("settings-openAsTab"),
-      text: getString("editor.toolbar.settings.openAsTab"),
+      text: getString("editor-toolbar-settings-openAsTab"),
       callback: (e) => {
         addon.hooks.onOpenNote(noteItem.id, "tab");
       },
     },
     {
       id: makeId("settings-openAsWindow"),
-      text: getString("editor.toolbar.settings.openAsWindow"),
+      text: getString("editor-toolbar-settings-openAsWindow"),
       callback: (e) => {
         addon.hooks.onOpenNote(noteItem.id, "window");
       },
     },
     {
       id: makeId("settings-showInLibrary"),
-      text: getString("editor.toolbar.settings.showInLibrary"),
+      text: getString("editor-toolbar-settings-showInLibrary"),
       callback: (e) => {
         Zotero.getMainWindow().ZoteroPane.selectItems([e.editor._item.id]);
       },
@@ -118,7 +118,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-export"),
-          text: getString("editor.toolbar.settings.export"),
+          text: getString("editor-toolbar-settings-export"),
           callback: (e) => {
             if (addon.api.sync.isSyncNote(noteItem.id)) {
               addon.hooks.onShowSyncInfo(noteItem.id);
@@ -132,7 +132,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-insertTemplate"),
-          text: getString("editor.toolbar.settings.insertTemplate"),
+          text: getString("editor-toolbar-settings-insertTemplate"),
           callback: (e) => {
             addon.hooks.onShowTemplatePicker("insert", {
               noteId: e.editor._item.id,
@@ -142,7 +142,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-refreshTemplates"),
-          text: getString("editor.toolbar.settings.refreshTemplates"),
+          text: getString("editor-toolbar-settings-refreshTemplates"),
           callback: (e) => {
             addon.hooks.onRefreshTemplatesInNote(e.editor);
           },
@@ -152,7 +152,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-copyLink"),
-          text: getString("editor.toolbar.settings.copyLink", {
+          text: getString("editor-toolbar-settings-copyLink", {
             args: {
               line: currentLine,
             },
@@ -163,7 +163,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-copyLinkAtSection"),
-          text: getString("editor.toolbar.settings.copyLinkAtSection", {
+          text: getString("editor-toolbar-settings-copyLinkAtSection", {
             args: {
               section: slice(currentSection, 10),
             },
@@ -192,7 +192,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
         },
         {
           id: makeId("settings-openParent"),
-          text: getString("editor.toolbar.settings.openParent"),
+          text: getString("editor-toolbar-settings-openParent"),
           callback: (e) => {
             Zotero.getMainWindow().ZoteroPane.viewAttachment([
               parentAttachment.id,
@@ -207,7 +207,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
   if (addon.api.sync.isSyncNote(noteItem.id)) {
     settingsMenuData.splice(5, 0, {
       id: makeId("settings-refreshSyncing"),
-      text: getString("editor.toolbar.settings.refreshSyncing"),
+      text: getString("editor-toolbar-settings-refreshSyncing"),
       callback: (e) => {
         addon.hooks.onSyncing([noteItem], {
           quiet: false,

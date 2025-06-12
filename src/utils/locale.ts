@@ -1,6 +1,7 @@
 import { config } from "../../package.json";
+import { FluentMessageId } from "../../typings/i10n";
 
-export { initLocale, getString };
+export { initLocale, getString, getLocaleID };
 
 /**
  * Initialize locale data
@@ -21,30 +22,14 @@ function initLocale() {
  * @param localString ftl key
  * @param options.branch branch name
  * @param options.args args
- * @example
- * ```ftl
- * # addon.ftl
- * addon-static-example = This is default branch!
- *     .branch-example = This is a branch under addon-static-example!
- * addon-dynamic-example =
-    { $count ->
-        [one] I have { $count } apple
-       *[other] I have { $count } apples
-    }
- * ```
- * ```js
- * getString("addon-static-example"); // This is default branch!
- * getString("addon-static-example", { branch: "branch-example" }); // This is a branch under addon-static-example!
- * getString("addon-dynamic-example", { args: { count: 1 } }); // I have 1 apple
- * getString("addon-dynamic-example", { args: { count: 2 } }); // I have 2 apples
- * ```
  */
-function getString(localString: string): string;
-function getString(localString: string, branch: string): string;
+function getString(localString: FluentMessageId): string;
+function getString(localString: FluentMessageId, branch: string): string;
 function getString(
-  localeString: string,
+  localeString: FluentMessageId,
   options: { branch?: string | undefined; args?: Record<string, unknown> },
 ): string;
+function getString(localeString: string, ...args: any[]): string;
 function getString(...inputs: any[]) {
   if (inputs.length === 1) {
     return _getString(inputs[0]);
@@ -60,21 +45,10 @@ function getString(...inputs: any[]) {
 }
 
 function _getString(
-  localeString: string,
+  localeString: FluentMessageId,
   options: { branch?: string | undefined; args?: Record<string, unknown> } = {},
 ): string {
-  switch (localeString) {
-    case "alt":
-      return Zotero.isMac ? "⌥" : "Alt";
-    case "ctrl":
-      return Zotero.isMac ? "⌘" : "Ctrl";
-    case "shift":
-      return Zotero.isMac ? "⇧" : "Shift";
-  }
-  const localStringWithPrefix = `${config.addonRef}-${localeString.replace(
-    /\./g,
-    "-",
-  )}`;
+  const localStringWithPrefix = `${config.addonRef}-${localeString}`;
   const { branch, args } = options;
   const pattern = addon.data.locale?.current.formatMessagesSync([
     { id: localStringWithPrefix, args },
@@ -83,14 +57,17 @@ function _getString(
     return localStringWithPrefix;
   }
   if (branch && pattern.attributes) {
-    return (
-      pattern.attributes[branch] ||
-      pattern.attributes.find(
-        (attr: { name: string; value: string }) => attr.name === branch,
-      )?.value ||
-      localStringWithPrefix
-    );
+    for (const attr of pattern.attributes) {
+      if (attr.name === branch) {
+        return attr.value;
+      }
+    }
+    return pattern.attributes[branch] || localStringWithPrefix;
   } else {
     return pattern.value || localStringWithPrefix;
   }
+}
+
+function getLocaleID(id: FluentMessageId) {
+  return `${config.addonRef}-${id}`;
 }

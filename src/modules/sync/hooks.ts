@@ -10,11 +10,11 @@ function setSyncing() {
   const syncPeriod = getPref("syncPeriodSeconds") as number;
   const enableHint = addon.data.env === "development";
   if (syncPeriod > 0) {
-    enableHint && showHint(`${getString("sync.start.hint")} ${syncPeriod} s`);
+    enableHint && showHint(`${getString("sync-start-hint")} ${syncPeriod} s`);
     const timer = ztoolkit.getGlobal("setInterval")(
       () => {
         if (!addon.data.alive) {
-          showHint(getString("sync.stop.hint"));
+          showHint(getString("sync-stop-hint"));
           ztoolkit.getGlobal("clearInterval")(timer);
         }
         // Only when Zotero is active and focused
@@ -84,12 +84,12 @@ async function callSyncing(
 
     if (!quiet) {
       progress = new ztoolkit.ProgressWindow(
-        `[${getString("sync.running.hint.title")}] ${
+        `[${getString("sync-running-hint-title")}] ${
           addon.data.env === "development" ? reason : "Better Notes"
         }`,
       )
         .createLine({
-          text: `[${getString("sync.running.hint.check")}] 0/${
+          text: `[${getString("sync-running-hint-check")}] 0/${
             items.length
           } ...`,
           type: "default",
@@ -128,7 +128,7 @@ async function callSyncing(
           break;
       }
       progress?.changeLine({
-        text: `[${getString("sync.running.hint.check")}] ${i}/${
+        text: `[${getString("sync-running-hint-check")}] ${i}/${
           items.length
         } ...`,
         progress: ((i - 1) / items.length) * 100,
@@ -142,7 +142,7 @@ async function callSyncing(
     i = 1;
     for (const filepath of Object.keys(toExport)) {
       progress?.changeLine({
-        text: `[${getString("sync.running.hint.updateMD")}] ${i}/${
+        text: `[${getString("sync-running-hint-updateMD")}] ${i}/${
           items.length
         } ...`,
         progress: ((i - 1) / items.length) * 100,
@@ -160,7 +160,7 @@ async function callSyncing(
     for (const syncStatus of toImport) {
       progress?.changeLine({
         text: `[${getString(
-          "sync.running.hint.updateNote",
+          "sync-running-hint-updateNote",
         )}] ${i}/${totalCount}, ${toDiff.length} queuing...`,
         progress: ((i - 1) / totalCount) * 100,
       });
@@ -179,7 +179,7 @@ async function callSyncing(
     totalCount = toDiff.length;
     for (const syncStatus of toDiff) {
       progress?.changeLine({
-        text: `[${getString("sync.running.hint.diff")}] ${i}/${totalCount}...`,
+        text: `[${getString("sync-running-hint-diff")}] ${i}/${totalCount}...`,
         progress: ((i - 1) / totalCount) * 100,
       });
 
@@ -195,10 +195,10 @@ async function callSyncing(
       text:
         (syncCount
           ? `[${getString(
-              "sync.running.hint.finish",
-            )}] ${syncCount} ${getString("sync.running.hint.synced")}`
-          : `[${getString("sync.running.hint.finish")}] ${getString(
-              "sync.running.hint.upToDate",
+              "sync-running-hint-finish",
+            )}] ${syncCount} ${getString("sync-running-hint-synced")}`
+          : `[${getString("sync-running-hint-finish")}] ${getString(
+              "sync-running-hint-upToDate",
             )}`) + (skippedCount ? `, ${skippedCount} skipped.` : ""),
       progress: 100,
     });

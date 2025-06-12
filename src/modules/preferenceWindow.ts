@@ -5,7 +5,7 @@ export function registerPrefsWindow() {
   Zotero.PreferencePanes.register({
     pluginID: config.addonID,
     src: rootURI + "chrome/content/preferences.xhtml",
-    label: getString("pref.title"),
+    label: getString("pref-title"),
     image: `chrome://${config.addonRef}/content/icons/favicon.png`,
   });
 }
