@@ -34,6 +34,13 @@ export class ContextPane extends PluginCEBase {
   init(): void {
     this._details = this._queryID("container") as unknown as DetailsPane;
     this._sidenav = this._queryID("sidenav");
+
+    // Make sure the item-pane-sidenav works after https://github.com/zotero/zotero/commit/3102b6b67a3866514e062c653c4c4d7d03f4e1fb
+    if (typeof (globalThis as any).Zotero_Tabs === "undefined") {
+      (globalThis as any).Zotero_Tabs = {
+        selectedType: "unknown",
+      };
+    }
   }
 
   render() {
