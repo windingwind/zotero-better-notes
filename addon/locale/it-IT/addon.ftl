@@ -13,6 +13,9 @@ menuAddNote-importMD = Importa file MarkDown come nota
 menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
 
 menuEditor-resizeImage = Ridimensiona immagine
+menuEditor-copy =  Copia link della nota...
+menuEditor-copyLine = Copia link della riga { $line }
+menuEditor-copySection = Copia link della sezione { $section }
 
 menuHelp-openUserGuide = Apri la guida utente di Better Notes
 

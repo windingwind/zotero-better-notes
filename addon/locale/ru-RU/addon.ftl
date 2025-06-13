@@ -13,6 +13,9 @@ menuAddNote-importMD = Импорт файла MarkDown в качестве пр
 menuAddReaderNote-newTemplateNote=Новая элементная Заметка из шаблона
 
 menuEditor-resizeImage=Изменить размер изображения
+menuEditor-copy = Копировать ссылку на заметку...
+menuEditor-copyLine = Копировать ссылку на строку { $line }
+menuEditor-copySection = Копировать ссылку на раздел { $section }
 
 menuHelp-openUserGuide = Open Better Notes User Guide
 

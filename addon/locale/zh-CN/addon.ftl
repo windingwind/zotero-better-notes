@@ -13,6 +13,9 @@ menuAddNote-importMD = 导入MarkDown为笔记
 menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
 
 menuEditor-resizeImage=缩放图片
+menuEditor-copy = 复制笔记链接...
+menuEditor-copyLine = 复制行链接 (L{ $line })
+menuEditor-copySection = 复制节链接 (Sec. { $section })
 
 menuHelp-openUserGuide = 打开Better Notes用户指南
 
