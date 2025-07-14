@@ -3,7 +3,7 @@ import { getPref } from "../../utils/prefs";
 import { formatPath, jointPath } from "../../utils/str";
 
 export async function saveMD(
-  filename: string,
+  filePath: string,
   noteId: number,
   options: {
     keepNoteLink?: boolean;
@@ -11,23 +11,16 @@ export async function saveMD(
   } = {},
 ) {
   const noteItem = Zotero.Items.get(noteId);
-  const dir = jointPath(...PathUtils.split(formatPath(filename)).slice(0, -1));
+  const filename = PathUtils.split(filePath).pop()
+  const dir = jointPath(...PathUtils.split(formatPath(filePath)).slice(0, -1));
   await IOUtils.makeDirectory(dir);
-  const hasImage = noteItem.getNote().includes("<img");
-  if (hasImage) {
-    const attachmentsDir = jointPath(
-      dir,
-      getPref("syncAttachmentFolder") as string,
-    );
-    await IOUtils.makeDirectory(attachmentsDir);
-  }
   await Zotero.File.putContentsAsync(
-    filename,
-    await addon.api.convert.note2md(noteItem, dir, options),
+    filePath,
+    await addon.api.convert.note2md(noteItem, dir, {...options, filename: filename}),
   );
 
-  showHintWithLink(`Note Saved to ${filename}`, "Show in Folder", (ev) => {
-    Zotero.File.reveal(filename);
+  showHintWithLink(`Note Saved to ${filePath}`, "Show in Folder", (ev) => {
+    Zotero.File.reveal(filePath);
   });
 }
 
@@ -38,16 +31,7 @@ export async function syncMDBatch(
 ) {
   const noteItems = Zotero.Items.get(noteIds);
   await IOUtils.makeDirectory(saveDir);
-  const attachmentsDir = jointPath(
-    saveDir,
-    getPref("syncAttachmentFolder") as string,
-  );
-  const hasImage = noteItems.some((noteItem) =>
-    noteItem.getNote().includes("<img"),
-  );
-  if (hasImage) {
-    await IOUtils.makeDirectory(attachmentsDir);
-  }
+
   let i = 0;
   for (const noteItem of noteItems) {
     const filename = await addon.api.sync.getMDFileName(noteItem.id, saveDir);
@@ -56,6 +40,7 @@ export async function syncMDBatch(
       keepNoteLink: false,
       withYAMLHeader: true,
       cachedYAMLHeader: metaList?.[i],
+      filename: filename,
     });
     await Zotero.File.putContentsAsync(filePath, content);
     addon.api.sync.updateSyncStatus(noteItem.id, {
