@@ -38,6 +38,7 @@ editor-pinTableTop =
 sync-title = Sincronizzazione
 sync-period-label = Intervallo della sincronizzazione automatica (secondi)
 sync-attachmentFolder-label = Cartella degli allegati
+sync-attachmentFolder-hint = (`&#36;&#123;filename&#125;` rappresenta il nome del file attuale.)
 sync-manager =
     .label = Apri Manager di sincronizzazione
 template-title = Template
