@@ -172,7 +172,10 @@ async function toMD(
     const raw = await new ztoolkit.FilePicker(
       `${Zotero.getString("fileInterface.export")} MarkDown File`,
       "save",
-      [["MarkDown File(*.md)", "*.md"]],
+      [
+        ["MarkDown File(*.md)", "*.md"],
+        ["All Files", "*"],
+      ],
       `${noteItem.getNoteTitle()}.md`,
     ).open();
     if (!raw) return;
@@ -193,7 +196,10 @@ async function toLatex(
     const raw = await new ztoolkit.FilePicker(
       `${Zotero.getString("fileInterface.export")} Latex File`,
       "save",
-      [["Latex File(*.tex)", "*.tex"]],
+      [
+        ["Latex File(*.tex)", "*.tex"],
+        ["All Files", "*"],
+      ],
       `${noteItem.getNoteTitle()}.tex`,
     ).open();
     if (!raw) return;
@@ -214,7 +220,10 @@ async function toMergedLatex(
     const raw = await new ztoolkit.FilePicker(
       `${Zotero.getString("fileInterface.export")} Latex File`,
       "save",
-      [["Latex File(*.tex)", "*.tex"]],
+      [
+        ["Latex File(*.tex)", "*.tex"],
+        ["All Files", "*"],
+      ],
       `export-notes-to-one-latex.tex`,
     ).open();
     if (!raw) return;
