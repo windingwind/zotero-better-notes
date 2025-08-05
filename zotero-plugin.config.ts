@@ -1,6 +1,7 @@
 import pkg from "./package.json";
 import { defineConfig } from "zotero-plugin-scaffold";
 import { replaceInFile } from "replace-in-file";
+import { bundleTypes } from "./scripts/types/bundleTypes.mjs";
 
 const TEST_PREFS = {};
 // Disable user guide, keep in sync with src/modules/userGuide.ts
@@ -23,7 +24,7 @@ export default defineConfig({
   },
 
   build: {
-    assets: ["addon/**/*.*"],
+    assets: ["addon/**/*.*", "scripts/types/**/*.*"],
     define: {
       ...pkg.config,
       author: pkg.author,
@@ -56,12 +57,16 @@ export default defineConfig({
       prefix: pkg.config.prefsPrefix,
     },
     hooks: {
-      "build:bundle": (ctx) => {
-        return replaceInFile({
-          files: ["README.md"],
-          from: /^ {2}- \[Latest Version.*/gm,
-          to: `  - [Latest Version: ${ctx.version}](${ctx.xpiDownloadLink})`,
-        }) as Promise<any>;
+      "build:bundle": async (ctx) => {
+        await Promise.all([
+          replaceInFile({
+            files: ["README.md"],
+            from: /^ {2}- \[Latest Version.*/gm,
+            to: `  - [Latest Version: ${ctx.version}](${ctx.xpiDownloadLink})`,
+          }) as Promise<any>,
+          bundleTypes(),
+        ]);
+        return;
       },
     },
   },
@@ -75,7 +80,6 @@ export default defineConfig({
     entries: ["test/"],
     prefs: TEST_PREFS,
     abortOnFail: true,
-    exitOnFinish: false,
     hooks: {},
     waitForPlugin: `() => Zotero.${pkg.config.addonRef}.data.initialized`,
   },

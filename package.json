@@ -60,7 +60,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-visit-parents": "^6.0.1",
     "yamljs": "^0.3.0",
-    "zotero-plugin-toolkit": "^5.1.0-2"
+    "zotero-plugin-toolkit": "^5.1.0-beta.4"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -88,10 +88,10 @@
     "prosemirror-transform": "^1.10.4",
     "prosemirror-view": "^1.40.1",
     "replace-in-file": "^7.2.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "xslt3": "^2.7.0",
-    "zotero-plugin-scaffold": "^0.6.1",
-    "zotero-types": "^4.1.0-beta.0"
+    "zotero-plugin-scaffold": "^0.8.0",
+    "zotero-types": "^4.1.0-beta.1"
   },
   "eslintConfig": {
     "env": {
@@ -138,6 +138,7 @@
       "**/dist/**",
       "**/node_modules/**",
       "**/scripts/**",
+      "**/addon/chrome/content/lib/**",
       "**/*.js",
       "**/*.bak"
     ]
