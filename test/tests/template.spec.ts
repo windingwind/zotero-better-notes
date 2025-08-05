@@ -238,7 +238,7 @@ This is a inline math<span class="math"><span class="katex"><span class="katex-m
 <h2>Highlight Text</h2>
 <p>Highlight <span style="background-color: rgb(255, 102, 102);">text</span> is here</p>
 <h2>Colored Text</h2>
-<p>Colored <span style="color: rgb(255, 32, 32)">text</span> is here</p>
+<p>Colored <span style="color: rgb(255, 32, 32);">text</span> is here</p>
 <h2>Task Lists</h2>
 <ul>
 <li>
@@ -249,7 +249,7 @@ Incomplete item
 </li>
 </ul>
 <h2>Strikethrough</h2>
-<p><span style="text-decoration: line-through">This text is strikethrough.</span></p>
+<p><span style="text-decoration: line-through;">This text is strikethrough.</span></p>
 <h2>Recursive Elements</h2>
 <h3>Recursive Links and Emphasis</h3>
 <p><strong><a href="https://example.com" rel="noopener noreferrer nofollow">Bold link</a></strong></p>
