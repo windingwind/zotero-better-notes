@@ -37,17 +37,17 @@ export async function showSyncManager() {
         columns: [
           {
             dataKey: "noteName",
-            label: "syncManager.noteName",
+            label: "syncManager-noteName",
             fixedWidth: false,
           },
           {
             dataKey: "lastSync",
-            label: "syncManager.lastSync",
+            label: "syncManager-lastSync",
             fixedWidth: false,
           },
           {
             dataKey: "filePath",
-            label: "syncManager.filePath",
+            label: "syncManager-filePath",
             fixedWidth: false,
           },
         ].map((column) =>
