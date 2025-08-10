@@ -142,10 +142,10 @@ function serializeAnnotations(
         Zotero.EditorInstanceUtilities,
         annotation.text.trim(),
       );
-      highlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
+      highlightHTML = `<span class="${annotation.type}" data-annotation="${encodeURIComponent(
         JSON.stringify(storedAnnotation),
       )}">${text}</span>`;
-      quotedHighlightHTML = `<span class="highlight" data-annotation="${encodeURIComponent(
+      quotedHighlightHTML = `<span class="${annotation.type}" data-annotation="${encodeURIComponent(
         JSON.stringify(storedAnnotation),
       )}">${Zotero.getString(
         "punctuation.openingQMark",
