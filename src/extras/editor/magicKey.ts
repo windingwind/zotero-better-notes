@@ -2,6 +2,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from "prosemirror-state";
 
 import { Popup } from "./popup";
 import { formatMessage } from "./editorStrings";
+import { ResolvedPos } from "prosemirror-model";
 
 export { initMagicKeyPlugin, MagicKeyOptions };
 
@@ -278,8 +279,8 @@ class PluginState {
       if (parent.type.name === "doc") {
         return;
       }
-      const text = parent.textContent;
-      if (text.endsWith("/") && !text.endsWith("//")) {
+      const textBeforeCursor = getTextBeforeCursor($from);
+      if (textBeforeCursor.endsWith("/") && !textBeforeCursor.endsWith("//")) {
         this._openPopup(state);
       } else {
         this._closePopup();
@@ -611,10 +612,9 @@ class PluginState {
 
   removeInputSlash(state: EditorState) {
     const { $from } = state.selection;
-    const { parent } = $from;
-    const text = parent.textContent;
     const { pos } = $from;
-    if (text.endsWith("/") && !text.endsWith("//")) {
+    const textBeforeCursor = getTextBeforeCursor($from);
+    if (textBeforeCursor.endsWith("/") && !textBeforeCursor.endsWith("//")) {
       const tr = state.tr.delete(pos - 1, pos);
       _currentEditorInstance._editorCore.view.dispatch(tr);
     }
@@ -666,4 +666,9 @@ function initMagicKeyPlugin(
 
 function getPlugin(key = "menu") {
   return _currentEditorInstance._editorCore.pluginState[key] as any;
+}
+
+function getTextBeforeCursor(from: ResolvedPos) {
+  const cursorPosInNode = from.parentOffset;
+  return from.parent.textContent.slice(0, cursorPosInNode);
 }
