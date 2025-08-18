@@ -61,7 +61,10 @@ async function createNoteFromMD() {
   const filepaths = await new ztoolkit.FilePicker(
     "Import MarkDown",
     "multiple",
-    [[`MarkDown(*.md)`, `*.md`]],
+    [
+      [`MarkDown(*.md)`, `*.md`],
+      ["All Files", "*"],
+    ],
   ).open();
 
   if (!filepaths) {

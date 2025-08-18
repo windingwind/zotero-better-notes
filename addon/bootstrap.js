@@ -55,8 +55,6 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
 
   Zotero.__addonInstance__.hooks.onShutdown();
 
-  Cu.unload(`${rootURI}/chrome/content/scripts/__addonRef__.js`);
-
   if (chromeHandle) {
     chromeHandle.destruct();
     chromeHandle = null;

@@ -21,9 +21,16 @@
     </style>
     <script>
       var browser;
-      var { XPCOMUtils } = ChromeUtils.import(
-        "resource://gre/modules/XPCOMUtils.jsm",
-      );
+      if (typeof ChromeUtils.import === "undefined") {
+        var { XPCOMUtils } = ChromeUtils.importESModule(
+          "resource://gre/modules/XPCOMUtils.sys.mjs",
+        );
+      } else {
+        var { XPCOMUtils } = ChromeUtils.import(
+          "resource://gre/modules/XPCOMUtils.jsm",
+        );
+      }
+
       window.XPCOMUtils = XPCOMUtils;
 
       const scope = {};

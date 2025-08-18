@@ -49,11 +49,6 @@
           "chrome://zotero/content/include.js",
           this,
         );
-
-        Services.scriptloader.loadSubScript(
-          "resource://zotero/require.js",
-          this,
-        );
         window.arguments[0]._initPromise.resolve();
       });
     </script>

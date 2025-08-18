@@ -208,11 +208,14 @@ async function getMDFileName(noteId: number, searchDir?: string) {
     }
   }
   // If no file found, use the template to generate a new filename
-  return await addon.api.template.runTemplate(
+  let filename = await addon.api.template.runTemplate(
     "[ExportMDFileNameV2]",
     "noteItem",
     [noteItem],
   );
+  // trim the filename to remove any leading or trailing spaces or line breaks
+  filename = filename.trim();
+  return filename;
 }
 
 async function findAllSyncedFiles(searchDir: string) {

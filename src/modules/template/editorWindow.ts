@@ -5,6 +5,7 @@ import { itemPicker } from "../../utils/itemPicker";
 import { getString } from "../../utils/locale";
 import { waitUtilAsync } from "../../utils/wait";
 import { xhtmlEscape } from "../../utils/str";
+import { initializeTemplateEditor } from "./monacoEditor";
 
 export async function showTemplateEditor() {
   if (
@@ -91,7 +92,7 @@ export async function showTemplateEditor() {
 
         for (const column of columns) {
           const span = document.createElement("span");
-          // @ts-ignore
+          // @ts-ignore - className property exists on column
           span.className = `cell ${column?.className}`;
           const cellData = rowData[column.dataKey as keyof typeof rowData];
           span.textContent = cellData;
@@ -207,6 +208,15 @@ export async function showTemplateEditor() {
       language: "javascript",
       theme: "vs-" + (isDark ? "dark" : "light"),
     });
+
+    // Register custom language for template syntax
+    const success = initializeTemplateEditor(monaco, editor, isDark);
+    if (!success) {
+      ztoolkit.log(
+        "Failed to register template language, falling back to default",
+      );
+    }
+
     addon.data.template.editor.monaco = monaco;
     addon.data.template.editor.editor = editor;
     await initFormats();
