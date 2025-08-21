@@ -44,14 +44,14 @@ class PluginState {
     },
     {
       messageId: "outboundLink",
-      searchParts: ["ol", "obl", "outboundLink"],
+      searchParts: ["ob", "obl", "outboundLink"],
       command: (state) => {
         this.options.insertLink?.("outbound");
       },
     },
     {
       messageId: "inboundLink",
-      searchParts: ["il", "ibl", "inboundLink"],
+      searchParts: ["ib", "ibl", "inboundLink"],
       command: (state) => {
         this.options.insertLink?.("inbound");
       },
@@ -96,7 +96,7 @@ class PluginState {
     },
     {
       messageId: "table",
-      searchParts: ["t", "tb", "table"],
+      searchParts: ["tb", "table"],
       command: (state) => {
         const input = prompt(
           "Enter the number of rows and columns, separated by a comma (e.g., 3,3)",
@@ -157,14 +157,14 @@ class PluginState {
     },
     {
       messageId: "paragraph",
-      searchParts: ["p", "paragraph"],
+      searchParts: ["pg", "paragraph"],
       command: (state) => {
         getPlugin()?.paragraph.run();
       },
     },
     {
       messageId: "monospaced",
-      searchParts: ["m", "monospaced"],
+      searchParts: ["ms", "monospaced"],
       command: (state) => {
         getPlugin()?.codeBlock.run();
       },
@@ -356,9 +356,22 @@ class PluginState {
     overflow: hidden auto;
   }
   .${this.popupClass} .popup-item {
+    display: flex;
+    align-items: flex-end;
     padding: 6px;
     cursor: pointer;
     border-radius: 5px;
+  }
+  .${this.popupClass} .popup-item[hidden] {
+    display: none !important;
+  }
+  .${this.popupClass} .popup-item-title {
+    flex: 1;
+  }
+  .${this.popupClass} .popup-item-key {
+    margin-left: 12px;
+    font-size: 0.9em;
+    font-family: monospace;
   }
   .${this.popupClass} .popup-item:hover {
     background-color: var(--fill-senary);
@@ -377,6 +390,7 @@ class PluginState {
       <div class="popup-item" data-command-id="${id}">
         <div class="popup-item-icon">${command.icon || ""}</div>
         <div class="popup-item-title">${command.title}</div>
+        <div class="popup-item-key">${command.searchParts![0]}</div>
       </div>`,
       )
       .join("")}
@@ -396,6 +410,8 @@ class PluginState {
     input.addEventListener("input", (event) => {
       const target = event.target as HTMLInputElement;
       const value = target.value;
+      let numIndex = 0;
+      let itemIndex;
       for (const [id, command] of Object.entries(this.commands)) {
         const item = this.popup!.container.querySelector(
           `.popup-item[data-command-id="${id}"]`,
@@ -417,7 +433,14 @@ class PluginState {
           item.hidden = true;
         } else {
           item.hidden = false;
+          if (
+            command.searchParts &&
+            command.searchParts[0].toLowerCase() === value.toLowerCase()
+          ) {
+            itemIndex = numIndex;
+          }
         }
+        numIndex += 1;
         if (matchedIndex >= 0) {
           // Change the matched part to bold
           const title = command.title!;
@@ -427,7 +450,7 @@ class PluginState {
             title.slice(matchedIndex + value.length);
         }
       }
-      this._selectCommand();
+      this._selectCommand(itemIndex);
     });
 
     input.addEventListener("keydown", (event) => {
