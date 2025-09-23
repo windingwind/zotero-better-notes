@@ -46,7 +46,11 @@ function init() {
     const size = ((getPref("windows.linkCreator.size") as string) || "").split(
       ",",
     );
-    window.resizeTo(Number(size[0] || "800"), Number(size[1] || "600"));
+    if (size.length === 2) {
+      window.resizeTo(Number(size[0] || "800"), Number(size[1] || "600"));
+    } else {
+      window.sizeToContent();
+    }
   }, 0);
 
   io = window.arguments[0];
