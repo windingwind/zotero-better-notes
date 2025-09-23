@@ -19,6 +19,9 @@ let tableHelper: VirtualizedTableHelper;
 function init() {
   args._initPromise.resolve();
   initTable();
+  requestIdleCallback(() => {
+    window.sizeToContent();
+  });
 }
 
 function accept() {
