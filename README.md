@@ -1,6 +1,6 @@
 # Better Notes for Zotero
 
-[![zotero target version](https://img.shields.io/badge/Zotero-7-green?style=flat-square&logo=zotero&logoColor=CC2936)](https://www.zotero.org)
+[![zotero target version](https://img.shields.io/badge/Zotero-7%2F8-green?style=flat-square&logo=zotero&logoColor=CC2936)](https://www.zotero.org)
 [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
 [![telegram group](https://img.shields.io/badge/Join%20Community-@bnzotero-blue?style=flat-square&logo=telegram)](https://t.me/boost/bnzotero)
 
@@ -88,7 +88,7 @@ and:
 
 ## 👋 Install
 
-- Download the plugin (.xpi file) from below.
+- Download the plugin (.xpi file) from below (beta version is only for Zotero 8 beta! Use the latest stable version for Zotero 7).
   - [Latest Version: 3.0.0-beta.1](https://github.com/windingwind/zotero-better-notes/releases/download/v3.0.0-beta.1/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
