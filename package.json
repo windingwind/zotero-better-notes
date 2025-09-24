@@ -91,7 +91,7 @@
     "typescript": "^5.9.2",
     "xslt3": "^2.7.0",
     "zotero-plugin-scaffold": "^0.8.0",
-    "zotero-types": "^4.1.0-beta.1"
+    "zotero-types": "^4.1.0-beta.3"
   },
   "eslintConfig": {
     "env": {

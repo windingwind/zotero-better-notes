@@ -1,23 +1,9 @@
 pref-title=Better Notes
 
-menuEdit-exportTemplate=运行模板并导出为文件...
-menuEdit-templateEditor=模板编辑器
-menuEdit-importTemplate=从剪贴板导入笔记模板
-
-menuTools-syncManager=同步管理器
-
-menuAddNote-newTemplateStandaloneNote=从模板新建独立笔记
-menuAddNote-newTemplateItemNote=从模板新建条目子笔记
-menuAddNote-importMD = 导入MarkDown为笔记
-
-menuAddReaderNote-newTemplateNote=从模板新建条目子笔记
-
 menuEditor-resizeImage=缩放图片
 menuEditor-copy = 复制笔记链接...
 menuEditor-copyLine = 复制行链接 (L{ $line })
 menuEditor-copySection = 复制节链接 (Sec. { $section })
-
-menuHelp-openUserGuide = 打开Better Notes用户指南
 
 templateEditor-templateType = 类型
 templateEditor-templateName = 名称

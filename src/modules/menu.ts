@@ -1,136 +1,127 @@
 import { config } from "../../package.json";
-import { getString } from "../utils/locale";
 
-export function registerMenus(win: _ZoteroTypes.MainWindow) {
-  // menuTools
-  ztoolkit.Menu.register("menuTools", { tag: "menuseparator" });
-  ztoolkit.Menu.register("menuTools", {
-    tag: "menuitem",
-    label: getString("menuTools-syncManager"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: (ev) => {
-      addon.hooks.onShowSyncManager();
-    },
-  });
-  ztoolkit.Menu.register("menuTools", {
-    tag: "menuitem",
-    label: getString("menuEdit-templateEditor"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: (ev) => {
-      addon.hooks.onShowTemplateEditor();
-    },
-  });
-  ztoolkit.Menu.register("menuTools", {
-    tag: "menuitem",
-    label: getString("menuEdit-importTemplate"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: (ev) => {
-      addon.hooks.onImportTemplateFromClipboard();
-    },
-  });
-
-  // menuFile
-  const menuFileAnchor = win.document.querySelector(
-    "#menu_newCollection",
-  ) as XULMenuItemElement;
-
-  ztoolkit.Menu.register(
-    "menuFile",
-    { tag: "menuseparator" },
-    "after",
-    menuFileAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuEdit",
-    {
-      tag: "menuitem",
-      label: getString("menuEdit-exportTemplate"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: (ev) => {
-        addon.hooks.onShowTemplatePicker("export");
+export function registerMenus() {
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuTools`,
+    pluginID: config.addonID,
+    target: "main/menubar/tools",
+    menus: [
+      {
+        menuType: "separator",
       },
-    },
-    "after",
-    menuFileAnchor,
-  );
-  // a copy of create note menu in library
-  ztoolkit.Menu.register(
-    "menuFile",
-    {
-      tag: "menuitem",
-      label: getString("menuAddNote-importMD"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: () => addon.hooks.onCreateNoteFromMD(),
-    },
-    "after",
-    menuFileAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuFile",
-    {
-      tag: "menuitem",
-      label: getString("menuAddNote-newTemplateItemNote"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: () =>
-        addon.hooks.onCreateNoteFromTemplate("item", "library"),
-    },
-    "after",
-    menuFileAnchor,
-  );
-  ztoolkit.Menu.register(
-    "menuFile",
-    {
-      tag: "menuitem",
-      label: getString("menuAddNote-newTemplateStandaloneNote"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
-    },
-    "after",
-    menuFileAnchor,
-  );
-
-  // create note menu in library
-  const newNoteMenu = win.document
-    .querySelector("#zotero-tb-note-add")
-    ?.querySelector("menupopup") as XULMenuPopupElement;
-  ztoolkit.Menu.register(newNoteMenu, {
-    tag: "menuitem",
-    label: getString("menuAddNote-newTemplateStandaloneNote"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
-  });
-  ztoolkit.Menu.register(newNoteMenu, {
-    tag: "menuitem",
-    label: getString("menuAddNote-newTemplateItemNote"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: () =>
-      addon.hooks.onCreateNoteFromTemplate("item", "library"),
-  });
-  ztoolkit.Menu.register(newNoteMenu, {
-    tag: "menuitem",
-    label: getString("menuAddNote-importMD"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: () => addon.hooks.onCreateNoteFromMD(),
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuTools-syncManager`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => {
+          addon.hooks.onShowSyncManager();
+        },
+      },
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuTools-templateEditor`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => {
+          addon.hooks.onShowTemplateEditor();
+        },
+      },
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuTools-importTemplateFromClipboard`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => {
+          addon.hooks.onImportTemplateFromClipboard();
+        },
+      },
+    ],
   });
 
-  // create note menu in reader side panel
-  ztoolkit.Menu.register(
-    win.document.querySelector(
-      "#context-pane-add-child-note-button-popup",
-    ) as XULMenuPopupElement,
-    {
-      tag: "menuitem",
-      label: getString("menuAddReaderNote-newTemplateNote"),
-      icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-      commandListener: () =>
-        addon.hooks.onCreateNoteFromTemplate("item", "reader"),
-    },
-  );
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuFile`,
+    pluginID: config.addonID,
+    target: "main/menubar/file",
+    menus: [
+      {
+        menuType: "separator",
+      },
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuFile-exportTemplate`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => {
+          addon.hooks.onShowTemplatePicker("export");
+        },
+      },
+    ],
+  });
 
-  ztoolkit.Menu.register("menuHelp", {
-    tag: "menuitem",
-    label: getString("menuHelp-openUserGuide"),
-    icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
-    commandListener: () => addon.hooks.onShowUserGuide(win, true),
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuNewNote`,
+    pluginID: config.addonID,
+    target: "main/library/addNote",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuAddNote-importMD`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => addon.hooks.onCreateNoteFromMD(),
+      },
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuAddNote-newTemplateItemNote`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () =>
+          addon.hooks.onCreateNoteFromTemplate("item", "library"),
+      },
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuAddNote-newTemplateStandaloneNote`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
+      },
+    ],
+  });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuHelp`,
+    pluginID: config.addonID,
+    target: "main/menubar/help",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuHelp-openUserGuide`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () =>
+          addon.hooks.onShowUserGuide(Zotero.getMainWindow(), true),
+      },
+    ],
+  });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuAddNotesPaneStandaloneNote`,
+    pluginID: config.addonID,
+    target: "notesPane/addStandaloneNote",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuAddNote-newTemplateStandaloneNote`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => addon.hooks.onCreateNoteFromTemplate("standalone"),
+      },
+    ],
+  });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuAddNotesPaneItemNote`,
+    pluginID: config.addonID,
+    target: "notesPane/addItemNote",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuAddNote-newTemplateItemNote`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onCommand: () => addon.hooks.onCreateNoteFromTemplate("item", "reader"),
+      },
+    ],
   });
 }

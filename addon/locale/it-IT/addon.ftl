@@ -1,23 +1,9 @@
 pref-title = Better Notes
 
-menuEdit-exportTemplate = Esporta il template su file...
-menuEdit-templateEditor = Editor dei template
-menuEdit-importTemplate = Nuovo template dagli appunti
-
-menuTools-syncManager = Manager di sincronizzazione
-
-menuAddNote-newTemplateStandaloneNote = Nuova nota indipendente da template
-menuAddNote-newTemplateItemNote = Nuova nota dell'elemento da template
-menuAddNote-importMD = Importa file MarkDown come nota
-
-menuAddReaderNote-newTemplateNote = Nuova nota dell'elemento da template
-
 menuEditor-resizeImage = Ridimensiona immagine
 menuEditor-copy =  Copia link della nota...
 menuEditor-copyLine = Copia link della riga { $line }
 menuEditor-copySection = Copia link della sezione { $section }
-
-menuHelp-openUserGuide = Apri la guida utente di Better Notes
 
 templateEditor-templateType = Tipo
 templateEditor-templateName = Nome

@@ -1,23 +1,9 @@
 pref-title = Better Notes
 
-menuEdit-exportTemplate = Şablonu Dosya Olarak Dışa Aktar...
-menuEdit-templateEditor = Şablon Düzenleyici
-menuEdit-importTemplate = Panodan Yeni Şablon Al
-
-menuTools-syncManager = Eşitleme Yönetimi
-
-menuAddNote-newTemplateStandaloneNote = Şablondan Yeni Bağımsız Not
-menuAddNote-newTemplateItemNote = Şablondan Yeni Eser Notu
-menuAddNote-importMD = Markdown Dosyasını Not Olarak İçe Aktar
-
-menuAddReaderNote-newTemplateNote = Şablondan Yeni Eser Notu
-
 menuEditor-resizeImage = Resmi Boyutlandır
 menuEditor-copy = Not Bağlantısını Kopyala...
 menuEditor-copyLine = Bağlantıyı Kopyala (Satır { $line })
 menuEditor-copySection = Bağlantıyı Kopyala (Başlık { $section })
-
-menuHelp-openUserGuide = Better Notes Kullanıcı Rehberini Aç
 
 templateEditor-templateType = Type
 templateEditor-templateName = Name

@@ -1,23 +1,9 @@
 pref-title=Better Notes
 
-menuEdit-exportTemplate=Экспорт шаблона в файл...
-menuEdit-templateEditor=Редактор шаблонов
-menuEdit-importTemplate=Новый шаблон из буфера обмена
-
-menuTools-syncManager=Синк менеджер
-
-menuAddNote-newTemplateStandaloneNote=Новая отдельная Заметка из шаблона
-menuAddNote-newTemplateItemNote=Новая элементная Заметка из шаблона
-menuAddNote-importMD = Импорт файла MarkDown в качестве примечания
-
-menuAddReaderNote-newTemplateNote=Новая элементная Заметка из шаблона
-
 menuEditor-resizeImage=Изменить размер изображения
 menuEditor-copy = Копировать ссылку на заметку...
 menuEditor-copyLine = Копировать ссылку на строку { $line }
 menuEditor-copySection = Копировать ссылку на раздел { $section }
-
-menuHelp-openUserGuide = Open Better Notes User Guide
 
 templateEditor-templateType = Type
 templateEditor-templateName = Name

@@ -67,6 +67,8 @@ async function onStartup() {
     `chrome://${config.addonRef}/content/icons/favicon.png`,
   );
 
+  registerMenus();
+
   registerNoteLinkProxyHandler();
 
   registerEditorInstanceHook();
@@ -97,12 +99,13 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
     `chrome://${config.addonRef}/content/scripts/customElements.js`,
     win,
   );
+
+  win.MozXULElement.insertFTLIfNeeded(`${config.addonRef}-mainWindow.ftl`);
+
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
 
   registerNotify(["tab", "item", "item-tag"], win);
-
-  registerMenus(win);
 
   initTemplates();
 
@@ -119,6 +122,9 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
+  win.document
+    .querySelector(`[href="${config.addonRef}-mainWindow.ftl"]`)
+    ?.remove();
   ztoolkit.unregisterAll();
 }
 
@@ -128,6 +134,11 @@ function onShutdown(): void {
   closeConvertServer();
 
   unregisterEditorInstanceHook();
+
+  Zotero.getMainWindows().forEach((win) => {
+    onMainWindowUnload(win);
+  });
+
   ztoolkit.unregisterAll();
   // Remove addon object
   addon.data.alive = false;
