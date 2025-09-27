@@ -21,10 +21,8 @@ export async function showSyncDiff(noteId: number, mdPath: string) {
   });
   const noteContent = await addon.api.convert.note2noteDiff(noteItem);
   ztoolkit.log(mdNoteContent, noteContent);
-  const changes = await addon.api.convert.content2diff(
-    noteContent,
-    mdNoteContent,
-  );
+  const changes =
+    (await addon.api.convert.content2diff(noteContent, mdNoteContent)) || [];
   ztoolkit.log("changes", changes);
 
   const syncDate = new Date(syncStatus.lastsync);
