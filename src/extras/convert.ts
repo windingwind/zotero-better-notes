@@ -612,7 +612,9 @@ function rehype2note(rehype: HRoot) {
 }
 
 function content2diff(oldStr: string, newStr: string) {
-  return diffChars(oldStr, newStr);
+  const diff = diffChars(oldStr, newStr);
+  if (!diff) return [];
+  return diff;
 }
 
 async function md2html(md: string) {
