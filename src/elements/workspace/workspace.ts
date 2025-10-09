@@ -18,6 +18,7 @@ export class Workspace extends PluginCEBase {
   _item?: Zotero.Item;
 
   _prefObserverID!: symbol;
+  _notifierID!: string;
 
   _editorElement!: EditorElement;
   _outline!: OutlinePane;
@@ -28,6 +29,9 @@ export class Workspace extends PluginCEBase {
   _rightSplitter!: XULSplitterElement;
 
   resizeOb!: ResizeObserver;
+
+  _savedScrollPosition: number | null = null;
+  _isRestoring: boolean = false;
 
   get content() {
     return this._parseContentID(
@@ -110,6 +114,7 @@ export class Workspace extends PluginCEBase {
     });
 
     this._initEditor();
+    this._hookEditorNotifyMethod();
 
     this.resizeOb = new ResizeObserver(() => {
       if (!this.editor) return;
@@ -124,10 +129,22 @@ export class Workspace extends PluginCEBase {
       persistKey,
       this._restoreState.bind(this),
     );
+
+    // Register notifier just for potential future use
+    this._notifierID = Zotero.Notifier.registerObserver(
+      {
+        notify: (event, type, ids, extraData) => {
+          // Scroll position preservation is now handled by hooking notify method
+        },
+      },
+      ["item"],
+      "bn-workspace",
+    );
   }
 
   destroy(): void {
     unregisterPrefObserver(this._prefObserverID);
+    Zotero.Notifier.unregisterObserver(this._notifierID);
     this.resizeOb.disconnect();
     delete this._addon.data.workspace.instances[this.uid];
   }
@@ -266,5 +283,105 @@ export class Workspace extends PluginCEBase {
     if (state.rightWidth) {
       this._context.style.width = state.rightWidth;
     }
+  }
+
+  _hookEditorNotifyMethod() {
+    // Hook the note-editor's notify method to intercept before initEditor is called
+    const noteEditor = this._editorElement;
+    if (!noteEditor || (noteEditor as any)._bnScrollHooked) return;
+
+    (noteEditor as any)._bnScrollHooked = true; // Prevent double hooking
+
+    const originalNotify = noteEditor.notify;
+    const self = this;
+
+    noteEditor.notify = async function(event: string, type: string, ids: number[], extraData: any) {
+      // Check if this is a modify event for our item from another editor
+      if (event === "modify" && type === "item" && self._item && ids.includes(self._item.id)) {
+        const editor = self.editor;
+        const isOwnEdit = editor && extraData[self._item.id]?.noteEditorID === editor.instanceID;
+
+        // If not our own edit, save scroll position and hide iframe BEFORE notify processes
+        if (!isOwnEdit && !self._isRestoring) {
+          const editorInstance = self.editor;
+          if (editorInstance?._iframeWindow) {
+            const editorCore = editorInstance._iframeWindow.document.querySelector(".editor-core") as HTMLElement;
+            if (editorCore) {
+              self._savedScrollPosition = editorCore.scrollTop;
+            }
+          }
+
+          const iframe = noteEditor.querySelector("iframe") as HTMLIFrameElement;
+          if (iframe) {
+            iframe.style.opacity = "0";
+            iframe.style.pointerEvents = "none";
+          }
+          self._isRestoring = true;
+
+          // Schedule restoration after notify completes
+          setTimeout(async () => {
+            await self._waitForEditorReady();
+            if (self._savedScrollPosition !== null) {
+              const editorInstance = self.editor;
+              if (editorInstance?._iframeWindow) {
+                const editorCore = editorInstance._iframeWindow.document.querySelector(".editor-core") as HTMLElement;
+                if (editorCore) {
+                  editorCore.scrollTop = self._savedScrollPosition;
+                }
+              }
+              self._savedScrollPosition = null;
+            }
+            const iframe = noteEditor.querySelector("iframe") as HTMLIFrameElement;
+            if (iframe) {
+              iframe.style.opacity = "1";
+              iframe.style.pointerEvents = "auto";
+            }
+            self._isRestoring = false;
+          }, 0);
+        }
+      }
+
+      // Call original notify
+      return await originalNotify.call(this, event, type, ids, extraData);
+    };
+  }
+
+  async _waitForEditorReady(): Promise<void> {
+    const maxAttempts = 50; // Maximum 5 seconds (50 * 100ms)
+    let attempts = 0;
+
+    return new Promise((resolve) => {
+      const checkEditor = () => {
+        attempts++;
+
+        try {
+          const editor = this.editor;
+          if (editor?._iframeWindow && editor._initPromise) {
+            // Wait for editor initialization promise
+            editor._initPromise.then(() => {
+              // Give it a bit more time for DOM to settle
+              setTimeout(() => resolve(), 100);
+            }).catch(() => {
+              // If promise fails, still resolve to avoid hanging
+              resolve();
+            });
+            return;
+          }
+        } catch (e) {
+          // Ignore errors during checking
+        }
+
+        if (attempts >= maxAttempts) {
+          // Timeout, resolve anyway
+          resolve();
+          return;
+        }
+
+        // Check again after 100ms
+        setTimeout(checkEditor, 100);
+      };
+
+      checkEditor();
+    });
   }
 }
