@@ -141,6 +141,15 @@ function getMarkdown(clipboardData: DataTransfer) {
       /`[^`]+`/, // Inline code: `code`
       /^> /m, // Blockquotes: Lines starting with >
       /```/, // Code blocks: Triple backticks
+      /\*\*[^*]+\*\*/, // Bold: **text**
+      /\*[^*]+\*/, // Italic: *text*
+      /__[^_]+__/, // Bold: __text__
+      /_[^_]+_/, // Italic: _text_
+      /~~[^~]+~~/, // Strikethrough: ~~text~~
+      /\^[^^]+\^/, // Superscript: ^text^
+      /~[^~]+~/, // Subscript: ~text~
+      /\$\$[\s\S]*?\$\$/, // Block math: $$...$$
+      /\$[^$\n]+\$/, // Inline math: $...$
     ];
 
     for (const pattern of markdownPatterns) {
