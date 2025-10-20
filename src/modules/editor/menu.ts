@@ -12,6 +12,11 @@ import { getEditorCore } from "../../utils/editor";
 export function initEditorMenu(editor: Zotero.EditorInstance) {
   const makeId = (key: string) =>
     `${config.addonRef}-editor-menu-${editor.instanceID}-${key}`;
+
+  if (editor._popup.dataset.bnMenuInitialized === "true") {
+    return;
+  }
+  editor._popup.dataset.bnMenuInitialized = "true";
   (editor._popup as XULMenuElement).addEventListener(
     "popupshowing",
     async (ev) => {
