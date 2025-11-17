@@ -38,6 +38,7 @@ editor-pinTableTop =
 sync-title = Eşitle
 sync-period-label = Otomatik Eşitleme Sıklığı (saniye)
 sync-attachmentFolder-label = Ek Klasörü
+sync-attachmentFolder-hint = (`&#36;&#123;filename&#125;` en son dosya isimlerini belirtmektedir.)
 sync-manager =
     .label = Eşitleme Yöneticisini Aç
 template-title = Şablon
