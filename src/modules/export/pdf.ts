@@ -5,23 +5,29 @@ import { renderNoteHTML } from "../../utils/note";
 export async function savePDF(noteId: number) {
   const html = await renderNoteHTML(Zotero.Items.get(noteId));
   disablePrintFooterHeader();
-  const args = {
-    _initPromise: Zotero.Promise.defer(),
-    browser: undefined as any,
-    url: `chrome://${config.addonRef}/content/printTemplate.xhtml`,
-  };
-  const win = Zotero.getMainWindow().openDialog(
-    `chrome://${config.addonRef}/content/printWrapper.xhtml`,
-    `${config.addonRef}-printWrapper`,
-    `chrome,centerscreen,resizable,status,width=900,height=650,dialog=no`,
-    args,
-  )!;
-  await args._initPromise.promise;
-  args.browser?.contentWindow.postMessage(
+
+  const { HiddenBrowser } = ChromeUtils.importESModule(
+    "chrome://zotero/content/HiddenBrowser.mjs",
+  );
+  const browser = new HiddenBrowser({
+    useHiddenFrame: false,
+  });
+
+  await browser.load(
+    `chrome://${config.addonRef}/content/printTemplate.xhtml`,
+    {
+      requireSuccessfulStatus: true,
+    },
+  );
+  await browser.waitForDocument();
+
+  browser.contentWindow.postMessage(
     { type: "print", html, style: Zotero.Prefs.get("note.css") || "" },
     "*",
   );
-  win.print();
+
+  browser.print();
+
   showHint("Note Saved as PDF");
 }
 
