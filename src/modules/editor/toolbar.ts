@@ -9,6 +9,7 @@ import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
 import { slice } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
+import { CustomSearchManager } from '../customSearch';
 
 export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   if (editor._disableUI) {
@@ -28,6 +29,10 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     ztoolkit.log("Editor toolbar not found");
     return;
   }
+
+  // Custom Search Button
+  const customSearchManager = new CustomSearchManager();
+  customSearchManager.registerToolbarButton(editor, toolbar);
   // Link creator
   registerEditorToolbarElement(
     editor,
