@@ -1,5 +1,5 @@
 import { PatchHelper } from "zotero-plugin-toolkit";
-import { getPref } from "../utils/prefs";
+import { getPref } from "../../utils/prefs";
 
 export function patchViewItems(win: _ZoteroTypes.MainWindow) {
   // @ts-ignore

@@ -41,7 +41,7 @@ import {
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
-import { patchViewItems } from "./modules/viewItems";
+import { patchViewItems } from "./modules/patches/viewItems";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref, setPref } from "./utils/prefs";
@@ -50,9 +50,10 @@ import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
-import { patchExportItems } from "./modules/exportItems";
-import { patchOpenTabMenu } from "./modules/openTabMenu";
+import { patchExportItems } from "./modules/patches/exportItems";
+import { patchOpenTabMenu } from "./modules/patches/openTabMenu";
 import { closeConvertServer } from "./utils/convert";
+import { patchCanEdit } from "./modules/patches/canEdit";
 
 async function onStartup() {
   await Promise.all([
@@ -112,6 +113,8 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   patchViewItems(win);
 
   patchExportItems(win);
+
+  patchCanEdit(win);
 
   // TEMP: This doesn't work, maybe better to wait for the support from Zotero
   // patchOpenTabMenu(win);
