@@ -1,5 +1,5 @@
 import { PatchHelper } from "zotero-plugin-toolkit";
-import { getPref } from "../utils/prefs";
+import { getPref } from "../../utils/prefs";
 
 export function patchExportItems(win: _ZoteroTypes.MainWindow) {
   const Zotero_File_Interface = win.Zotero_File_Interface;
