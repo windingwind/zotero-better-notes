@@ -26,6 +26,12 @@ export function formatPath(path: string, suffix: string = "") {
   path = Zotero.File.normalizeToUnix(path);
   if (Zotero.isWin) {
     path = path.replace(/\//g, "\\");
+
+    if (path[0] === "\\" && path[1] !== "\\") {
+      // Assume it's an UNC path wrongly formatted, e.g. `\wsl.localhost\...` from pathHelper
+      path = `\\${path}`;
+    }
+    return path;
   }
   if (suffix && !path.endsWith(suffix)) {
     path += suffix;
