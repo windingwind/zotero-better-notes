@@ -18,6 +18,7 @@ interface MagicKeyOptions {
   openAttachment?: () => void;
   canOpenAttachment?: () => boolean;
   enable?: boolean;
+  enableShortcut?: boolean;
 }
 
 interface MagicCommand {
@@ -303,6 +304,7 @@ class PluginState {
     const isMac =
       typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
     if (
+      this.options.enableShortcut &&
       ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) &&
       event.key === "/"
     ) {
