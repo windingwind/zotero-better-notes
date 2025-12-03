@@ -575,6 +575,7 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
               );
             },
             enable: getPref("editor.useMagicKey") as boolean,
+            enableShortcut: getPref("editor.useMagicKeyShortcut") as boolean,
           },
           markdownPaste: {
             enable: getPref("editor.useMarkdownPaste") as boolean,
