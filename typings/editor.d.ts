@@ -48,10 +48,17 @@ declare interface EditorElement extends XULBoxElement {
   _iframe: HTMLIFrameElement;
   _editorInstance: Zotero.EditorInstance;
   _initialized?: boolean;
+  _bnScrollHooked?: boolean;
   mode?: "edit" | "view" | "merge";
   viewMode?: string;
   parent?: Zotero.Item;
   item?: Zotero.Item;
   getCurrentInstance(): Zotero.EditorInstance;
   initEditor(): Promise<void>;
+  notify(
+    event: string,
+    type: string,
+    ids: number[],
+    extraData: any,
+  ): Promise<void>;
 }
