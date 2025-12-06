@@ -1032,11 +1032,11 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
     try {
       citation = JSON.parse(decodeURIComponent(node.properties.dataCitation));
     } catch (e) {
-      Zotero.debug("citation parse error: " + e);
+      ztoolkit.log("citation parse error: " + e);
       continue;
     }
     if (!citation?.citationItems?.length) {
-      Zotero.debug(citation?.citationItems);
+      ztoolkit.log(citation?.citationItems);
       continue;
     }
 
@@ -1052,7 +1052,7 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
           libID = Zotero.Libraries.userLibraryID;
         }
         if (!libID) {
-          Zotero.debug(
+          ztoolkit.log(
             "[Bid Export] Library not found, groups ID = " + uriParts[4],
           );
           continue;
@@ -1060,13 +1060,13 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
         const key = uriParts[uriParts.length - 1];
         const item_ = Zotero.Items.getByLibraryAndKey(libID, key);
         if (!item_) {
-          Zotero.debug("[Bid Export] Item not found, key = " + key);
+          ztoolkit.log("[Bid Export] Item not found, key = " + key);
           continue;
         }
         items.push(item_);
         const citationKey = item_.getField("citationKey");
         if (citationKey === "") {
-          Zotero.debug("[Bid Export] Detect empty citationKey.");
+          ztoolkit.log("[Bid Export] Detect empty citationKey.");
           continue;
         }
 
@@ -1101,7 +1101,7 @@ async function convertToBibString(
     (item) => item.includes(BBT) && !item.includes("disabled"),
   );
   if (!installedAndEnabled) {
-    Zotero.debug("Better BibTex for Zotero is not installed.");
+    ztoolkit.log("Better BibTex for Zotero is not installed.");
     showHint(
       "Export Error: Better BibTex for Zotero is needed for exporting the .bib file. Please install and enable it first.",
     );
@@ -1112,7 +1112,7 @@ async function convertToBibString(
   return res;
 }
 
-function exportToBibtex(
+async function exportToBibtex(
   libCitationMap: Map<number, Set<string>>,
 ): Promise<string> {
   const port = Services.prefs.getIntPref("extensions.zotero.httpServer.port");
@@ -1138,7 +1138,7 @@ function exportToBibtex(
     })
       .then((response) => {
         if (!response.ok) {
-          Zotero.debug(
+          ztoolkit.log(
             `[Bib Export] Network response was not ok for libId ${libId}`,
           );
           throw new Error(`Network response was not ok for libId ${libId}`);
@@ -1146,7 +1146,7 @@ function exportToBibtex(
         return response.json();
       })
       .then((result) => {
-        Zotero.debug(
+        ztoolkit.log(
           `[Bib Export] Response data for libId ${libId}: ` +
             JSON.stringify(result),
         );
@@ -1156,11 +1156,10 @@ function exportToBibtex(
     promises.push(promise);
   });
 
-  // 执行所有请求并将结果合并
   return Promise.all(promises)
     .then((results) => results.join("\n"))
     .catch((error) => {
-      Zotero.debug("[Bib Export] Fetch error: " + error.message);
+      ztoolkit.log("[Bib Export] Fetch error: " + error.message);
       return "[Bib Export] Fetch error: " + error.message;
     });
 }
