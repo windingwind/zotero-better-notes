@@ -1026,7 +1026,7 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
     return "";
   }
   const items: Zotero.Item[] = [];
-  const citationAllKeys: string[] = [];
+  const libIdAndCitationKeys: Map<number, Set<string>> = new Map();
   for (const node of nodes) {
     let citation;
     try {
@@ -1045,11 +1045,20 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
       const uri = citationItem.uris[0];
       if (typeof uri === "string") {
         const uriParts = uri.split("/");
+        let libID: number | boolean;
+        if (uriParts[3] === "groups") {
+          libID = Zotero.Groups.getLibraryIDFromGroupID(Number(uriParts[4]));
+        } else {
+          libID = Zotero.Libraries.userLibraryID;
+        }
+        if (!libID) {
+          Zotero.debug(
+            "[Bid Export] Library not found, groups ID = " + uriParts[4],
+          );
+          continue;
+        }
         const key = uriParts[uriParts.length - 1];
-        const item_ = Zotero.Items.getByLibraryAndKey(
-          Zotero.Libraries.userLibraryID,
-          key,
-        );
+        const item_ = Zotero.Items.getByLibraryAndKey(libID, key);
         if (!item_) {
           Zotero.debug("[Bid Export] Item not found, key = " + key);
           continue;
@@ -1060,21 +1069,32 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
           Zotero.debug("[Bid Export] Detect empty citationKey.");
           continue;
         }
+
+        if (!libIdAndCitationKeys.has(libID as number)) {
+          libIdAndCitationKeys.set(libID as number, new Set());
+        }
+
+        const existingKeys =
+          libIdAndCitationKeys.get(libID as number) || new Set();
+        existingKeys.add(citationKey);
+        libIdAndCitationKeys.set(libID as number, existingKeys);
+
         citationKeys.push(citationKey);
       }
     }
-    citationAllKeys.push(...citationKeys);
 
     node.type = "text";
     node.value = "\\cite{" + citationKeys.join(",") + "}";
   }
 
   // convert the citation into string using Better BibTex for Zotero
-  const bibString = await convertToBibString(citationAllKeys);
+  const bibString = await convertToBibString(libIdAndCitationKeys);
   return bibString;
 }
 
-async function convertToBibString(citationAllKeys: string[]) {
+async function convertToBibString(
+  libIdAndCitationKeys: Map<number, Set<string>>,
+) {
   const BBT = "Better BibTex for Zotero";
   const installedExtensions = await Zotero.getInstalledExtensions();
   const installedAndEnabled = installedExtensions.some(
@@ -1088,42 +1108,60 @@ async function convertToBibString(citationAllKeys: string[]) {
     return "";
   }
 
-  const uniqueCitationKeys = Array.from(new Set(citationAllKeys));
-  const res = await exportToBibtex(uniqueCitationKeys);
+  const res = await exportToBibtex(libIdAndCitationKeys);
   return res;
 }
 
-function exportToBibtex(citationKeys: string[]): Promise<string> {
-  const data = {
-    jsonrpc: "2.0",
-    method: "item.export",
-    params: [citationKeys, "bibtex"],
-  };
-
+function exportToBibtex(
+  libCitationMap: Map<number, Set<string>>,
+): Promise<string> {
   const port = Services.prefs.getIntPref("extensions.zotero.httpServer.port");
 
-  return fetch(`http://localhost:${port}/better-bibtex/json-rpc`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        Zotero.debug("[Bib Export] Network response was not ok");
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
+  const promises: Promise<string>[] = [];
+
+  libCitationMap.forEach((citationKeys, libId) => {
+    const citationKeysArray = Array.from(citationKeys);
+
+    const data = {
+      jsonrpc: "2.0",
+      method: "item.export",
+      params: [citationKeysArray, "bibtex", libId],
+    };
+
+    const promise = fetch(`http://localhost:${port}/better-bibtex/json-rpc`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
     })
-    .then((result) => {
-      Zotero.debug("[Bib Export] Response data: " + JSON.stringify(result));
-      return "result" in result ? (result.result as string) : "";
-    })
+      .then((response) => {
+        if (!response.ok) {
+          Zotero.debug(
+            `[Bib Export] Network response was not ok for libId ${libId}`,
+          );
+          throw new Error(`Network response was not ok for libId ${libId}`);
+        }
+        return response.json();
+      })
+      .then((result) => {
+        Zotero.debug(
+          `[Bib Export] Response data for libId ${libId}: ` +
+            JSON.stringify(result),
+        );
+        return "result" in result ? (result.result as string) : "";
+      });
+
+    promises.push(promise);
+  });
+
+  // 执行所有请求并将结果合并
+  return Promise.all(promises)
+    .then((results) => results.join("\n"))
     .catch((error) => {
       Zotero.debug("[Bib Export] Fetch error: " + error.message);
-      return "";
+      return "[Bib Export] Fetch error: " + error.message;
     });
 }
 
