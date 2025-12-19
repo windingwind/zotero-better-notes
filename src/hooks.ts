@@ -52,7 +52,6 @@ import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/patches/exportItems";
 import { patchOpenTabMenu } from "./modules/patches/openTabMenu";
 import { closeConvertServer } from "./utils/convert";
-import { patchCanEdit } from "./modules/patches/canEdit";
 
 async function onStartup() {
   await Promise.all([
@@ -110,11 +109,6 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   initTemplates();
 
   patchExportItems(win);
-
-  patchCanEdit(win);
-
-  // TEMP: This doesn't work, maybe better to wait for the support from Zotero
-  // patchOpenTabMenu(win);
 
   await restoreNoteTabs();
 
