@@ -124,4 +124,27 @@ export function registerMenus() {
       },
     ],
   });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuTabMoveNewWindow`,
+    pluginID: config.addonID,
+    target: "main/tab",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuTab-moveNewWindow`,
+        onShowing(_, context) {
+          context.setVisible(context.tabType.startsWith("note"));
+        },
+        onCommand: (_, context) => {
+          addon.hooks.onOpenNote(context.items[0].id, "window", {
+            forceTakeover: true,
+          });
+          (
+            context.menuElem.ownerGlobal as _ZoteroTypes.MainWindow
+          ).Zotero_Tabs.close(context.tabID);
+        },
+      },
+    ],
+  });
 }

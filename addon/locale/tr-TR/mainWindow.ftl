@@ -17,3 +17,6 @@ menuAddNote-newTemplateStandaloneNote =
     .label = Şablondan Yeni Bağımsız Not
 menuAddNote-newTemplateItemNote =
     .label = Şablondan Yeni Öğe Notu
+
+menuTab-moveNewWindow =
+    .label = Move to BN New Window

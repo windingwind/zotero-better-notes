@@ -118,6 +118,7 @@ export type FluentMessageId =
   | 'menuEditor-resizeImage'
   | 'menuFile-exportTemplate'
   | 'menuHelp-openUserGuide'
+  | 'menuTab-moveNewWindow'
   | 'menuTools-importTemplateFromClipboard'
   | 'menuTools-syncManager'
   | 'menuTools-templateEditor'

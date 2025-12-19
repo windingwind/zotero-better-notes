@@ -17,3 +17,6 @@ menuAddNote-newTemplateStandaloneNote =
     .label = Новая отдельная заметка из шаблона
 menuAddNote-newTemplateItemNote =
     .label = Новая заметка элемента из шаблона
+
+menuTab-moveNewWindow =
+    .label = Move to BN New Window

@@ -17,3 +17,6 @@ menuAddNote-newTemplateStandaloneNote =
     .label = 从模板新建独立笔记
 menuAddNote-newTemplateItemNote =
     .label = 从模板新建条目笔记
+
+menuTab-moveNewWindow =
+    .label = 移动到 BN 新窗口

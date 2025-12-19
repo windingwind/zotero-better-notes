@@ -17,3 +17,6 @@ menuAddNote-newTemplateStandaloneNote =
     .label = New Standalone Note from Template
 menuAddNote-newTemplateItemNote =
     .label = New Item Note from Template
+
+menuTab-moveNewWindow =
+    .label = Move to BN New Window

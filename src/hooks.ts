@@ -44,7 +44,6 @@ import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/patches/exportItems";
-import { patchOpenTabMenu } from "./modules/patches/openTabMenu";
 import { closeConvertServer } from "./utils/convert";
 
 async function onStartup() {
