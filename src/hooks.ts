@@ -12,12 +12,6 @@ import {
 } from "./modules/template/controller";
 import { registerMenus } from "./modules/menu";
 import { initWorkspace } from "./modules/workspace/content";
-import {
-  openWorkspaceTab,
-  onTabSelect,
-  restoreNoteTabs,
-  onUpdateNoteTabsTitle,
-} from "./modules/workspace/tab";
 import { openWorkspaceWindow } from "./modules/workspace/window";
 import { openNotePreview } from "./modules/workspace/preview";
 import { registerNotify } from "./modules/notify";
@@ -110,8 +104,6 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
   patchExportItems(win);
 
-  await restoreNoteTabs();
-
   showUserGuide(win);
 }
 
@@ -160,9 +152,6 @@ async function onNotify(
   ) {
     Zotero.Session.debounceSave();
   }
-  if (event === "select" && type === "tab") {
-    onTabSelect(extraData[ids[0]].type);
-  }
   if (event === "modify" && type === "item") {
     const modifiedNotes = Zotero.Items.get(ids).filter((item) => item.isNote());
     if (modifiedNotes.length) {
@@ -174,7 +163,6 @@ async function onNotify(
       for (const item of modifiedNotes) {
         await addon.api.relation.updateNoteLinkRelation(item.id);
       }
-      onUpdateNoteTabsTitle(modifiedNotes);
     }
   }
   if (type === "item-tag") {
