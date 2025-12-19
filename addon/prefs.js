@@ -16,8 +16,6 @@ pref("__prefsPrefix__.editor.useMarkdownPaste", true);
 pref("__prefsPrefix__.editor.pinTableLeft", true);
 pref("__prefsPrefix__.editor.pinTableTop", true);
 
-pref("__prefsPrefix__.openNote.takeover", true);
-pref("__prefsPrefix__.openNote.defaultAsWindow", false);
 pref("__prefsPrefix__.exportNotes.takeover", true);
 
 pref("__prefsPrefix__.annotationNote.enableTagSync", true);

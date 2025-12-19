@@ -98,7 +98,7 @@ async function getMenuData(editor: Zotero.EditorInstance) {
       id: makeId("settings-openAsWindow"),
       text: getString("editor-toolbar-settings-openAsWindow"),
       callback: (e) => {
-        addon.hooks.onOpenNote(noteItem.id, "window");
+        addon.hooks.onOpenNote(noteItem.id, "window", { forceTakeover: true });
       },
     },
     {

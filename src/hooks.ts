@@ -41,7 +41,6 @@ import {
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
-import { patchViewItems } from "./modules/patches/viewItems";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { getPref, setPref } from "./utils/prefs";
@@ -109,8 +108,6 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   registerNotify(["tab", "item", "item-tag"], win);
 
   initTemplates();
-
-  patchViewItems(win);
 
   patchExportItems(win);
 
@@ -235,8 +232,8 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
   if (!win) {
     return;
   }
-  if (!options.forceTakeover && !getPref("openNote.takeover")) {
-    win.ZoteroPane.openNoteWindow(noteId);
+  if (!options.forceTakeover) {
+    win.ZoteroPane.openNote(noteId);
     return;
   }
   let { workspaceUID } = options;
@@ -250,6 +247,7 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
 
     if ((currentWindow as any)?.Zotero_Tabs?.selectedType === "note") {
       mode = "preview" as K;
+      // TODO: open preview
       workspaceUID = (
         currentWindow?.document.querySelector(
           `#${win.Zotero_Tabs.selectedID} bn-workspace`,
@@ -276,13 +274,13 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
       openNotePreview(noteItem, workspaceUID, options);
       break;
     case "tab":
-      return (await openWorkspaceTab(noteItem, options)) as any;
+      return win.ZoteroPane.openNote(noteId, { openInWindow: false }) as any;
       break;
     case "window":
       return (await openWorkspaceWindow(noteItem, options)) as any;
       break;
     case "builtin":
-      win.ZoteroPane.openNoteWindow(noteId);
+      win.ZoteroPane.openNote(noteId);
       break;
     default:
       break;

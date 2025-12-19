@@ -1,8 +1,4 @@
 basic-title = Basic
-basic-openNote-takeover =
-    .label = Take over opening note
-basic-openNote-defaultAsWindow =
-    .label = Open note as window by default
 basic-exportNotes-takeover =
     .label = Take over exporting notes
 

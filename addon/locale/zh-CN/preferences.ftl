@@ -1,8 +1,4 @@
 basic-title = 基本
-basic-openNote-takeover =
-    .label = 接管打开笔记
-basic-openNote-defaultAsWindow =
-    .label = 默认在窗口打开笔记
 basic-exportNotes-takeover =
     .label = 接管导出笔记
 

@@ -1,8 +1,4 @@
 basic-title = Temel
-basic-openNote-takeover =
-    .label = Notları açmayı devral
-basic-openNote-defaultAsWindow =
-    .label = Notları her zaman pencere olarak aç
 basic-exportNotes-takeover =
     .label = Take over exporting notes
 

@@ -20,8 +20,6 @@ declare namespace _ZoteroTypes {
       "editor.useMarkdownPaste": boolean;
       "editor.pinTableLeft": boolean;
       "editor.pinTableTop": boolean;
-      "openNote.takeover": boolean;
-      "openNote.defaultAsWindow": boolean;
       "exportNotes.takeover": boolean;
       "annotationNote.enableTagSync": boolean;
     };

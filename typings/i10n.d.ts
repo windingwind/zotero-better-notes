@@ -17,8 +17,6 @@ export type FluentMessageId =
   | 'autoMDFileName'
   | 'backup'
   | 'basic-exportNotes-takeover'
-  | 'basic-openNote-defaultAsWindow'
-  | 'basic-openNote-takeover'
   | 'basic-title'
   | 'cancel'
   | 'confirm'
