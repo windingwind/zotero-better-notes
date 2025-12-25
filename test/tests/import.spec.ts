@@ -38,7 +38,7 @@ describe("Import", function () {
 
     await itemModifyPromise;
 
-    const win = await addon.hooks.onOpenNote(note.id, "window");
+    await Zotero.getActiveZoteroPane().selectItem(note.id);
 
     // Wait for the editor to be ready
     await wait.waitUtilAsync(() => {
@@ -49,16 +49,15 @@ describe("Import", function () {
     const editor = addon.api.editor.getEditorInstance(note.id);
     assert.exists(editor);
 
-    addon.api.editor.insert(editor, "<p>temp</p<", "start");
+    addon.api.editor.insert(editor, "<p>temp</p>", "start");
     const start = addon.api.editor.getPositionAtLine(editor, 0, "start");
     const end = addon.api.editor.getPositionAtLine(editor, 0, "end");
     addon.api.editor.del(editor, start, end);
 
     editor?.saveSync();
 
-    await itemModifyPromise;
-
-    win?.close();
+    // It's possible that the modify event is not fired because nothing changed since Zotero 8
+    await Promise.race([itemModifyPromise, Zotero.Promise.delay(1000)]);
 
     const content = note.getNote();
     const expected = getNoteContent()
