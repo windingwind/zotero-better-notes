@@ -70,6 +70,9 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
 
           noteEditor.appendChild(hbox);
 
+          box.querySelector("#editor-view").docShell.windowDraggingAllowed =
+            true;
+
           wait
             .waitUntilAsync(() => noteEditor._editorInstance)
             .then(() => {
