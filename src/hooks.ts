@@ -45,6 +45,7 @@ import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/patches/exportItems";
 import { closeConvertServer } from "./utils/convert";
+import { patchNoteEditorCE } from "./modules/patches/noteEditor";
 
 async function onStartup() {
   await Promise.all([
@@ -101,6 +102,8 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   initTemplates();
 
   patchExportItems(win);
+
+  patchNoteEditorCE(win);
 
   showUserGuide(win);
 }
