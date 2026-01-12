@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { config } from "../../../package.json";
+import { getWorkspaceUID } from "../../utils/workspace";
 
 const RelatedBox = document.createXULElement("related-box")
   .constructor! as typeof XULElementBase;
@@ -100,7 +101,7 @@ export class NoteRelatedBox extends RelatedBox {
       return super._handleShowItem(id);
     }
     Zotero[config.addonRef].hooks.onOpenNote(item.id, "preview", {
-      workspaceUID: this.closest("bn-workspace")?.dataset.uid,
+      workspaceUID: getWorkspaceUID(this),
     });
   }
 }

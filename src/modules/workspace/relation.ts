@@ -1,6 +1,7 @@
 import { config } from "../../../package.json";
 import { slice } from "../../utils/str";
-import { waitUtilAsync } from "../../utils/wait";
+import { wait } from "zotero-plugin-toolkit";
+import { getWorkspaceUID } from "../../utils/workspace";
 
 export function registerNoteRelation() {
   const key = Zotero.ItemPaneManager.registerSection({
@@ -58,8 +59,8 @@ export function registerNoteRelation() {
         Zotero.Notifier.unregisterObserver(notifierKey);
       }
     },
-    onItemChange: ({ body, item, setEnabled }) => {
-      if (body.closest("bn-workspace") as HTMLElement | undefined) {
+    onItemChange: ({ body, item, tabType, setEnabled }) => {
+      if (getWorkspaceUID(body)) {
         setEnabled(true);
         body.dataset.itemID = String(item.id);
         return;
@@ -81,6 +82,9 @@ export function registerNoteRelation() {
             addon.hooks.onOpenNote(
               ev.data.id,
               ev.data.isShift ? "window" : "tab",
+              {
+                forceTakeover: true,
+              },
             );
           }
         });
@@ -92,7 +96,7 @@ export function registerNoteRelation() {
 
 async function renderGraph(body: HTMLElement, item: Zotero.Item) {
   const data = await getRelationData(item);
-  await waitUtilAsync(
+  await wait.waitUtilAsync(
     () =>
       body.querySelector("iframe")!.contentDocument?.readyState === "complete",
   );

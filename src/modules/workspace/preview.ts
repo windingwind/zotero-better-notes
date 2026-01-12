@@ -1,6 +1,6 @@
 import { config } from "../../../package.json";
 import { waitUtilAsync } from "../../utils/wait";
-import { getWorkspaceByUID } from "../../utils/workspace";
+import { getWorkspaceByUID, getWorkspaceUID } from "../../utils/workspace";
 
 export function openNotePreview(
   noteItem: Zotero.Item,
@@ -22,7 +22,18 @@ export function openNotePreview(
       l10nID: `${config.addonRef}-note-preview-sidenav`,
       l10nArgs: JSON.stringify({ title: noteItem.getNoteTitle() }),
     },
-    bodyXHTML: `<note-editor data-id="${noteItem.id}" class="bn-note-preview"></note-editor>`,
+    bodyXHTML: `
+<linkset>
+  <html:link
+    rel="localization"
+    href="${config.addonRef}-notePreview.ftl"
+  ></html:link>
+  <html:link
+    rel="stylesheet"
+    href="chrome://${config.addonRef}/content/styles/workspace/workspace.css"
+  ></html:link>
+</linkset>
+<note-editor data-id="${noteItem.id}" class="bn-note-preview"></note-editor>`,
     sectionButtons: [
       {
         type: "openNote",
@@ -48,7 +59,7 @@ export function openNotePreview(
         l10nID: `${config.addonRef}-note-preview-full`,
         onClick: ({ body }) => {
           const iframe = body.querySelector("iframe");
-          const details = body.closest("bn-details");
+          const details = getItemDetails(body);
           const head = body
             .closest("item-pane-custom-section")
             ?.querySelector(".head");
@@ -74,16 +85,14 @@ export function openNotePreview(
       },
     ],
     onItemChange: ({ body, setEnabled }) => {
-      if (
-        (body.closest("bn-workspace") as HTMLElement | undefined)?.dataset
-          .uid !== workspaceUID
-      ) {
+      if (getWorkspaceUID(body) !== workspaceUID) {
         setEnabled(false);
         return;
       }
+      body.dataset.enabled = "true";
       setEnabled(true);
     },
-    onRender: ({ setSectionSummary }) => {
+    onRender: ({ body, setSectionSummary }) => {
       setSectionSummary(noteItem.getNoteTitle());
     },
     onAsyncRender: async ({ body, item }) => {
@@ -113,7 +122,10 @@ export function openNotePreview(
         );
       }
     },
-    onDestroy: () => {
+    onDestroy: ({ body }) => {
+      if (!body.dataset.enabled) {
+        return;
+      }
       Zotero.ItemPaneManager.unregisterSection(key || "");
     },
   });
@@ -122,13 +134,22 @@ export function openNotePreview(
   workspace?.toggleContext(true);
 
   setTimeout(() => {
-    // @ts-ignore
-    workspace?.querySelector("bn-details")?.scrollToPane(key);
+    workspace?.scrollToPane(String(key));
   }, 500);
 
+  // If registration failed, it is already opened, just scroll to it
   if (!key) {
     scrollPreviewEditorTo(noteItem, workspaceUID, options);
   }
+}
+
+function getItemDetails(elem: HTMLElement) {
+  if (elem.ownerGlobal?.Zotero_Tabs) {
+    return elem.ownerGlobal.ZoteroContextPane.context._getItemContext(
+      elem.ownerGlobal.Zotero_Tabs.selectedID,
+    );
+  }
+  return elem.closest("bn-details");
 }
 
 function scrollPreviewEditorTo(
@@ -141,13 +162,11 @@ function scrollPreviewEditorTo(
 ) {
   const workspace = getWorkspaceByUID(workspaceUID);
   if (!workspace) return;
-  const editor = workspace.querySelector(
-    `note-editor[data-id="${item.id}"]`,
-  ) as EditorElement;
+  const editor = workspace.getPreviewEditor(item.id);
   if (!editor) return;
   const section = editor.closest("item-pane-custom-section");
   // @ts-ignore
-  workspace?.querySelector("bn-details")?.scrollToPane(section.dataset.pane);
+  getItemDetails(editor)?.scrollToPane(section.dataset.pane);
   if (typeof options.lineIndex === "number") {
     addon.api.editor.scroll(editor._editorInstance, options.lineIndex);
   }

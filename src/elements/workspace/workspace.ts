@@ -7,13 +7,14 @@ import {
   unregisterPrefObserver,
 } from "../../utils/prefs";
 import { waitUtilAsync } from "../../utils/wait";
+import { VirtualWorkspace } from "../../utils/workspace";
 import { PluginCEBase } from "../base";
 import { ContextPane } from "./contextPane";
 import { OutlinePane } from "./outlinePane";
 
 const persistKey = "persist.workspace";
 
-export class Workspace extends PluginCEBase {
+export class Workspace extends PluginCEBase implements VirtualWorkspace {
   uid: string = Zotero.Utilities.randomString(8);
   _item?: Zotero.Item;
 
@@ -179,6 +180,17 @@ export class Workspace extends PluginCEBase {
 
     this._rightSplitter.setAttribute("state", open ? "open" : "collapsed");
     this._persistState();
+  }
+
+  scrollToPane(key: string) {
+    const itemDetails = this._context._details;
+    return itemDetails.scrollToPane(key);
+  }
+
+  getPreviewEditor(itemID: number): EditorElement | undefined {
+    return this.querySelector(
+      `note-editor[data-id="${itemID}"]`,
+    ) as EditorElement;
   }
 
   async _initEditor() {

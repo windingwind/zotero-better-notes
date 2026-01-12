@@ -1,10 +1,21 @@
 import { config } from "../../../package.json";
-import { Workspace } from "../../elements/workspace/workspace";
+import { getWorkspaceUID } from "../../utils/workspace";
 
 export function registerNoteLinkSection(type: "inbound" | "outbound") {
   const key = Zotero.ItemPaneManager.registerSection({
     paneID: `bn-note-${type}-link`,
     pluginID: config.addonID,
+    bodyXHTML: `
+<linkset>
+  <html:link
+    rel="stylesheet"
+    href="chrome://${config.addonRef}/content/styles/workspace/related.css"
+  ></html:link>
+  <html:link
+    rel="localization"
+    href="${config.addonRef}-noteRelation.ftl"
+  ></html:link>
+</linkset>`,
     header: {
       icon: `chrome://${config.addonRef}/content/icons/${type}-link-16.svg`,
       l10nID: `${config.addonRef}-note-${type}-header`,
@@ -59,8 +70,11 @@ export function registerNoteLinkSection(type: "inbound" | "outbound") {
         Zotero.Notifier.unregisterObserver(notifierKey);
       }
     },
-    onItemChange: ({ body, item, setEnabled }) => {
-      if (body.closest("bn-workspace") as HTMLElement | undefined) {
+    onItemChange: ({ body, item, tabType, setEnabled }) => {
+      if (
+        (body.closest("bn-workspace") as HTMLElement | undefined) ||
+        tabType === "note"
+      ) {
         setEnabled(true);
         body.dataset.itemID = String(item.id);
         return;
@@ -91,7 +105,7 @@ async function renderSection(
     setCount: (count: number) => void;
   },
 ) {
-  body.replaceChildren();
+  body.querySelectorAll(".row").forEach((elem) => elem.remove());
   const doc = body.ownerDocument;
   const api = {
     inbound: addon.api.relation.getNoteLinkInboundRelation,
@@ -117,9 +131,10 @@ async function renderSection(
     count++;
 
     const linkParams = {
-      workspaceUID: (body.closest("bn-workspace") as Workspace)?.dataset.uid,
+      workspaceUID: getWorkspaceUID(body),
       lineIndex: linkData.toLine ?? undefined,
       sectionName: linkData.toSection ?? undefined,
+      forceTakeover: true,
     };
 
     const row = doc.createElement("div");

@@ -52,7 +52,6 @@ async function onStartup() {
     Zotero.unlockPromise,
     Zotero.uiReadyPromise,
   ]);
-  Zotero.Prefs.set("layout.css.nesting.enabled", true, true);
   initLocale();
   ztoolkit.ProgressWindow.setIconURI(
     "default",
@@ -226,14 +225,14 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
   if (mode === "auto") {
     const currentWindow = getFocusedWindow();
 
-    if ((currentWindow as any)?.Zotero_Tabs?.selectedType === "note") {
+    if (
+      (currentWindow as _ZoteroTypes.MainWindow)?.Zotero_Tabs?.selectedType ===
+      "note"
+    ) {
       mode = "preview" as K;
-      // TODO: open preview
       workspaceUID = (
-        currentWindow?.document.querySelector(
-          `#${win.Zotero_Tabs.selectedID} bn-workspace`,
-        ) as HTMLElement | undefined
-      )?.dataset.uid;
+        currentWindow as _ZoteroTypes.MainWindow
+      ).Zotero_Tabs.getTabInfo().id;
     } else if (currentWindow?.document.querySelector("body.workspace-window")) {
       mode = "preview" as K;
       workspaceUID = (

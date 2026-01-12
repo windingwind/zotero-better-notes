@@ -84,12 +84,11 @@ import {
   linkAnnotationToTarget,
   updateNoteLinkRelation,
 } from "./utils/relation";
-import { getWorkspaceByTabID, getWorkspaceByUID } from "./utils/workspace";
+import { getWorkspaceByUID } from "./utils/workspace";
 import { getString } from "./utils/locale";
 import { showRestartHint } from "./utils/hint";
 
 const workspace = {
-  getWorkspaceByTabID,
   getWorkspaceByUID,
 };
 

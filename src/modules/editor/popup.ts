@@ -12,6 +12,7 @@ import {
 import { getNoteLink, getNoteLinkParams } from "../../utils/link";
 import { getString } from "../../utils/locale";
 import { waitUtilAsync } from "../../utils/wait";
+import { getWorkspaceUID } from "../../utils/workspace";
 
 export function initEditorPopup(editor: Zotero.EditorInstance) {
   if (editor._disableUI) {
@@ -52,6 +53,10 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
   const _window = editor._iframeWindow;
   const link = getURLAtCursor(editor);
   const linkParams = getNoteLinkParams(link);
+  Object.assign(linkParams, {
+    forceTakeover: true,
+    workspaceUID: getWorkspaceUID(editor._popup)!,
+  });
   const linkNote = linkParams.noteItem;
   const editorNote = editor._item;
   // If the note is invalid, we remove the buttons
@@ -143,7 +148,11 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
         {
           type: "click",
           listener: async (e) => {
-            addon.hooks.onOpenNote(linkNote.id, "window", linkParams);
+            addon.hooks.onOpenNote(
+              linkNote.id,
+              (e as MouseEvent).shiftKey ? "window" : "preview",
+              linkParams,
+            );
           },
         },
       ],
