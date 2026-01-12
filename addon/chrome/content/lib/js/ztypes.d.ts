@@ -60295,6 +60295,21 @@ declare namespace _ZoteroTypes {
     _downloadInProgressPromise: Promise<void> | null;
     registerEditorInstance(instance: Zotero.EditorInstance): void;
     unregisterEditorInstance(instance: Zotero.EditorInstance): Promise<void>;
+    open(
+      itemID: number,
+      location: any,
+      options?: {
+        title?: string;
+        tabIndex?: number;
+        tabID?: string;
+        openInBackground?: boolean;
+        openInWindow?: boolean;
+        allowDuplicate?: boolean;
+        preventJumpback?: boolean;
+        parentItemKey?: string;
+      },
+    ): Promise<Zotero.EditorInstance>;
+    getByTabID(tabID: string): Zotero.EditorInstance | null;
 
     /**
      * Replace local URIs for citations and highlights
@@ -62012,7 +62027,7 @@ declare namespace _ZoteroTypes {
 
     interface UIHookArgs {
       item: Zotero.Item;
-      tabType: "library" | "reader";
+      tabType: "library" | "reader" | "note" | string;
       editable: boolean;
 
       /** Set l10n args for section header */
@@ -62078,7 +62093,7 @@ declare namespace _ZoteroTypes {
     interface BasicHookArgs {
       rowID: string;
       item: Zotero.Item;
-      tabType: "library" | "reader";
+      tabType: "library" | "reader" | "note" | string;
       editable: boolean;
     }
 
@@ -62364,6 +62379,7 @@ declare namespace _ZoteroTypes {
       | "reader/pdf"
       | "reader/epub"
       | "reader/snapshot"
+      | "note"
       | string;
 
     /**
@@ -65571,12 +65587,15 @@ declare namespace _ZoteroTypes {
     readonly activeEditor?: Zotero.EditorInstance;
     readonly sidenav: XULElement;
     readonly splitter: XULElement;
+    // TODO: complete type
+    readonly context: any;
     showLoadingMessage(isShow: boolean): void;
     init(): void;
     destroy(): void;
     update(): void;
     focus(): void;
     togglePane(): void;
+    collapsed: boolean;
     updateAddToNote(): void;
   }
 }
@@ -65659,7 +65678,16 @@ declare namespace _ZoteroTypes {
       item: Zotero.Item,
     ) => Array<Zotero.Item>;
     isAttachmentWithExtractableAnnotations(item: Zotero.Item): boolean;
+    /** @deprecated use openNote() with openInWindow option */
     openNoteWindow(itemID: number, col?: number, parentKey?: string): void;
+    openNote(
+      itemID: number,
+      options?: {
+        col?: number;
+        parentKey?: string;
+        openInWindow?: boolean;
+      },
+    ): void;
     viewPDF(
       itemID: number,
       location: _ZoteroTypes.Reader.Location,
@@ -65951,6 +65979,9 @@ declare namespace _ZoteroTypes {
     _tabs: _ZoteroTypes.TabInstance[];
 
     _getTab(tabId: string): { tab: _ZoteroTypes.TabInstance; tabIndex: number };
+    getTabInfo(tabID?: string): TabInstance & { subType?: string };
+    getSidebarState(tabType: string): { open?: boolean; width: number };
+    updateSidebarLayout(state?: { width?: number | boolean }): void;
     _update(): void;
     getTabIDByItemID(itemID: number): string;
     init(): void;
