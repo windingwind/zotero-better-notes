@@ -53,6 +53,34 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     }) as HTMLButtonElement,
   );
 
+  if (editor._tabID) {
+    const sidebarState =
+      Zotero.getMainWindow().Zotero_Tabs.getSidebarState("note");
+    registerEditorToolbarElement(
+      editor,
+      toolbar,
+      "start",
+      ztoolkit.UI.createElement(_document, "button", {
+        classList: ["toolbar-button", "bn-toggle-left-pane"],
+        properties: {
+          innerHTML: ICONS.workspaceToggle,
+          title: "Toggle left pane",
+        },
+        styles: {
+          display: sidebarState.open ? "none" : "inherit",
+        },
+        listeners: [
+          {
+            type: "click",
+            listener: () => {
+              Zotero.Notes.toggleSidebar(true);
+            },
+          },
+        ],
+      }),
+    );
+  }
+
   const settingsButton = editor._iframeWindow.document.querySelector(
     ".toolbar .end .dropdown .toolbar-button",
   ) as HTMLDivElement;

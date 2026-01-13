@@ -253,6 +253,7 @@ export type FluentMessageId =
   | 'templateType-text'
   | 'templateType-unknown'
   | 'title'
+  | 'toggleOutlinePane'
   | 'unSync'
   | 'unsync'
   | 'useBubbleMap'

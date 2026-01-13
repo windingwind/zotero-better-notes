@@ -1,3 +1,5 @@
+toggleOutlinePane =
+    .tooltiptext = Toggle Outline Pane
 setOutline =
     .tooltiptext = Anahat görünümünü değiştir
 useTreeView = 

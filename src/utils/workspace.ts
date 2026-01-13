@@ -1,6 +1,13 @@
 import { config } from "../../package.json";
+import { OutlinePane } from "../elements/workspace/outlinePane";
 
-export { getWorkspaceByUID, getWorkspaceUID, OutlineType, VirtualWorkspace };
+export {
+  getWorkspaceByUID,
+  getWorkspaceUID,
+  OutlineType,
+  VirtualWorkspace,
+  WorkspaceTab,
+};
 
 enum OutlineType {
   empty = 0,
@@ -93,7 +100,52 @@ class WorkspaceTab implements VirtualWorkspace {
     Zotero.getMainWindow().ZoteroContextPane.collapsed = !open;
   }
 
-  toggleOutline(open?: boolean): void {}
+  toggleOutline(width?: number): void;
+  toggleOutline(open?: boolean): void;
+  toggleOutline(param?: boolean | number): void {
+    const win = Zotero.getMainWindow();
+    const outlineContainer = this._tabContent.querySelector(
+      "#bn-outline-container",
+    ) as OutlinePane;
+
+    if (!outlineContainer) {
+      return;
+    }
+
+    let open: boolean;
+    let width: number | false = false;
+    if (typeof param === "number") {
+      open = param > 0;
+      width = param;
+    } else {
+      open = param ?? outlineContainer?.getAttribute("collapsed") === "true";
+    }
+
+    outlineContainer.setAttribute("collapsed", open ? "false" : "true");
+    if (typeof width === "number") {
+      outlineContainer.style.width = `${width}px`;
+    }
+    // @ts-ignore
+    this._tabContent.sidebarWidth = param;
+    win.Zotero_Tabs.updateSidebarLayout({ width: param });
+    win.ZoteroContextPane.update();
+
+    this.updateToggleOutlineButton();
+  }
+
+  updateToggleOutlineButton(): void {
+    const open =
+      Zotero.getMainWindow().Zotero_Tabs.getSidebarState("note").open;
+    const toggleButtonInEditor =
+      this.editor?._iframeWindow?.document?.querySelector(
+        ".toolbar-button.bn-toggle-left-pane",
+      ) as HTMLElement;
+    if (toggleButtonInEditor) {
+      toggleButtonInEditor.style.display = open ? "none" : "inherit";
+    }
+    // We don't need to hide the outline button in the outline pane,
+    // because it's hidden when outline pane is collapsed.
+  }
 
   scrollToPane(key: string) {
     const itemDetails =

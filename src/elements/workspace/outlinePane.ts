@@ -2,7 +2,7 @@ import { FilePickerHelper } from "zotero-plugin-toolkit";
 import { config } from "../../../package.json";
 import { formatPath } from "../../utils/str";
 import { waitUtilAsync } from "../../utils/wait";
-import { OutlineType } from "../../utils/workspace";
+import { getWorkspaceByUID, OutlineType } from "../../utils/workspace";
 import { PluginCEBase } from "../base";
 import {
   getPref,
@@ -49,6 +49,11 @@ export class OutlinePane extends PluginCEBase {
   ></html:link>
 </linkset>
 <hbox id="left-toolbar">
+  <toolbarbutton
+    id="toggleOutlinePane"
+    class="zotero-tb-button"
+    data-l10n-id="${config.addonRef}-toggleOutlinePane"
+  ></toolbarbutton>
   <toolbarbutton
     id="setOutline"
     class="zotero-tb-button"
@@ -192,6 +197,15 @@ export class OutlinePane extends PluginCEBase {
   async updateOutline() {
     if (!this.item) return;
 
+    const toggleOutlinePane = this.querySelector(
+      `#${this._wrapID("toggleOutlinePane")}`,
+    );
+    if (this.editor?._tabID) {
+      toggleOutlinePane?.removeAttribute("hidden");
+    } else {
+      toggleOutlinePane?.setAttribute("hidden", "true");
+    }
+
     this._outlineContainer.contentWindow?.removeEventListener(
       "message",
       this.messageHandler,
@@ -270,6 +284,12 @@ export class OutlinePane extends PluginCEBase {
     if (!this.item) return;
     const type = this._unwrapID((ev.target as XULToolBarButtonElement).id);
     switch (type) {
+      case "toggleOutlinePane": {
+        const workspace = getWorkspaceByUID(this.editor?._tabID || "");
+        if (!workspace) return;
+        workspace.toggleOutline(false);
+        break;
+      }
       case "useTreeView":
       case "useMindMap":
       case "useBubbleMap": {
@@ -401,6 +421,8 @@ export class OutlinePane extends PluginCEBase {
   };
 
   _persistState() {
+    // Tab outline use Zotero_Tabs state
+    if (this.editor?._tabID) return;
     let state = getPrefJSON(persistKey);
 
     if (state?.outlineType === this.outlineType) {
@@ -416,6 +438,8 @@ export class OutlinePane extends PluginCEBase {
   }
 
   _restoreState() {
+    // Tab outline use Zotero_Tabs state
+    if (this.editor?._tabID) return;
     const state = getPrefJSON(persistKey);
     if (
       typeof state.outlineType === "number" &&

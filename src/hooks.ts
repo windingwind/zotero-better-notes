@@ -46,6 +46,7 @@ import { closeParsingServer } from "./utils/parsing";
 import { patchExportItems } from "./modules/patches/exportItems";
 import { closeConvertServer } from "./utils/convert";
 import { patchNoteEditorCE } from "./modules/patches/noteEditor";
+import { patchNotes } from "./modules/patches/notes";
 
 async function onStartup() {
   await Promise.all([
@@ -73,6 +74,8 @@ async function onStartup() {
 
   registerNoteLinkSection("inbound");
   registerNoteLinkSection("outbound");
+
+  patchNotes();
 
   initSyncList();
 

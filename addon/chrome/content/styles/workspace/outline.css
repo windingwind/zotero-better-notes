@@ -6,7 +6,7 @@ bn-outline,
 }
 
 bn-outline {
-  min-width: 100px;
+  min-width: 140px;
   flex-direction: column;
 
   .zotero-tb-button {
@@ -32,7 +32,13 @@ bn-outline {
 #__addonRef__-left-toolbar {
   background: var(--material-toolbar);
   border-bottom: var(--material-panedivider);
-  padding: 6px 8px;
+  padding: 6px 0px;
+}
+
+#__addonRef__-toggleOutlinePane {
+  list-style-image: url("chrome://zotero/skin/20/universal/sidebar.svg");
+  fill: currentColor;
+  -moz-context-properties: fill, fill-opacity;
 }
 
 #__addonRef__-setOutline {

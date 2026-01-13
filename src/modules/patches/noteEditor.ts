@@ -1,6 +1,6 @@
 import { PatchHelper, wait } from "zotero-plugin-toolkit";
-import { ICONS } from "../../utils/config";
 import type { OutlinePane } from "../../elements/workspace/outlinePane";
+import { getWorkspaceByUID, WorkspaceTab } from "../../utils/workspace";
 
 export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
   const NoteEditorProto =
@@ -15,7 +15,6 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
       function (height: number | null = null) {
         // @ts-ignore
         const noteEditor = this as any;
-        ztoolkit.log("patched setBottomPlaceholderHeight", noteEditor);
 
         if (!noteEditor.tabID) {
           // @ts-ignore
@@ -60,6 +59,13 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
             tabContent.sidebarWidth = width;
             win.Zotero_Tabs.updateSidebarLayout({ width });
             win.ZoteroContextPane.update();
+
+            const workspace = getWorkspaceByUID(
+              noteEditor.tabID,
+            ) as WorkspaceTab;
+            if (workspace) {
+              workspace.updateToggleOutlineButton();
+            }
           };
           splitter.addEventListener("command", splitterHandler);
           splitter.addEventListener("mousemove", splitterHandler);
@@ -82,47 +88,6 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
               outlineContainer.item = noteEditor.item;
               outlineContainer._editorElement = noteEditor;
               outlineContainer.render();
-
-              const _document = editor._iframeWindow.document;
-              const toolbar = _document.querySelector(
-                ".toolbar",
-              ) as HTMLDivElement;
-
-              // TODO: move to editor code
-              const toggleOutline = ztoolkit.UI.createElement(
-                _document,
-                "button",
-                {
-                  classList: ["toolbar-button"],
-                  properties: {
-                    innerHTML: ICONS.workspaceToggle,
-                    title: "Toggle left pane",
-                  },
-                  listeners: [
-                    {
-                      type: "click",
-                      listener: (e) => {
-                        const willOpen =
-                          outlineContainer.getAttribute("collapsed") === "true";
-                        outlineContainer.setAttribute(
-                          "collapsed",
-                          willOpen ? "false" : "true",
-                        );
-                        tabContent.sidebarOpen = willOpen;
-
-                        win.Zotero_Tabs.updateSidebarLayout({
-                          width: willOpen,
-                        });
-                        win.ZoteroContextPane.update();
-                      },
-                    },
-                  ],
-                },
-              );
-
-              requestIdleCallback(() =>
-                toolbar.querySelector(".start")?.prepend(toggleOutline),
-              );
             });
         }
 

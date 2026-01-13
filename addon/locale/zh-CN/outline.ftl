@@ -1,3 +1,5 @@
+toggleOutlinePane =
+    .tooltiptext = 展开/折叠大纲栏
 setOutline =
     .tooltiptext = 切换大纲模式
 useTreeView = 
