@@ -61,7 +61,7 @@ sync-running-hint-finish = Finish
 sync-running-hint-synced = Synced
 sync-running-hint-upToDate = Up To Date
 
-workspace-switchOutline = Swith Outline Mode
+workspace-switchOutline = Switch Outline Mode
 workspace-saveOutlineImage = Save Image
 workspace-saveOutlineFreeMind = Save MindMap
 workspace-emptyWorkspaceGuideInfo = No note opened in workspace.
