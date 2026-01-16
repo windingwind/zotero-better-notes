@@ -1,22 +1,22 @@
 menuTools-syncManager =
-    .label = Sync Manager
+    .label = Sync-Manager
 menuTools-templateEditor =
-    .label = Template Editor
+    .label = Vorlagen-Editor
 menuTools-importTemplateFromClipboard =
-    .label = New Template from Clipboard
+    .label = Neue Vorlage aus der Zwischenablage
 
 menuFile-exportTemplate =
-    .label = Export Template...
+    .label = Vorlage exportieren...
 
 menuHelp-openUserGuide =
-    .label = Open Better Notes User Guide
+    .label = Better Notes Nutzerhandbuch öffnen
 
 menuAddNote-importMD =
-    .label = Import from MarkDown File
+    .label = Aus Markdown-Datei importieren
 menuAddNote-newTemplateStandaloneNote =
-    .label = New Standalone Note from Template
+    .label = Neue separate Notiz aus Vorlage
 menuAddNote-newTemplateItemNote =
-    .label = New Item Note from Template
+    .label = Neue Eintrags-Notiz aus Vorlage
 
 menuTab-moveNewWindow =
-    .label = Move to BN New Window
+    .label = In neues BN-Fenster verschieben

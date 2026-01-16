@@ -1,25 +1,25 @@
 title =
-    .title = Link Creator
+    .title = Link-Ersteller
 tab-inbound =
-    .label = Mention in
+    .label = Erwähnen in
 tab-outbound =
-    .label = Link to
+    .label = Verknüpfen mit
 
-inbound-step1-content = Step 1. Mention in note:
-inbound-step2-content = Step 2. Insert to:
-inbound-step3-content = Step 3. Preview:
+inbound-step1-content = Schritt 1. Erwähnen in Notiz:
+inbound-step2-content = Schritt 2. Einfügen in:
+inbound-step3-content = Schritt 3. Vorschau:
 inbound-step3-middle =
     { $show ->
         [true] mentions
         *[other] { "" }
     }
 
-outbound-step1-content = Step 1. Link to note:
-outbound-step2-content = Step 2. Insert to:
-outbound-step3-content = Step 3. Preview:
+outbound-step1-content = Schritt 1. Mit Notiz verknüpfen:
+outbound-step2-content = Schritt 2. Einfügen in:
+outbound-step3-content = Schritt 3. Vorschau:
 outbound-step3-middle =
     { $show ->
-        [true] links to
+        [true] Verknüpfungen zu
         *[other] { "" }
     }
 

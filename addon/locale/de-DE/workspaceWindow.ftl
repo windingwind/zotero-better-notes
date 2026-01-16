@@ -1,1 +1,1 @@
-title = Note Workspace
+title = Notizen-Workspace

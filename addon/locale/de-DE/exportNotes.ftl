@@ -1,10 +1,10 @@
 title =
-    .title = Export Notes with Better Notes
+    .title = Notizen mit Better Notes exportieren
 
 target =
-    .value = Target: {$title}{ $left ->
+    .value = Ziel: {$title}{ $left ->
         [0]{ "" }
-        *[other] { " " }and {$left} more.
+        *[other] { " " }und {$left} mehr.
     }
 format =
     .value = Format:
@@ -15,32 +15,32 @@ format-msword =
 format-pdf =
     .label = PDF(.pdf)
 format-freemind = 
-    .label = Mind Map
+    .label = Mind-Map
 format-note = 
-    .label = Zotero Note
+    .label = Zotero Notiz
 format-latex =
     .label = LaTeX(.tex)
 
 links-keep =
-    .label = Keep note links(zotero://note/)
+    .label = Notizlinks beibehalten(zotero://note/)
 links-embed =
-    .label = Embed linked notes in the content
+    .label = Verlinkte Notizen im Inhalt einbetten
 links-standalone =
-    .label = Convert linked notes to standalone exports
+    .label = Verlinkte Notizen in separate Exporte konvertieren
 links-remove =
-    .label = Remove note links
+    .label = Notizlinks entfernen
 
 markdown-autoSync =
-    .label = Set auto-sync for each note
-    .title = Auto-sync is available for "Convert linked notes to standalone exports" mode.
+    .label = Auto-Sync für jede Notiz setzen
+    .title = Auto-Sync ist für den "Verlinkte Notizen in separate Exporte konvertieren"-Modus verfügbar.
 markdown-withYAMLHeader =
-    .label = With YAML header
+    .label = Mit YAML Kopfzeilen
 markdown-autoFilename =
-    .label = Auto generate file name
+    .label = Dateinamen automatisch generieren
 
 useDefaultExport =
-    .label = Use Zotero's default export
-    .tooltiptext = Export notes without advanced options provided by Better Notes.
+    .label = Zoteros Standard-Export verwenden
+    .tooltiptext = Notiz ohne die von Better Notes bereitgestellten Zusatzoptionen exportieren.
 
 latex-merge =
-    .label = Merge into one tex file
+    .label = In eine tex-Datei zusammenführen

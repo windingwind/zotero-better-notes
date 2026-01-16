@@ -1,27 +1,27 @@
-title = Note Sync Conflict Resolution
+title = Notizen-Synchronisations-Konfliktklärung
 
-diff-desc = Merge the changes from:
+diff-desc = Änderungen zusammenführen von:
     .title = { $title }
 diff-note =
     .title = { $title }
 diff-md =
     .title = { $title }
-diff-both = Keep Both
-    .title = Keep changes from both sides
+diff-both = Beide behalten
+    .title = Änderungen beider Seiten behalten
 
-list-header = Pick Changes to Keep
-list-selectAll = Select All
+list-header = Zu behaltende Änderungen auswählen
+list-selectAll = Alle auswählen
 
-diff-header = Raw Note
+diff-header = Notiz - Raw
 
-rendered-header = Rendered Note
+rendered-header = Notiz - Rendered
 
 finish =
-    .label = Resolve Conflict
-    .tooltiptext = Save the selected changes and update the note and the markdown file.
+    .label = Konflikt lösen
+    .tooltiptext = Ausgewählte Änderungen speichern und Notiz und Markdown-Datei aktualisieren.
 unsync =
-    .label = Stop Syncing This Note
-    .tooltiptext = Remove the note from the sync list and keep the local changes.
+    .label = Diese Notiz nicht mehr synchronisieren.
+    .tooltiptext = Notiz aus der Synchronisationsliste entfernen und lokale Änderungen behalten.
 skip =
-    .label = Skip For Now
-    .tooltiptext = Skip this note and keep the local changes until the next sync.
+    .label = Vorerst überspringen
+    .tooltiptext = Diese Notiz überspringen und lokale Änderungen bis zur nächsten Synchronisation beibehalten.

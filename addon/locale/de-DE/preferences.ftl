@@ -1,52 +1,52 @@
 basic-title = Basic
 basic-exportNotes-takeover =
-    .label = Take over exporting notes
+    .label = Notizenexport übernehmen
 
-editor-title = Note Editor
-editor-expandLevel-label = Outline expand to heading level
+editor-title = Notizen-Editor
+editor-expandLevel-label = Gliederung auf Überschriftenebene erweitern
 editor-keepLinks = 
-    .label = Show note links in outline
-editor-noteLinkPreviewType = Show preview for note link when:
+    .label = Notizlinks in der Gliederung zeigen
+editor-noteLinkPreviewType = Vorschau für Notizlinks anzeigen bei:
 editor-noteLinkPreview-hover = 
     .label = Hover
 editor-noteLinkPreview-ctrl = 
-    .label = Press { PLATFORM() ->
+    .label = Tastenkombination { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl
     }
 editor-noteLinkPreview-disable = 
-    .label = Never
+    .label = Nie
 editor-useMagicKey = 
-    .label = Use magic key "/" to show command palette
+    .label = Zaubertaste "/" verwenden um Befehlspalette anzuzeigen
 editor-useMagicKeyShortcut = 
-    .label = Use { PLATFORM() ->
+    .label = Nutze { PLATFORM() ->
         [macos] ⌘
        *[other] Ctrl
-    } + "/" to show command palette
+    } + "/" um Befehlspalette anzuzeigen
 editor-useMarkdownPaste = 
-    .label = Use enhanced markdown paste
-editor-pinTable-label = Pin table's
+    .label = Erweitertes Markdown-Enfügen benutzen
+editor-pinTable-label = Bei Tabellen anheften:
 editor-pinTableLeft =
-    .label = First column
+    .label = Erste Spalte
 editor-pinTableTop =
-    .label = First row when scrolling
+    .label = Erste Zeile beim Blättern
 
-sync-title = Sync
-sync-period-label = Auto-sync period (seconds)
-sync-attachmentFolder-label = Attachment folder
+sync-title = Synchronisation
+sync-period-label = Abstand automatischer Synchronisierungen (Sekunden)
+sync-attachmentFolder-label = Anhangs-Ordner
 sync-manager =
-    .label = Open Sync Manager
-template-title = Template
+    .label = Synchronisations-Manager öffnen
+template-title = Vorlage
 template-editor =
-    .label = Open Template Editor
-annotation-title = PDF Annotation
+    .label = Vorlagen-Editor öffnen
+annotation-title = PDF-Anmerkungen
 annotation-autoAnnotation =
-    .label = Automatically add new annotations to workspace note
+    .label = Automatisch neue Anmerkungen zur Workspace-Notiz hinzufügen
 
-annotationNote-title = Note from Annotation
+annotationNote-title = Notiz aus Anmerkungen
 annotationNote-enableTagSync = 
-    .label = Keep tags of note from annotation in sync with the original annotation
+    .label = Tags der Anmerkungen-Notiz mit der originalen Anmerkung synchronisieren.
 
-about-title = About
+about-title = Über
 help =
     .value = { $name } VERSION { $version } Build { $time }
