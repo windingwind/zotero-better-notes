@@ -1,0 +1,13 @@
+title = Sync Manager
+refresh = 
+    .label = Refresh
+    .tooltiptext = Refresh the list of notes
+sync = 
+    .label = Sync
+    .tooltiptext = Sync the selected notes immediately
+unSync = 
+    .label = Unsync
+    .tooltiptext = Unsync the selected notes
+detect = 
+    .label = Detect...
+    .tooltiptext = Detect synced notes from folder
