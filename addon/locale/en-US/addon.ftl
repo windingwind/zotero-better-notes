@@ -34,12 +34,12 @@ editor-previewImage-title = Preview Image
 
 syncManager-noteName = Note Name
 syncManager-lastSync = Last Sync
-syncManager-filePath = MarkDown Path
+syncManager-filePath = Markdown Path
 syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
     {$new} new, {$current} will be updated.
     Do you want to apply the changes?
 
-syncInfo-syncTo = MarkDown Path
+syncInfo-syncTo = Markdown Path
 syncInfo-lastSync = Last Sync
 syncInfo-sync = Sync
 syncInfo-unSync = Unsync
@@ -54,14 +54,14 @@ sync-start-hint = Note Auto-Sync is enabled every
 sync-stop-hint = Note Auto-Sync is disabled
 sync-running-hint-title = Note Syncing
 sync-running-hint-check = Check Status
-sync-running-hint-updateMD = Update MarkDown
+sync-running-hint-updateMD = Update Markdown
 sync-running-hint-updateNote = Update Note
 sync-running-hint-diff = Confirm Merge
 sync-running-hint-finish = Finish
 sync-running-hint-synced = Synced
 sync-running-hint-upToDate = Up To Date
 
-workspace-switchOutline = Swith Outline Mode
+workspace-switchOutline = Switch Outline Mode
 workspace-saveOutlineImage = Save Image
 workspace-saveOutlineFreeMind = Save MindMap
 workspace-emptyWorkspaceGuideInfo = No note opened in workspace.
@@ -88,7 +88,7 @@ templatePicker-itemData-title = Choose Item Template Data Source
 
 alert-notValidCollectionError = Please select a valid collection.
 alert-notValidParentItemError = No valid parent item.
-alert-syncImportedNotes = Keep imported notes in sync with MarkDown files?
+alert-syncImportedNotes = Keep imported notes in sync with Markdown files?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
 alert-templateEditor-shouldImport = Seems like you are trying to directly save a note template share code. Do you want to import it as a template?
 alert-templateEditor-unsaved = You have unsaved changes in the template editor. Do you want to save them?
