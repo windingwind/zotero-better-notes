@@ -89,7 +89,7 @@ and:
 ## 👋 Install
 
 - Download the plugin (.xpi file) from below (beta version is only for Zotero 8 beta! Use the latest stable version for Zotero 7).
-  - [Latest Version: 3.0.1](https://github.com/windingwind/zotero-better-notes/releases/download/v3.0.1/better-notes-for-zotero.xpi)
+  - [Latest Version: 3.0.2](https://github.com/windingwind/zotero-better-notes/releases/download/v3.0.2/better-notes-for-zotero.xpi)
   - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
   - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
 
