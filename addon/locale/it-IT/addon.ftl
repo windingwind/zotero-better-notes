@@ -65,8 +65,8 @@ workspace-emptyWorkspaceGuideOpen = Scegli una nota da aprire
 workspace-emptyWorkspaceGuideOr = o
 workspace-emptyWorkspaceGuideCreate = Crea una nuova nota
 
-editor-toolbar-settings-openAsTab = Apri come scheda
-editor-toolbar-settings-openAsWindow = Apri in nuova finestra
+editor-toolbar-settings-openAsTab = Apri Nota in nuova scheda
+editor-toolbar-settings-openAsWindow = Apri Nota in nuova finestra di BN
 editor-toolbar-settings-showInLibrary = Mostra nella biblioteca
 editor-toolbar-settings-insertTemplate = Inserisci template
 editor-toolbar-settings-refreshTemplates = Aggiorna il contenuto dal template

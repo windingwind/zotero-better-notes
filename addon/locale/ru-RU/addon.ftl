@@ -69,9 +69,9 @@ workspace-emptyWorkspaceGuideOpen = Choose a note to open
 workspace-emptyWorkspaceGuideOr = or
 workspace-emptyWorkspaceGuideCreate = Create a new note
 
-editor-toolbar-settings-openAsTab = Open as tab
-editor-toolbar-settings-openAsWindow = Open as window
-editor-toolbar-settings-showInLibrary = Show in Library
+editor-toolbar-settings-openAsTab = Open Заметка в новой вкладке
+editor-toolbar-settings-openAsWindow = Open Заметка в BN новом окне
+editor-toolbar-settings-showInLibrary = Показать в библиотеке
 editor-toolbar-settings-insertTemplate=Вставить шаблон
 editor-toolbar-settings-refreshTemplates = Update content from templates
 editor-toolbar-settings-copyLink = Копировать Ссылку (L{ $line })

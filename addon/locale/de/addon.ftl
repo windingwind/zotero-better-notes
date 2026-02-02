@@ -69,8 +69,8 @@ workspace-emptyWorkspaceGuideOpen = Wähle eine Notiz zum Öffnen
 workspace-emptyWorkspaceGuideOr = oder
 workspace-emptyWorkspaceGuideCreate = Erstelle eine neue Notiz
 
-editor-toolbar-settings-openAsTab = Als Tab öffnen
-editor-toolbar-settings-openAsWindow = Als Fenster öffnen
+editor-toolbar-settings-openAsTab = Notiz in neuem Tab öffnen
+editor-toolbar-settings-openAsWindow = Notiz in neuem BN-Fenster öffnen
 editor-toolbar-settings-showInLibrary = In Bibliothek anzeigen
 editor-toolbar-settings-insertTemplate = Vorlage einsetzen
 editor-toolbar-settings-refreshTemplates = Inhalt aus Vorlage aktualisieren

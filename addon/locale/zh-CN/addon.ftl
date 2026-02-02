@@ -69,8 +69,8 @@ workspace-emptyWorkspaceGuideOpen = 打开现有笔记
 workspace-emptyWorkspaceGuideOr = 或
 workspace-emptyWorkspaceGuideCreate = 创建新笔记
 
-editor-toolbar-settings-openAsTab = 在标签页中打开
-editor-toolbar-settings-openAsWindow = 在窗口中打开
+editor-toolbar-settings-openAsTab = 打开笔记到新标签页
+editor-toolbar-settings-openAsWindow = 打开笔记到 BN 新窗口
 editor-toolbar-settings-showInLibrary = 在文库中显示
 editor-toolbar-settings-insertTemplate=插入模板
 editor-toolbar-settings-refreshTemplates = 更新模板生成内容
