@@ -103,4 +103,40 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
       },
     enabled: true,
   });
+
+  updateExistingNoteTabs(win);
+}
+
+async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
+  const tabs = win.Zotero_Tabs._tabs;
+
+  for (const tab of tabs) {
+    if (!tab.type.startsWith("note")) {
+      continue;
+    }
+
+    // Recreate tab to update sidebar state
+    const item = Zotero.Items.get(tab.data.itemID);
+    if (!item || !item.isNote()) {
+      continue;
+    }
+
+    const currentIndex = tabs.indexOf(tab);
+    const isSelected = win.Zotero_Tabs.selectedID === tab.id ? true : false;
+
+    win.Zotero_Tabs.close(tab.id);
+
+    await wait.waitUntilAsync(() => !win.Zotero_Tabs._getTab(tab.id).tab);
+
+    Zotero.Notes.open(
+      item.id,
+      {},
+      {
+        title: tab.title,
+        tabIndex: currentIndex,
+        openInBackground: !isSelected,
+        parentItemKey: tab.data.parentItemKey,
+      },
+    );
+  }
 }
