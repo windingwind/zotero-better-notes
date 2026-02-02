@@ -34,6 +34,7 @@ editor-pinTableTop =
 sync-title = Синк
 sync-period-label = Авто-синк период (сек)
 sync-attachmentFolder-label = Attachment folder
+sync-attachmentFolder-hint = (`&#36;&#123;filename&#125;` репрезентує ім’я чинного файлу.)
 sync-manager =
     .label = Открыть Синк менеджер
 template-title = Шаблон
