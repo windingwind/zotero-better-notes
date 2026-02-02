@@ -9,11 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Telegram Message
+        env:
+          RELEASE_BODY: ${{ github.event.release.body }}
+          REPO_NAME: ${{ github.repository }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          TG_MSG_ID: ${{ secrets.TG_MSG_ID }}
         run: |
-          msg_text='
-          📢 A new release of ${{ github.repository }} is published: ${{ github.event.release.tag_name }}
-          Release Name: ${{ github.event.release.name }}
-          Description: ${{ github.event.release.body }}
-          You can check updates in Zotero to get the latest version, or view on GitHub: ${{ github.event.release.html_url }}'
-          curl -s -X POST 'https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage' \
-          -d "chat_id=${{ secrets.TG_CHAT_ID }}&text=${msg_text}&reply_to_message_id=${{ secrets.TG_MSG_ID }}"
+          # Convert GFM to Telegram Markdown (Legacy)
+          # 1. Convert headers (### Text) to Bold (*Text*)
+          # 2. Convert GFM Bold (**Text**) to Telegram Bold (*Text*)
+          # 3. Escape underscores to prevent broken italics (Note: this might break some complex links with underscores)
+          ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed 's/^### \(.*\)$/*\1*/g' | sed 's/\*\*/\*/g' | sed 's/_/\\_/g')
+          
+          msg_text="
+          📢 A new release of $REPO_NAME is published: $TAG_NAME
+          Release Name: $RELEASE_NAME
+          Description: 
+          $ESCAPED_BODY
+
+          You can check updates in Zotero to get the latest version, or view on GitHub: $RELEASE_URL"
+          curl -s -X POST "https://api.telegram.org/bot$TG_BOT_TOKEN/sendMessage" \
+          -d "chat_id=$TG_CHAT_ID" \
+          --data-urlencode "text=$msg_text" \
+          -d "parse_mode=Markdown" \
+          -d "reply_to_message_id=$TG_MSG_ID"
