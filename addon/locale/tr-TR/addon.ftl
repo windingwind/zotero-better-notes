@@ -69,8 +69,8 @@ workspace-emptyWorkspaceGuideOpen = Açmak için bir not seçin
 workspace-emptyWorkspaceGuideOr = ya da
 workspace-emptyWorkspaceGuideCreate = Yeni bir not oluşturun
 
-editor-toolbar-settings-openAsTab = Sekme Olarak Aç
-editor-toolbar-settings-openAsWindow = Pencere Olarak Aç
+editor-toolbar-settings-openAsTab = Notu Yeni Sekmeinde Aç
+editor-toolbar-settings-openAsWindow = Notu BN Yeni Pencereinde Aç
 editor-toolbar-settings-showInLibrary = Kitaplıkta Göster
 editor-toolbar-settings-insertTemplate = Şablon Uygula
 editor-toolbar-settings-refreshTemplates = İçeriği Şablona Göre Güncelle
