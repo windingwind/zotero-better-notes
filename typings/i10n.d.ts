@@ -109,6 +109,7 @@ export type FluentMessageId =
   | 'markdown-autoFilename'
   | 'markdown-autoSync'
   | 'markdown-withYAMLHeader'
+  | 'menu-openNoteAsBNWindow'
   | 'menuAddNote-importMD'
   | 'menuAddNote-newTemplateItemNote'
   | 'menuAddNote-newTemplateStandaloneNote'
