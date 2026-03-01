@@ -1,4 +1,10 @@
-import { EditorState, Plugin, PluginKey, Transaction } from "prosemirror-state";
+import {
+  EditorState,
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  Transaction,
+} from "prosemirror-state";
 
 import { Popup } from "./popup";
 import { formatMessage } from "./editorStrings";
@@ -633,6 +639,55 @@ class PluginState {
     }
 
     this._closePopup();
+
+    if (command.messageId === "mathBlock") {
+      setTimeout(() => {
+        this._activateSelectedNodeEditor("math_display");
+      }, 0);
+    }
+  }
+
+  _activateSelectedNodeEditor(nodeTypeName: string) {
+    const view = _currentEditorInstance._editorCore.view;
+    const { selection } = view.state;
+    let nodeDOM: HTMLElement | null = null;
+
+    if (
+      selection instanceof NodeSelection &&
+      selection.node.type.name === nodeTypeName
+    ) {
+      nodeDOM = view.nodeDOM(selection.from) as HTMLElement | null;
+    }
+
+    if (!nodeDOM) {
+      nodeDOM =
+        (document.querySelector(
+          ".ProseMirror-selectednode",
+        ) as HTMLElement | null) || null;
+    }
+
+    if (!nodeDOM) {
+      return;
+    }
+
+    const target =
+      (nodeDOM.querySelector(
+        'textarea, input, [contenteditable="true"]',
+      ) as HTMLElement | null) || nodeDOM;
+
+    try {
+      view.focus();
+      target.dispatchEvent(
+        new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        }),
+      );
+      target.focus();
+    } catch (error) {
+      console.warn("BN: Failed to activate selected math block", error);
+    }
   }
 
   removeInputSlash(state: EditorState) {
