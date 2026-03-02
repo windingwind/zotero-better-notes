@@ -176,6 +176,7 @@ async function renderSection(
     });
     note.className = "zotero-clicky zotero-clicky-open-link";
     note.setAttribute("tabindex", "0");
+    note.setAttribute("tooltiptext", "Open in new tab (Click) or new BN window (Shift+Click)");
     row.append(note);
 
     body.append(row);
