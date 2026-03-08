@@ -12,7 +12,7 @@ function registerReaderAnnotationButton() {
     (event) => {
       const { doc, append, params, reader } = event;
       // TEMP: If not many annotations, create the button immediately
-      if (reader._item.numAnnotations() < 1000) {
+      if (reader._item.numAnnotations() < 200) {
         createNoteFromAnnotationButton(doc, reader, params.annotation, append);
         return;
       }
