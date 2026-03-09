@@ -37,7 +37,6 @@ import { waitUtilAsync } from "./utils/wait";
 import { initSyncList } from "./modules/sync/api";
 import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
-import { getPref, setPref } from "./utils/prefs";
 import { closeRelationServer } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
 import { showUserGuide } from "./modules/userGuide";

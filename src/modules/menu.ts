@@ -147,4 +147,28 @@ export function registerMenus() {
       },
     ],
   });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-openNoteAsBNWindow`,
+    pluginID: config.addonID,
+    target: "main/library/item",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menu-openNoteAsBNWindow`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onShowing: (_, context) => {
+          context.setVisible(!!context.items?.every((item) => item.isNote()));
+        },
+        onCommand: (_, context) => {
+          if (!context.items?.length) {
+            return;
+          }
+          addon.hooks.onOpenNote(context.items[0].id, "window", {
+            forceTakeover: true,
+          });
+        },
+      },
+    ],
+  });
 }

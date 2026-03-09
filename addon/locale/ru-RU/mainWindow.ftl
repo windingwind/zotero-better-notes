@@ -20,3 +20,5 @@ menuAddNote-newTemplateItemNote =
 
 menuTab-moveNewWindow =
     .label = Move to BN New Window
+menu-openNoteAsBNWindow =
+    .label = Open Заметка в BN новом окне

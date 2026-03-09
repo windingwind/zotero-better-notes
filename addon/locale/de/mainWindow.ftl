@@ -20,3 +20,5 @@ menuAddNote-newTemplateItemNote =
 
 menuTab-moveNewWindow =
     .label = In neues BN-Fenster verschieben
+menu-openNoteAsBNWindow =
+    .label = Notiz in neues BN-Fenster öffnen
