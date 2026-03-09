@@ -34,6 +34,7 @@ editor-pinTableTop =
 sync-title = 同步
 sync-period-label = 自动同步周期 (秒)
 sync-attachmentFolder-label = 附件文件夹
+sync-attachmentFolder-hint = (其中 `&#36;&#123;filename&#125;` 表示当前文件名)
 sync-manager =
     .label = 打开同步管理器
 template-title = 模板

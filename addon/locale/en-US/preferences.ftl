@@ -34,6 +34,7 @@ editor-pinTableTop =
 sync-title = Sync
 sync-period-label = Auto-sync period (seconds)
 sync-attachmentFolder-label = Attachment folder
+sync-attachmentFolder-hint = (`&#36;&#123;filename&#125;` representing for current filename.)
 sync-manager =
     .label = Open Sync Manager
 template-title = Template
