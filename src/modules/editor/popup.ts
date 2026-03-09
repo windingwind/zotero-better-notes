@@ -138,7 +138,7 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
     const openButton = ztoolkit.UI.createElement(_window.document, "button", {
       id: "link-popup-open",
       properties: {
-        title: "Open in new window",
+        title: "Open in preview pane (Click) or new BN window (Shift+Click)",
         innerHTML: ICONS["openInNewWindow"],
       },
       classList: ["link-popup-extra"],
