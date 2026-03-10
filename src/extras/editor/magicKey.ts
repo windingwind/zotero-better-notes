@@ -202,6 +202,9 @@ class PluginState {
       searchParts: ["mb", "mathBlock"],
       command: (state) => {
         getPlugin()?.math_display.run();
+        setTimeout(() => {
+          this._activateSelectedNodeEditor("math_display");
+        }, 0);
       },
     },
     {
@@ -639,12 +642,6 @@ class PluginState {
     }
 
     this._closePopup();
-
-    if (command.messageId === "mathBlock") {
-      setTimeout(() => {
-        this._activateSelectedNodeEditor("math_display");
-      }, 0);
-    }
   }
 
   _activateSelectedNodeEditor(nodeTypeName: string) {
