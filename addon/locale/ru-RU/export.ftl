@@ -1,6 +1,6 @@
 title=Экспорт Заметок
 options-linkMode=Режим связанных заметок
-options-MD=MarkDown(.md)
+options-MD=Markdown(.md)
 options-Docx=MS Word(.docx)
 options-PDF=PDF(.pdf)
 options-mm=Mind Map

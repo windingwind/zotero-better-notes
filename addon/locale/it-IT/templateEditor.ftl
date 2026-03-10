@@ -173,5 +173,5 @@ snippet-exportMDFileContentMDContent = contenuto markdown
     .title = { -variable-type }: { -variable-string }. Il contenuto markdown da esportare
 snippet-exportLatexFileContentNoteItem = target note
     .title = { -variable-type }: { -variable-note }. The note item to be exported
-snippet-exportLatexFileContentLatexContent = latex content
-    .title = { -variable-type }: { -variable-string }. The latex content to be exported
+snippet-exportLatexFileContentLatexContent = LaTeX content
+    .title = { -variable-type }: { -variable-string }. The LaTeX content to be exported
