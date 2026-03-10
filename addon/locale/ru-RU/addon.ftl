@@ -15,7 +15,7 @@ templateEditor-templateDisplayName =
     .ExportMDFileNameV2 = Export File Name
     .ExportMDFileHeaderV2 = Export MD File Header
     .ExportMDFileContent = Export MD File Content
-    .ExportLatexFileContent = Export Latex File Content
+    .ExportLatexFileContent = Export LaTeX File Content
 
 templateEditor-templateDisplayType =
     .system = Builtin
@@ -34,12 +34,12 @@ editor-previewImage-title = Preview Image
 
 syncManager-noteName=Имя заметки
 syncManager-lastSync=Последний Синк
-syncManager-filePath=MarkDown путь
+syncManager-filePath=Markdown путь
 syncManager-detectConfirmInfo = {$total} synced markdown files detected in {$dir}
     {$new} new, {$current} will be updated.
     Do you want to apply the changes?
 
-syncInfo-syncTo=MarkDown путь
+syncInfo-syncTo=Markdown путь
 syncInfo-lastSync=Последний Синк
 syncInfo-sync=Синк
 syncInfo-unSync=ДеСинк
@@ -54,7 +54,7 @@ sync-start-hint=Авто-Синк заметок включен каждые
 sync-stop-hint=Авто-Синк заметок отключен
 sync-running-hint-title=Синхронизация заметок
 sync-running-hint-check=Проверить статус
-sync-running-hint-updateMD=Обновить MarkDown
+sync-running-hint-updateMD=Обновить Markdown
 sync-running-hint-updateNote=Обновить заметку
 sync-running-hint-diff=Подтвердить слияние
 sync-running-hint-finish=Финиш
@@ -88,7 +88,7 @@ templatePicker-itemData-title=Выбрать источник данных ша�
 
 alert-notValidCollectionError=Выберите валидную коллекцию.
 alert-notValidParentItemError=Нет валидного родительского элемента.
-alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами MarkDown?
+alert-syncImportedNotes = Синхронизировать импортированные заметки с файлами Markdown?
 alert-linkCreator-emptyNote = Cannot create link from/to an empty note. 
 alert-templateEditor-shouldImport = Вы пытаетесь сохранить код шаблона заметки. Хотите импортировать его как шаблон?
 alert-templateEditor-unsaved = You have unsaved changes in the template editor. Do you want to save them?

@@ -15,7 +15,7 @@ templateEditor-templateDisplayName =
     .ExportMDFileNameV2 = Export File Name
     .ExportMDFileHeaderV2 = Export MD File Header
     .ExportMDFileContent = Export MD File Content
-    .ExportLatexFileContent = Export Latex File Content
+    .ExportLatexFileContent = Export LaTeX File Content
 
 templateEditor-templateDisplayType =
     .system = Builtin
@@ -34,12 +34,12 @@ editor-previewImage-title = Resmi Önizle
 
 syncManager-noteName = Not Adı
 syncManager-lastSync = Son Eşitleme
-syncManager-filePath = MarkDown Dosya Yolu
+syncManager-filePath = Markdown Dosya Yolu
 syncManager-detectConfirmInfo = {$dir} dosya yolunda toplam {$total} adet eşitlenmiş Markdown dosyası bulundu. 
     {$new} Yeni, {$current} dosya güncellenecek.
     Değişiklikleri uygulamak istediğinizden emin misiniz?
 
-syncInfo-syncTo = MarkDown Dosya Yolu
+syncInfo-syncTo = Markdown Dosya Yolu
 syncInfo-lastSync = Son Eşitleme
 syncInfo-sync = Eşitle
 syncInfo-unSync = Eşitlemeyi Kaldır
@@ -54,7 +54,7 @@ sync-start-hint = Not Oto Senkronizasyonu her bir için aktive edildi
 sync-stop-hint = Not Oto Senkronizasyonu Devre Dışı
 sync-running-hint-title = Not Senkronizasyonu
 sync-running-hint-check = Durumu Kontrol Et
-sync-running-hint-updateMD = MarkDownu Güncelle
+sync-running-hint-updateMD = Markdown'ı Güncelle
 sync-running-hint-updateNote = Notu Güncelle
 sync-running-hint-diff = Birleşmeyi Onayla
 sync-running-hint-finish = Bitir
