@@ -109,16 +109,19 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   /* -- Research Questions & Hypotheses 研究问题与假设 -- */
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
-  md += "**RQ**: \\n\\n";
-  md += "**Hypotheses / 假设**:\\n\\n";
+  md += "### RQ\\n\\n";
+  md += " \\n\\n";
+  md += "### Hypotheses / 假设\\n\\n";
   md += "- H1: \\n";
   md += "- H2: \\n\\n";
 
   /* -- Theoretical Framework 理论框架 -- */
   md += "## Theoretical Framework / 理论框架\\n\\n";
   md += "<!-- 记录所使用的理论基础和概念模型 -->\\n\\n";
-  md += "**Core Theory / 核心理论**: \\n\\n";
-  md += "**Key Constructs / 关键构念**: \\n\\n";
+  md += "### Core Theory / 核心理论\\n\\n";
+  md += " \\n\\n";
+  md += "### Key Constructs / 关键构念\\n\\n";
+  md += " \\n\\n";
 
   /* -- Methods & Data 研究方法与数据 -- */
   md += "## Methods & Data / 研究方法与数据\\n\\n";
@@ -142,9 +145,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "\\n";
 
   md += "## Limitations & Future Research / 局限与未来方向\\n\\n";
-  md += "**Limitations / 局限性**:\\n\\n";
+  md += "### Limitations / 局限性\\n\\n";
   md += "- \\n\\n";
-  md += "**Future Directions / 未来方向**:\\n\\n";
+  md += "### Future Directions / 未来方向\\n\\n";
   md += "- \\n\\n";
 
   /* -- Key Quotes 可引用原文 -- */
@@ -193,14 +196,18 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   /* -- Research Questions & Purpose 研究问题与目的 -- */
   md += "## Research Questions & Purpose / 研究问题与目的\\n\\n";
   md += "<!-- 记录核心研究问题和研究目的 -->\\n\\n";
-  md += "**RQ**: \\n\\n";
-  md += "**Purpose / 研究目的**: \\n\\n";
+  md += "### RQ\\n\\n";
+  md += " \\n\\n";
+  md += "### Purpose / 研究目的\\n\\n";
+  md += " \\n\\n";
 
   /* -- Theoretical Lens 理论视角 -- */
   md += "## Theoretical Lens / 理论视角\\n\\n";
   md += "<!-- 记录理论视角或分析框架，如扎根理论、制度理论、意义建构等 -->\\n\\n";
-  md += "**Theoretical Perspective / 理论视角**: \\n\\n";
-  md += "**Key Concepts / 关键概念**: \\n\\n";
+  md += "### Theoretical Perspective / 理论视角\\n\\n";
+  md += " \\n\\n";
+  md += "### Key Concepts / 关键概念\\n\\n";
+  md += " \\n\\n";
 
   /* -- Research Design & Methods 研究设计与方法 -- */
   md += "## Research Design & Methods / 研究设计与方法\\n\\n";
@@ -219,21 +226,21 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   /* -- Core Findings & Contributions 核心发现与贡献 -- */
   md += "## Key Findings & Themes / 核心发现与主题\\n\\n";
   md += "<!-- 记录主要发现、涌现主题和核心命题 -->\\n\\n";
-  md += "**Theme 1 / 主题一**: \\n\\n";
+  md += "### Theme 1 / 主题一\\n\\n";
   md += "- \\n\\n";
-  md += "**Theme 2 / 主题二**: \\n\\n";
+  md += "### Theme 2 / 主题二\\n\\n";
   md += "- \\n\\n";
 
   md += "## Contributions & Implications / 理论贡献与实践启示\\n\\n";
-  md += "**Theoretical Contributions / 理论贡献**:\\n\\n";
+  md += "### Theoretical Contributions / 理论贡献\\n\\n";
   md += "- \\n\\n";
-  md += "**Practical Implications / 实践启示**:\\n\\n";
+  md += "### Practical Implications / 实践启示\\n\\n";
   md += "- \\n\\n";
 
   md += "## Limitations & Future Research / 局限与未来方向\\n\\n";
-  md += "**Limitations / 局限性**:\\n\\n";
+  md += "### Limitations / 局限性\\n\\n";
   md += "- \\n\\n";
-  md += "**Future Directions / 未来方向**:\\n\\n";
+  md += "### Future Directions / 未来方向\\n\\n";
   md += "- \\n\\n";
 
   /* -- Key Quotes 可引用原文 -- */
