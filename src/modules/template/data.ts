@@ -132,6 +132,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     md += "> " + abstractText.replace(/\\n/g, " ") + "\\n\\n";
   }
 
+  /* -- Executive Summary 论文概述 -- */
+  md += "## Executive Summary / 论文概述\\n\\n";
+  md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
+  md += " \\n\\n";
+
   /* -- Research Questions & Hypotheses 研究问题与假设 -- */
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
@@ -244,6 +249,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     md += "## Abstract / 摘要\\n\\n";
     md += "> " + abstractText.replace(/\\n/g, " ") + "\\n\\n";
   }
+
+  /* -- Executive Summary 论文概述 -- */
+  md += "## Executive Summary / 论文概述\\n\\n";
+  md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
+  md += " \\n\\n";
 
   /* -- Research Questions & Purpose 研究问题与目的 -- */
   md += "## Research Questions & Purpose / 研究问题与目的\\n\\n";
