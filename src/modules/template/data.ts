@@ -92,45 +92,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     citation = creators[0].lastName + " et al. (" + year + ")";
   }
 
-  /* ===== Metadata 元数据 ===== */
-  const title = topItem.getField("title") || "";
-  const authors = creators.map((c) => (c.firstName + " " + c.lastName).trim()).join(", ");
-  const journal = topItem.getField("publicationTitle") || "";
-  const doi = topItem.getField("DOI") || "";
-  const abstractText = topItem.getField("abstractNote") || "";
-  const tags = topItem.getTags().map((t) => t.tag).join(", ");
-  const volume = topItem.getField("volume") || "";
-  const issue = topItem.getField("issue") || "";
-  const pages = topItem.getField("pages") || "";
-  const pubInfo = [journal, volume ? "Vol. " + volume : "", issue ? "No. " + issue : "", pages ? "pp. " + pages : ""].filter(Boolean).join(", ");
-
   let md = "";
-  md += "# " + title + "\\n\\n";
+  md += "# " + citation + "\\n\\n";
   md += "---\\n\\n";
-
-  /* -- Citation 引用格式 -- */
-  md += "**APA Citation / APA引用**: " + citation + "\\n\\n";
-
-  /* -- Basic Info 基本信息 -- */
-  md += "## Metadata / 基本信息\\n\\n";
-  md += "| Field / 字段 | Value / 值 |\\n";
-  md += "| :--- | :--- |\\n";
-  md += "| **Authors / 作者** | " + authors + " |\\n";
-  md += "| **Year / 年份** | " + year + " |\\n";
-  md += "| **Publication / 发表期刊** | " + pubInfo + " |\\n";
-  if (doi) {
-    md += "| **DOI** | [" + doi + "](https://doi.org/" + doi + ") |\\n";
-  }
-  if (tags) {
-    md += "| **Tags / 标签** | " + tags + " |\\n";
-  }
-  md += "\\n";
-
-  /* -- Abstract 摘要 -- */
-  if (abstractText) {
-    md += "## Abstract / 摘要\\n\\n";
-    md += "> " + abstractText.replace(/\\n/g, " ") + "\\n\\n";
-  }
 
   /* -- Executive Summary 论文概述 -- */
   md += "## Executive Summary / 论文概述\\n\\n";
@@ -212,45 +176,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     citation = creators[0].lastName + " et al. (" + year + ")";
   }
 
-  /* ===== Metadata 元数据 ===== */
-  const title = topItem.getField("title") || "";
-  const authors = creators.map((c) => (c.firstName + " " + c.lastName).trim()).join(", ");
-  const journal = topItem.getField("publicationTitle") || "";
-  const doi = topItem.getField("DOI") || "";
-  const abstractText = topItem.getField("abstractNote") || "";
-  const tags = topItem.getTags().map((t) => t.tag).join(", ");
-  const volume = topItem.getField("volume") || "";
-  const issue = topItem.getField("issue") || "";
-  const pages = topItem.getField("pages") || "";
-  const pubInfo = [journal, volume ? "Vol. " + volume : "", issue ? "No. " + issue : "", pages ? "pp. " + pages : ""].filter(Boolean).join(", ");
-
   let md = "";
-  md += "# " + title + "\\n\\n";
+  md += "# " + citation + "\\n\\n";
   md += "---\\n\\n";
-
-  /* -- Citation 引用格式 -- */
-  md += "**APA Citation / APA引用**: " + citation + "\\n\\n";
-
-  /* -- Basic Info 基本信息 -- */
-  md += "## Metadata / 基本信息\\n\\n";
-  md += "| Field / 字段 | Value / 值 |\\n";
-  md += "| :--- | :--- |\\n";
-  md += "| **Authors / 作者** | " + authors + " |\\n";
-  md += "| **Year / 年份** | " + year + " |\\n";
-  md += "| **Publication / 发表期刊** | " + pubInfo + " |\\n";
-  if (doi) {
-    md += "| **DOI** | [" + doi + "](https://doi.org/" + doi + ") |\\n";
-  }
-  if (tags) {
-    md += "| **Tags / 标签** | " + tags + " |\\n";
-  }
-  md += "\\n";
-
-  /* -- Abstract 摘要 -- */
-  if (abstractText) {
-    md += "## Abstract / 摘要\\n\\n";
-    md += "> " + abstractText.replace(/\\n/g, " ") + "\\n\\n";
-  }
 
   /* -- Executive Summary 论文概述 -- */
   md += "## Executive Summary / 论文概述\\n\\n";
