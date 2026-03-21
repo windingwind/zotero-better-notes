@@ -98,7 +98,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
 
   /* -- Executive Summary 论文概述 -- */
   md += "## Executive Summary / 论文概述\\n\\n";
+  md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
+  md += " \\n\\n";
+  md += "### Conceptual Model / 概念模型\\n\\n";
+  md += "<!-- 记录论文的核心研究模型或理论框架图 -->\\n\\n";
   md += " \\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
@@ -131,6 +135,8 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "| **Data Source / 数据来源** |  |\\n";
   md += "| **DV / 因变量** |  |\\n";
   md += "| **IV / 自变量** |  |\\n";
+  md += "| **Moderator / 调节变量** |  |\\n";
+  md += "| **Mediator / 中介变量** |  |\\n";
   md += "| **Controls / 控制变量** |  |\\n";
   md += "| **Analysis Method / 分析方法** |  |\\n";
   md += "\\n";
@@ -185,7 +191,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
 
   /* -- Executive Summary 论文概述 -- */
   md += "## Executive Summary / 论文概述\\n\\n";
+  md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
+  md += " \\n\\n";
+  md += "### Conceptual Model / 概念模型\\n\\n";
+  md += "<!-- 记录论文的核心研究模型或理论框架图 -->\\n\\n";
   md += " \\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
@@ -218,6 +228,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "| **Participants / 研究对象** |  |\\n";
   md += "| **Data Collection / 数据收集** |  |\\n";
   md += "| **Data Analysis / 数据分析** |  |\\n";
+  md += "| **Data Structure / 数据结构** |  |\\n";
   md += "\\n";
   md += "<!-- 研究策略如：案例研究/民族志/叙事研究/扎根理论/行动研究等 -->\\n";
   md += "<!-- 数据收集如：半结构化访谈/参与观察/档案资料/焦点小组等 -->\\n";
@@ -226,10 +237,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   /* -- Core Findings & Contributions 核心发现与贡献 -- */
   md += "## Key Findings & Themes / 核心发现与主题\\n\\n";
   md += "<!-- 记录主要发现、涌现主题和核心命题 -->\\n\\n";
-  md += "### Theme 1 / 主题一\\n\\n";
-  md += "- \\n\\n";
-  md += "### Theme 2 / 主题二\\n\\n";
-  md += "- \\n\\n";
+  md += "1. \\n";
+  md += "2. \\n";
+  md += "3. \\n\\n";
 
   md += "## Contributions & Implications / 理论贡献与实践启示\\n\\n";
   md += "### Theoretical Contributions / 理论贡献\\n\\n";
