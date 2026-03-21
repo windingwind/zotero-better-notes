@@ -101,8 +101,8 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
   md += " \\n\\n";
-  md += "### Conceptual Model / 概念模型\\n\\n";
-  md += "<!-- 记录论文的核心研究模型或理论框架图 -->\\n\\n";
+  md += "### Theoretical Model / 理论模型\\n\\n";
+  md += "<!-- 记录论文的理论模型或研究框架 -->\\n\\n";
   md += " \\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
@@ -194,8 +194,8 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
   md += " \\n\\n";
-  md += "### Conceptual Model / 概念模型\\n\\n";
-  md += "<!-- 记录论文的核心研究模型或理论框架图 -->\\n\\n";
+  md += "### Theoretical Model / 理论模型\\n\\n";
+  md += "<!-- 记录论文的理论模型或研究框架 -->\\n\\n";
   md += " \\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
