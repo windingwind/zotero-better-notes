@@ -137,6 +137,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
   md += " \\n\\n";
 
+  /* -- My Reflections 我的迷思 -- */
+  md += "## My Reflections / 我的迷思\\n\\n";
+  md += "<!-- 记录你在阅读过程中的思考、疑问和灵感 -->\\n\\n";
+  md += "- \\n\\n";
+
   /* -- Research Questions & Hypotheses 研究问题与假设 -- */
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
@@ -178,12 +183,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "**Future Directions / 未来方向**:\\n\\n";
   md += "- \\n\\n";
 
-  /* -- Personal Reflections 我的迷思 -- */
-  md += "## My Reflections & Quotes / 我的迷思与引用\\n\\n";
-  md += "<!-- 记录你的思考、疑问，以及值得引用的原文 -->\\n\\n";
-  md += "**Reflections / 迷思**:\\n\\n";
-  md += "- \\n\\n";
-  md += "**Key Quotes / 可引用原文**:\\n\\n";
+  /* -- Key Quotes 可引用原文 -- */
+  md += "## Key Quotes / 可引用原文\\n\\n";
+  md += "<!-- 记录值得引用的原文段落 -->\\n\\n";
   md += "> \\"...\\" (" + citation + ", p. )\\n\\n";
 
   return md;
@@ -255,6 +257,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
   md += " \\n\\n";
 
+  /* -- My Reflections 我的迷思 -- */
+  md += "## My Reflections / 我的迷思\\n\\n";
+  md += "<!-- 记录你在阅读过程中的思考、疑问和灵感 -->\\n\\n";
+  md += "- \\n\\n";
+
   /* -- Research Questions & Purpose 研究问题与目的 -- */
   md += "## Research Questions & Purpose / 研究问题与目的\\n\\n";
   md += "<!-- 记录核心研究问题和研究目的 -->\\n\\n";
@@ -301,12 +308,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "**Future Directions / 未来方向**:\\n\\n";
   md += "- \\n\\n";
 
-  /* -- Personal Reflections 我的迷思 -- */
-  md += "## My Reflections & Quotes / 我的迷思与引用\\n\\n";
-  md += "<!-- 记录你的思考、疑问，以及值得引用的原文 -->\\n\\n";
-  md += "**Reflections / 迷思**:\\n\\n";
-  md += "- \\n\\n";
-  md += "**Key Quotes / 可引用原文**:\\n\\n";
+  /* -- Key Quotes 可引用原文 -- */
+  md += "## Key Quotes / 可引用原文\\n\\n";
+  md += "<!-- 记录值得引用的原文段落 -->\\n\\n";
   md += "> \\"...\\" (" + citation + ", p. )\\n\\n";
 
   return md;
