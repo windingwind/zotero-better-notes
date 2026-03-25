@@ -125,9 +125,13 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
         {
           type: "click",
           listener: async (e) => {
+            const shouldKeepCurrentText =
+              typeof linkParams.lineIndex === "number" ||
+              typeof linkParams.sectionName === "string" ||
+              typeof linkParams.selectionText === "string";
             updateURLAtCursor(
               editor,
-              linkNote.getNoteTitle(),
+              shouldKeepCurrentText ? undefined : linkNote.getNoteTitle(),
               getURLAtCursor(editor),
             );
           },
