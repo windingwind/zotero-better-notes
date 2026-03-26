@@ -18,6 +18,7 @@ import { registerNotify } from "./modules/notify";
 import {
   registerReaderAnnotationButton,
   syncAnnotationNoteTags,
+  invalidateAnnotationNoteCacheByItemIDs,
 } from "./modules/annotationNote";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
 import { showTemplatePicker } from "./modules/template/picker";
@@ -147,6 +148,9 @@ async function onNotify(
 ) {
   if (extraData?.skipBN) {
     return;
+  }
+  if (type === "item" && ["modify", "delete", "trash"].includes(event)) {
+    await invalidateAnnotationNoteCacheByItemIDs(ids);
   }
   if (
     ["add", "close"].includes(event) &&

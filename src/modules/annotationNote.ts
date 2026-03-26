@@ -4,9 +4,143 @@ import { getNoteLinkParams } from "../utils/link";
 import { addLineToNote } from "../utils/note";
 import { getPref } from "../utils/prefs";
 
-export { registerReaderAnnotationButton, syncAnnotationNoteTags };
+export {
+  registerReaderAnnotationButton,
+  syncAnnotationNoteTags,
+  stopCacheCleanupTimer,
+  invalidateAnnotationNoteCacheByItemIDs,
+};
+
+const MAX_CACHE_SIZE = 1000;
+const CACHE_STALE_TIME_MS = 90 * 60 * 1000; // 90 minutes
+const CACHE_CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+
+interface CacheEntry {
+  hasNote: boolean;
+  lastAccessTime: number;
+}
+
+const annotationNoteStateCache = new Map<string, CacheEntry>();
+const buttonUpdateRequestToken = new WeakMap<HTMLElement, number>();
+let cacheCleanupTimer: ReturnType<typeof setInterval> | null = null;
+
+function getAnnotationCacheKey(libraryID: number, itemKey: string) {
+  return `${libraryID}:${itemKey}`;
+}
+
+function startCacheCleanupTimer() {
+  if (cacheCleanupTimer) {
+    return;
+  }
+  cacheCleanupTimer = setInterval(() => {
+    const now = Date.now();
+    let cleanedCount = 0;
+    for (const [key, entry] of annotationNoteStateCache.entries()) {
+      if (now - entry.lastAccessTime > CACHE_STALE_TIME_MS) {
+        annotationNoteStateCache.delete(key);
+        cleanedCount++;
+      }
+    }
+    if (cleanedCount > 0) {
+      ztoolkit.log(
+        `[annotationNote] Cleaned ${cleanedCount} stale cache entries. Cache size: ${annotationNoteStateCache.size}`,
+      );
+    }
+  }, CACHE_CLEANUP_INTERVAL_MS);
+}
+
+function stopCacheCleanupTimer() {
+  if (cacheCleanupTimer) {
+    clearInterval(cacheCleanupTimer);
+    cacheCleanupTimer = null;
+  }
+}
+
+function evictOldestCacheEntry() {
+  let oldestKey: string | null = null;
+  let oldestTime = Infinity;
+
+  for (const [key, entry] of annotationNoteStateCache.entries()) {
+    if (entry.lastAccessTime < oldestTime) {
+      oldestTime = entry.lastAccessTime;
+      oldestKey = key;
+    }
+  }
+
+  if (oldestKey) {
+    annotationNoteStateCache.delete(oldestKey);
+  }
+}
+
+function setCacheEntry(key: string, hasNote: boolean) {
+  const now = Date.now();
+  annotationNoteStateCache.set(key, { hasNote, lastAccessTime: now });
+
+  // Enforce size limit
+  if (annotationNoteStateCache.size > MAX_CACHE_SIZE) {
+    evictOldestCacheEntry();
+  }
+
+  // Ensure cleanup timer is running
+  startCacheCleanupTimer();
+}
+
+function getCacheEntry(key: string): CacheEntry | undefined {
+  const entry = annotationNoteStateCache.get(key);
+  if (entry) {
+    // Update last access time on read
+    entry.lastAccessTime = Date.now();
+  }
+  return entry;
+}
+
+async function invalidateAnnotationNoteCacheByItemIDs(itemIDs: (number | string)[]) {
+  let shouldClearAll = false;
+  const keysToDelete = new Set<string>();
+
+  for (const rawID of itemIDs) {
+    const itemID = typeof rawID === "number" ? rawID : Number(rawID);
+    if (!Number.isFinite(itemID)) {
+      continue;
+    }
+
+    const item = Zotero.Items.get(itemID);
+    // Deleted items may no longer be resolvable here.
+    if (!item) {
+      shouldClearAll = true;
+      break;
+    }
+
+    if (item.isAnnotation()) {
+      keysToDelete.add(getAnnotationCacheKey(item.libraryID, item.key));
+      continue;
+    }
+
+    if (item.isNote()) {
+      const annotationModel = await addon.api.relation.getAnnotationByLinkTarget(
+        item.libraryID,
+        item.key,
+      );
+      if (annotationModel) {
+        keysToDelete.add(
+          getAnnotationCacheKey(annotationModel.fromLibID, annotationModel.fromKey),
+        );
+      }
+    }
+  }
+
+  if (shouldClearAll) {
+    annotationNoteStateCache.clear();
+    return;
+  }
+
+  for (const key of keysToDelete) {
+    annotationNoteStateCache.delete(key);
+  }
+}
 
 function registerReaderAnnotationButton() {
+  startCacheCleanupTimer();
   Zotero.Reader.registerEventListener(
     "renderSidebarAnnotationHeader",
     (event) => {
@@ -17,39 +151,39 @@ function registerReaderAnnotationButton() {
         return;
       }
       const annotationData = params.annotation;
-      const placeholder = doc.createElement("img");
-      placeholder.src = "chrome://zotero/error.png";
-      placeholder.dataset.annotationId = annotationData.id;
-      placeholder.dataset.libraryId = reader._item.libraryID.toString();
-      // TEMP: Use error event to delay the button creation to avoid blocking the main thread
-      placeholder.addEventListener("error", (event) => {
-        const placeholder = event.currentTarget as HTMLElement;
-        placeholder.ownerGlobal?.requestIdleCallback(() => {
-          const annotationID = placeholder.dataset.annotationId;
-          const libraryID = parseInt(placeholder.dataset.libraryId || "");
-          const button = doc.createElement("div");
-          button.classList.add("icon");
-          button.innerHTML = getAnnotationNoteButtonInnerHTML(false);
-          button.title = getAnnotationNoteButtonTitle(false);
-          button.dataset.annotationId = annotationID;
-          button.dataset.libraryId = libraryID.toString();
-          button.addEventListener("click", (e) => {
-            const button = e.currentTarget as HTMLElement;
-            createNoteFromAnnotation(
-              reader._item.libraryID,
-              annotationID!,
-              (e as MouseEvent).shiftKey ? "window" : "builtin",
-            );
-            button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
-            e.preventDefault();
-          });
-          placeholder.replaceWith(button);
-          placeholder.ownerGlobal?.requestIdleCallback(() => {
-            updateAnnotationNoteButton(button, libraryID, annotationID!);
-          });
-        });
+      const cacheKey = getAnnotationCacheKey(reader._item.libraryID, annotationData.id);
+      const cachedEntry = getCacheEntry(cacheKey);
+      const initialHasNote = cachedEntry?.hasNote ?? false;
+      const button = doc.createElement("div");
+      button.classList.add("icon");
+      button.innerHTML = getAnnotationNoteButtonInnerHTML(initialHasNote);
+      button.title = getAnnotationNoteButtonTitle(initialHasNote);
+      button.dataset.annotationId = annotationData.id;
+      button.dataset.libraryId = reader._item.libraryID.toString();
+      button.addEventListener("click", (e) => {
+        const button = e.currentTarget as HTMLElement;
+        createNoteFromAnnotation(
+          reader._item.libraryID,
+          annotationData.id,
+          (e as MouseEvent).shiftKey ? "window" : "builtin",
+        );
+        button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
+        e.preventDefault();
       });
-      append(placeholder);
+      append(button);
+
+      // Defer relation query to idle time to keep typing smooth when there are many annotations.
+      const scheduleUpdate = () => {
+        if (!button.isConnected) {
+          return;
+        }
+        updateAnnotationNoteButton(button, reader._item.libraryID, annotationData.id);
+      };
+      if (doc.defaultView?.requestIdleCallback) {
+        doc.defaultView.requestIdleCallback(scheduleUpdate);
+      } else {
+        doc.defaultView?.setTimeout(scheduleUpdate, 0);
+      }
     },
     config.addonID,
   );
@@ -61,11 +195,15 @@ function createNoteFromAnnotationButton(
   annotationData: any,
   append: (element: HTMLElement) => void,
 ) {
+  const cacheKey = getAnnotationCacheKey(reader._item.libraryID, annotationData.id);
+  const cachedEntry = getCacheEntry(cacheKey);
+  const initialHasNote = cachedEntry?.hasNote ?? false;
+
   const button = ztoolkit.UI.createElement(doc, "div", {
     classList: ["icon"],
     properties: {
-      innerHTML: getAnnotationNoteButtonInnerHTML(false),
-      title: getAnnotationNoteButtonTitle(false),
+      innerHTML: getAnnotationNoteButtonInnerHTML(initialHasNote),
+      title: getAnnotationNoteButtonTitle(initialHasNote),
     },
     listeners: [
       {
@@ -115,9 +253,29 @@ function updateAnnotationNoteButton(
   libraryID: number,
   itemKey: string,
 ) {
+  const cacheKey = getAnnotationCacheKey(libraryID, itemKey);
+  const requestToken = (buttonUpdateRequestToken.get(button) ?? 0) + 1;
+  buttonUpdateRequestToken.set(button, requestToken);
+  const cachedEntry = getCacheEntry(cacheKey);
+  if (cachedEntry) {
+    button.innerHTML = getAnnotationNoteButtonInnerHTML(cachedEntry.hasNote);
+    button.title = getAnnotationNoteButtonTitle(cachedEntry.hasNote);
+  }
+
   hasNoteFromAnnotation(libraryID, itemKey).then((hasNote) => {
+    if (buttonUpdateRequestToken.get(button) !== requestToken) {
+      return;
+    }
+    setCacheEntry(cacheKey, hasNote);
+    if (!button.isConnected) {
+      return;
+    }
     button.innerHTML = getAnnotationNoteButtonInnerHTML(hasNote);
     button.title = getAnnotationNoteButtonTitle(hasNote);
+  }).catch((e) => {
+    if (__env__ === "development") {
+      console.warn("[annotationNote] updateAnnotationNoteButton failed", e);
+    }
   });
 }
 
@@ -203,6 +361,10 @@ async function createNoteFromAnnotation(
       addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {});
       return;
     }
+    setCacheEntry(
+      getAnnotationCacheKey(annotationItem.libraryID, annotationItem.key),
+      false,
+    );
   }
 
   const note: Zotero.Item = new Zotero.Item("note");
@@ -230,6 +392,11 @@ async function createNoteFromAnnotation(
     toKey: note.key,
     url: addon.api.convert.note2link(note, { ignore: true })!,
   });
+
+  setCacheEntry(
+    getAnnotationCacheKey(annotationItem.libraryID, annotationItem.key),
+    true,
+  );
 
   addon.hooks.onOpenNote(note.id, "builtin", {});
 }
