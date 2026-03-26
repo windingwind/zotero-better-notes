@@ -16,6 +16,17 @@ note-inbound-sidenav =
 note-inbound-refresh =
     .tooltiptext = Refresh
 
+note-bookmark-header =
+    .label =
+        { $count ->
+            [one] { $count } Bookmark
+            *[other] { $count } Bookmarks
+        }
+note-bookmark-sidenav =
+    .tooltiptext = Bookmarks
+note-bookmark-refresh =
+    .tooltiptext = Refresh
+
 note-outbound-header =
     .label =
         { $count ->

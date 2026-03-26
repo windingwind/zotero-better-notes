@@ -17,6 +17,7 @@ import { openNotePreview } from "./modules/workspace/preview";
 import { registerNotify } from "./modules/notify";
 import {
   registerReaderAnnotationButton,
+  registerBookmarkToolbarButton,
   syncAnnotationNoteTags,
 } from "./modules/annotationNote";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
@@ -39,6 +40,7 @@ import { getFocusedWindow } from "./utils/window";
 import { registerNoteRelation } from "./modules/workspace/relation";
 import { closeRelationServer } from "./utils/relation";
 import { registerNoteLinkSection } from "./modules/workspace/link";
+import { registerBookmarkSection } from "./modules/workspace/bookmark";
 import { showUserGuide } from "./modules/userGuide";
 import { refreshTemplatesInNote } from "./modules/template/refresh";
 import { closeParsingServer } from "./utils/parsing";
@@ -69,10 +71,13 @@ async function onStartup() {
 
   registerReaderAnnotationButton();
 
+  registerBookmarkToolbarButton();
+
   registerNoteRelation();
 
   registerNoteLinkSection("inbound");
   registerNoteLinkSection("outbound");
+  registerBookmarkSection();
 
   patchNotes();
 
@@ -242,8 +247,8 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
       mode = "preview" as K;
       workspaceUID = (
         currentWindow.document.querySelector("bn-workspace") as
-          | HTMLElement
-          | undefined
+        | HTMLElement
+        | undefined
       )?.dataset.uid;
     } else {
       mode = "tab" as K;

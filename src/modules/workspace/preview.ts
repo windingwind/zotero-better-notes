@@ -8,10 +8,11 @@ export function openNotePreview(
   options: {
     lineIndex?: number;
     sectionName?: string;
+    paneID?: string;
   } = {},
-) {
+): string | undefined {
   const key = Zotero.ItemPaneManager.registerSection({
-    paneID: `bn-note-preview-${workspaceUID}-${noteItem.id}`,
+    paneID: options.paneID ?? `bn-note-preview-${workspaceUID}-${noteItem.id}`,
     pluginID: config.addonID,
     header: {
       icon: "chrome://zotero/skin/16/universal/note.svg",
@@ -95,8 +96,8 @@ export function openNotePreview(
     onRender: ({ body, setSectionSummary }) => {
       setSectionSummary(noteItem.getNoteTitle());
     },
-    onAsyncRender: async ({ body, item }) => {
-      if (!item?.isNote()) return;
+    onAsyncRender: async ({ body }) => {
+      if (!noteItem) return;
       const editorElement = body.querySelector("note-editor")! as EditorElement;
       await waitUtilAsync(() => Boolean(editorElement._initialized));
       if (!editorElement._initialized) {
@@ -141,6 +142,8 @@ export function openNotePreview(
   if (!key) {
     scrollPreviewEditorTo(noteItem, workspaceUID, options);
   }
+
+  return key || undefined;
 }
 
 function getItemDetails(elem: HTMLElement) {

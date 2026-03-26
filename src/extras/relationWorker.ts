@@ -28,7 +28,7 @@ const handlers = {
 
 const messageServer = new MessageHelper({
   canBeDestroyed: true,
-  dev: true,
+  dev: false,
   name: "parsingWorker",
   target: self,
   handlers,
@@ -88,12 +88,10 @@ async function linkAnnotationToTarget(model: AnnotationModel) {
 }
 
 async function getLinkTargetByAnnotation(fromLibID: number, fromKey: string) {
-  log("getLinkTargetByAnnotation", fromLibID, fromKey);
   return db.annotation.get({ fromLibID, fromKey });
 }
 
 async function getAnnotationByLinkTarget(toLibID: number, toKey: string) {
-  log("getAnnotationByLinkTarget", toLibID, toKey);
   return db.annotation.get({ toLibID, toKey });
 }
 
