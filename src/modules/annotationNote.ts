@@ -94,7 +94,9 @@ function getCacheEntry(key: string): CacheEntry | undefined {
   return entry;
 }
 
-async function invalidateAnnotationNoteCacheByItemIDs(itemIDs: (number | string)[]) {
+async function invalidateAnnotationNoteCacheByItemIDs(
+  itemIDs: (number | string)[],
+) {
   let shouldClearAll = false;
   const keysToDelete = new Set<string>();
 
@@ -117,13 +119,17 @@ async function invalidateAnnotationNoteCacheByItemIDs(itemIDs: (number | string)
     }
 
     if (item.isNote()) {
-      const annotationModel = await addon.api.relation.getAnnotationByLinkTarget(
-        item.libraryID,
-        item.key,
-      );
+      const annotationModel =
+        await addon.api.relation.getAnnotationByLinkTarget(
+          item.libraryID,
+          item.key,
+        );
       if (annotationModel) {
         keysToDelete.add(
-          getAnnotationCacheKey(annotationModel.fromLibID, annotationModel.fromKey),
+          getAnnotationCacheKey(
+            annotationModel.fromLibID,
+            annotationModel.fromKey,
+          ),
         );
       }
     }
@@ -151,7 +157,10 @@ function registerReaderAnnotationButton() {
         return;
       }
       const annotationData = params.annotation;
-      const cacheKey = getAnnotationCacheKey(reader._item.libraryID, annotationData.id);
+      const cacheKey = getAnnotationCacheKey(
+        reader._item.libraryID,
+        annotationData.id,
+      );
       const cachedEntry = getCacheEntry(cacheKey);
       const initialHasNote = cachedEntry?.hasNote ?? false;
       const button = doc.createElement("div");
@@ -177,7 +186,11 @@ function registerReaderAnnotationButton() {
         if (!button.isConnected) {
           return;
         }
-        updateAnnotationNoteButton(button, reader._item.libraryID, annotationData.id);
+        updateAnnotationNoteButton(
+          button,
+          reader._item.libraryID,
+          annotationData.id,
+        );
       };
       if (doc.defaultView?.requestIdleCallback) {
         doc.defaultView.requestIdleCallback(scheduleUpdate);
@@ -195,7 +208,10 @@ function createNoteFromAnnotationButton(
   annotationData: any,
   append: (element: HTMLElement) => void,
 ) {
-  const cacheKey = getAnnotationCacheKey(reader._item.libraryID, annotationData.id);
+  const cacheKey = getAnnotationCacheKey(
+    reader._item.libraryID,
+    annotationData.id,
+  );
   const cachedEntry = getCacheEntry(cacheKey);
   const initialHasNote = cachedEntry?.hasNote ?? false;
 
@@ -262,21 +278,23 @@ function updateAnnotationNoteButton(
     button.title = getAnnotationNoteButtonTitle(cachedEntry.hasNote);
   }
 
-  hasNoteFromAnnotation(libraryID, itemKey).then((hasNote) => {
-    if (buttonUpdateRequestToken.get(button) !== requestToken) {
-      return;
-    }
-    setCacheEntry(cacheKey, hasNote);
-    if (!button.isConnected) {
-      return;
-    }
-    button.innerHTML = getAnnotationNoteButtonInnerHTML(hasNote);
-    button.title = getAnnotationNoteButtonTitle(hasNote);
-  }).catch((e) => {
-    if (__env__ === "development") {
-      console.warn("[annotationNote] updateAnnotationNoteButton failed", e);
-    }
-  });
+  hasNoteFromAnnotation(libraryID, itemKey)
+    .then((hasNote) => {
+      if (buttonUpdateRequestToken.get(button) !== requestToken) {
+        return;
+      }
+      setCacheEntry(cacheKey, hasNote);
+      if (!button.isConnected) {
+        return;
+      }
+      button.innerHTML = getAnnotationNoteButtonInnerHTML(hasNote);
+      button.title = getAnnotationNoteButtonTitle(hasNote);
+    })
+    .catch((e) => {
+      if (__env__ === "development") {
+        console.warn("[annotationNote] updateAnnotationNoteButton failed", e);
+      }
+    });
 }
 
 async function hasNoteFromAnnotation(
