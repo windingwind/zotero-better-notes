@@ -3,6 +3,7 @@ import { ICONS } from "../utils/config";
 import { getNoteLinkParams } from "../utils/link";
 import { addLineToNote } from "../utils/note";
 import { getPref } from "../utils/prefs";
+import { getWorkspaceUID } from "../utils/workspace";
 
 export { registerReaderAnnotationButton, syncAnnotationNoteTags };
 
@@ -11,9 +12,16 @@ function registerReaderAnnotationButton() {
     "renderSidebarAnnotationHeader",
     (event) => {
       const { doc, append, params, reader } = event;
+      const workspaceUID = getWorkspaceUID(doc.documentElement);
       // TEMP: If not many annotations, create the button immediately
       if (reader._item.numAnnotations() < 200) {
-        createNoteFromAnnotationButton(doc, reader, params.annotation, append);
+        createNoteFromAnnotationButton(
+          doc,
+          reader,
+          params.annotation,
+          append,
+          workspaceUID,
+        );
         return;
       }
       const annotationData = params.annotation;
@@ -39,6 +47,7 @@ function registerReaderAnnotationButton() {
               reader._item.libraryID,
               annotationID!,
               (e as MouseEvent).shiftKey ? "window" : "builtin",
+              workspaceUID,
             );
             button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
             e.preventDefault();
@@ -60,6 +69,7 @@ function createNoteFromAnnotationButton(
   reader: _ZoteroTypes.ReaderInstance,
   annotationData: any,
   append: (element: HTMLElement) => void,
+  workspaceUID?: string,
 ) {
   const button = ztoolkit.UI.createElement(doc, "div", {
     classList: ["icon"],
@@ -76,6 +86,7 @@ function createNoteFromAnnotationButton(
             reader._item.libraryID,
             annotationData.id,
             (e as MouseEvent).shiftKey ? "window" : "builtin",
+            workspaceUID,
           );
           button.innerHTML = getAnnotationNoteButtonInnerHTML(true);
           e.preventDefault();
@@ -153,6 +164,7 @@ async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
   openMode: "window" | "builtin" | undefined,
+  workspaceUID?: string,
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
     libraryID,
@@ -169,9 +181,24 @@ async function createNoteFromAnnotation(
     if (linkRegex.test(tag)) {
       const linkParams = getNoteLinkParams(tag);
       if (linkParams.noteItem && linkParams.noteItem.isNote()) {
-        addon.hooks.onOpenNote(linkParams.noteItem.id, openMode || "tab", {
+        const openNoteOptions: {
+          lineIndex?: number;
+          workspaceUID?: string;
+          forceTakeover?: boolean;
+        } = {
           lineIndex: linkParams.lineIndex || undefined,
-        });
+        };
+        if (openMode === "window") {
+          Object.assign(openNoteOptions, {
+            forceTakeover: true,
+            workspaceUID,
+          });
+        }
+        addon.hooks.onOpenNote(
+          linkParams.noteItem.id,
+          openMode || "builtin",
+          openNoteOptions,
+        );
         // Remove deprecated link tag and create a link in IndexedDB
         await addon.api.relation.linkAnnotationToTarget({
           fromLibID: annotationItem.libraryID,
@@ -200,7 +227,14 @@ async function createNoteFromAnnotation(
       linkTarget.toKey,
     );
     if (targetItem) {
-      addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {});
+      addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {
+        ...(openMode === "window"
+          ? {
+              forceTakeover: true,
+              workspaceUID,
+            }
+          : {}),
+      });
       return;
     }
   }
@@ -231,7 +265,14 @@ async function createNoteFromAnnotation(
     url: addon.api.convert.note2link(note, { ignore: true })!,
   });
 
-  addon.hooks.onOpenNote(note.id, "builtin", {});
+  addon.hooks.onOpenNote(note.id, openMode || "builtin", {
+    ...(openMode === "window"
+      ? {
+          forceTakeover: true,
+          workspaceUID,
+        }
+      : {}),
+  });
 }
 
 async function syncAnnotationNoteTags(
