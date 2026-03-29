@@ -187,9 +187,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
 
   let md = "";
   md += "# " + citation + "\\n\\n";
-  md += "---\\n\\n";
 
   /* -- Executive Summary 论文概述 -- */
+  md += "---\\n\\n";
   md += "## Executive Summary / 论文概述\\n\\n";
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇Meta分析的核心内容：研究了什么关系、纳入了多少研究、总体效应如何 -->\\n\\n";
@@ -199,13 +199,16 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += " \\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
+  md += "---\\n\\n";
   md += "## My Reflections / 我的迷思\\n\\n";
   md += "<!-- 记录你在阅读过程中的思考、疑问和灵感 -->\\n\\n";
   md += "- \\n\\n";
 
   /* -- Research Questions & Hypotheses 研究问题与假设 -- */
+  md += "---\\n\\n";
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
+  md += " \\n\\n";
   md += "### RQ\\n\\n";
   md += " \\n\\n";
   md += "### Hypotheses / 假设\\n\\n";
@@ -213,14 +216,17 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "- H2: \\n\\n";
 
   /* -- Theoretical Framework 理论框架 -- */
+  md += "---\\n\\n";
   md += "## Theoretical Framework / 理论框架\\n\\n";
   md += "<!-- 记录所使用的理论基础和整合逻辑 -->\\n\\n";
+  md += " \\n\\n";
   md += "### Core Theory / 核心理论\\n\\n";
   md += " \\n\\n";
   md += "### Key Constructs / 关键构念\\n\\n";
   md += " \\n\\n";
 
   /* -- Search & Inclusion Strategy 检索与纳入策略 -- */
+  md += "---\\n\\n";
   md += "## Search & Inclusion Strategy / 检索与纳入策略\\n\\n";
   md += "| Aspect / 方面 | Description / 描述 |\\n";
   md += "| :--- | :--- |\\n";
@@ -236,6 +242,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "\\n";
 
   /* -- Coding & Effect Sizes 编码与效应量 -- */
+  md += "---\\n\\n";
   md += "## Coding & Effect Sizes / 编码与效应量\\n\\n";
   md += "| Aspect / 方面 | Description / 描述 |\\n";
   md += "| :--- | :--- |\\n";
@@ -248,6 +255,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "<!-- 分析模型如：固定效应 (Fixed-Effects) / 随机效应 (Random-Effects) / 多层次模型 等 -->\\n\\n";
 
   /* -- Overall Effects 总体效应 -- */
+  md += "---\\n\\n";
   md += "## Overall Effects / 总体效应\\n\\n";
   md += "| Relationship / 关系 | k | N | ES | 95% CI | p |\\n";
   md += "| :--- | :---: | :---: | :---: | :---: | :---: |\\n";
@@ -255,16 +263,18 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "\\n";
 
   /* -- Heterogeneity 异质性检验 -- */
+  md += "---\\n\\n";
   md += "## Heterogeneity / 异质性检验\\n\\n";
   md += "| Index / 指标 | Value / 值 | Interpretation / 解读 |\\n";
   md += "| :--- | :---: | :--- |\\n";
   md += "| **Q** |  |  |\\n";
-  md += "| **I\u00B2** |  |  |\\n";
-  md += "| **\u03C4\u00B2** |  |  |\\n";
+  md += "| **I²** |  |  |\\n";
+  md += "| **τ²** |  |  |\\n";
   md += "\\n";
-  md += "<!-- I\u00B2 参考: 25% = low, 50% = moderate, 75% = high -->\\n\\n";
+  md += "<!-- I² 参考: 25% = low, 50% = moderate, 75% = high -->\\n\\n";
 
   /* -- Moderator Analysis 调节分析 -- */
+  md += "---\\n\\n";
   md += "## Moderator Analysis / 调节分析\\n\\n";
   md += "<!-- 记录显著的调节变量及其效应 -->\\n\\n";
   md += "| Moderator / 调节变量 | Levels / 水平 | ES | Q-between | p |\\n";
@@ -273,6 +283,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "\\n";
 
   /* -- Publication Bias 发表偏倚 -- */
+  md += "---\\n\\n";
   md += "## Publication Bias / 发表偏倚\\n\\n";
   md += "| Test / 检验方法 | Result / 结果 | Notes / 备注 |\\n";
   md += "| :--- | :---: | :--- |\\n";
@@ -283,18 +294,21 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "\\n";
 
   /* -- Key Findings & Implications 关键发现与启示 -- */
+  md += "---\\n\\n";
   md += "## Key Findings / 关键发现\\n\\n";
   md += "<!-- 总结最重要的发现 -->\\n\\n";
   md += "1. \\n";
   md += "2. \\n";
   md += "3. \\n\\n";
 
+  md += "---\\n\\n";
   md += "## Contributions & Implications / 理论贡献与实践启示\\n\\n";
   md += "### Theoretical Contributions / 理论贡献\\n\\n";
   md += "- \\n\\n";
   md += "### Practical Implications / 实践启示\\n\\n";
   md += "- \\n\\n";
 
+  md += "---\\n\\n";
   md += "## Limitations & Future Research / 局限与未来方向\\n\\n";
   md += "### Limitations / 局限性\\n\\n";
   md += "- \\n\\n";
@@ -302,6 +316,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "- \\n\\n";
 
   /* -- Key Quotes 可引用原文 -- */
+  md += "---\\n\\n";
   md += "## Key Quotes / 可引用原文\\n\\n";
   md += "<!-- 记录值得引用的原文段落 -->\\n\\n";
   md += "> \\"...\\" (" + citation + ", p. )\\n\\n";
