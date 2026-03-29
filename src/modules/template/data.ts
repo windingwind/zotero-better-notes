@@ -100,10 +100,10 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Executive Summary / 论文概述\\n\\n";
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Theoretical Model / 理论模型\\n\\n";
   md += "<!-- 记录论文的理论模型或研究框架 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
   md += "## My Reflections / 我的迷思\\n\\n";
@@ -114,7 +114,7 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
   md += "### RQ\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Hypotheses / 假设\\n\\n";
   md += "- H1: \\n";
   md += "- H2: \\n\\n";
@@ -123,9 +123,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Theoretical Framework / 理论框架\\n\\n";
   md += "<!-- 记录所使用的理论基础和概念模型 -->\\n\\n";
   md += "### Core Theory / 核心理论\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Key Constructs / 关键构念\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- Methods & Data 研究方法与数据 -- */
   md += "## Methods & Data / 研究方法与数据\\n\\n";
@@ -193,10 +193,10 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Executive Summary / 论文概述\\n\\n";
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇Meta分析的核心内容：研究了什么关系、纳入了多少研究、总体效应如何 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Theoretical Model / 理论模型\\n\\n";
   md += "<!-- 记录Meta分析的理论框架或整合模型 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
   md += "---\\n\\n";
@@ -208,9 +208,9 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "---\\n\\n";
   md += "## Research Questions & Hypotheses / 研究问题与假设\\n\\n";
   md += "<!-- 记录核心研究问题和假设 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### RQ\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Hypotheses / 假设\\n\\n";
   md += "- H1: \\n";
   md += "- H2: \\n\\n";
@@ -219,11 +219,11 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "---\\n\\n";
   md += "## Theoretical Framework / 理论框架\\n\\n";
   md += "<!-- 记录所使用的理论基础和整合逻辑 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Core Theory / 核心理论\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Key Constructs / 关键构念\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- Search & Inclusion Strategy 检索与纳入策略 -- */
   md += "---\\n\\n";
@@ -353,10 +353,10 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Executive Summary / 论文概述\\n\\n";
   md += "### Narrative Summary / 文字概述\\n\\n";
   md += "<!-- 用一段话概括这篇论文的核心内容：研究了什么问题、怎么研究的、发现了什么 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Theoretical Model / 理论模型\\n\\n";
   md += "<!-- 记录论文的理论模型或研究框架 -->\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- My Reflections 我的迷思 -- */
   md += "## My Reflections / 我的迷思\\n\\n";
@@ -367,17 +367,17 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
   md += "## Research Questions & Purpose / 研究问题与目的\\n\\n";
   md += "<!-- 记录核心研究问题和研究目的 -->\\n\\n";
   md += "### RQ\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Purpose / 研究目的\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- Theoretical Lens 理论视角 -- */
   md += "## Theoretical Lens / 理论视角\\n\\n";
   md += "<!-- 记录理论视角或分析框架，如扎根理论、制度理论、意义建构等 -->\\n\\n";
   md += "### Theoretical Perspective / 理论视角\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
   md += "### Key Concepts / 关键概念\\n\\n";
-  md += " \\n\\n";
+  md += "\\u00A0\\n\\n";
 
   /* -- Research Design & Methods 研究设计与方法 -- */
   md += "## Research Design & Methods / 研究设计与方法\\n\\n";
