@@ -45,8 +45,7 @@ export class DetailsPane extends ItemDetails {
 </hbox>`);
 
   init() {
-    MozXULElement.insertFTLIfNeeded(`${config.addonRef}-notePreview.ftl`);
-    MozXULElement.insertFTLIfNeeded(`${config.addonRef}-noteRelation.ftl`);
+    document.l10n?.addResourceIds([`${config.addonRef}-notePreview.ftl`, `${config.addonRef}-noteRelation.ftl`]);
 
     this._prefObserverID = registerPrefObserver(
       persistKey,

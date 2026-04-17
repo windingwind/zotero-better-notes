@@ -94,7 +94,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
     win,
   );
 
-  win.MozXULElement.insertFTLIfNeeded(`${config.addonRef}-mainWindow.ftl`);
+  win.document.l10n?.addResourceIds([`${config.addonRef}-mainWindow.ftl`]);
 
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
