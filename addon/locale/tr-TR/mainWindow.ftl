@@ -12,7 +12,7 @@ menuHelp-openUserGuide =
     .label = Better Notes Kullanıcı Kılavuzunu Aç
 
 menuAddNote-importMD =
-    .label = MarkDown Dosyasından İçe Aktar
+    .label = Markdown Dosyasından İçe Aktar
 menuAddNote-newTemplateStandaloneNote =
     .label = Şablondan Yeni Bağımsız Not
 menuAddNote-newTemplateItemNote =

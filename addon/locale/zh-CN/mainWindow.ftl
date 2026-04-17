@@ -12,7 +12,7 @@ menuHelp-openUserGuide =
     .label = 打开 Better Notes 用户指南
 
 menuAddNote-importMD =
-    .label = 从 MarkDown 文件导入
+    .label = 从 Markdown 文件导入
 menuAddNote-newTemplateStandaloneNote =
     .label = 从模板新建独立笔记
 menuAddNote-newTemplateItemNote =

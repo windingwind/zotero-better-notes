@@ -12,7 +12,7 @@ menuHelp-openUserGuide =
     .label = Открыть руководство пользователя Better Notes
 
 menuAddNote-importMD =
-    .label = Импорт из файла MarkDown
+    .label = Импорт из файла Markdown
 menuAddNote-newTemplateStandaloneNote =
     .label = Новая отдельная заметка из шаблона
 menuAddNote-newTemplateItemNote =
