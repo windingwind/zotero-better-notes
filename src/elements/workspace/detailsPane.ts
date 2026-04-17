@@ -45,7 +45,10 @@ export class DetailsPane extends ItemDetails {
 </hbox>`);
 
   init() {
-    document.l10n?.addResourceIds([`${config.addonRef}-notePreview.ftl`, `${config.addonRef}-noteRelation.ftl`]);
+    document.l10n?.addResourceIds([
+      `${config.addonRef}-notePreview.ftl`,
+      `${config.addonRef}-noteRelation.ftl`,
+    ]);
 
     this._prefObserverID = registerPrefObserver(
       persistKey,

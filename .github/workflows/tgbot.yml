@@ -24,7 +24,7 @@ jobs:
           # 2. Convert GFM Bold (**Text**) to Telegram Bold (*Text*)
           # 3. Escape underscores to prevent broken italics (Note: this might break some complex links with underscores)
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed 's/^### \(.*\)$/*\1*/g' | sed 's/\*\*/\*/g' | sed 's/_/\\_/g')
-          
+
           msg_text="
           📢 A new release of $REPO_NAME is published: $TAG_NAME
           Release Name: $RELEASE_NAME
