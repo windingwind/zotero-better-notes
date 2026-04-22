@@ -111,9 +111,12 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
-  win.document
-    .querySelector(`[href="${config.addonRef}-mainWindow.ftl"]`)
-    ?.remove();
+  win.document.l10n?.removeResourceIds([
+    `${config.addonRef}-mainWindow.ftl`,
+    `${config.addonRef}-notePreview.ftl`,
+    `${config.addonRef}-noteRelation.ftl`,
+    `${config.addonRef}-outline.ftl`,
+  ]);
   ztoolkit.unregisterAll();
 }
 
