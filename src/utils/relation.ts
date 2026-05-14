@@ -42,7 +42,28 @@ export {
   getAnnotationByLinkTarget,
 };
 
+const updatingNoteLinkRelationIDs = new Set<number>();
+const pendingNoteLinkRelationIDs = new Set<number>();
+
 async function updateNoteLinkRelation(noteID: number) {
+  if (updatingNoteLinkRelationIDs.has(noteID)) {
+    pendingNoteLinkRelationIDs.add(noteID);
+    ztoolkit.log("updateNoteLinkRelation pending", noteID);
+    return;
+  }
+  updatingNoteLinkRelationIDs.add(noteID);
+  try {
+    do {
+      pendingNoteLinkRelationIDs.delete(noteID);
+      await rebuildNoteLinkRelation(noteID);
+    } while (pendingNoteLinkRelationIDs.has(noteID));
+  } finally {
+    updatingNoteLinkRelationIDs.delete(noteID);
+    pendingNoteLinkRelationIDs.delete(noteID);
+  }
+}
+
+async function rebuildNoteLinkRelation(noteID: number) {
   ztoolkit.log("updateNoteLinkRelation", noteID);
   const note = Zotero.Items.get(noteID);
   const affectedNoteIDs = new Set([noteID]);
@@ -74,11 +95,19 @@ async function updateNoteLinkRelation(noteID: number) {
       }
     }
   }
-  const result = await (
-    await getRelationServer()
-  ).proxy.rebuildLinkForNote(fromLibID, fromKey, linkToData);
+  const server = await getRelationServer();
+  const oldOutboundLinks = (await server.proxy.getOutboundLinks(
+    fromLibID,
+    fromKey,
+  )) as LinkModel[];
+  if (!hasLinkRelationChanged(oldOutboundLinks, linkToData)) {
+    ztoolkit.log("updateNoteLinkRelation skipped unchanged", noteID);
+    return;
+  }
 
-  for (const link of result.oldOutboundLinks as LinkModel[]) {
+  await server.proxy.rebuildLinkForNote(fromLibID, fromKey, linkToData);
+
+  for (const link of oldOutboundLinks) {
     const item = Zotero.Items.getByLibraryAndKey(link.toLibID, link.toKey);
     if (!item) {
       continue;
@@ -86,13 +115,34 @@ async function updateNoteLinkRelation(noteID: number) {
     affectedNoteIDs.add(item.id);
   }
   Zotero.Notifier.trigger(
-    // @ts-ignore
+    // @ts-ignore - updateBNRelation is a Better Notes custom notifier event.
     "updateBNRelation",
     "item",
     Array.from(affectedNoteIDs),
     {},
     true,
   );
+}
+
+function hasLinkRelationChanged(oldLinks: LinkModel[], newLinks: LinkModel[]) {
+  return serializeLinkModels(oldLinks) !== serializeLinkModels(newLinks);
+}
+
+function serializeLinkModels(links: LinkModel[]) {
+  return links.map(getLinkModelKey).sort().join("\n");
+}
+
+function getLinkModelKey(link: LinkModel) {
+  return [
+    String(link.fromLibID),
+    link.fromKey,
+    String(link.toLibID),
+    link.toKey,
+    String(link.fromLine),
+    link.toLine === null ? "" : String(link.toLine),
+    link.toSection ?? "",
+    link.url,
+  ].join("\t");
 }
 
 async function getNoteLinkOutboundRelation(
