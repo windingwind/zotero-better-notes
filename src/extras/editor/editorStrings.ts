@@ -30,7 +30,7 @@ const editorStrings = {
   },
   openAttachment: {
     "en-US": "Open attachment of parent item",
-    "zh-CN": "打开父条目的附件",
+    "zh-CN": "打开上级条目的附件",
   },
   copySectionLink: {
     "en-US": "Copy Section Link",

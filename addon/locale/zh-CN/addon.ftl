@@ -15,7 +15,7 @@ templateEditor-templateDisplayName =
     .ExportMDFileNameV2 = Export File Name (导出文件名)
     .ExportMDFileHeaderV2 = Export MD File Header (导出MD头)
     .ExportMDFileContent = Export MD File Content (导出MD正文)
-    .ExportLatexFileContent = Export Latex File Content (导出Latex正文)
+    .ExportLatexFileContent = Export LaTeX File Content (导出LaTeX正文)
 
 templateEditor-templateDisplayType =
     .system = 内置
@@ -34,12 +34,12 @@ editor-previewImage-title = 预览图片
 
 syncManager-noteName=笔记名称
 syncManager-lastSync=最近同步
-syncManager-filePath=MarkDown路径
+syncManager-filePath=Markdown路径
 syncManager-detectConfirmInfo = 扫描到{$total}项由本插件同步的markdown文件 (来自{$dir})
     将要新同步{$new}项, 将要覆盖{$current}项
     确定应用这些更改吗?
 
-syncInfo-syncTo=MarkDown路径
+syncInfo-syncTo=Markdown路径
 syncInfo-lastSync=最近同步
 syncInfo-sync=同步
 syncInfo-unSync=取消同步
@@ -52,7 +52,7 @@ sync-start-hint=自动同步已启用, 间隔
 sync-stop-hint=自动同步已停止
 sync-running-hint-title=笔记同步
 sync-running-hint-check=检查状态
-sync-running-hint-updateMD=更新MarkDown
+sync-running-hint-updateMD=更新Markdown
 sync-running-hint-updateNote=更新笔记
 sync-running-hint-diff=确认合并
 sync-running-hint-finish=同步完成
@@ -87,8 +87,8 @@ templatePicker-itemData-useCustom=另作选择...
 templatePicker-itemData-title=选择条目模板数据源
 
 alert-notValidCollectionError=请选择一个有效的分类。
-alert-notValidParentItemError=无效的父条目。
-alert-syncImportedNotes = 保持导入的笔记与 MarkDown 文件同步？
+alert-notValidParentItemError=无效的上级条目。
+alert-syncImportedNotes = 保持导入的笔记与 Markdown 文件同步？
 alert-linkCreator-emptyNote = 无法从/向空笔记创建链接。
 alert-templateEditor-shouldImport = 似乎您正在尝试直接保存一个笔记模板分享代码。您想要将其导入为模板吗？
 alert-templateEditor-unsaved = 您在模板编辑器中有未保存的更改。您想要保存它们吗？

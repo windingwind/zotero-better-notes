@@ -86,8 +86,6 @@ export class Workspace extends PluginCEBase implements VirtualWorkspace {
   }
 
   init(): void {
-    // MozXULElement.insertFTLIfNeeded(`${config.addonRef}-workspace.ftl`);
-
     // For note preview section enabled decision
     this.dataset.uid = this.uid;
     this._addon.data.workspace.instances[this.uid] = new WeakRef(this);

@@ -15,7 +15,7 @@ templateEditor-templateDisplayName =
     .ExportMDFileNameV2 = Export File Name
     .ExportMDFileHeaderV2 = Export MD File Header
     .ExportMDFileContent = Export MD File Content
-    .ExportLatexFileContent = Export Latex File Content
+    .ExportLatexFileContent = Export LaTeX File Content
 
 templateEditor-templateDisplayType =
     .system = Builtin

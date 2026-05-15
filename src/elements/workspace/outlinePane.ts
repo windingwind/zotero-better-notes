@@ -139,7 +139,7 @@ export class OutlinePane extends PluginCEBase {
   }
 
   init(): void {
-    MozXULElement.insertFTLIfNeeded(`${config.addonRef}-outline.ftl`);
+    document.l10n?.addResourceIds([`${config.addonRef}-outline.ftl`]);
 
     this._outlineContainer = this._queryID(
       "outline",

@@ -94,8 +94,8 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
     win,
   );
 
-  win.MozXULElement.insertFTLIfNeeded(`${config.addonRef}-mainWindow.ftl`);
-  
+  win.document.l10n?.addResourceIds([`${config.addonRef}-mainWindow.ftl`]);
+
   // Zotero 8 compatibility: mock missing context menu builder
   // @ts-ignore
   if (typeof win.goBuildEditContextMenu !== "function") {
@@ -113,7 +113,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   patchExportItems(win);
 
   patchNoteEditorCE(win);
-  
+
   initGlobalMainNoteButton(win);
 
   showUserGuide(win);
@@ -148,9 +148,12 @@ function initGlobalMainNoteButton(win: _ZoteroTypes.MainWindow) {
 }
 
 async function onMainWindowUnload(win: Window): Promise<void> {
-  win.document
-    .querySelector(`[href="${config.addonRef}-mainWindow.ftl"]`)
-    ?.remove();
+  win.document.l10n?.removeResourceIds([
+    `${config.addonRef}-mainWindow.ftl`,
+    `${config.addonRef}-notePreview.ftl`,
+    `${config.addonRef}-noteRelation.ftl`,
+    `${config.addonRef}-outline.ftl`,
+  ]);
   ztoolkit.unregisterAll();
 }
 

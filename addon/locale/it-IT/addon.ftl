@@ -15,7 +15,7 @@ templateEditor-templateDisplayName =
     .ExportMDFileNameV2 = Esporta il nome del file
     .ExportMDFileHeaderV2 = Esporta l'intestazione del file MD
     .ExportMDFileContent = Esporta il contenuto del file MD
-    .ExportLatexFileContent = Export Latex File Content
+    .ExportLatexFileContent = Export LaTeX File Content
 
 templateEditor-templateDisplayType =
     .system = Integrato
@@ -30,12 +30,12 @@ templateEditor-templateHelp =
 
 syncManager-noteName = Nome nota
 syncManager-lastSync = Ultima sincronizzazione
-syncManager-filePath = Percorso MarkDown
+syncManager-filePath = Percorso Markdown
 syncManager-detectConfirmInfo = Individuati {$total} file markdown sincronizzati nella cartella {$dir}
     {$new} nuovo/i, {$current} da aggiornare.
     Vuoi procedere con la modifica?
 
-syncInfo-syncTo = Percorso MarkDown
+syncInfo-syncTo = Percorso Markdown
 syncInfo-lastSync = Ultima sincronizzazione
 syncInfo-sync = Sincronizza
 syncInfo-unSync = Interrompi sincronizzazione
@@ -50,7 +50,7 @@ sync-start-hint = La sincronizzazione automatica delle note è avviata ogni
 sync-stop-hint = La sincronizzazione automatica delle note è disabilitata
 sync-running-hint-title = Sincronizzazione note
 sync-running-hint-check = Controlla status
-sync-running-hint-updateMD = Aggiorna MarkDown
+sync-running-hint-updateMD = Aggiorna Markdown
 sync-running-hint-updateNote = Aggiorna Note
 sync-running-hint-diff = Conferma unione
 sync-running-hint-finish = Terminato
