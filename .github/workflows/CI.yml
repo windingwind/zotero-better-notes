@@ -40,7 +40,7 @@ jobs:
     if: github.event_name == 'push' && needs.test.result == 'success'
     env:
       # Allow triggering other workflows
-      GITHUB_TOKEN: ${{ secrets.PAT }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,12 +62,14 @@ jobs:
       - name: Release to GitHub
         run: |
           npm run release
-          # cp build/update.json update.json
-          # cp build/update-beta.json update-beta.json
-          # git add update.json
-          # git add update-beta.json
-          # git commit -m 'chore(publish): synchronizing `update.json`'
-          # git push
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          cp build/update.json update.json
+          cp build/update-beta.json update-beta.json || true
+          git add update.json
+          git add update-beta.json || true
+          git commit -m 'chore(publish): synchronizing `update.json`'
+          git push
           sleep 1s
 
       - name: Notify release

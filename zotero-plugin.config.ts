@@ -3,7 +3,7 @@ import { defineConfig } from "zotero-plugin-scaffold";
 import { replaceInFile } from "replace-in-file";
 import { bundleTypes } from "./scripts/types/bundleTypes.mjs";
 
-const TEST_PREFS = {};
+const TEST_PREFS: Record<string, string | number | boolean> = {};
 // Disable user guide, keep in sync with src/modules/userGuide.ts
 TEST_PREFS[`${pkg.config.prefsPrefix}.latestTourVersion`] = 1;
 
@@ -13,11 +13,9 @@ export default defineConfig({
   name: pkg.config.addonName,
   id: pkg.config.addonID,
   namespace: pkg.config.addonRef,
-  updateURL: `https://github.com/{{owner}}/{{repo}}/releases/download/release/${
-    pkg.version.includes("-") ? "update-beta.json" : "update.json"
-  }`,
+  updateURL: `https://raw.githubusercontent.com/mnkhprre/zotero-better-notes/master/update.json`,
   xpiDownloadLink:
-    "https://github.com/{{owner}}/{{repo}}/releases/download/v{{version}}/{{xpiName}}.xpi",
+    "https://github.com/mnkhprre/zotero-better-notes/releases/download/v{{version}}/{{xpiName}}.xpi",
 
   server: {
     asProxy: false,

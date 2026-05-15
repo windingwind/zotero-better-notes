@@ -17,8 +17,14 @@ menuAddNote-newTemplateStandaloneNote =
     .label = New Standalone Note from Template
 menuAddNote-newTemplateItemNote =
     .label = New Item Note from Template
+menuAddNote-createMainNote =
+    .label = Create Main Note
 
 menuTab-moveNewWindow =
     .label = Move to BN New Window
 menu-openNoteAsBNWindow =
     .label = Open Note in BN New Window
+menu-setAsMainNote =
+    .label = Set as Main Note
+menu-openInWorkspaceTab =
+    .label = Open in Workspace Tab

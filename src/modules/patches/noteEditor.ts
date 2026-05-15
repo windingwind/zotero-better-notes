@@ -16,6 +16,13 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
         // @ts-ignore
         const noteEditor = this as any;
 
+        if (
+          Components.utils.isDeadWrapper(win) ||
+          Components.utils.isDeadWrapper(noteEditor)
+        ) {
+          return;
+        }
+
         if (!noteEditor.tabID) {
           // @ts-ignore
           return origin.apply(this, [height]);
@@ -82,6 +89,12 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
           wait
             .waitUntilAsync(() => noteEditor._editorInstance)
             .then(() => {
+              if (
+                Components.utils.isDeadWrapper(win) ||
+                Components.utils.isDeadWrapper(noteEditor)
+              ) {
+                return;
+              }
               const editor =
                 noteEditor._editorInstance as Zotero.EditorInstance;
 

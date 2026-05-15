@@ -31,9 +31,24 @@ const DEFAULT_TEMPLATES = <NoteTemplate[]>[
     text: `\${{
   let res = "";
   if (annotationItem.annotationComment) {
-    res += await Zotero.BetterNotes.api.convert.md2html(
-      annotationItem.annotationComment
-    );
+    let comment = annotationItem.annotationComment || "";
+    
+    // Remove "note link" if it points to a zotero://select URL
+    comment = comment.replace(/\\*?note link:\\*?\\s*(?:\\[[^\\]]*\\]\\()?zotero:\\/\\/select[^\\s)]+\\)?/gi, "");
+    
+    // Remove the Turkish placeholders
+    comment = comment.replace(/Se\\u00e7ilen Konum.*?\\(Referred in\\)?:?/gi, "");
+    comment = comment.replace(/Konum aran\\u0131yor\\.\\.\\./gi, "");
+    
+    // Clean up excessive newlines
+    comment = comment.replace(/\\n\\s*\\n\\s*\\n/g, "\\n\\n");
+    comment = comment.trim();
+    if (comment) {
+      let html = await Zotero.BetterNotes.api.convert.md2html(comment);
+      html = html.replace(/color\\s*:\\s*[^;\"']+;?/gi, "");
+      html = html.replace(/background-color\\s*:\\s*[^;\"']+;?/gi, "");
+      res += html;
+    }
   }
   res += await Zotero.BetterNotes.api.convert.annotations2html([annotationItem], {noteItem, ignoreComment: true});
   return res;

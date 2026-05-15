@@ -32,6 +32,13 @@ export class OutboundCreator extends PluginCEBase {
   ></html:link>
 </linkset>
 <bn-note-picker></bn-note-picker>
+<div class="toolbar-header-container">
+  <span data-l10n-id="linkCreator-insert-position-label" class="toolbar-header content"></span>
+  <html:select id="bn-link-insert-position">
+    <html:option value="start" data-l10n-id="linkCreator-insert-position-start"></html:option>
+    <html:option value="end" data-l10n-id="linkCreator-insert-position-end"></html:option>
+  </html:select>
+</div>
 <bn-note-outline></bn-note-outline>
 <bn-note-preview></bn-note-preview>
 `);

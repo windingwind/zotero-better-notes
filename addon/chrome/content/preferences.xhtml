@@ -132,6 +132,22 @@
     native="true"
     preference="__prefsPrefix__.annotationNote.enableTagSync"
   />
+  <hbox align="center">
+    <html:label
+      for="__addonRef__-annotationNote-insertionIndex"
+      data-l10n-id="annotationNote-insertion-label"
+    ></html:label>
+    <menulist
+      id="__addonRef__-annotationNote-insertionIndex"
+      preference="__prefsPrefix__.annotationNote.insertionIndex"
+      native="true"
+    >
+      <menupopup>
+        <menuitem data-l10n-id="annotationNote-insertion-start" value="0" />
+        <menuitem data-l10n-id="annotationNote-insertion-end" value="-1" />
+      </menupopup>
+    </menulist>
+  </hbox>
 </groupbox>
 <groupbox>
   <label><html:h2 data-l10n-id="about-title"></html:h2></label>

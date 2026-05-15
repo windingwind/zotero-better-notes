@@ -40,6 +40,23 @@ export function formatPath(path: string, suffix: string = "") {
 }
 
 export async function getFileContent(path: string) {
+  // Zotero 8: Zotero.File.getContentsAsync() with URIs is deprecated
+  // Use Zotero.HTTP.request() for chrome://, jar:, resource:// URIs
+  if (
+    path.startsWith("chrome://") ||
+    path.startsWith("jar:") ||
+    path.startsWith("resource://")
+  ) {
+    try {
+      const res = await Zotero.HTTP.request("GET", path, {
+        responseType: "text",
+      });
+      return res.response as string;
+    } catch (e) {
+      ztoolkit.log("[getFileContent] HTTP request failed for", path, e);
+      // Fallback to old method
+    }
+  }
   const contentOrXHR = await Zotero.File.getContentsAsync(path);
   const content =
     typeof contentOrXHR === "string"

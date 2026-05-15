@@ -163,7 +163,7 @@ async function hasNoteFromAnnotation(
 async function createNoteFromAnnotation(
   libraryID: number,
   itemKey: string,
-  openMode: "window" | "builtin" | undefined,
+  openMode: "window" | "native-window" | "builtin" | undefined,
   workspaceUID?: string,
 ) {
   const annotationItem = Zotero.Items.getByLibraryAndKey(
@@ -188,7 +188,7 @@ async function createNoteFromAnnotation(
         } = {
           lineIndex: linkParams.lineIndex || undefined,
         };
-        if (openMode === "window") {
+        if (openMode === "window" || openMode === "native-window") {
           Object.assign(openNoteOptions, {
             forceTakeover: true,
             workspaceUID,
@@ -228,7 +228,7 @@ async function createNoteFromAnnotation(
     );
     if (targetItem) {
       addon.hooks.onOpenNote(targetItem.id, openMode || "builtin", {
-        ...(openMode === "window"
+        ...(openMode === "window" || openMode === "native-window"
           ? {
               forceTakeover: true,
               workspaceUID,
@@ -249,7 +249,9 @@ async function createNoteFromAnnotation(
     "annotationItem, topItem, noteItem",
     [annotationItem, annotationItem.parentItem!.parentItem, note],
   );
-  await addLineToNote(note, renderedTemplate);
+
+  const insertionIndex = getPref("annotationNote.insertionIndex") as number;
+  await addLineToNote(note, renderedTemplate, insertionIndex);
 
   const tags = annotationItem.getTags();
   for (const tag of tags) {
@@ -266,7 +268,7 @@ async function createNoteFromAnnotation(
   });
 
   addon.hooks.onOpenNote(note.id, openMode || "builtin", {
-    ...(openMode === "window"
+    ...(openMode === "window" || openMode === "native-window"
       ? {
           forceTakeover: true,
           workspaceUID,

@@ -24,3 +24,7 @@ outbound-step3-middle =
     }
 
 outlinePicker-cursorLine = 🖋️Cursor (L{ $line })
+
+linkCreator-insert-position-label = Insertion Position:
+linkCreator-insert-position-start = Start of Section
+linkCreator-insert-position-end = End of Section

@@ -76,21 +76,48 @@ and:
 
 ## 🤔 What can it do?
 
-🖇️ Connect knowledge fragments with _note link_. With one click. [Learn more →](#note-link)
+<details open>
+<summary><b>📚 Knowledge Management & Linking</b></summary>
 
-🗂️ Simplify and automate knowledge analysis with extensive _note templates_. With one click. [Learn more →](#note-template)
+- 🖇️ **Connect knowledge fragments** with _note link_. With one click. [Learn more →](#note-link)
+- 📌 **Main Note System**: Set any note as your "Main Note" and access it instantly via a dedicated toolbar button.
+- 🖥️ **Multi-Window Support**: Open as many note tabs or windows as you like!
+- 🗂️ **Note Templates**: Simplify and automate knowledge analysis with extensive note templates. [Learn more →](#note-template)
 
-🔄️ Keep in sync with your Markdown files. Two-way, automatically. [Learn more →](#syncing-note-%EF%B8%8F-markdown)
+</details>
 
-🖨️ Export notes to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
+<details>
+<summary><b>🔄 Syncing & Exporting</b></summary>
 
-📝 Enhancements for Zotero's note editor with outline, link relation, view images.... Open as much note tabs/windows as you like!
+- 🔄️ **Markdown Sync**: Keep in sync with your Markdown files (like Obsidian). Two-way, automatically. [Learn more →](#syncing-note-%EF%B8%8F-markdown)
+- 🖨️ **Universal Export**: Export notes to Markdown, Docx, PDF, and mind maps. [Learn more →](#note-export)
+
+</details>
+
+<details>
+<summary><b>🧹 Editor Enhancements & Smart Cleaning</b></summary>
+
+- 📝 **Advanced Editor**: Enhancements for Zotero's note editor with outline, link relation, and image viewing.
+- 🧹 **Smart Turkish Cleaning**: Automatically cleans up Turkish placeholders (`Seçilen Konum`, `Konum aranıyor...`) and redundant links.
+- 🪄 **Magic Key**: Command palette for quick actions in the editor.
+- 🖼️ **Image Handling**: Resize images with right-click; preview with double-click.
+
+</details>
+
+<details>
+<summary><b>🤖 AI & Workflow Automation</b></summary>
+
+- 🤖 **LLM Integration**: Integrated chatting pane for AI-assisted writing (requires Zotero-GPT).
+- ⚡ **Action Workflow**: Automate note generation/syncing with powerful action scripts.
+
+</details>
+
 
 ## 👋 Install
 
-- Download the plugin (.xpi file) from below (beta version is only for Zotero beta!).
-  - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
-  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
+- Download the plugin (.xpi file) from below.
+  - [Latest Release](https://github.com/mnkhprre/zotero-better-notes/releases/latest)
+  - [All Releases](https://github.com/mnkhprre/zotero-better-notes/releases)
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
@@ -227,6 +254,25 @@ The [Actions & Tags](https://github.com/windingwind/zotero-actions-tags) plugin 
 - Resize images with a right-click menu.
 - Preview images with double-click/ctrl-click.
 
+### ✨ mnkhprre Edition Features (0.8.8 → 3.0.6)
+
+This version integrates the beloved features from the **0.8.8 fork** into the modern **3.0.6** codebase, optimized for Zotero 8:
+
+- **📌 Advanced Main Note System**:
+  - **Quick Access Button**: A global home icon next to your tabs for instant navigation to your Main Note.
+  - **Context Menu Integration**: Right-click any note in the library to "Set as Main Note".
+- **🧹 Smart Turkish Note Cleaning**:
+  - Automatically filters out Turkish metadata placeholders like `Seçilen Konum`, `Konum aranıyor...`, and `(Referred in)`.
+  - Cleans up redundant `note link` references and excessive newlines when creating notes from annotations.
+  - Ensures a high-fidelity, clean note structure out of the box.
+- **📍 Flexible Annotation Insertion**:
+  - Support for **Insert at Start** and **Insert at End** of notes.
+  - New context menu options to quickly set the insertion target as the current note.
+- **🚀 Zotero 8 Performance**:
+  - Fixed infinite refresh loops and editor stability issues introduced in official v3.0.6.
+  - Full compatibility with the new Zotero 8 native windowing system.
+
+
 ## 🧲 API
 
 BN provides APIs for other plugin developers in `Zotero.BetterNotes.api.${API_MODULE}`. See [`api.ts`](src/api.ts).
@@ -257,7 +303,7 @@ This plugin is built based on the [Zotero Plugin Template](https://github.com/wi
 To start, run
 
 ```bash
-git clone https://github.com/windingwind/zotero-better-notes.git
+git clone https://github.com/mnkhprre/zotero-better-notes.git
 cd zotero-better-notes
 npm install
 npm run build
