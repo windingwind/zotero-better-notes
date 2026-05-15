@@ -182,7 +182,10 @@ const note = {
 const relation = {
   getNoteLinkInboundRelation,
   getNoteLinkOutboundRelation,
-  updateNoteLinkRelation,
+  updateNoteLinkRelation: Zotero.Utilities.throttle(
+    updateNoteLinkRelation,
+    3000,
+  ),
   linkAnnotationToTarget,
   getLinkTargetByAnnotation,
   getAnnotationByLinkTarget,
