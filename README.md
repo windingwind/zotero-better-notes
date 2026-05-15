@@ -254,17 +254,24 @@ The [Actions & Tags](https://github.com/windingwind/zotero-actions-tags) plugin 
 - Resize images with a right-click menu.
 - Preview images with double-click/ctrl-click.
 
-### ✨ Custom Features (mnkhprre fork)
+### ✨ mnkhprre Edition Features (0.8.8 → 3.0.6)
 
-This fork includes several enhancements specifically designed for Zotero 8 and Turkish academic workflows:
+This version integrates the beloved features from the **0.8.8 fork** into the modern **3.0.6** codebase, optimized for Zotero 8:
 
-- **🚀 Zotero 8 Optimized**: Fully compatible with Zotero 8, including stability fixes for the new note editor.
-- **📌 Main Note System**:
-  - Right-click any note to **"Set as Main Note"**.
-  - Quick access "Main Note" button next to Zotero tabs for instant navigation.
-  - **"Create Main Note"** shortcut in the new note menu.
-- **🧹 Smart Turkish Note Cleaning**: Automatically cleans up Turkish placeholders (`Seçilen Konum`, `Konum aranıyor...`) and redundant `note link` references when creating notes from annotations, providing a cleaner workspace.
-- **🖥️ Workspace Enhancements**: "Open in Workspace Tab" context menu for quick side-by-side editing.
+- **📌 Advanced Main Note System**:
+  - **Quick Access Button**: A global home icon next to your tabs for instant navigation to your Main Note.
+  - **Context Menu Integration**: Right-click any note in the library to "Set as Main Note".
+- **🧹 Smart Turkish Note Cleaning**:
+  - Automatically filters out Turkish metadata placeholders like `Seçilen Konum`, `Konum aranıyor...`, and `(Referred in)`.
+  - Cleans up redundant `note link` references and excessive newlines when creating notes from annotations.
+  - Ensures a high-fidelity, clean note structure out of the box.
+- **📍 Flexible Annotation Insertion**:
+  - Support for **Insert at Start** and **Insert at End** of notes.
+  - New context menu options to quickly set the insertion target as the current note.
+- **🚀 Zotero 8 Performance**:
+  - Fixed infinite refresh loops and editor stability issues introduced in official v3.0.6.
+  - Full compatibility with the new Zotero 8 native windowing system.
+
 
 ## 🧲 API
 
