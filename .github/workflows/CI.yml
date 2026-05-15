@@ -40,7 +40,7 @@ jobs:
     if: github.event_name == 'push' && needs.test.result == 'success'
     env:
       # Allow triggering other workflows
-      GITHUB_TOKEN: ${{ secrets.PAT }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
