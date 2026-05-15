@@ -88,9 +88,9 @@ and:
 
 ## 👋 Install
 
-- Download the plugin (.xpi file) from below (beta version is only for Zotero beta!).
-  - [Latest Stable](https://github.com/windingwind/zotero-better-notes/releases/latest)
-  - [All Releases](https://github.com/windingwind/zotero-better-notes/releases)
+- Download the plugin (.xpi file) from below.
+  - [Latest Release](https://github.com/mnkhprre/zotero-better-notes/releases/latest)
+  - [All Releases](https://github.com/mnkhprre/zotero-better-notes/releases)
 
   _Note_: If you're using Firefox as your browser, right-click the `.xpi` and select "Save As.."
 
@@ -227,6 +227,18 @@ The [Actions & Tags](https://github.com/windingwind/zotero-actions-tags) plugin 
 - Resize images with a right-click menu.
 - Preview images with double-click/ctrl-click.
 
+### ✨ Custom Features (mnkhprre fork)
+
+This fork includes several enhancements specifically designed for Zotero 8 and Turkish academic workflows:
+
+- **🚀 Zotero 8 Optimized**: Fully compatible with Zotero 8, including stability fixes for the new note editor.
+- **📌 Main Note System**:
+  - Right-click any note to **"Set as Main Note"**.
+  - Quick access "Main Note" button next to Zotero tabs for instant navigation.
+  - **"Create Main Note"** shortcut in the new note menu.
+- **🧹 Smart Turkish Note Cleaning**: Automatically cleans up Turkish placeholders (`Seçilen Konum`, `Konum aranıyor...`) and redundant `note link` references when creating notes from annotations, providing a cleaner workspace.
+- **🖥️ Workspace Enhancements**: "Open in Workspace Tab" context menu for quick side-by-side editing.
+
 ## 🧲 API
 
 BN provides APIs for other plugin developers in `Zotero.BetterNotes.api.${API_MODULE}`. See [`api.ts`](src/api.ts).
@@ -257,7 +269,7 @@ This plugin is built based on the [Zotero Plugin Template](https://github.com/wi
 To start, run
 
 ```bash
-git clone https://github.com/windingwind/zotero-better-notes.git
+git clone https://github.com/mnkhprre/zotero-better-notes.git
 cd zotero-better-notes
 npm install
 npm run build
