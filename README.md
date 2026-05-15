@@ -76,15 +76,42 @@ and:
 
 ## 🤔 What can it do?
 
-🖇️ Connect knowledge fragments with _note link_. With one click. [Learn more →](#note-link)
+<details open>
+<summary><b>📚 Knowledge Management & Linking</b></summary>
 
-🗂️ Simplify and automate knowledge analysis with extensive _note templates_. With one click. [Learn more →](#note-template)
+- 🖇️ **Connect knowledge fragments** with _note link_. With one click. [Learn more →](#note-link)
+- 📌 **Main Note System**: Set any note as your "Main Note" and access it instantly via a dedicated toolbar button.
+- 🖥️ **Multi-Window Support**: Open as many note tabs or windows as you like!
+- 🗂️ **Note Templates**: Simplify and automate knowledge analysis with extensive note templates. [Learn more →](#note-template)
 
-🔄️ Keep in sync with your Markdown files. Two-way, automatically. [Learn more →](#syncing-note-%EF%B8%8F-markdown)
+</details>
 
-🖨️ Export notes to different formats: Markdown, Docx, PDF, and mind map. [Learn more →](#note-export)
+<details>
+<summary><b>🔄 Syncing & Exporting</b></summary>
 
-📝 Enhancements for Zotero's note editor with outline, link relation, view images.... Open as much note tabs/windows as you like!
+- 🔄️ **Markdown Sync**: Keep in sync with your Markdown files (like Obsidian). Two-way, automatically. [Learn more →](#syncing-note-%EF%B8%8F-markdown)
+- 🖨️ **Universal Export**: Export notes to Markdown, Docx, PDF, and mind maps. [Learn more →](#note-export)
+
+</details>
+
+<details>
+<summary><b>🧹 Editor Enhancements & Smart Cleaning</b></summary>
+
+- 📝 **Advanced Editor**: Enhancements for Zotero's note editor with outline, link relation, and image viewing.
+- 🧹 **Smart Turkish Cleaning**: Automatically cleans up Turkish placeholders (`Seçilen Konum`, `Konum aranıyor...`) and redundant links.
+- 🪄 **Magic Key**: Command palette for quick actions in the editor.
+- 🖼️ **Image Handling**: Resize images with right-click; preview with double-click.
+
+</details>
+
+<details>
+<summary><b>🤖 AI & Workflow Automation</b></summary>
+
+- 🤖 **LLM Integration**: Integrated chatting pane for AI-assisted writing (requires Zotero-GPT).
+- ⚡ **Action Workflow**: Automate note generation/syncing with powerful action scripts.
+
+</details>
+
 
 ## 👋 Install
 
