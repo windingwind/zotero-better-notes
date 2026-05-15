@@ -43,9 +43,14 @@ annotation-title = PDF Ek Açıklamaları
 annotation-autoAnnotation =
     .label = Çalışma alanı notuna otomatik olarak yeni ek açıklamaları ekle
 
-annotationNote-title = Note from Annotation
+annotationNote-title = Ek Açıklamadan Not
 annotationNote-enableTagSync = 
-    .label = Keep tags of note from annotation in sync with the original annotation
+    .label = Ek açıklamadan gelen notun etiketlerini orijinal ek açıklama ile eşzamanlı tut
+annotationNote-insertion-label = Yeni ek açıklamaları şuraya ekle:
+annotationNote-insertion-start = 
+    .label = Notun başına
+annotationNote-insertion-end = 
+    .label = Notun sonuna
 
 about-title = Hakkında
 help =

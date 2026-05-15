@@ -17,7 +17,12 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
   ].getService(Components.interfaces.amIAddonManagerStartup);
   var manifestURI = Services.io.newURI(rootURI + "manifest.json");
   chromeHandle = aomStartup.registerChrome(manifestURI, [
-    ["content", "__addonRef__", rootURI + "chrome/content/", "contentaccessible=yes"],
+    [
+      "content",
+      "__addonRef__",
+      rootURI + "chrome/content/",
+      "contentaccessible=yes",
+    ],
   ]);
 
   /**

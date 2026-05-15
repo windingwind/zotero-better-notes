@@ -4,7 +4,7 @@ import {
   copyNoteLink,
   getLineAtCursor,
   getSectionAtCursor,
-  insert
+  insert,
 } from "../../utils/editor";
 import { getString } from "../../utils/locale";
 import { openLinkCreator } from "../../utils/linkCreator";
@@ -75,15 +75,29 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
   registerEditorToolbarElement(editor, toolbar, "start", recentMainNotesButton);
 
   recentMainNotesButton.addEventListener("mouseover", async () => {
-    if (recentMainNotesButton.parentElement?.querySelector(".bn-recentnotes-popup")) return;
+    if (
+      recentMainNotesButton.parentElement?.querySelector(
+        ".bn-recentnotes-popup",
+      )
+    )
+      return;
 
     const popup = ztoolkit.UI.createElement(_document, "div", {
       classList: ["popup", "bn-recentnotes-popup"],
       styles: {
-        position: "absolute", zIndex: "1000", minWidth: "200px", maxHeight: "400px", overflowY: "auto",
-        backgroundColor: "var(--color-bg, Canvas)", color: "var(--color-text, CanvasText)",
-        border: "1px solid var(--border-color, #ccc)", borderRadius: "4px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.15)", padding: "4px 0", left: "0", top: "100%",
+        position: "absolute",
+        zIndex: "1000",
+        minWidth: "200px",
+        maxHeight: "400px",
+        overflowY: "auto",
+        backgroundColor: "var(--color-bg, Canvas)",
+        color: "var(--color-text, CanvasText)",
+        border: "1px solid var(--border-color, #ccc)",
+        borderRadius: "4px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        padding: "4px 0",
+        left: "0",
+        top: "100%",
       },
     }) as HTMLDivElement;
 
@@ -91,35 +105,63 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     wrapper.style.position = "relative";
     wrapper.appendChild(popup);
 
-    const addMenuItem = (text: string, callback: () => void, isHeader = false) => {
+    const addMenuItem = (
+      text: string,
+      callback: () => void,
+      isHeader = false,
+    ) => {
       const btn = ztoolkit.UI.createElement(_document, "button", {
         classList: ["option"],
         properties: { textContent: text, title: text },
         styles: {
-          display: "block", width: "100%", textAlign: "left", padding: "4px 12px", border: "none",
-          background: "none", cursor: isHeader ? "default" : "pointer", fontSize: "12px",
-          color: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-          fontWeight: isHeader ? "bold" : "normal", opacity: isHeader ? "0.6" : "1",
+          display: "block",
+          width: "100%",
+          textAlign: "left",
+          padding: "4px 12px",
+          border: "none",
+          background: "none",
+          cursor: isHeader ? "default" : "pointer",
+          fontSize: "12px",
+          color: "inherit",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          fontWeight: isHeader ? "bold" : "normal",
+          opacity: isHeader ? "0.6" : "1",
         },
       });
       if (!isHeader) {
-        btn.addEventListener("mouseover", () => btn.style.backgroundColor = "rgba(128, 128, 128, 0.2)");
-        btn.addEventListener("mouseout", () => btn.style.backgroundColor = "transparent");
-        btn.addEventListener("click", () => { 
-          try { popup.remove(); } catch(e) {}
-          callback(); 
+        btn.addEventListener(
+          "mouseover",
+          () => (btn.style.backgroundColor = "rgba(128, 128, 128, 0.2)"),
+        );
+        btn.addEventListener(
+          "mouseout",
+          () => (btn.style.backgroundColor = "transparent"),
+        );
+        btn.addEventListener("click", () => {
+          try {
+            popup.remove();
+          } catch (e) {}
+          callback();
         });
       }
       popup.appendChild(btn);
     };
 
-    const recentPref = Zotero.Prefs.get("betternotes.recentMainNoteIds") || Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") || "";
-    const recentIds = String(recentPref).split(",").map(id => parseInt(id)).filter(id => !isNaN(id) && id > 0);
+    const recentPref =
+      Zotero.Prefs.get("betternotes.recentMainNoteIds") ||
+      Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") ||
+      "";
+    const recentIds = String(recentPref)
+      .split(",")
+      .map((id) => parseInt(id))
+      .filter((id) => !isNaN(id) && id > 0);
     const uniqueIds = Array.from(new Set(recentIds));
-    const items = Zotero.Items.get(uniqueIds).filter(i => i && !i.deleted);
+    const items = Zotero.Items.get(uniqueIds).filter((i) => i && !i.deleted);
 
     addMenuItem("📋 Recent Main Notes", () => {}, true);
-    
+
     if (items.length === 0) {
       addMenuItem("  (No recent main notes)", () => {});
     } else {
@@ -131,11 +173,18 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     }
 
     const leaveHandler = () => {
-      try { popup.remove(); } catch(e) {}
-      try { wrapper.removeEventListener("mouseleave", leaveHandler); } catch(e) {}
+      try {
+        popup.remove();
+      } catch (e) {}
+      try {
+        wrapper.removeEventListener("mouseleave", leaveHandler);
+      } catch (e) {}
     };
     setTimeout(() => {
-      try { if (popup.parentElement) wrapper.addEventListener("mouseleave", leaveHandler); } catch(e) {}
+      try {
+        if (popup.parentElement)
+          wrapper.addEventListener("mouseleave", leaveHandler);
+      } catch (e) {}
     }, 100);
   });
   // --- END CUSTOM RECENT MAIN NOTES BTN ---
@@ -158,10 +207,19 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     const popup = ztoolkit.UI.createElement(_document, "div", {
       classList: ["popup", "bn-addlink-popup"],
       styles: {
-        position: "absolute", zIndex: "1000", minWidth: "240px", maxHeight: "450px", overflowY: "auto",
-        backgroundColor: "var(--color-bg, Canvas)", color: "var(--color-text, CanvasText)",
-        border: "1px solid var(--border-color, #ccc)", borderRadius: "4px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.15)", padding: "0", left: "0", top: "100%",
+        position: "absolute",
+        zIndex: "1000",
+        minWidth: "240px",
+        maxHeight: "450px",
+        overflowY: "auto",
+        backgroundColor: "var(--color-bg, Canvas)",
+        color: "var(--color-text, CanvasText)",
+        border: "1px solid var(--border-color, #ccc)",
+        borderRadius: "4px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        padding: "0",
+        left: "0",
+        top: "100%",
       },
     }) as HTMLDivElement;
 
@@ -171,28 +229,50 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 
     const renderPopup = async () => {
       popup.innerHTML = "";
-      
+
       let mainNoteId = 0;
-      try { mainNoteId = parseInt(String(Zotero.Prefs.get("betternotes.mainNoteID"))) || 0; } catch(e) {}
+      try {
+        mainNoteId =
+          parseInt(String(Zotero.Prefs.get("betternotes.mainNoteID"))) || 0;
+      } catch (e) {}
       const mainNote = mainNoteId ? Zotero.Items.get(mainNoteId) : null;
-      const curPos = String(Zotero.Prefs.get("betternotes.insertLinkPosition") || "end");
+      const curPos = String(
+        Zotero.Prefs.get("betternotes.insertLinkPosition") || "end",
+      );
 
       // --- HTML Helper (Safer for Zotero 8) ---
-      const createEl = (tag: string, props: any = {}, styles: any = {}, listeners: any[] = []) => {
+      const createEl = (
+        tag: string,
+        props: any = {},
+        styles: any = {},
+        listeners: any[] = [],
+      ) => {
         const el = ztoolkit.UI.createElement(_document, tag, {
-          namespace: ["button", "label", "menu"].includes(tag) ? "html" : undefined,
-          properties: props, listeners,
+          namespace: ["button", "label", "menu"].includes(tag)
+            ? "html"
+            : undefined,
+          properties: props,
+          listeners,
         });
         if (styles && el && (el as any).style) {
-          for (const k in styles) { (el as any).style[k] = styles[k]; }
+          for (const k in styles) {
+            (el as any).style[k] = styles[k];
+          }
         }
         return el;
       };
 
       // 1) Status Bar / Preview
-      const statusBar = createEl("div", 
-        { textContent: "📍 Ready to link..." }, 
-        { padding: "6px 12px", fontSize: "11px", backgroundColor: "rgba(128,128,128,0.1)", borderBottom: "1px solid rgba(128,128,128,0.2)", color: "var(--color-text-muted, #666)" }
+      const statusBar = createEl(
+        "div",
+        { textContent: "📍 Ready to link..." },
+        {
+          padding: "6px 12px",
+          fontSize: "11px",
+          backgroundColor: "rgba(128,128,128,0.1)",
+          borderBottom: "1px solid rgba(128,128,128,0.2)",
+          color: "var(--color-text-muted, #666)",
+        },
       );
       popup.appendChild(statusBar);
 
@@ -201,48 +281,107 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
         statusBar.style.color = "var(--color-primary, #007bff)";
       };
 
-      const addMenuItem = (text: string, callback: () => void, opts: { style?: any, persistent?: boolean, onHover?: () => void } = {}) => {
-        const btn = createEl("button", 
-          { textContent: text, title: text }, 
-          { display: "block", width: "100%", textAlign: "left", padding: "4px 12px", border: "none", background: "none", cursor: "pointer", fontSize: "12px", color: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", ...(opts.style || {}) },
-          [{ type: "click", listener: () => { if (!opts.persistent) try { popup.remove(); } catch(e){} callback(); } }]
+      const addMenuItem = (
+        text: string,
+        callback: () => void,
+        opts: { style?: any; persistent?: boolean; onHover?: () => void } = {},
+      ) => {
+        const btn = createEl(
+          "button",
+          { textContent: text, title: text },
+          {
+            display: "block",
+            width: "100%",
+            textAlign: "left",
+            padding: "4px 12px",
+            border: "none",
+            background: "none",
+            cursor: "pointer",
+            fontSize: "12px",
+            color: "inherit",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            ...(opts.style || {}),
+          },
+          [
+            {
+              type: "click",
+              listener: () => {
+                if (!opts.persistent)
+                  try {
+                    popup.remove();
+                  } catch (e) {}
+                callback();
+              },
+            },
+          ],
         );
         btn.addEventListener("mouseover", () => {
           btn.style.backgroundColor = "rgba(128, 128, 128, 0.2)";
           if (opts.onHover) opts.onHover();
         });
-        btn.addEventListener("mouseout", () => btn.style.backgroundColor = "transparent");
+        btn.addEventListener(
+          "mouseout",
+          () => (btn.style.backgroundColor = "transparent"),
+        );
         popup.appendChild(btn);
       };
 
-      const addSeparator = () => popup.appendChild(createEl("div", {}, { height: "1px", backgroundColor: "rgba(128, 128, 128, 0.2)", margin: "4px 0" }));
+      const addSeparator = () =>
+        popup.appendChild(
+          createEl(
+            "div",
+            {},
+            {
+              height: "1px",
+              backgroundColor: "rgba(128, 128, 128, 0.2)",
+              margin: "4px 0",
+            },
+          ),
+        );
 
       // 2) Top Action Button ( respects mode)
       if (mainNote && mainNote.id !== noteItem.id) {
-        const actionText = curPos === "start" ? "🔝 Add link to Start of Main Note" : "🔚 Add link to End of Main Note";
-        addMenuItem(actionText, async () => {
-          editor.saveSync();
-          const currentNoteLink = addon.api.convert.note2link(noteItem, { lineIndex: getLineAtCursor(editor) });
-          const html = `<p dir="ltr"><a href="${currentNoteLink}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle() || noteItem.id}</a></p>`;
-          
-          let idx = curPos === "start" ? 0 : -1;
-          // If start mode, try to insert AFTER the first H1 if it exists
-          if (curPos === "start") {
-            try {
-              const nodes = await addon.api.note.getNoteTreeFlattened(mainNote, { keepLink: false });
-              if (nodes.length > 0 && nodes[0].model.level === 1) {
-                idx = nodes[0].model.lineIndex + 1; // v19: Safe under H1
-              }
-            } catch(e) {}
-          }
+        const actionText =
+          curPos === "start"
+            ? "🔝 Add link to Start of Main Note"
+            : "🔚 Add link to End of Main Note";
+        addMenuItem(
+          actionText,
+          async () => {
+            editor.saveSync();
+            const currentNoteLink = addon.api.convert.note2link(noteItem, {
+              lineIndex: getLineAtCursor(editor),
+            });
+            const html = `<p dir="ltr"><a href="${currentNoteLink}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle() || noteItem.id}</a></p>`;
 
-          await addon.api.note.insert(mainNote, html, idx, false);
-          const backlink = `\n<p dir="ltr">Referred in <a href="${addon.api.convert.note2link(mainNote, { lineIndex: idx })}">${mainNote.getNoteTitle()} (${curPos === "start" ? "Start" : "End"})</a></p>`;
-          insert(editor, backlink);
-        }, { 
-          style: { fontWeight: "bold", borderBottom: "1px solid rgba(128,128,128,0.1)" },
-          onHover: () => updateStatus(mainNote.getNoteTitle(), curPos) 
-        });
+            let idx = curPos === "start" ? 0 : -1;
+            // If start mode, try to insert AFTER the first H1 if it exists
+            if (curPos === "start") {
+              try {
+                const nodes = await addon.api.note.getNoteTreeFlattened(
+                  mainNote,
+                  { keepLink: false },
+                );
+                if (nodes.length > 0 && nodes[0].model.level === 1) {
+                  idx = nodes[0].model.lineIndex + 1; // v19: Safe under H1
+                }
+              } catch (e) {}
+            }
+
+            await addon.api.note.insert(mainNote, html, idx, false);
+            const backlink = `\n<p dir="ltr">Referred in <a href="${addon.api.convert.note2link(mainNote, { lineIndex: idx })}">${mainNote.getNoteTitle()} (${curPos === "start" ? "Start" : "End"})</a></p>`;
+            insert(editor, backlink);
+          },
+          {
+            style: {
+              fontWeight: "bold",
+              borderBottom: "1px solid rgba(128,128,128,0.1)",
+            },
+            onHover: () => updateStatus(mainNote.getNoteTitle(), curPos),
+          },
+        );
       }
 
       addMenuItem("🔗 Open Link Creator...", () => {
@@ -252,56 +391,112 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 
       if (mainNote && mainNote.isNote() && mainNote.id !== noteItem.id) {
         addSeparator();
-        const outlineHeader = createEl("div", { textContent: "📋 Main Note Sections" }, { padding: "4px 12px", fontSize: "11px", fontWeight: "bold", opacity: "0.6" });
+        const outlineHeader = createEl(
+          "div",
+          { textContent: "📋 Main Note Sections" },
+          {
+            padding: "4px 12px",
+            fontSize: "11px",
+            fontWeight: "bold",
+            opacity: "0.6",
+          },
+        );
         popup.appendChild(outlineHeader);
 
         try {
-          const nodes = await addon.api.note.getNoteTreeFlattened(mainNote, { keepLink: false });
+          const nodes = await addon.api.note.getNoteTreeFlattened(mainNote, {
+            keepLink: false,
+          });
           nodes.forEach((node, i) => {
             const indent = "  ".repeat(Math.max(0, node.model.level - 1));
             const name = node.model.name || "Untitled";
-            addMenuItem(`${indent}${name}`, async () => {
-              editor.saveSync();
-              const link = addon.api.convert.note2link(noteItem, { lineIndex: getLineAtCursor(editor) });
-              const html = `<p dir="ltr"><a href="${link}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle()}</a></p>`;
-              
-              let idx = 0;
-              if (curPos === "start") {
-                idx = node.model.lineIndex + 1; // v19: Immediately after heading line
-              } else {
-                // End of section: After the last line of the section
-                idx = node.model.endIndex + 1;
-              }
+            addMenuItem(
+              `${indent}${name}`,
+              async () => {
+                editor.saveSync();
+                const link = addon.api.convert.note2link(noteItem, {
+                  lineIndex: getLineAtCursor(editor),
+                });
+                const html = `<p dir="ltr"><a href="${link}" rel="noopener noreferrer nofollow">${noteItem.getNoteTitle()}</a></p>`;
 
-              await addon.api.note.insert(mainNote, html, idx, false);
-              const back = `\n<p dir="ltr">Referred in <a href="${addon.api.convert.note2link(mainNote, { sectionName: name })}">${mainNote.getNoteTitle()}/${name}</a></p>`;
-              insert(editor, back);
-            }, { 
-              style: { paddingLeft: `${12 + (node.model.level - 1) * 16}px` },
-              onHover: () => updateStatus(name, curPos)
-            });
+                let idx = 0;
+                if (curPos === "start") {
+                  idx = node.model.lineIndex + 1; // v19: Immediately after heading line
+                } else {
+                  // End of section: After the last line of the section
+                  idx = node.model.endIndex + 1;
+                }
+
+                await addon.api.note.insert(mainNote, html, idx, false);
+                const back = `\n<p dir="ltr">Referred in <a href="${addon.api.convert.note2link(mainNote, { sectionName: name })}">${mainNote.getNoteTitle()}/${name}</a></p>`;
+                insert(editor, back);
+              },
+              {
+                style: { paddingLeft: `${12 + (node.model.level - 1) * 16}px` },
+                onHover: () => updateStatus(name, curPos),
+              },
+            );
           });
-        } catch(e) { addMenuItem("  (Error loading headings)", () => {}); }
+        } catch (e) {
+          addMenuItem("  (Error loading headings)", () => {});
+        }
 
         // 3) Bottom Radio Selector (Sticky)
         addSeparator();
-        const footer = createEl("div", {}, { padding: "8px 12px", display: "flex", alignItems: "center", gap: "10px", backgroundColor: "rgba(128,128,128,0.05)" });
-        footer.appendChild(createEl("span", { textContent: "Insert at:" }, { fontSize: "11px", fontWeight: "bold" }));
-        
-        ["start", "end"].forEach(p => {
-          const label = createEl("label", {}, { display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", cursor: "pointer" });
-          const radio = createEl("input", { type: "radio", name: "pos", value: p, checked: curPos === p }) as HTMLInputElement;
+        const footer = createEl(
+          "div",
+          {},
+          {
+            padding: "8px 12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            backgroundColor: "rgba(128,128,128,0.05)",
+          },
+        );
+        footer.appendChild(
+          createEl(
+            "span",
+            { textContent: "Insert at:" },
+            { fontSize: "11px", fontWeight: "bold" },
+          ),
+        );
+
+        ["start", "end"].forEach((p) => {
+          const label = createEl(
+            "label",
+            {},
+            {
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              fontSize: "11px",
+              cursor: "pointer",
+            },
+          );
+          const radio = createEl("input", {
+            type: "radio",
+            name: "pos",
+            value: p,
+            checked: curPos === p,
+          }) as HTMLInputElement;
           radio.addEventListener("change", () => {
             Zotero.Prefs.set("betternotes.insertLinkPosition", p);
             renderPopup();
           });
           label.appendChild(radio);
-          label.appendChild(createEl("span", { textContent: p.charAt(0).toUpperCase() + p.slice(1) }));
+          label.appendChild(
+            createEl("span", {
+              textContent: p.charAt(0).toUpperCase() + p.slice(1),
+            }),
+          );
           footer.appendChild(label);
         });
         popup.appendChild(footer);
       } else if (!mainNote && mainNoteId > 0) {
-        addMenuItem("⚠ Main Note not found", () => Zotero.Prefs.set("betternotes.mainNoteID", "0"));
+        addMenuItem("⚠ Main Note not found", () =>
+          Zotero.Prefs.set("betternotes.mainNoteID", "0"),
+        );
       } else if (!mainNote) {
         addMenuItem("ℹ Set a Main Note first.", () => {});
       }
@@ -309,8 +504,14 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 
     await renderPopup();
 
-    const leaveHandler = () => { popup.remove(); wrapper.removeEventListener("mouseleave", leaveHandler); };
-    setTimeout(() => { if (popup.parentElement) wrapper.addEventListener("mouseleave", leaveHandler); }, 100);
+    const leaveHandler = () => {
+      popup.remove();
+      wrapper.removeEventListener("mouseleave", leaveHandler);
+    };
+    setTimeout(() => {
+      if (popup.parentElement)
+        wrapper.addEventListener("mouseleave", leaveHandler);
+    }, 100);
   });
   // --- END CUSTOM ADD LINK / MAIN NOTE BTN ---
 

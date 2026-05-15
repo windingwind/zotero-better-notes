@@ -213,7 +213,9 @@ async function getNoteTree(
 
   const noteLines = await getLinesInNote(note);
   if (!noteLines || !Array.isArray(noteLines)) {
-    ztoolkit.log("[getNoteTree] noteLines is undefined or invalid, returning empty tree");
+    ztoolkit.log(
+      "[getNoteTree] noteLines is undefined or invalid, returning empty tree",
+    );
     const tree = new TreeModel();
     return tree.parse({
       id: -1,

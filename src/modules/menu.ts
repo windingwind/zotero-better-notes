@@ -180,15 +180,25 @@ export function registerMenus() {
           if (!context.items?.[0]) return;
           const item = context.items[0];
           Zotero.Prefs.set("betternotes.mainNoteID", String(item.id));
-          
+
           // Add to history
-          const recentPref = Zotero.Prefs.get("betternotes.recentMainNoteIds") || Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") || "";
-          let recentIds = String(recentPref).split(",").filter(id => id.trim().length > 0);
+          const recentPref =
+            Zotero.Prefs.get("betternotes.recentMainNoteIds") ||
+            Zotero.Prefs.get("Knowledge4Zotero.recentMainNoteIds") ||
+            "";
+          let recentIds = String(recentPref)
+            .split(",")
+            .filter((id) => id.trim().length > 0);
           recentIds.unshift(String(item.id));
           recentIds = Array.from(new Set(recentIds)).slice(0, 10);
-          Zotero.Prefs.set("betternotes.recentMainNoteIds", recentIds.join(","));
-          
-          Zotero.getMainWindow().ZoteroPane.displayMessage("Note set as Main Note");
+          Zotero.Prefs.set(
+            "betternotes.recentMainNoteIds",
+            recentIds.join(","),
+          );
+
+          Zotero.getMainWindow().ZoteroPane.displayMessage(
+            "Note set as Main Note",
+          );
         },
       },
       {
@@ -200,7 +210,9 @@ export function registerMenus() {
         },
         onCommand: (_, context: BNMenuContext) => {
           if (!context.items?.[0]) return;
-          addon.hooks.onOpenNote(context.items[0].id, "tab", { forceTakeover: true });
+          addon.hooks.onOpenNote(context.items[0].id, "tab", {
+            forceTakeover: true,
+          });
         },
       },
       {
