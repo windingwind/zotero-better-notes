@@ -13,9 +13,9 @@ export default defineConfig({
   name: pkg.config.addonName,
   id: pkg.config.addonID,
   namespace: pkg.config.addonRef,
-  updateURL: `https://raw.githubusercontent.com/mnkhprre/zotero-better-notes/master/addon/update.json`,
+  updateURL: `https://raw.githubusercontent.com/mnkhprre/zotero-better-notes/master/update.json`,
   xpiDownloadLink:
-    "https://github.com/{{owner}}/{{repo}}/releases/download/v{{version}}/{{xpiName}}.xpi",
+    "https://github.com/mnkhprre/zotero-better-notes/releases/download/v{{version}}/{{xpiName}}.xpi",
 
   server: {
     asProxy: false,
