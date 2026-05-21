@@ -113,6 +113,7 @@ export type FluentMessageId =
   | 'menuAddNote-importMD'
   | 'menuAddNote-newTemplateItemNote'
   | 'menuAddNote-newTemplateStandaloneNote'
+  | 'menuCollection-exportNotes'
   | 'menuEditor-copy'
   | 'menuEditor-copyLine'
   | 'menuEditor-copySection'
