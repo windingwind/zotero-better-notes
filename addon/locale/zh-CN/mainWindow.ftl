@@ -18,6 +18,9 @@ menuAddNote-newTemplateStandaloneNote =
 menuAddNote-newTemplateItemNote =
     .label = 从模板新建条目笔记
 
+menuCollection-exportNotes =
+    .label = 导出分类中的笔记...
+
 menuTab-moveNewWindow =
     .label = 移动到 BN 新窗口
 menu-openNoteAsBNWindow =

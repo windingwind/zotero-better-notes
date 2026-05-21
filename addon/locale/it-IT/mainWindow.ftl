@@ -18,6 +18,9 @@ menuAddNote-newTemplateStandaloneNote =
 menuAddNote-newTemplateItemNote =
     .label = Nuova Nota Elemento da Template
 
+menuCollection-exportNotes =
+    .label = Export Notes in Collection...
+
 menuTab-moveNewWindow =
     .label = Move to BN New Window
 menu-openNoteAsBNWindow =

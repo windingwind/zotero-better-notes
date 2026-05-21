@@ -83,6 +83,32 @@ export function registerMenus() {
   });
 
   Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menuCollectionExportNotes`,
+    pluginID: config.addonID,
+    target: "main/library/collection",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menuCollection-exportNotes`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onShowing: (_, context) => {
+          context.setVisible(context.collectionTreeRow?.type === "collection");
+        },
+        onCommand: (_, context) => {
+          const collection = context.collectionTreeRow
+            ?.ref as Zotero.Collection | undefined;
+          if (!collection) {
+            return;
+          }
+          addon.hooks.onShowExportNoteOptions(
+            collection.getChildItems(true, false),
+          );
+        },
+      },
+    ],
+  });
+
+  Zotero.MenuManager.registerMenu({
     menuID: `${config.addonRef}-menuHelp`,
     pluginID: config.addonID,
     target: "main/menubar/help",
