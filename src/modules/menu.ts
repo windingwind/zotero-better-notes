@@ -95,8 +95,9 @@ export function registerMenus() {
           context.setVisible(context.collectionTreeRow?.type === "collection");
         },
         onCommand: (_, context) => {
-          const collection = context.collectionTreeRow
-            ?.ref as Zotero.Collection | undefined;
+          const collection = context.collectionTreeRow?.ref as
+            | Zotero.Collection
+            | undefined;
           if (!collection) {
             return;
           }
