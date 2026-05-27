@@ -108,7 +108,9 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
 }
 
 async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
-  const tabs = win.Zotero_Tabs._tabs;
+  // Snapshot the live `_tabs` array. Without this, the reopened tabs we
+  // append below get re-iterated by the loop and the takeover recurses.
+  const tabs = [...win.Zotero_Tabs._tabs];
 
   for (const tab of tabs) {
     if (!tab.type.startsWith("note")) {
@@ -121,7 +123,26 @@ async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
       continue;
     }
 
-    const currentIndex = tabs.indexOf(tab);
+    // Wait for the editor to fully initialize before closing the tab. On
+    // Zotero 10, session-restored note tabs reach `type === "note"`
+    // before their editor instance's `_initPromise` resolves. Closing
+    // mid-init triggers `unregisterEditorInstance(this)` against a
+    // torn-down iframe and produces "can't access dead object" / "tab is
+    // undefined" cascades that leave the reopened tab blank — most
+    // visible when more than one note tab is session-restored (see issue
+    // #1579).
+    try {
+      const editor = Zotero.Notes._editorInstances.find(
+        (e) => e && (e as any)._tabID === tab.id,
+      ) as any;
+      if (editor && editor._initPromise) {
+        await editor._initPromise;
+      }
+    } catch (e) {
+      // Initialization errors are non-fatal here; still take over.
+    }
+
+    const currentIndex = win.Zotero_Tabs._tabs.indexOf(tab);
     const isSelected = win.Zotero_Tabs.selectedID === tab.id ? true : false;
 
     win.Zotero_Tabs.close(tab.id);
