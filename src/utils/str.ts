@@ -40,6 +40,26 @@ export function formatPath(path: string, suffix: string = "") {
 }
 
 export async function getFileContent(path: string) {
+  // Zotero 10's `Zotero.File.getContentsAsync` throws NS_ERROR_FAILURE
+  // inside `xpcom/http.js:33` when passed a `chrome:`, `resource:`,
+  // `jar:` or `file:` URI: the URI parser accesses `.username`, and these
+  // schemes have no userinfo component. The bundled plugin URI we use to
+  // load `editorScript.js` is a `jar:file://.../*.xpi!/...` form on an
+  // installed XPI, so this path fails on every Zotero 10 install and
+  // aborts editor-script injection before the `<script>` tag is appended
+  // — silently killing hover-preview, magic key, markdown paste, image
+  // preview, and the in-editor toolbar (see issue #1579).
+  //
+  // Use `fetch()` for URI-shaped paths (it accepts chrome / resource /
+  // jar / file fine in the privileged context) and keep the original
+  // `getContentsAsync` for OS file paths.
+  if (typeof path === "string" && /^(chrome|resource|file|jar):/.test(path)) {
+    const res = await fetch(path);
+    if (!res.ok) {
+      throw new Error(`getFileContent(${path}) failed: ${res.status}`);
+    }
+    return await res.text();
+  }
   const contentOrXHR = await Zotero.File.getContentsAsync(path);
   const content =
     typeof contentOrXHR === "string"
