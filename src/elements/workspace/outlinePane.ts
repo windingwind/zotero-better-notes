@@ -211,15 +211,16 @@ export class OutlinePane extends PluginCEBase {
       this.messageHandler,
     );
 
-    this._outlineContainer.setAttribute(
-      "src",
-      OutlinePane.outlineSources[this.outlineType],
-    );
+    const src = OutlinePane.outlineSources[this.outlineType];
+    this._outlineContainer.setAttribute("src", src);
 
+    const targetHref = src.toLowerCase();
     await waitUtilAsync(
       () =>
+        this._outlineContainer.contentWindow?.location.href.toLowerCase() ===
+          targetHref &&
         this._outlineContainer.contentWindow?.document.readyState ===
-        "complete",
+          "complete",
     );
     this._outlineContainer.contentWindow?.addEventListener(
       "message",
