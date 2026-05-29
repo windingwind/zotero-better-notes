@@ -44,7 +44,9 @@ annotation-autoAnnotation =
     .label = 自动添加新批注到工作区笔记
 
 annotationNote-title = 从注释生成笔记
-annotationNote-enableTagSync = 
+annotationNote-enableCreateNoteButton =
+    .label = 在阅读器的注释上显示“从注释生成笔记”按钮
+annotationNote-enableTagSync =
     .label = 保持注释生成的笔记的标签与原始注释同步
 
 about-title = 关于

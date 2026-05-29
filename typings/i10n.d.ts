@@ -12,6 +12,7 @@ export type FluentMessageId =
   | 'alert-templateEditor-unsaved'
   | 'annotation-autoAnnotation'
   | 'annotation-title'
+  | 'annotationNote-enableCreateNoteButton'
   | 'annotationNote-enableTagSync'
   | 'annotationNote-title'
   | 'autoMDFileName'

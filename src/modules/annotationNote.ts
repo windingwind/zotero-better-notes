@@ -11,6 +11,9 @@ function registerReaderAnnotationButton() {
   Zotero.Reader.registerEventListener(
     "renderSidebarAnnotationHeader",
     (event) => {
+      if (!getPref("annotationNote.enableCreateNoteButton")) {
+        return;
+      }
       const { doc, append, params, reader } = event;
       const workspaceUID = getWorkspaceUID(doc.documentElement);
       // TEMP: If not many annotations, create the button immediately

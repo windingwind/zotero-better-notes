@@ -44,7 +44,9 @@ annotation-autoAnnotation =
     .label = Automatically add new annotations to workspace note
 
 annotationNote-title = Note from Annotation
-annotationNote-enableTagSync = 
+annotationNote-enableCreateNoteButton =
+    .label = Show the "Create note from annotation" button on annotations in the reader
+annotationNote-enableTagSync =
     .label = Keep tags of note from annotation in sync with the original annotation
 
 about-title = About
