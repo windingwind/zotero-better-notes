@@ -40,12 +40,8 @@ export function formatPath(path: string, suffix: string = "") {
 }
 
 export async function getFileContent(path: string) {
-  const contentOrXHR = await Zotero.File.getContentsAsync(path);
-  const content =
-    typeof contentOrXHR === "string"
-      ? contentOrXHR
-      : (contentOrXHR as any as XMLHttpRequest).response;
-  return content;
+  const res = await fetch(path);
+  return await res.text();
 }
 
 export function randomString(len: number, seed?: string, chars?: string) {
