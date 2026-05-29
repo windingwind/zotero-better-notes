@@ -108,7 +108,7 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
 }
 
 async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
-  const tabs = win.Zotero_Tabs._tabs;
+  const tabs = [...win.Zotero_Tabs._tabs];
 
   for (const tab of tabs) {
     if (!tab.type.startsWith("note")) {
@@ -121,14 +121,19 @@ async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
       continue;
     }
 
-    const currentIndex = tabs.indexOf(tab);
+    const editor = Zotero.Notes.getByTabID(tab.id);
+    if (editor?._initPromise) {
+      await editor._initPromise;
+    }
+
+    const currentIndex = win.Zotero_Tabs._tabs.indexOf(tab);
     const isSelected = win.Zotero_Tabs.selectedID === tab.id ? true : false;
 
     win.Zotero_Tabs.close(tab.id);
 
     await wait.waitUntilAsync(() => !win.Zotero_Tabs._getTab(tab.id).tab);
 
-    Zotero.Notes.open(
+    await Zotero.Notes.open(
       item.id,
       {},
       {
