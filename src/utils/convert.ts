@@ -136,10 +136,23 @@ async function note2md(
     withYAMLHeader?: boolean;
     cachedYAMLHeader?: Record<string, any>;
     skipSavingImages?: boolean;
+    filename?: string;
   } = {},
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = await note2rehype(noteStatus.content);
+
+  var attachmentFolder = getPref("syncAttachmentFolder") as string
+  if (options.filename) {
+    var oldDir = new String(attachmentFolder)
+    attachmentFolder = oldDir.replace(/\${filename}/g, options.filename.replace(/\.md$/gm, '')).valueOf()  // substitute ${filename} & trim '.md'
+  }
+
+  const hasImage = noteItem.getNote().includes("<img")
+  if (hasImage) {
+    await IOUtils.makeDirectory(jointPath(dir, attachmentFolder));
+  }
+
   processN2MRehypeHighlightNodes(
     getN2MRehypeHighlightNodes(rehype as HRoot),
     NodeMode.direct,
@@ -156,7 +169,7 @@ async function note2md(
   await processN2MRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
     noteItem.libraryID,
-    jointPath(dir, getPref("syncAttachmentFolder") as string),
+    jointPath(dir, attachmentFolder),
     options.skipSavingImages,
     false,
     NodeMode.direct,
@@ -248,10 +261,22 @@ async function note2latex(
     withYAMLHeader?: boolean;
     cachedYAMLHeader?: Record<string, any>;
     skipSavingImages?: boolean;
+    filename?: string;
   } = {},
 ) {
   const noteStatus = addon.api.sync.getNoteStatus(noteItem.id)!;
   const rehype = await note2rehype(noteStatus.content);
+
+  var attachmentFolder = getPref("syncAttachmentFolder") as string
+  if (options.filename) {
+    var oldDir = new String(attachmentFolder)
+    attachmentFolder = oldDir.replace(/\${filename}/g, options.filename.replace(/\.tex$/gm, '')).valueOf()  // substitute ${filename} & trim '.tex'
+  }
+
+  const hasImage = noteItem.getNote().includes("<img")
+  if (hasImage) {
+    await IOUtils.makeDirectory(jointPath(dir, attachmentFolder));
+  }
 
   const bibString = await processN2LRehypeCitationNodes(
     getN2MRehypeCitationNodes(rehype as HRoot),
@@ -263,7 +288,7 @@ async function note2latex(
   await processN2LRehypeImageNodes(
     getN2MRehypeImageNodes(rehype),
     noteItem.libraryID,
-    jointPath(dir, getPref("syncAttachmentFolder") as string),
+    jointPath(dir, attachmentFolder),
     options.skipSavingImages,
     false,
     NodeMode.direct,
@@ -728,12 +753,14 @@ async function processN2MRehypeImageNodes(
       } else {
         newFile = (await Zotero.File.copyToUnique(oldFile, newAbsPath)).path;
       }
+      var newFileSplits = PathUtils.split(newFile)
+      var newFilename = newFileSplits.pop(), newFileParentFolder = newFileSplits.pop()
       newFile = formatPath(
         absolutePath
           ? newFile
           : jointPath(
-              getPref("syncAttachmentFolder") as string,
-              PathUtils.split(newFile).pop() || "",
+              newFileParentFolder || getPref("syncAttachmentFolder") as string,
+              newFilename || "",
             ),
       );
     } catch (e) {
@@ -1332,12 +1359,14 @@ async function processN2LRehypeImageNodes(
       } else {
         newFile = (await Zotero.File.copyToUnique(oldFile, newAbsPath)).path;
       }
+      var newFileSplits = PathUtils.split(newFile)
+      var newFilename = newFileSplits.pop(), newFileParentFolder = newFileSplits.pop()
       newFile = formatPath(
         absolutePath
           ? newFile
           : jointPath(
-              getPref("syncAttachmentFolder") as string,
-              PathUtils.split(newFile).pop() || "",
+              newFileParentFolder || getPref("syncAttachmentFolder") as string,
+              newFilename || "",
             ),
       );
     } catch (e) {
