@@ -20,6 +20,7 @@ import {
   syncAnnotationNoteTags,
 } from "./modules/annotationNote";
 import { setSyncing, callSyncing } from "./modules/sync/hooks";
+import { syncLinkedNoteOnEdit } from "./modules/sync/autoLink";
 import { showTemplatePicker } from "./modules/template/picker";
 import { showImageViewer } from "./modules/imageViewer";
 import { showExportNoteOptions } from "./modules/export/exportWindow";
@@ -168,6 +169,7 @@ async function onNotify(
       });
       for (const item of modifiedNotes) {
         await addon.api.relation.updateNoteLinkRelation(item.id);
+        await syncLinkedNoteOnEdit(item.id);
       }
     }
   }

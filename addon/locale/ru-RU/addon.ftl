@@ -60,6 +60,9 @@ sync-running-hint-diff=Подтвердить слияние
 sync-running-hint-finish=Финиш
 sync-running-hint-synced=Синхронизировано
 sync-running-hint-upToDate=Обновить
+sync-autoLink-selectFolder-title=Better Notes — Авто-синхронизация связанной заметки
+sync-autoLink-selectFolder-text=Связанные заметки синхронизируются в несколько разных папок. Выберите, в какую папку синхронизировать новые связанные заметки:
+sync-autoLink-added-hint=Связанная заметка «{ $title }» добавлена в синхронизацию: { $dir }
 
 workspace-switchOutline=Переключить режим Набросок
 workspace-saveOutlineImage=Сохранить изображение

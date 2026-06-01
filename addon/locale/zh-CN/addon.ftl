@@ -58,6 +58,9 @@ sync-running-hint-diff=确认合并
 sync-running-hint-finish=同步完成
 sync-running-hint-synced=已同步
 sync-running-hint-upToDate=已最新
+sync-autoLink-selectFolder-title=Better Notes - 自动同步链接笔记
+sync-autoLink-selectFolder-text=链接的笔记被同步到了多个不同的文件夹。请选择要将新链接的笔记同步到哪个文件夹：
+sync-autoLink-added-hint=链接笔记“{ $title }”已添加到同步：{ $dir }
 
 fileInterface-sync=同步到
 

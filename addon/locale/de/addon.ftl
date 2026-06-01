@@ -60,6 +60,9 @@ sync-running-hint-diff = Zusammenführung bestätigen
 sync-running-hint-finish = Beenden
 sync-running-hint-synced = Synchronisiert
 sync-running-hint-upToDate = Aktuell
+sync-autoLink-selectFolder-title = Better Notes – Verknüpfte Notiz automatisch synchronisieren
+sync-autoLink-selectFolder-text = Die verknüpften Notizen werden in mehrere verschiedene Ordner synchronisiert. Wählen Sie, in welchen Ordner die neu verknüpften Notizen synchronisiert werden sollen:
+sync-autoLink-added-hint = Verknüpfte Notiz „{ $title }“ zur Synchronisierung hinzugefügt: { $dir }
 
 workspace-switchOutline = Gliederungsmodus umschalten
 workspace-saveOutlineImage = Bild speichern

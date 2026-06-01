@@ -1,6 +1,7 @@
 pref("__prefsPrefix__.syncNoteIds", "");
 pref("__prefsPrefix__.syncPeriodSeconds", 30);
 pref("__prefsPrefix__.syncAttachmentFolder", "attachments");
+pref("__prefsPrefix__.sync.autoSyncLinkedNotes", false);
 
 pref("__prefsPrefix__.autoAnnotation", false);
 

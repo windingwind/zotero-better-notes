@@ -60,6 +60,9 @@ sync-running-hint-diff = Birleşmeyi Onayla
 sync-running-hint-finish = Bitir
 sync-running-hint-synced = Senkronize Edildi
 sync-running-hint-upToDate = Güncel
+sync-autoLink-selectFolder-title = Better Notes - Bağlı Notu Otomatik Eşitle
+sync-autoLink-selectFolder-text = Bağlı notlar birkaç farklı klasöre eşitleniyor. Yeni bağlı notların hangi klasöre eşitleneceğini seçin:
+sync-autoLink-added-hint = Bağlı not "{ $title }" şu konuma eşitlemeye eklendi: { $dir }
 
 workspace-switchOutline = Anahat Moduna Geç
 workspace-saveOutlineImage = Resmi Kaydet

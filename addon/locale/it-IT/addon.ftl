@@ -56,6 +56,9 @@ sync-running-hint-diff = Conferma unione
 sync-running-hint-finish = Terminato
 sync-running-hint-synced = Sincronizzato
 sync-running-hint-upToDate = Aggiornato
+sync-autoLink-selectFolder-title = Better Notes - Sincronizzazione automatica nota collegata
+sync-autoLink-selectFolder-text = Le note collegate sono sincronizzate in diverse cartelle. Scegli in quale cartella sincronizzare le note appena collegate:
+sync-autoLink-added-hint = Nota collegata "{ $title }" aggiunta alla sincronizzazione in { $dir }
 
 workspace-switchOutline = Cambia modalità dello schema
 workspace-saveOutlineImage = Salva immagine

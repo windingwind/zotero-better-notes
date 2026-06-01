@@ -60,6 +60,9 @@ sync-running-hint-diff = Confirm Merge
 sync-running-hint-finish = Finish
 sync-running-hint-synced = Synced
 sync-running-hint-upToDate = Up To Date
+sync-autoLink-selectFolder-title = Better Notes - Auto-Sync Linked Note
+sync-autoLink-selectFolder-text = The linked notes are synced to several different folders. Choose which folder to sync the newly linked notes to:
+sync-autoLink-added-hint = Linked note "{ $title }" added to sync at { $dir }
 
 workspace-switchOutline = Switch Outline Mode
 workspace-saveOutlineImage = Save Image
