@@ -85,6 +85,10 @@ import {
   linkAnnotationToTarget,
   updateNoteLinkRelation,
 } from "./utils/relation";
+import {
+  registerEditorSection,
+  unregisterEditorSection,
+} from "./modules/editor/section";
 import { getWorkspaceByUID } from "./utils/workspace";
 import { getString } from "./utils/locale";
 import { showRestartHint } from "./utils/hint";
@@ -171,6 +175,8 @@ const editor = {
   getTextBetweenLines,
   moveHeading,
   updateHeadingTextAtLine,
+  registerSection: registerEditorSection,
+  unregisterSection: unregisterEditorSection,
 };
 
 const note = {

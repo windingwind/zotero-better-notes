@@ -2,7 +2,15 @@ import { config } from "../../../package.json";
 import { getWorkspaceUID } from "../../utils/workspace";
 
 export function registerNoteLinkSection(type: "inbound" | "outbound") {
-  const key = Zotero.ItemPaneManager.registerSection({
+  return Zotero.ItemPaneManager.registerSection(
+    getNoteLinkSectionOptions(type),
+  );
+}
+
+export function getNoteLinkSectionOptions(
+  type: "inbound" | "outbound",
+): _ZoteroTypes.ItemPaneManagerSection.ItemDetailsSectionOptions<string> {
+  return {
     paneID: `bn-note-${type}-link`,
     pluginID: config.addonID,
     bodyXHTML: `
@@ -45,7 +53,7 @@ export function registerNoteLinkSection(type: "inbound" | "outbound") {
             const item = Zotero.Items.get(body.dataset.itemID || "");
             if (
               item &&
-              // @ts-ignore
+              // @ts-ignore custom notifier event from the relation worker
               event === "updateBNRelation" &&
               type === "item" &&
               (ids as number[]).includes(item.id)
@@ -90,7 +98,7 @@ export function registerNoteLinkSection(type: "inbound" | "outbound") {
         setCount: makeSetCount(setL10nArgs),
       });
     },
-  });
+  };
 }
 
 async function renderSection(
@@ -160,9 +168,13 @@ async function renderSection(
     label.title = linkData.url;
 
     const box = doc.createElement("div");
-    box.addEventListener("click", () =>
-      addon.hooks.onOpenNote(targetItem.id, "preview", linkParams),
-    );
+    box.addEventListener("click", () => {
+      if (box.closest("note-editor")) {
+        box.ownerGlobal?.ZoteroPane?.selectItem(targetItem.id);
+      } else {
+        addon.hooks.onOpenNote(targetItem.id, "preview", linkParams);
+      }
+    });
     box.className = "box keyboard-clickable";
     box.setAttribute("tabindex", "0");
     box.append(icon, label);

@@ -4,6 +4,7 @@ import { initEditorPlugins } from "./plugins";
 import { initEditorMenu } from "./menu";
 import { initEditorPopup } from "./popup";
 import { initEditorToolbar } from "./toolbar";
+import { initEditorSections } from "./section";
 
 let prefsObserver = Symbol();
 
@@ -54,6 +55,7 @@ async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
     initEditorPopup(editor);
     initEditorMenu(editor);
     initEditorPlugins(editor);
+    await initEditorSections(editor);
   } catch (e) {
     const isDead =
       !Zotero.Notes._editorInstances.includes(editor) ||

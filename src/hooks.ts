@@ -7,6 +7,10 @@ import {
   unregisterEditorInstanceHook,
 } from "./modules/editor/initalize";
 import {
+  registerBuiltinEditorSections,
+  unregisterBuiltinEditorSections,
+} from "./modules/editor/builtinSections";
+import {
   importTemplateFromClipboard,
   initTemplates,
 } from "./modules/template/controller";
@@ -66,14 +70,18 @@ async function onStartup() {
 
   registerEditorInstanceHook();
 
+  // Inbound/outbound link and relation sections: shown in the item pane /
+  // context pane (standalone window right side, note tabs) via ItemPaneManager...
+  registerNoteRelation();
+  registerNoteLinkSection("inbound");
+  registerNoteLinkSection("outbound");
+  // ...and in the main window item pane note view via the editor section
+  // mechanism (where no context pane exists).
+  registerBuiltinEditorSections();
+
   registerPrefsWindow();
 
   registerReaderAnnotationButton();
-
-  registerNoteRelation();
-
-  registerNoteLinkSection("inbound");
-  registerNoteLinkSection("outbound");
 
   patchNotes();
 
@@ -95,7 +103,11 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
     win,
   );
 
-  win.document.l10n?.addResourceIds([`${config.addonRef}-mainWindow.ftl`]);
+  win.document.l10n?.addResourceIds([
+    `${config.addonRef}-mainWindow.ftl`,
+    // Note editor section headers (inbound/outbound link, relation) live here.
+    `${config.addonRef}-noteRelation.ftl`,
+  ]);
 
   // Create ztoolkit for every window
   addon.data.ztoolkit = createZToolkit();
@@ -125,6 +137,8 @@ function onShutdown(): void {
   closeRelationServer();
   closeParsingServer();
   closeConvertServer();
+
+  unregisterBuiltinEditorSections();
 
   unregisterEditorInstanceHook();
 

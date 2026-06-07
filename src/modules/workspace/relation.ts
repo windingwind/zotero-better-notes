@@ -4,7 +4,13 @@ import { wait } from "zotero-plugin-toolkit";
 import { getWorkspaceUID } from "../../utils/workspace";
 
 export function registerNoteRelation() {
-  const key = Zotero.ItemPaneManager.registerSection({
+  return Zotero.ItemPaneManager.registerSection(
+    getNoteRelationSectionOptions(),
+  );
+}
+
+export function getNoteRelationSectionOptions(): _ZoteroTypes.ItemPaneManagerSection.ItemDetailsSectionOptions<string> {
+  return {
     paneID: `bn-note-relation`,
     pluginID: config.addonID,
     header: {
@@ -39,7 +45,7 @@ export function registerNoteRelation() {
             const item = Zotero.Items.get(body.dataset.itemID || "");
             if (
               item &&
-              // @ts-ignore
+              // @ts-ignore custom notifier event from the relation worker
               event === "updateBNRelation" &&
               type === "item" &&
               (ids as number[]).includes(item.id)
@@ -60,7 +66,7 @@ export function registerNoteRelation() {
       }
     },
     onItemChange: ({ body, item, tabType, setEnabled }) => {
-      if (getWorkspaceUID(body)) {
+      if (getWorkspaceUID(body) && item?.isNote()) {
         setEnabled(true);
         body.dataset.itemID = String(item.id);
         return;
@@ -91,7 +97,7 @@ export function registerNoteRelation() {
       }
       await renderGraph(body, item);
     },
-  });
+  };
 }
 
 async function renderGraph(body: HTMLElement, item: Zotero.Item) {
