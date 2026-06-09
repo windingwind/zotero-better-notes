@@ -16,6 +16,7 @@ declare namespace _ZoteroTypes {
       "workspace.outline.expandLevel": number;
       "workspace.outline.keepLinks": boolean;
       "editor.noteLinkPreviewType": string;
+      "editor.paneNoteSection": boolean;
       "editor.useMagicKey": boolean;
       "editor.useMagicKeyShortcut": boolean;
       "editor.useMarkdownPaste": boolean;

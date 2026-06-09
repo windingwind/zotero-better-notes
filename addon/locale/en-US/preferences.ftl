@@ -16,6 +16,8 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = Never
+editor-paneNoteSection = 
+    .label = Show note sections in the right-side editor pane
 editor-useMagicKey = 
     .label = Use magic key "/" to show command palette
 editor-useMagicKeyShortcut = 
