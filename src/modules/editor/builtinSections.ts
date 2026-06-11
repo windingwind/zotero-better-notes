@@ -1,10 +1,14 @@
 import { getNoteLinkSectionOptions } from "../workspace/link";
 import { getNoteRelationSectionOptions } from "../workspace/relation";
 import { registerEditorSection, unregisterEditorSection } from "./section";
+import { getPref } from "../../utils/prefs";
 
 const registeredPaneIDs: string[] = [];
 
 export function registerBuiltinEditorSections() {
+  if (!getPref("editor.paneNoteSection")) {
+    return;
+  }
   const sections = [
     getNoteLinkSectionOptions("inbound"),
     getNoteLinkSectionOptions("outbound"),

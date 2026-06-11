@@ -35,6 +35,7 @@ export type FluentMessageId =
   | 'editor-noteLinkPreview-disable'
   | 'editor-noteLinkPreview-hover'
   | 'editor-noteLinkPreviewType'
+  | 'editor-paneNoteSection'
   | 'editor-pinTable-label'
   | 'editor-pinTableLeft'
   | 'editor-pinTableTop'

@@ -11,6 +11,7 @@ pref("__prefsPrefix__.workspace.outline.expandLevel", 2);
 pref("__prefsPrefix__.workspace.outline.keepLinks", true);
 
 pref("__prefsPrefix__.editor.noteLinkPreviewType", "hover");
+pref("__prefsPrefix__.editor.paneNoteSection", false);
 pref("__prefsPrefix__.editor.useMagicKey", true);
 pref("__prefsPrefix__.editor.useMagicKeyShortcut", true);
 pref("__prefsPrefix__.editor.useMarkdownPaste", true);

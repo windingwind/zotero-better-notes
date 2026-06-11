@@ -16,6 +16,8 @@ editor-noteLinkPreview-ctrl =
     }
 editor-noteLinkPreview-disable = 
     .label = 从不
+editor-paneNoteSection = 
+    .label = 在条目/内容窗格笔记编辑器中显示入链/出链/关系图
 editor-useMagicKey =
     .label = 使用魔法键 "/" 显示命令面板
 editor-useMagicKeyShortcut = 
