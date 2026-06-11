@@ -5,6 +5,7 @@ import { initEditorMenu } from "./menu";
 import { initEditorPopup } from "./popup";
 import { initEditorToolbar } from "./toolbar";
 import { initEditorSections } from "./section";
+import { initEditorMagicKeyCommands } from "./magicKey";
 
 let prefsObserver = Symbol();
 
@@ -55,6 +56,7 @@ async function onEditorInstanceCreated(editor: Zotero.EditorInstance) {
     initEditorPopup(editor);
     initEditorMenu(editor);
     initEditorPlugins(editor);
+    await initEditorMagicKeyCommands(editor);
     await initEditorSections(editor);
   } catch (e) {
     const isDead =

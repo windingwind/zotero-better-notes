@@ -89,6 +89,10 @@ import {
   registerEditorSection,
   unregisterEditorSection,
 } from "./modules/editor/section";
+import {
+  registerMagicKeyCommand,
+  unregisterMagicKeyCommand,
+} from "./modules/editor/magicKey";
 import { getWorkspaceByUID } from "./utils/workspace";
 import { getString } from "./utils/locale";
 import { showRestartHint } from "./utils/hint";
@@ -177,6 +181,8 @@ const editor = {
   updateHeadingTextAtLine,
   registerSection: registerEditorSection,
   unregisterSection: unregisterEditorSection,
+  registerMagicKeyCommand,
+  unregisterMagicKeyCommand,
 };
 
 const note = {

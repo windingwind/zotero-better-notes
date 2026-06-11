@@ -12,6 +12,7 @@ import {
 import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { initPlugins } from "./editor/plugins";
+import { setMagicKeyCommands } from "./editor/magicKey";
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -394,6 +395,7 @@ export const BetterNotesEditorAPI = {
   getNodeFromHTML,
   setSelection,
   initPlugins,
+  setMagicKeyCommands,
   updateTableSize,
 };
 

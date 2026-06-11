@@ -10,7 +10,12 @@ import { Popup } from "./popup";
 import { formatMessage } from "./editorStrings";
 import { ResolvedPos } from "prosemirror-model";
 
-export { initMagicKeyPlugin, MagicKeyOptions };
+export {
+  initMagicKeyPlugin,
+  setMagicKeyCommands,
+  MagicKeyOptions,
+  MagicCommand,
+};
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -34,6 +39,15 @@ interface MagicCommand {
   icon?: string;
   command: (state: EditorState) => void | Transaction;
   enabled?: (state: EditorState) => boolean;
+}
+
+// Custom commands registered from the main context via
+// BetterNotesEditorAPI.setMagicKeyCommands. Shared by all PluginState
+// instances of this editor window.
+let customCommands: MagicCommand[] = [];
+
+function setMagicKeyCommands(commands: MagicCommand[]) {
+  customCommands = commands || [];
 }
 
 class PluginState {
@@ -217,7 +231,7 @@ class PluginState {
   ];
 
   get commands() {
-    return this._commands.filter((command) => {
+    return [...this._commands, ...customCommands].filter((command) => {
       if (command.enabled) {
         return command.enabled(this.state);
       }

@@ -18,6 +18,7 @@ export {
   moveHeading,
   updateHeadingTextAtLine,
   getEditorCore,
+  getEditorAPI,
   getRangeAtCursor,
   getLineAtCursor,
   getSectionAtCursor,
