@@ -1,5 +1,6 @@
 import { PatchHelper } from "zotero-plugin-toolkit";
 import { getPref } from "../../utils/prefs";
+import { config } from "../../../package.json";
 
 export function patchExportItems(win: _ZoteroTypes.MainWindow) {
   const Zotero_File_Interface = win.Zotero_File_Interface;
@@ -24,5 +25,6 @@ export function patchExportItems(win: _ZoteroTypes.MainWindow) {
         return origin.apply(this);
       },
     enabled: true,
+    pluginID: config.addonID,
   });
 }

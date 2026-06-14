@@ -1,7 +1,6 @@
 import {
   BasicTool,
   UITool,
-  MenuManager,
   ClipboardHelper,
   FilePickerHelper,
   ProgressWindowHelper,
@@ -42,7 +41,6 @@ function initZToolkit(_ztoolkit: ReturnType<typeof createZToolkit>) {
 
 class MyToolkit extends BasicTool {
   UI: UITool;
-  Menu: MenuManager;
   Clipboard: typeof ClipboardHelper;
   FilePicker: typeof FilePickerHelper;
   ProgressWindow: typeof ProgressWindowHelper;
@@ -54,7 +52,6 @@ class MyToolkit extends BasicTool {
   constructor() {
     super();
     this.UI = new UITool(this);
-    this.Menu = new MenuManager(this);
     this.Clipboard = ClipboardHelper;
     this.FilePicker = FilePickerHelper;
     this.ProgressWindow = ProgressWindowHelper;

@@ -1,6 +1,7 @@
 import { PatchHelper, wait } from "zotero-plugin-toolkit";
 import type { OutlinePane } from "../../elements/workspace/outlinePane";
 import { getWorkspaceByUID, WorkspaceTab } from "../../utils/workspace";
+import { config } from "../../../package.json";
 
 export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
   const NoteEditorProto =
@@ -102,6 +103,7 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
         noteEditor.setToggleContextPaneButtonMode();
       },
     enabled: true,
+    pluginID: config.addonID,
   });
 
   updateExistingNoteTabs(win);

@@ -1,3 +1,4 @@
+import { PatchHelper } from "zotero-plugin-toolkit";
 import { initEditorImagePreviewer } from "./image";
 import { injectEditorCSS, injectEditorScripts } from "./inject";
 import { initEditorPlugins } from "./plugins";
@@ -6,23 +7,22 @@ import { initEditorPopup } from "./popup";
 import { initEditorToolbar } from "./toolbar";
 import { initEditorSections } from "./section";
 import { initEditorMagicKeyCommands } from "./magicKey";
+import { config } from "../../../package.json";
 
 let prefsObserver = Symbol();
 
 export function registerEditorInstanceHook() {
-  Zotero.Notes.registerEditorInstance = new Proxy(
-    Zotero.Notes.registerEditorInstance,
-    {
-      apply: (
-        target,
-        thisArg,
-        argumentsList: [instance: Zotero.EditorInstance],
-      ) => {
-        target.apply(thisArg, argumentsList);
-        argumentsList.forEach(onEditorInstanceCreated);
+  new PatchHelper().setData({
+    target: Zotero.Notes,
+    funcSign: "registerEditorInstance",
+    patcher: (origin) =>
+      function (this: typeof Zotero.Notes, instance: Zotero.EditorInstance) {
+        origin.apply(this, [instance]);
+        onEditorInstanceCreated(instance);
       },
-    },
-  );
+    enabled: true,
+    pluginID: config.addonID,
+  });
   Zotero.Notes._editorInstances.forEach(onEditorInstanceCreated);
 
   // For unknown reasons, the css becomes undefined after font size change
