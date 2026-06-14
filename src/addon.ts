@@ -5,7 +5,7 @@ import { SyncDataType } from "./modules/sync/managerWindow";
 import hooks from "./hooks";
 import api from "./api";
 import { createZToolkit } from "./utils/ztoolkit";
-import { MessageHelper } from "zotero-plugin-toolkit/dist/helpers/message";
+import { MessageHelper } from "zotero-plugin-toolkit";
 import type { handlers as parsingHandlers } from "./extras/parsingWorker";
 import type { handlers as relationHandlers } from "./extras/relationWorker";
 import type { handlers as convertHandlers } from "./extras/convertWorker/main";
