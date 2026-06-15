@@ -11,7 +11,14 @@ import {
 
 const _require = window.require;
 const CollectionTree = _require("chrome://zotero/content/collectionTree.js");
-const ItemTree = _require("chrome://zotero/content/itemTree.js");
+// Zotero moved collection-view behavior into a `CollectionViewItemTree` subclass.
+// Fall back to `ItemTree` for older versions.
+let ItemTree: any;
+try {
+  ItemTree = _require("chrome://zotero/content/collectionViewItemTree.js");
+} catch {
+  ItemTree = _require("chrome://zotero/content/itemTree.js");
+}
 const { getCSSItemTypeIcon } = _require("components/icons");
 
 const persistKey = "persist.notePicker";
