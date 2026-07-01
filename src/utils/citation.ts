@@ -25,11 +25,12 @@ export async function parseCitationHTML(
   let i = 0;
   for (const item of items) {
     if (item.isRegularItem()) {
+      // `args` is optional and may be shorter than the item list. See #1597
       const currentArgs = {
-        locator: args[i].locator || "",
-        label: args[i].label || "",
-        prefix: args[i].prefix || "",
-        suffix: args[i].suffix || "",
+        locator: args[i]?.locator || "",
+        label: args[i]?.label || "",
+        prefix: args[i]?.prefix || "",
+        suffix: args[i]?.suffix || "",
       };
       // @ts-ignore
       const itemData = Zotero.Utilities.Item.itemToCSLJSON(item);

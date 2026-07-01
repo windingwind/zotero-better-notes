@@ -423,6 +423,20 @@ function replace(targetNode: any, sourceNode: any) {
   targetNode.children = sourceNode.children;
 }
 
+// Replace every `<a>` in `nodes` with its children, so re-wrapping never
+// produces nested anchors. See #1597
+function unwrapAnchorNodes(nodes: any[]): any[] {
+  const result: any[] = [];
+  for (const node of nodes || []) {
+    if (node?.type === "element" && node.tagName === "a") {
+      result.push(...unwrapAnchorNodes(node.children));
+    } else {
+      result.push(node);
+    }
+  }
+  return result;
+}
+
 function getN2MRehypeHighlightNodes(rehype: HRoot) {
   const nodes: any[] | null | undefined = [];
   visit(
@@ -614,7 +628,9 @@ function processN2MRehypeCitationNodes(
         }
         const newNode = h("span");
         replace(newNode, child);
-        newNode.children = [h("a", { href: uris[i] }, child.children)];
+        newNode.children = [
+          h("a", { href: uris[i] }, unwrapAnchorNodes(child.children)),
+        ];
         return newNode;
       }),
       { type: "text", value: ")" },
@@ -865,7 +881,9 @@ async function processM2NRehypeCitationNodes(
     return;
   }
   for (const node of nodes) {
-    let importFailed = false;
+    // Default to failed so the anchor-stripping fallback runs unless the
+    // rebuild actually succeeds (avoids leaking export links). See #1597
+    let importFailed = true;
     if (isImport) {
       try {
         // {
@@ -884,13 +902,18 @@ async function processM2NRehypeCitationNodes(
         const ids = dataCitation.citationItems.map((c: { uris: string[] }) =>
           Zotero.URI.getURIItemID(c.uris[0]),
         );
-        const html = await addon.api.convert.item2citation(ids, dataCitation);
-        if (html) {
-          const newNode = await note2rehype(html);
-          // root -> p -> span(cite, this is what we actually want)
-          replace(node, (newNode.children[0] as any).children[0]);
-        } else {
-          importFailed = true;
+        // Pass the per-item args list, not the whole citation object.
+        const html = await addon.api.convert.item2citation(
+          ids,
+          dataCitation.citationItems,
+        );
+        // root -> p -> span(cite, this is what we actually want)
+        const citationNode = html
+          ? ((await note2rehype(html)).children?.[0] as any)?.children?.[0]
+          : undefined;
+        if (citationNode) {
+          replace(node, citationNode);
+          importFailed = false;
         }
       } catch (e) {
         ztoolkit.log(e);
