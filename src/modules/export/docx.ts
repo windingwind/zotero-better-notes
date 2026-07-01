@@ -116,13 +116,7 @@ async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
     }
     */
     const citation = tryDecodeParse(elem.getAttribute("data-citation") || "{}");
-    const citationItems = [];
-    for (const citationItem of citation.citationItems) {
-      const item = globalCitationItems.find(
-        (item: any) => item.uris[0] === citationItem.uris[0],
-      );
-      citationItems.push(item);
-    }
+    const citationItems = mergeDocxCitationItems(citation, globalCitationItems);
     const properties = citation.properties;
     const formattedCitation = `${
       elem.textContent || "Zotero Citation"
@@ -227,6 +221,21 @@ async function parseDocxFields(html: string, worker: HTMLIFrameElement) {
   }
 
   return str;
+}
+
+// Each citation instance keeps its locator/label/prefix/suffix on the citation
+// element, while the full item data lives once at the note level. Merge them so
+// the locator survives a Zotero Refresh in Word. See #1588
+function mergeDocxCitationItems(
+  citation: { citationItems?: { uris: string[] }[] },
+  globalCitationItems: { uris: string[] }[],
+) {
+  return (citation.citationItems || []).map((citationItem) => {
+    const globalItem = globalCitationItems.find(
+      (item) => item.uris?.[0] === citationItem.uris?.[0],
+    );
+    return { ...citationItem, ...globalItem };
+  });
 }
 
 function getCacheID(cache: Record<string, any>, defaultValue: any) {
