@@ -9,6 +9,9 @@ export function registerNoteLinkProxyHandler() {
         addon.hooks.onOpenNote(linkParams.noteItem.id, "auto", {
           lineIndex: linkParams.lineIndex,
           sectionName: linkParams.sectionName,
+          // Without forceTakeover, onOpenNote early-returns via the plain
+          // ZoteroPane.openNote and drops the navigation target (see #1596).
+          forceTakeover: true,
         });
       }
     },

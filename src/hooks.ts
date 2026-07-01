@@ -18,6 +18,7 @@ import { registerMenus } from "./modules/menu";
 import { initWorkspace } from "./modules/workspace/content";
 import { openWorkspaceWindow } from "./modules/workspace/window";
 import { openNotePreview } from "./modules/workspace/preview";
+import { scrollTabEditorTo } from "./modules/workspace/tab";
 import { registerNotify } from "./modules/notify";
 import {
   registerReaderAnnotationButton,
@@ -277,9 +278,14 @@ async function onOpenNote<K extends keyof OpenNoteReturns>(
       }
       openNotePreview(noteItem, workspaceUID, options);
       break;
-    case "tab":
-      return win.ZoteroPane.openNote(noteId, { openInWindow: false }) as any;
-      break;
+    case "tab": {
+      const editorInstance = await (win.ZoteroPane.openNote(noteId, {
+        openInWindow: false,
+      }) as unknown as Promise<Zotero.EditorInstance | null>);
+      // Forward the navigation target to the tab editor.
+      scrollTabEditorTo(editorInstance, options);
+      return (editorInstance as any)?.tabID;
+    }
     case "window":
       return (await openWorkspaceWindow(noteItem, options)) as any;
       break;

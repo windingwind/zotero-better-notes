@@ -1,20 +1,26 @@
 export const TAB_TYPE = "note";
 
-function scrollTabEditorTo(
-  item: Zotero.Item,
+export async function scrollTabEditorTo(
+  editor: Zotero.EditorInstance | null | undefined,
   options: {
     lineIndex?: number;
     sectionName?: string;
   } = {},
 ) {
-  const tab = Zotero.getMainWindow().Zotero_Tabs._tabs.find(
-    (tab) => tab.data?.itemID == item.id,
-  );
-  if (!tab || tab.type !== TAB_TYPE) return;
-  const workspace = Zotero.getMainWindow().document.querySelector(
-    `#${tab.id} > bn-workspace`,
-  );
-  if (!workspace) return;
-  // @ts-ignore
-  workspace.scrollEditorTo(options);
+  if (
+    !editor ||
+    (typeof options.lineIndex !== "number" &&
+      typeof options.sectionName !== "string")
+  ) {
+    return;
+  }
+  // Zotero.Notes.open already awaits the editor's init promise before
+  // resolving, but await it again defensively before scrolling.
+  await editor._initPromise;
+  if (typeof options.lineIndex === "number") {
+    addon.api.editor.scroll(editor, options.lineIndex);
+  }
+  if (typeof options.sectionName === "string") {
+    addon.api.editor.scrollToSection(editor, options.sectionName);
+  }
 }
