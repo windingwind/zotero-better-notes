@@ -72,6 +72,10 @@ const editorStrings = {
     "en-US": "Ordered List",
     "zh-CN": "有序列表",
   },
+  todoList: {
+    "en-US": "To-do List",
+    "zh-CN": "待办列表",
+  },
   blockquote: {
     "en-US": "Blockquote",
     "zh-CN": "引用",

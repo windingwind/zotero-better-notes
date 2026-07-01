@@ -196,8 +196,22 @@ export class Workspace extends PluginCEBase implements VirtualWorkspace {
     const editor = this._editorElement._editorInstance;
     await editor._initPromise;
 
-    const _document = editor._iframeWindow.document;
-    await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
+    const win = editor._iframeWindow;
+    try {
+      // Abort if the iframe is torn down mid-wait, otherwise the condition
+      // throws "dead object" on every poll.
+      await waitUtilAsync(
+        () =>
+          Components.utils.isDeadWrapper(win) ||
+          !!win.document.querySelector(".toolbar"),
+      );
+    } catch (e) {
+      return;
+    }
+    if (Components.utils.isDeadWrapper(win)) {
+      return;
+    }
+    const _document = win.document;
     const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
 
     const toggleOutline = this._addon.data.ztoolkit.UI.createElement(

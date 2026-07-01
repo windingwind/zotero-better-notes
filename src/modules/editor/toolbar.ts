@@ -2,6 +2,7 @@ import { config } from "../../../package.json";
 import { ICONS } from "../../utils/config";
 import {
   copyNoteLink,
+  getEditorAPI,
   getLineAtCursor,
   getSectionAtCursor,
 } from "../../utils/editor";
@@ -17,12 +18,23 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
 
   const noteItem = editor._item;
 
-  const _document = editor._iframeWindow.document;
+  const win = editor._iframeWindow;
   try {
-    await waitUtilAsync(() => !!_document.querySelector(".toolbar"));
+    // Stop waiting as soon as the iframe is torn down, otherwise the condition
+    // throws "can't access dead object" on every poll.
+    await waitUtilAsync(
+      () =>
+        Components.utils.isDeadWrapper(win) ||
+        !!win.document.querySelector(".toolbar"),
+    );
   } catch (e) {
     ztoolkit.log("Editor toolbar not found");
+    return;
   }
+  if (Components.utils.isDeadWrapper(win)) {
+    return;
+  }
+  const _document = win.document;
   const toolbar = _document.querySelector(".toolbar") as HTMLDivElement;
   if (!toolbar) {
     ztoolkit.log("Editor toolbar not found");
@@ -107,6 +119,79 @@ export async function initEditorToolbar(editor: Zotero.EditorInstance) {
     attributes: true,
     attributeFilter: ["class"],
   });
+
+  // Add a "To-do List" entry to the note-editor's format dropdown, alongside
+  // the built-in list options. The dropdown's popup is created by React only
+  // while open, so we re-inject whenever it appears.
+  const textDropdown = _document.querySelector(".toolbar .text-dropdown");
+  if (textDropdown) {
+    const formatObserver = new MutationObserver(() => {
+      try {
+        const blockOptions = textDropdown.querySelector(".block-options");
+        if (blockOptions) {
+          injectTodoFormatOption(editor, blockOptions as HTMLElement);
+        }
+      } catch (e) {
+        // The iframe may be tearing down mid-observation; ignore.
+      }
+    });
+    formatObserver.observe(textDropdown, { childList: true, subtree: true });
+  }
+}
+
+function injectTodoFormatOption(
+  editor: Zotero.EditorInstance,
+  blockOptions: HTMLElement,
+) {
+  if (blockOptions.querySelector(".bn-todo-option")) {
+    return;
+  }
+  const api = getEditorAPI(editor);
+  const doc = blockOptions.ownerDocument;
+  const active = api.isTaskListActive();
+
+  const button = ztoolkit.UI.createElement(doc, "button", {
+    classList: active
+      ? ["option", "bn-todo-option", "active"]
+      : ["option", "bn-todo-option"],
+    attributes: {
+      role: "menuitem",
+    },
+    properties: {
+      innerHTML: `<span>☑ ${getString("editor-toolbar-todoList")}</span>`,
+    },
+    listeners: [
+      {
+        // Keep the editor selection so the toggle acts on the current line.
+        type: "mousedown",
+        listener: (e) => e.preventDefault(),
+      },
+      {
+        type: "click",
+        listener: () => {
+          api.toggleTaskList();
+        },
+      },
+    ],
+  });
+
+  // Place it right after the built-in bullet-list option (identified by its
+  // non-localized "•" glyph).
+  const options = Array.from(
+    blockOptions.querySelectorAll("button.option"),
+  ) as HTMLElement[];
+  const bulletButton = options.find(
+    (el) => el !== button && (el.textContent || "").includes("•"),
+  );
+  // On a checkbox row the bullet-list option is also "active"; don't show two.
+  if (active && bulletButton) {
+    bulletButton.classList.remove("active");
+  }
+  if (bulletButton) {
+    bulletButton.after(button);
+  } else {
+    blockOptions.append(button);
+  }
 }
 
 async function getMenuData(editor: Zotero.EditorInstance) {

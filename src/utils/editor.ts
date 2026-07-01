@@ -581,6 +581,9 @@ function initEditorPlugins(editor: Zotero.EditorInstance) {
           markdownPaste: {
             enable: getPref("editor.useMarkdownPaste") as boolean,
           },
+          taskList: {
+            enable: getPref("editor.useTaskList") as boolean,
+          },
         },
         editor._iframeWindow,
         { wrapReflectors: true, cloneFunctions: true },

@@ -172,8 +172,20 @@ async function updateEditorLinkPopup(editor: Zotero.EditorInstance) {
     if (!linkPopup) {
       return;
     }
-    // Ensure the builtin buttons are appended
-    await waitUtilAsync(() => linkPopup.querySelectorAll("button").length >= 2);
+    // Ensure the builtin buttons are appended. Bail out if the iframe is torn
+    // down so the condition doesn't throw "dead object" on every poll.
+    try {
+      await waitUtilAsync(
+        () =>
+          Components.utils.isDeadWrapper(_window) ||
+          linkPopup.querySelectorAll("button").length >= 2,
+      );
+    } catch (e) {
+      return;
+    }
+    if (Components.utils.isDeadWrapper(_window)) {
+      return;
+    }
     linkPopup?.append(insertButton, updateButton, openButton);
   } else {
     Array.from(_window.document.querySelectorAll(".link-popup-extra")).forEach(

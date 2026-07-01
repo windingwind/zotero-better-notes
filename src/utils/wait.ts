@@ -22,11 +22,18 @@ export function waitUtilAsync(
 ) {
   return new Promise<void>((resolve, reject) => {
     const start = Date.now();
+    // Only log a throwing condition once per wait. Conditions that touch a
+    // (possibly dead) editor iframe can throw on every tick, and logging each
+    // one — with a stack trace — floods the console during startup/teardown.
+    let logged = false;
     const _condition = () => {
       try {
         return condition();
       } catch (e) {
-        ztoolkit.log(e);
+        if (!logged) {
+          logged = true;
+          ztoolkit.log(e);
+        }
         return false;
       }
     };

@@ -83,6 +83,7 @@ editor-toolbar-settings-openParent = Open Attachment
 editor-toolbar-settings-export = Export Current Note...
 editor-toolbar-settings-refreshSyncing = Sync Now
 editor-toolbar-settings-updateRelatedNotes = Update Related Notes
+editor-toolbar-todoList = To-do List
 
 templatePicker-itemData-info = are selected in library. Please choose the data source:
 templatePicker-itemData-useLibrary = Use selected items in library

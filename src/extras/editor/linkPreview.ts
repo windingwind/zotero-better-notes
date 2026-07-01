@@ -208,48 +208,48 @@ function initLinkPreviewPlugin(
   const core = _currentEditorInstance._editorCore;
   console.log("Init BN Link Preview Plugin");
   const key = new PluginKey("linkPreviewPlugin");
-  return [
-    ...plugins,
-    new Plugin({
-      key,
-      state: {
-        init(config, state) {
-          return new PluginState(state, options);
-        },
-        apply: (tr, pluginState, oldState, newState) => {
-          pluginState.update(newState, oldState);
-          return pluginState;
-        },
+  const plugin = new Plugin({
+    key,
+    state: {
+      init(config, state) {
+        return new PluginState(state, options);
       },
-      props: {
-        handleDOMEvents: {
-          mousemove: (view, event) => {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.update(view.state);
-            pluginState.handleMouseMove(event);
-          },
-          keydown: (view, event) => {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.handleKeydown(event);
-          },
-          wheel: (view, event) => {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.popup?.layoutPopup(pluginState);
-          },
+      apply: (tr, pluginState, oldState, newState) => {
+        pluginState.update(newState, oldState);
+        return pluginState;
+      },
+    },
+    props: {
+      handleDOMEvents: {
+        mousemove: (view, event) => {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.update(view.state);
+          pluginState.handleMouseMove(event);
+        },
+        keydown: (view, event) => {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.handleKeydown(event);
+        },
+        wheel: (view, event) => {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.popup?.layoutPopup(pluginState);
         },
       },
-      view: (editorView) => {
-        return {
-          update(view, prevState) {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.update(view.state, prevState);
-          },
-          destroy() {
-            const pluginState = key.getState(editorView.state) as PluginState;
-            pluginState.destroy();
-          },
-        };
-      },
-    }),
-  ];
+    },
+    view: (editorView) => {
+      return {
+        update(view, prevState) {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.update(view.state, prevState);
+        },
+        destroy() {
+          const pluginState = key.getState(editorView.state) as PluginState;
+          pluginState.destroy();
+        },
+      };
+    },
+  });
+  // Marker used by initPlugins to keep the reconfigure idempotent on reload.
+  (plugin.spec as any).betterNotes = "linkPreview";
+  return [...plugins, plugin];
 }

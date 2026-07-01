@@ -25,8 +25,10 @@ editor-useMagicKeyShortcut =
         [macos] ⌘
        *[other] Ctrl
     } + "/" to show command palette
-editor-useMarkdownPaste = 
+editor-useMarkdownPaste =
     .label = Use enhanced markdown paste
+editor-useTaskList =
+    .label = Enable to-do lists (render "[ ]" / "[x]" in bullet lists as checkboxes)
 editor-pinTable-label = Pin table's
 editor-pinTableLeft =
     .label = First column

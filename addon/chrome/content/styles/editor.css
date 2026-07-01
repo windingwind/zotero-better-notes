@@ -124,3 +124,34 @@ body.pin-table-left.pin-table-top
   cursor: ew-resize;
   cursor: col-resize;
 }
+
+/* Better Notes: to-do lists (GFM "[ ]" / "[x]" markers rendered as checkboxes) */
+.primary-editor .bn-task-marker {
+  /* Hide the raw "[ ]" / "[x]" text; the checkbox widget replaces it */
+  display: none;
+}
+.primary-editor li.bn-task-item {
+  list-style: none;
+}
+.primary-editor .bn-task-checkbox {
+  /* Keep the checkbox IN FLOW so every row has clickable content and height —
+     otherwise an empty to-do row (marker hidden, checkbox out of flow) collapses
+     and can't be focused. Negative margin pulls it into the list-marker gutter
+     (ul padding-left is 2rem) so it lines up with a normal bullet, and the text
+     stays at the list content edge. */
+  position: relative;
+  margin-inline-start: -1.4em;
+  margin-inline-end: 0.4em;
+  vertical-align: middle;
+  cursor: pointer;
+  /* The note-editor's drag plugin puts a `.drag-handle` (z-index: 99) in this
+     same gutter on hover; sit above it so clicks reach the checkbox. */
+  z-index: 100;
+}
+.primary-editor li.bn-task-checked > p {
+  text-decoration: line-through;
+  /* Dim with color, not opacity: opacity < 1 creates a stacking context on the
+     <p>, which would trap the checkbox's z-index inside it and let the drag
+     handle cover it (making a checked box unclickable). */
+  color: var(--fill-secondary);
+}

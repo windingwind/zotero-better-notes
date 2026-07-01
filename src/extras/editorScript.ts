@@ -13,6 +13,7 @@ import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { initPlugins } from "./editor/plugins";
 import { setMagicKeyCommands } from "./editor/magicKey";
+import { toggleTaskList, isTaskListActive } from "./editor/taskList";
 
 declare const _currentEditorInstance: {
   _editorCore: EditorCore;
@@ -397,6 +398,8 @@ export const BetterNotesEditorAPI = {
   initPlugins,
   setMagicKeyCommands,
   updateTableSize,
+  toggleTaskList,
+  isTaskListActive,
 };
 
 // @ts-ignore

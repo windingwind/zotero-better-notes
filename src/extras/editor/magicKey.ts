@@ -9,6 +9,7 @@ import {
 import { Popup } from "./popup";
 import { formatMessage } from "./editorStrings";
 import { ResolvedPos } from "prosemirror-model";
+import { toggleTaskList } from "./taskList";
 
 export {
   initMagicKeyPlugin,
@@ -202,6 +203,13 @@ class PluginState {
       searchParts: ["ol", "orderedList"],
       command: (state) => {
         getPlugin()?.orderedList.run();
+      },
+    },
+    {
+      messageId: "todoList",
+      searchParts: ["td", "todo", "todoList", "task", "checkbox"],
+      command: (state) => {
+        toggleTaskList();
       },
     },
     {
@@ -717,42 +725,42 @@ function initMagicKeyPlugin(
   options: MagicKeyOptions,
 ) {
   console.log("Init BN Magic Key Plugin");
-  const key = new PluginKey("linkPreviewPlugin");
-  return [
-    ...plugins,
-    new Plugin({
-      key,
-      state: {
-        init(config, state) {
-          return new PluginState(state, options);
-        },
-        apply: (tr, pluginState, oldState, newState) => {
-          pluginState.update(newState, oldState);
-          return pluginState;
-        },
+  const key = new PluginKey("magicKeyPlugin");
+  const plugin = new Plugin({
+    key,
+    state: {
+      init(config, state) {
+        return new PluginState(state, options);
       },
-      props: {
-        handleDOMEvents: {
-          keydown: (view, event) => {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.handleKeydown(event);
-          },
+      apply: (tr, pluginState, oldState, newState) => {
+        pluginState.update(newState, oldState);
+        return pluginState;
+      },
+    },
+    props: {
+      handleDOMEvents: {
+        keydown: (view, event) => {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.handleKeydown(event);
         },
       },
-      view: (editorView) => {
-        return {
-          update(view, prevState) {
-            const pluginState = key.getState(view.state) as PluginState;
-            pluginState.update(view.state, prevState);
-          },
-          destroy() {
-            const pluginState = key.getState(editorView.state) as PluginState;
-            pluginState.destroy();
-          },
-        };
-      },
-    }),
-  ];
+    },
+    view: (editorView) => {
+      return {
+        update(view, prevState) {
+          const pluginState = key.getState(view.state) as PluginState;
+          pluginState.update(view.state, prevState);
+        },
+        destroy() {
+          const pluginState = key.getState(editorView.state) as PluginState;
+          pluginState.destroy();
+        },
+      };
+    },
+  });
+  // Marker used by initPlugins to keep the reconfigure idempotent on reload.
+  (plugin.spec as any).betterNotes = "magicKey";
+  return [...plugins, plugin];
 }
 
 function getPlugin(key = "menu") {

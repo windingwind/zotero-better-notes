@@ -23,78 +23,81 @@ function initMarkdownPastePlugin(plugins: readonly Plugin[]) {
     return plugins;
   }
   const oldPastePlugin = plugins[oldPastePluginIndex];
+  const plugin = new Plugin({
+    key,
+    props: {
+      handlePaste: (view, event, slice) => {
+        if (!event.clipboardData) {
+          return false;
+        }
+        const markdown = getMarkdown(event.clipboardData);
+
+        if (!markdown) {
+          // Try the old paste plugin
+          return oldPastePlugin.props.handlePaste?.apply(oldPastePlugin, [
+            view,
+            event,
+            slice,
+          ]);
+        }
+
+        md2html(markdown).then((html: string) => {
+          const slice = window.BetterNotesEditorAPI.getSliceFromHTML(
+            view.state,
+            html,
+          );
+          const tr = view.state.tr.replaceSelection(slice);
+          view.dispatch(tr);
+        });
+        return true;
+      },
+      handleDrop: (view, event, slice, moved) => {
+        if (!event.dataTransfer) {
+          return false;
+        }
+
+        const markdown = getMarkdown(event.dataTransfer);
+        if (!markdown) {
+          // Try the old drop plugin first
+          return oldPastePlugin.props.handleDrop?.apply(oldPastePlugin, [
+            view,
+            event,
+            slice,
+            moved,
+          ]);
+        }
+
+        md2html(markdown).then((html: string) => {
+          const slice = window.BetterNotesEditorAPI.getSliceFromHTML(
+            view.state,
+            html,
+          );
+          const pos = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+          if (!pos) {
+            return;
+          }
+          // Insert the slice to the current position
+          const tr = view.state.tr.insert(pos.pos, slice);
+          view.dispatch(tr);
+        });
+
+        return true;
+      },
+    },
+    view: (editorView) => {
+      return {
+        destroy() {},
+      };
+    },
+  });
+  // Marker used by initPlugins to keep the reconfigure idempotent on reload.
+  (plugin.spec as any).betterNotes = "markdownPaste";
   return [
     ...plugins.slice(0, oldPastePluginIndex),
-    new Plugin({
-      key,
-      props: {
-        handlePaste: (view, event, slice) => {
-          if (!event.clipboardData) {
-            return false;
-          }
-          const markdown = getMarkdown(event.clipboardData);
-
-          if (!markdown) {
-            // Try the old paste plugin
-            return oldPastePlugin.props.handlePaste?.apply(oldPastePlugin, [
-              view,
-              event,
-              slice,
-            ]);
-          }
-
-          md2html(markdown).then((html: string) => {
-            const slice = window.BetterNotesEditorAPI.getSliceFromHTML(
-              view.state,
-              html,
-            );
-            const tr = view.state.tr.replaceSelection(slice);
-            view.dispatch(tr);
-          });
-          return true;
-        },
-        handleDrop: (view, event, slice, moved) => {
-          if (!event.dataTransfer) {
-            return false;
-          }
-
-          const markdown = getMarkdown(event.dataTransfer);
-          if (!markdown) {
-            // Try the old drop plugin first
-            return oldPastePlugin.props.handleDrop?.apply(oldPastePlugin, [
-              view,
-              event,
-              slice,
-              moved,
-            ]);
-          }
-
-          md2html(markdown).then((html: string) => {
-            const slice = window.BetterNotesEditorAPI.getSliceFromHTML(
-              view.state,
-              html,
-            );
-            const pos = view.posAtCoords({
-              left: event.clientX,
-              top: event.clientY,
-            });
-            if (!pos) {
-              return;
-            }
-            // Insert the slice to the current position
-            const tr = view.state.tr.insert(pos.pos, slice);
-            view.dispatch(tr);
-          });
-
-          return true;
-        },
-      },
-      view: (editorView) => {
-        return {
-          destroy() {},
-        };
-      },
-    }),
+    plugin,
     ...plugins.slice(oldPastePluginIndex + 1),
   ];
 }
