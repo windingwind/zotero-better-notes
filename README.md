@@ -195,6 +195,8 @@ Any changes made to your note or its corresponding Markdown file will be automat
 
 > 💡 Note: Synchronisation takes place once the editor is closed and after the period of time you set in the `Auto-sync period` preference.
 
+> 💡 Using extended Markdown (Obsidian wiki links `[[...]]`, callouts, embeds, …)? See [Markdown Flavor Compatibility](docs/markdown-flavor-compatibility.md) to learn which syntaxes survive sync and how to keep the rest.
+
 ### Note Export
 
 BN offers various options to export your notes, giving you the flexibility to choose the format that suits your needs.
