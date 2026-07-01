@@ -110,40 +110,48 @@ export function patchNoteEditorCE(win: _ZoteroTypes.MainWindow) {
 }
 
 async function updateExistingNoteTabs(win: _ZoteroTypes.MainWindow) {
-  const tabs = [...win.Zotero_Tabs._tabs];
+  const noteTabs = [...win.Zotero_Tabs._tabs].filter((tab) =>
+    tab.type?.startsWith("note"),
+  );
 
-  for (const tab of tabs) {
-    if (!tab.type.startsWith("note")) {
-      continue;
+  for (const tab of noteTabs) {
+    try {
+      // Recreate tab to update sidebar state
+      const item = Zotero.Items.get(tab.data.itemID);
+      if (!item || !item.isNote()) {
+        continue;
+      }
+
+      const editor = Zotero.Notes.getByTabID(tab.id);
+      if (editor?._initPromise) {
+        await editor._initPromise;
+      }
+
+      // The tab may have been closed or moved while we awaited above. Re-read
+      // its position and skip if it's gone, so we never close/reopen (and later
+      // select) a stale tab id.
+      const currentIndex = win.Zotero_Tabs._tabs.indexOf(tab);
+      if (currentIndex < 0 || !win.Zotero_Tabs._getTab(tab.id).tab) {
+        continue;
+      }
+      const isSelected = win.Zotero_Tabs.selectedID === tab.id;
+
+      win.Zotero_Tabs.close(tab.id);
+
+      await wait.waitUntilAsync(() => !win.Zotero_Tabs._getTab(tab.id).tab);
+
+      await Zotero.Notes.open(
+        item.id,
+        {},
+        {
+          title: tab.title,
+          tabIndex: currentIndex,
+          openInBackground: !isSelected,
+          parentItemKey: tab.data.parentItemKey,
+        },
+      );
+    } catch (e) {
+      ztoolkit.log("BN: Failed to recreate note tab", tab?.id, e);
     }
-
-    // Recreate tab to update sidebar state
-    const item = Zotero.Items.get(tab.data.itemID);
-    if (!item || !item.isNote()) {
-      continue;
-    }
-
-    const editor = Zotero.Notes.getByTabID(tab.id);
-    if (editor?._initPromise) {
-      await editor._initPromise;
-    }
-
-    const currentIndex = win.Zotero_Tabs._tabs.indexOf(tab);
-    const isSelected = win.Zotero_Tabs.selectedID === tab.id ? true : false;
-
-    win.Zotero_Tabs.close(tab.id);
-
-    await wait.waitUntilAsync(() => !win.Zotero_Tabs._getTab(tab.id).tab);
-
-    await Zotero.Notes.open(
-      item.id,
-      {},
-      {
-        title: tab.title,
-        tabIndex: currentIndex,
-        openInBackground: !isSelected,
-        parentItemKey: tab.data.parentItemKey,
-      },
-    );
   }
 }
