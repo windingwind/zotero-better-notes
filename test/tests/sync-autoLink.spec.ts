@@ -68,18 +68,29 @@ describe("Sync - Auto-sync linked notes", function () {
    */
   async function ensureLink(fromNote: Zotero.Item, toNote: Zotero.Item) {
     const start = Date.now();
+    let lastError: unknown;
     while (Date.now() - start < 20000) {
-      await addon.api.relation.updateNoteLinkRelation(fromNote.id);
-      await Zotero.Promise.delay(300);
-      const outbound = await addon.api.relation.getNoteLinkOutboundRelation(
-        fromNote.id,
-      );
-      if (outbound.some((link) => link.toKey === toNote.key)) {
-        return;
+      try {
+        await addon.api.relation.updateNoteLinkRelation(fromNote.id);
+        await Zotero.Promise.delay(300);
+        const outbound = await addon.api.relation.getNoteLinkOutboundRelation(
+          fromNote.id,
+        );
+        if (outbound.some((link) => link.toKey === toNote.key)) {
+          return;
+        }
+      } catch (e) {
+        // `updateNoteLinkRelation` is throttled and shared process-wide, so a
+        // transient failure from an unrelated call can surface here. Keep
+        // polling instead of aborting, but remember the error so a *persistent*
+        // failure is still reported below rather than silently swallowed.
+        lastError = e;
+        await Zotero.Promise.delay(300);
       }
     }
     throw new Error(
-      `Link relation ${fromNote.key} -> ${toNote.key} was not built in time`,
+      `Link relation ${fromNote.key} -> ${toNote.key} was not built in time` +
+        (lastError ? `; last error: ${lastError}` : ""),
     );
   }
 
