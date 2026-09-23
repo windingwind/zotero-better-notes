@@ -148,6 +148,7 @@ export type FluentMessageId =
   | 'markdown-withYAMLHeader'
   | 'markdownMode-loadError'
   | 'markdownMode-saveError'
+  | 'menu-importMDToItem'
   | 'menu-openNoteAsBNWindow'
   | 'menuAddNote-importMD'
   | 'menuAddNote-newTemplateItemNote'

@@ -28,3 +28,6 @@ menu-openNoteAsBNWindow =
 
 menuTools-libraryGraph =
     .label = 笔记关系图谱
+
+menu-importMDToItem =
+    .label = 从 Markdown 导入为笔记

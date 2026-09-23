@@ -1,7 +1,7 @@
 import { getString } from "../utils/locale";
 import { formatPath } from "../utils/str";
 
-export { createNoteFromTemplate, createNoteFromMD, createNote };
+export { createNoteFromTemplate, createNoteFromMD, createNote, importMDToItem };
 
 function getLibraryParentId() {
   return Zotero.getMainWindow()
@@ -139,4 +139,79 @@ async function createNote(
     await noteItem.saveTx();
   }
   return noteItem;
+}
+
+async function importMDToItem(parentItemId: number) {
+  const parentItem = Zotero.Items.get(parentItemId);
+  if (!parentItem || !parentItem.isRegularItem()) {
+    Zotero.getMainWindow().alert(getString("alert-notValidParentItemError"));
+    return;
+  }
+
+  const syncNotes = Zotero.getMainWindow().confirm(
+    getString("alert-syncImportedNotes"),
+  );
+
+  // 获取默认目录：查找父条目的PDF附件所在目录
+  let defaultDirectory: string | undefined;
+  try {
+    const attachmentIds = parentItem.getAttachments();
+    const attachments = Zotero.Items.get(attachmentIds);
+    for (const attachment of attachments) {
+      if (attachment.attachmentContentType === "application/pdf") {
+        const filePath = await attachment.getFilePathAsync();
+        if (filePath) {
+          const pathParts = PathUtils.split(formatPath(filePath));
+          if (pathParts.length > 1) {
+            pathParts.pop();
+            defaultDirectory = formatPath(pathParts.join("/"));
+          }
+          break;
+        }
+      }
+    }
+  } catch (error) {
+    ztoolkit.log("获取默认目录失败:", error);
+  }
+
+  const filepaths = await new ztoolkit.FilePicker(
+    "Import MarkDown",
+    "multiple",
+    [
+      [`MarkDown(*.md)`, `*.md`],
+      ["All Files", "*"],
+    ],
+    undefined,
+    undefined,
+    undefined,
+    defaultDirectory,
+  ).open();
+
+  if (!filepaths) {
+    return;
+  }
+
+  for (const filepath of filepaths) {
+    const noteItem = new Zotero.Item("note");
+    noteItem.libraryID = parentItem.libraryID;
+    noteItem.parentID = parentItemId;
+    await noteItem.saveTx();
+
+    await addon.api.$import.fromMD(filepath, {
+      noteId: noteItem.id,
+      ignoreVersion: true,
+    });
+
+    if (syncNotes) {
+      const pathSplit = PathUtils.split(formatPath(filepath));
+      addon.api.sync.updateSyncStatus(noteItem.id, {
+        itemID: noteItem.id,
+        path: formatPath(pathSplit.slice(0, -1).join("/")),
+        filename: pathSplit.pop() || "",
+        lastsync: new Date().getTime(),
+        md5: "",
+        noteMd5: Zotero.Utilities.Internal.md5(noteItem.getNote(), false),
+      });
+    }
+  }
 }

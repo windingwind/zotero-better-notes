@@ -212,6 +212,30 @@ export function registerMenus() {
       },
     ],
   });
+
+  Zotero.MenuManager.registerMenu({
+    menuID: `${config.addonRef}-menu-importMDToItem`,
+    pluginID: config.addonID,
+    target: "main/library/item",
+    menus: [
+      {
+        menuType: "menuitem",
+        l10nID: `${config.addonRef}-menu-importMDToItem`,
+        icon: `chrome://${config.addonRef}/content/icons/favicon.png`,
+        onShowing: (_, context) => {
+          context.setVisible(
+            !!context.items?.every((item) => item.isRegularItem()),
+          );
+        },
+        onCommand: (_, context) => {
+          if (!context.items?.length) {
+            return;
+          }
+          addon.hooks.onImportMDToItem(context.items[0].id);
+        },
+      },
+    ],
+  });
 }
 
 // TEMP: Zotero 10 allows multi-selection in the collections tree and passes the
