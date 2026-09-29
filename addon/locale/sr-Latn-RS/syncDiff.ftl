@@ -1,0 +1,23 @@
+title = Rešavanje sukoba pri sinhronizaciji beleške
+diff-desc = Spoji izmene iz:
+    .title = { $title }
+diff-note =
+    .title = { $title }
+diff-md =
+    .title = { $title }
+diff-both = Zadrži obe verzije
+    .title = Zadrži izmene s obe strane
+list-header = Izaberi izmene koje želiš da zadržiš
+list-selectAll = Izaberi sve
+diff-header = Izvorna beleška
+rendered-header = Prikazana beleška
+finish =
+    .label = Reši sukob
+    .tooltiptext = Sačuvaj izabrane izmene i ažuriraj belešku i Markdown datoteku.
+unsync =
+    .label = Prekini sinhronizaciju ove beleške
+    .tooltiptext = Ukloni belešku sa spiska za sinhronizaciju i zadrži lokalne izmene.
+skip =
+    .label = Preskoči za sada
+    .tooltiptext = Preskoči belešku i zadrži lokalne izmene do sledeće sinhronizacije.
+

@@ -1,0 +1,25 @@
+menuTools-syncManager =
+    .label = Upravljač sinhronizacijom
+menuTools-templateEditor =
+    .label = Uređivač šablona
+menuTools-importTemplateFromClipboard =
+    .label = Novi šablon iz ostave
+menuFile-exportTemplate =
+    .label = Izvezi šablon...
+menuHelp-openUserGuide =
+    .label = Otvori vodič za Better Notes
+menuAddNote-importMD =
+    .label = Uvezi iz Markdown datoteke
+menuAddNote-newTemplateStandaloneNote =
+    .label = Nova samostalna beleška iz šablona
+menuAddNote-newTemplateItemNote =
+    .label = Nova beleška uz stavku iz šablona
+menuCollection-exportNotes =
+    .label = Izvezi beleške iz zbirke...
+menuTab-moveNewWindow =
+    .label = Premesti u novi prozor Better Notes-a
+menu-openNoteAsBNWindow =
+    .label = Otvori belešku u novom prozoru Better Notes-a
+menuTools-libraryGraph =
+    .label = Graf veza između beležaka
+
