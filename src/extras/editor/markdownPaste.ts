@@ -1,5 +1,6 @@
 import { Plugin, PluginKey } from "prosemirror-state";
 import { md2html } from "../convert";
+import { convertLatexHTML, findLatexMath } from "../shared/latexMath";
 
 export { initMarkdownPastePlugin, MarkdownPasteOptions };
 
@@ -96,8 +97,11 @@ function initMarkdownPastePlugin(plugins: readonly Plugin[]) {
   // Marker used by initPlugins to keep the reconfigure idempotent on reload.
   (plugin.spec as any).betterNotes = "markdownPaste";
   return [
-    ...plugins.slice(0, oldPastePluginIndex),
     plugin,
+    // Zotero 10 has a separate Markdown paste handler before its general paste
+    // plugin. Run first so it cannot consume LaTeX backslash delimiters before
+    // our converter sees them. Unhandled input still falls through to Zotero.
+    ...plugins.slice(0, oldPastePluginIndex),
     ...plugins.slice(oldPastePluginIndex + 1),
   ];
 }
@@ -130,11 +134,12 @@ function getMarkdown(clipboardData: DataTransfer) {
       return false;
     }
 
-    return html;
+    return convertLatexHTML(html, new DOMParser());
   }
 
   const text = clipboardData.getData("text/plain");
   if (text) {
+    if (findLatexMath(text).length) return text;
     // Match markdown patterns
     const markdownPatterns = [
       /^#/m, // Headers: Lines starting with #

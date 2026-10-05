@@ -20,6 +20,7 @@ import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 import { visitParents } from "unist-util-visit-parents";
 import { h } from "hastscript";
+import { normalizeLatexMath } from "./shared/latexMath";
 
 import { Nodes, Root as HRoot, RootContent } from "hast";
 import { ListItem, Root as MRoot, Table } from "mdast";
@@ -433,6 +434,7 @@ const md2remarkProcessor = unified()
   .use(remarkParse);
 
 function md2remark(str: string) {
+  str = normalizeLatexMath(str);
   // Parse Obsidian-style image ![[xxx.png]]
   // Encode spaces in link, otherwise it cannot be parsed to image node
   str = str

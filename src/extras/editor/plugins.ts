@@ -5,6 +5,7 @@ import { initTaskListPlugin, TaskListOptions } from "./taskList";
 // Use custom column resizing plugin, since the original one breaks
 import { columnResizing } from "./columnResizing";
 import { initNodeViews } from "./nodeViews";
+import { initLatexInputPlugin } from "./latexInput";
 
 export { initPlugins };
 
@@ -33,6 +34,7 @@ function initPlugins(options: {
   if (options.linkPreview.previewType !== "disable")
     plugins = initLinkPreviewPlugin(plugins, options.linkPreview);
   if (options.markdownPaste.enable) plugins = initMarkdownPastePlugin(plugins);
+  plugins = initLatexInputPlugin(plugins);
   if (options.taskList.enable) plugins = initTaskListPlugin(plugins);
   plugins = initMagicKeyPlugin(plugins, options.magicKey);
   // Collect all plugins and reconfigure the state only once
