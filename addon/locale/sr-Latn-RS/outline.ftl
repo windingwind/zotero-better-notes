@@ -1,0 +1,23 @@
+toggleOutlinePane =
+    .tooltiptext = Prikaži ili sakrij strukturu
+setOutline =
+    .tooltiptext = Promeni prikaz strukture
+useTreeView =
+    .label = Prikaz stabla
+useMindMap =
+    .label = Mapa uma
+useBubbleMap =
+    .label = Mapa mehurića
+saveOutline =
+    .tooltiptext = Sačuvaj kao...
+saveOutlineImage =
+    .label = Slika strukture
+    .tooltiptext = Samo u režimu mape uma ili mape mehurića
+saveOutlineSVG =
+    .label = SVG strukture
+    .tooltiptext = Samo u režimu mape uma ili mape mehurića
+saveOutlineFreeMind =
+    .label = FreeMind struktura
+saveMore =
+    .label = Markdown, DOCX, PDF...
+
