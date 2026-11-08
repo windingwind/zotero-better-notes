@@ -8,6 +8,7 @@ import {
   Attrs,
   DOMParser,
   Schema,
+  Slice,
 } from "prosemirror-model";
 import { EditorState, TextSelection } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
@@ -27,7 +28,27 @@ function fromHTML(schema: Schema, html: string, slice?: boolean) {
     fragment.appendChild(domNode.firstChild);
   }
   if (slice) {
-    return DOMParser.fromSchema(schema).parseSlice(fragment);
+    const parsed = DOMParser.fromSchema(schema).parseSlice(fragment);
+    // parseSlice opens text-containing math atoms at the slice edges. Inserting
+    // such a slice into an empty paragraph unwraps the formula into raw text.
+    // Keep normal paragraph/list paste fitting, but never open through math.
+    const capOpenDepth = (start: boolean, maximum: number) => {
+      let node = start ? parsed.content.firstChild : parsed.content.lastChild;
+      for (let depth = 0; node && depth < maximum; depth++) {
+        if (
+          node.type.name === "math_inline" ||
+          node.type.name === "math_display"
+        )
+          return depth;
+        node = start ? node.firstChild : node.lastChild;
+      }
+      return maximum;
+    };
+    return new Slice(
+      parsed.content,
+      capOpenDepth(true, parsed.openStart),
+      capOpenDepth(false, parsed.openEnd),
+    );
   } else {
     return DOMParser.fromSchema(schema).parse(fragment);
   }

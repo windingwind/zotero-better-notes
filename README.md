@@ -150,6 +150,23 @@ BN enhances the note editor with link preview. Hover+Ctrl/Cmd or click the link 
 
 BN supports direct markdown paste. You can paste markdown content into the note editor, and it will be converted to the rich text format automatically.
 
+#### LaTeX Math Input
+
+Type or paste formulas using `\(...\)` for inline math and `\[...\]` for display math. Better Notes converts completed formulas into Zotero's editable math nodes automatically. Pasting requires Direct Markdown Paste to be enabled.
+
+The `equation`, `align`, and `gather` environments (including starred variants), and `displaymath`, are also supported. For example:
+
+```latex
+The energy is \(E = mc^2\).
+
+\begin{align}
+a &= b + c \\
+d &= e + f
+\end{align}
+```
+
+This supports KaTeX-compatible formulas, not full LaTeX document compilation. Document layout commands, custom package macros, equation numbering, and cross-references are not supported. Code blocks and inline code are left literal; existing notes are not converted retroactively.
+
 ### Note Link
 
 To create a _note link_ between the note you are editing and another note, click the <img src="addon/chrome/content/icons/favicon.png" width="20px"></img> button in the title bar of the note editor.
