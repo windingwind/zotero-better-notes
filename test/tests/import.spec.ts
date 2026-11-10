@@ -7,7 +7,7 @@ import {
   parseTemplateString,
 } from "../utils/note";
 import { getTempDirectory } from "../utils/io";
-import { waitForItemModifyEvent, waitForNoteWindow } from "../utils/wait";
+import { waitForItemModifyEvent } from "../utils/wait";
 
 describe("Import", function () {
   const addon = getAddon();

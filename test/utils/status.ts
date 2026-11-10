@@ -12,7 +12,13 @@ export async function resetData() {
 export async function resetTabs() {
   const win = Zotero.getMainWindow();
   const Zotero_Tabs = win.Zotero_Tabs;
-  Zotero_Tabs.closeAll();
+  // Since Zotero 11, closeAll() also closes library tabs, leaving no
+  // collectionsView/itemsView for the tests to use
+  Zotero_Tabs.close(
+    Zotero_Tabs._tabs
+      .filter((tab) => tab.type.split("-")[0] !== "library")
+      .map((tab) => tab.id),
+  );
 }
 
 export async function resetAll() {

@@ -111,7 +111,3 @@ export async function waitForWindow(uri: string, timeout: number = 3000) {
     timeout,
   );
 }
-
-export async function waitForNoteWindow() {
-  return await waitForWindow("chrome://zotero/content/note.xhtml");
-}
