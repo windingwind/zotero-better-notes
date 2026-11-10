@@ -53,6 +53,10 @@ import { patchExportItems } from "./modules/patches/exportItems";
 import { closeConvertServer } from "./utils/convert";
 import { patchNoteEditorCE } from "./modules/patches/noteEditor";
 import { patchNotes } from "./modules/patches/notes";
+import {
+  registerAnnotationExportMenu,
+  unregisterAnnotationExportMenu,
+} from "./modules/annotationExport";
 
 async function onStartup() {
   await Promise.all([
@@ -84,6 +88,7 @@ async function onStartup() {
   registerPrefsWindow();
 
   registerReaderAnnotationButton();
+  registerAnnotationExportMenu();
 
   patchNotes();
 
@@ -136,6 +141,7 @@ async function onMainWindowUnload(win: Window): Promise<void> {
 }
 
 function onShutdown(): void {
+  unregisterAnnotationExportMenu();
   closeRelationServer();
   closeParsingServer();
   closeConvertServer();

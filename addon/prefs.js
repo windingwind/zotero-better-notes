@@ -25,3 +25,4 @@ pref("__prefsPrefix__.exportNotes.takeover", true);
 
 pref("__prefsPrefix__.annotationNote.enableTagSync", true);
 pref("__prefsPrefix__.annotationNote.enableCreateNoteButton", true);
+pref("__prefsPrefix__.annotationExport.includeComment", false);

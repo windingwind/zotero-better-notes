@@ -28,6 +28,7 @@ declare namespace _ZoteroTypes {
       "exportNotes.takeover": boolean;
       "annotationNote.enableTagSync": boolean;
       "annotationNote.enableCreateNoteButton": boolean;
+      "annotationExport.includeComment": boolean;
     };
   }
 }

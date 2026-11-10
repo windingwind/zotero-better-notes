@@ -164,3 +164,9 @@ libraryGraph-rescan-tooltip = Rebuild the note link index for all notes
 libraryGraph-indexing = Indexing notes… { $done }/{ $total }
 libraryGraph-stats = { $notes } notes · { $links } links
 libraryGraph-empty = No note links found. Create links between notes to see them here.
+
+annotationExport-copy = Export Link
+annotationExport-includeComment = Include comment when exporting link
+annotationExport-comment = Comment:{ " " }
+annotationExport-copied = Annotation link copied
+annotationExport-failed = Could not copy annotation link

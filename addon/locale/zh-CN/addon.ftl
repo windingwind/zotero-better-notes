@@ -163,3 +163,9 @@ libraryGraph-rescan-tooltip = 重建所有笔记的链接索引
 libraryGraph-indexing = 正在索引笔记… { $done }/{ $total }
 libraryGraph-stats = { $notes } 篇笔记 · { $links } 条链接
 libraryGraph-empty = 未找到笔记链接。在笔记之间创建链接后即可在此查看。
+
+annotationExport-copy = 导出地址
+annotationExport-includeComment = 导出地址时包含注释文本
+annotationExport-comment = 注释：
+annotationExport-copied = 已复制标注地址
+annotationExport-failed = 复制标注地址失败
