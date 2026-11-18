@@ -37,6 +37,7 @@ import {
   createNoteFromTemplate,
   createNoteFromMD,
   createNote,
+  importMDToItem,
 } from "./modules/createNote";
 import { createZToolkit } from "./utils/ztoolkit";
 import { waitUtilAsync } from "./utils/wait";
@@ -336,6 +337,8 @@ const onCreateNote = createNote;
 
 const onCreateNoteFromMD = createNoteFromMD;
 
+const onImportMDToItem = importMDToItem;
+
 const onShowUserGuide = showUserGuide;
 
 const onShowLibraryGraph = showLibraryGraph;
@@ -366,6 +369,7 @@ export default {
   onCreateNoteFromTemplate,
   onCreateNoteFromMD,
   onCreateNote,
+  onImportMDToItem,
   onShowUserGuide,
   onShowLibraryGraph,
 };

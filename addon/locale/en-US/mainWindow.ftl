@@ -28,3 +28,6 @@ menu-openNoteAsBNWindow =
 
 menuTools-libraryGraph =
     .label = Note Relation Graph
+
+menu-importMDToItem =
+    .label = Import Markdown to Item
