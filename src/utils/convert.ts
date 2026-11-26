@@ -1107,7 +1107,7 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
     node.value = "\\cite{" + citationKeys.join(",") + "}";
   }
 
-  // convert the citation into string using Better BibTex for Zotero
+  // Convert the citations using Better BibTeX for Zotero.
   const bibString = await convertToBibString(libIdAndCitationKeys);
   return bibString;
 }
@@ -1115,15 +1115,19 @@ async function processN2LRehypeCitationNodes(nodes: string | any[]) {
 async function convertToBibString(
   libIdAndCitationKeys: Map<number, Set<string>>,
 ) {
-  const BBT = "Better BibTex for Zotero";
-  const installedExtensions = await Zotero.getInstalledExtensions();
-  const installedAndEnabled = installedExtensions.some(
-    (item) => item.includes(BBT) && !item.includes("disabled"),
+  if (!libIdAndCitationKeys.size) {
+    return "";
+  }
+
+  const { AddonManager } = ChromeUtils.importESModule(
+    "resource://gre/modules/AddonManager.sys.mjs",
   );
-  if (!installedAndEnabled) {
-    ztoolkit.log("Better BibTex for Zotero is not installed.");
+  // The ID is unchanged across versions, unlike the BibTex/BibTeX display name.
+  const bbt = await AddonManager.getAddonByID("better-bibtex@iris-advies.com");
+  if (!bbt?.isActive) {
+    ztoolkit.log("Better BibTeX for Zotero is not installed or enabled.");
     showHint(
-      "Export Error: Better BibTex for Zotero is needed for exporting the .bib file. Please install and enable it first.",
+      "Export Error: Better BibTeX for Zotero is needed for exporting the .bib file. Please install and enable it first.",
     );
     return "";
   }
@@ -1153,6 +1157,7 @@ async function exportToBibtex(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Zotero-Allowed-Request": "true",
       },
       body: JSON.stringify(data),
     })
@@ -1163,14 +1168,25 @@ async function exportToBibtex(
           );
           throw new Error(`Network response was not ok for libId ${libId}`);
         }
-        return response.json();
+        return response.json() as Promise<{
+          result?: unknown;
+          error?: { message?: string };
+        } | null>;
       })
       .then((result) => {
         ztoolkit.log(
           `[Bib Export] Response data for libId ${libId}: ` +
             JSON.stringify(result),
         );
-        return "result" in result ? (result.result as string) : "";
+        if (result?.error) {
+          throw new Error(
+            result.error.message || `BibTeX export failed for libId ${libId}`,
+          );
+        }
+        if (typeof result?.result !== "string") {
+          throw new Error(`Invalid BibTeX response for libId ${libId}`);
+        }
+        return result.result;
       });
 
     promises.push(promise);
@@ -1179,8 +1195,12 @@ async function exportToBibtex(
   return Promise.all(promises)
     .then((results) => results.join("\n"))
     .catch((error) => {
-      ztoolkit.log("[Bib Export] Fetch error: " + error.message);
-      return "[Bib Export] Fetch error: " + error.message;
+      ztoolkit.log("[Bib Export] Export error: " + error.message);
+      showHint(
+        "Export Error: Could not export the .bib file with Better BibTeX. " +
+          error.message,
+      );
+      return "";
     });
 }
 
