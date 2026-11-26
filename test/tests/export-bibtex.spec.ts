@@ -191,14 +191,23 @@ describe("Export - BibTeX (#1637)", function () {
   it("does not require Better BibTeX for notes without citations", async function () {
     await bbt!.uninstall();
     bbt = null;
-    note.setNote('<div data-schema-version="9"><p>No citations</p></div>');
-    await note.saveTx();
-    await addon.api.$export.saveLatex(texPath, note.id);
-    expect(await Zotero.File.getContentsAsync(texPath)).to.include(
-      "No citations",
-    );
-    expect(requests.length).to.equal(0);
-    expect(pickerCalls).to.equal(0);
+
+    // The library pane may still be initializing an editor for the citation
+    // fixture. Rewriting that note can race with the editor saving its old HTML.
+    const plainNote = new Zotero.Item("note");
+    plainNote.setNote('<div data-schema-version="9"><p>No citations</p></div>');
+    await plainNote.saveTx();
+    try {
+      await addon.api.$export.saveLatex(texPath, plainNote.id);
+      expect(await Zotero.File.getContentsAsync(texPath)).to.include(
+        "No citations",
+      );
+      expect(await IOUtils.exists(bibPath)).to.equal(false);
+      expect(requests.length).to.equal(0);
+      expect(pickerCalls).to.equal(0);
+    } finally {
+      await Zotero.Items.erase(plainNote.id);
+    }
   });
 
   it("exports bibliography content for merged notes", async function () {
