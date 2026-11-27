@@ -35,7 +35,7 @@ function registerReaderAnnotationButton() {
       // TEMP: Use error event to delay the button creation to avoid blocking the main thread
       placeholder.addEventListener("error", (event) => {
         const placeholder = event.currentTarget as HTMLElement;
-        placeholder.ownerGlobal?.requestIdleCallback(() => {
+        placeholder.ownerDocument.defaultView?.requestIdleCallback(() => {
           const annotationID = placeholder.dataset.annotationId;
           const libraryID = parseInt(placeholder.dataset.libraryId || "");
           const button = doc.createElement("div");
@@ -56,7 +56,7 @@ function registerReaderAnnotationButton() {
             e.preventDefault();
           });
           placeholder.replaceWith(button);
-          placeholder.ownerGlobal?.requestIdleCallback(() => {
+          placeholder.ownerDocument.defaultView?.requestIdleCallback(() => {
             updateAnnotationNoteButton(button, libraryID, annotationID!);
           });
         });

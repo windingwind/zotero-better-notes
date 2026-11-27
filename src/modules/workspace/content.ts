@@ -13,7 +13,7 @@ export async function initWorkspace(
   container.style.minHeight = "0px";
 
   // @ts-ignore
-  const customElements = container.ownerGlobal
+  const customElements = container.ownerDocument.defaultView!
     .customElements as CustomElementRegistry;
 
   await waitUtilAsync(() => !!customElements.get("bn-workspace"));

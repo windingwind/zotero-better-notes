@@ -144,9 +144,9 @@ export function openNotePreview(
 }
 
 function getItemDetails(elem: HTMLElement) {
-  if (elem.ownerGlobal?.Zotero_Tabs) {
-    return elem.ownerGlobal.ZoteroContextPane.context._getItemContext(
-      elem.ownerGlobal.Zotero_Tabs.selectedID,
+  if (elem.ownerDocument.defaultView?.Zotero_Tabs) {
+    return elem.ownerDocument.defaultView!.ZoteroContextPane.context._getItemContext(
+      elem.ownerDocument.defaultView!.Zotero_Tabs.selectedID,
     );
   }
   return elem.closest("bn-details");

@@ -41,6 +41,6 @@ function mountInItemPane(
   return (
     !editor._tabID &&
     !host.closest("bn-workspace") &&
-    host.ownerGlobal?.ZoteroPane
+    host.ownerDocument.defaultView?.ZoteroPane
   );
 }

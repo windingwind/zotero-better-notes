@@ -182,7 +182,7 @@ export function registerMenus() {
             forceTakeover: true,
           });
           (
-            context.menuElem.ownerGlobal as _ZoteroTypes.MainWindow
+            context.menuElem.ownerDocument.defaultView as unknown as _ZoteroTypes.MainWindow
           ).Zotero_Tabs.close(context.tabID);
         },
       },

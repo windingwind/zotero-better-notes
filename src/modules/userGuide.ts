@@ -77,8 +77,15 @@ You can find more information in the following links:
       showButtons: ["prev", "next"],
       showProgress: true,
       onBeforeRender: async () => {
-        const Zotero_Tabs = Zotero.getMainWindow().Zotero_Tabs;
-        Zotero_Tabs.select("zotero-pane");
+        const Zotero_Tabs = win.Zotero_Tabs as any;
+        // Zotero 11: library tab IDs are no longer always "zotero-pane"
+        const libraryTabID =
+          typeof Zotero_Tabs.isLibraryTab === "function"
+            ? (Zotero_Tabs._tabs as { id: string }[]).find((tab) =>
+                Zotero_Tabs.isLibraryTab(tab.id),
+              )?.id
+            : "zotero-pane";
+        if (libraryTabID) Zotero_Tabs.select(libraryTabID);
         const collectionsView = win.ZoteroPane.collectionsView;
         collectionsView && collectionsView.selectLibrary(1);
       },

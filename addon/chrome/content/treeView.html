@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
   <body>
-    <script src="chrome://__addonRef__/content/lib/js/jquery.min.js"></script>
     <script src="chrome://__addonRef__/content/lib/js/dx.all.js"></script>
     <link
       rel="stylesheet"
@@ -140,12 +139,19 @@
           getData();
         }
 
+        // No jQuery: on Zotero 11 (Fx153) innerHTML in chrome documents drops
+        // form elements, which makes jQuery 3.x's support checks throw on load.
+        // DevExtreme works natively with DOM elements.
         function createTreeView(selector, items) {
-          $(selector).dxTreeView({
+          const tree = getTreeView();
+          if (tree) {
+            tree.option("items", items);
+            return;
+          }
+          new DevExpress.ui.dxTreeView(document.querySelector(selector), {
             items,
             expandNodesRecursive: false,
             dataStructure: "plain",
-            height: $("window").height(),
             displayExpr: "name",
             noDataText: "Outline is Empty",
             onItemClick: jumpNode,
@@ -153,7 +159,11 @@
         }
 
         function createSortable(selector, driveName) {
-          $(selector).dxSortable({
+          const element = document.querySelector(selector);
+          if (DevExpress.ui.dxSortable.getInstance(element)) {
+            return;
+          }
+          new DevExpress.ui.dxSortable(element, {
             filter: ".dx-treeview-item",
             group: "shared",
             data: driveName,
@@ -161,9 +171,14 @@
             allowReordering: true,
             onDragChange: (e) => {
               if (e.fromComponent === e.toComponent) {
-                const $nodes = e.element.find(".dx-treeview-node");
+                const nodes = e.element.querySelectorAll(".dx-treeview-node");
+                const fromElem = nodes[e.fromIndex];
+                const toElem = nodes[e.toIndex];
                 const isDragIntoChild =
-                  $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
+                  !!fromElem &&
+                  !!toElem &&
+                  fromElem !== toElem &&
+                  fromElem.contains(toElem);
                 if (isDragIntoChild) {
                   e.cancel = true;
                 }
@@ -222,7 +237,9 @@
 
         function getTreeView() {
           try {
-            return $("#treeview").dxTreeView("instance");
+            return DevExpress.ui.dxTreeView.getInstance(
+              document.querySelector("#treeview"),
+            );
           } catch {
             return undefined;
           }
@@ -237,9 +254,9 @@
         }
 
         function findNode(treeView, index) {
-          const nodeElement = treeView.element().find(".dx-treeview-node")[
-            index
-          ];
+          const nodeElement = treeView
+            .element()
+            .querySelectorAll(".dx-treeview-node")[index];
           if (nodeElement) {
             return findNodeById(
               treeView.getNodes(),
@@ -312,7 +329,7 @@
         }
 
         function getTopVisibleNode(component) {
-          const treeViewElement = component.element().get(0);
+          const treeViewElement = component.element();
           const treeViewTopPosition =
             treeViewElement.getBoundingClientRect().top;
           const nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
@@ -417,10 +434,8 @@
                   : undefined,
             });
           });
-          $(() => {
-            createTreeView("#treeview", treeData);
-            createSortable("#treeview", "treeData");
-          });
+          createTreeView("#treeview", treeData);
+          createSortable("#treeview", "treeData");
         }
 
         function handler(e) {

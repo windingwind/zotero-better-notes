@@ -94,7 +94,7 @@ export async function waitForWindow(uri: string, timeout: number = 3000) {
         }
 
         Services.ww.unregisterNotification(winObserver);
-        const win = ev.target?.ownerGlobal;
+        const win = (ev.target as Document | null)?.defaultView;
         // Give window code time to run on load
         win?.setTimeout(function () {
           resolve(win);

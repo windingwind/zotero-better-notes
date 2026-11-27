@@ -170,7 +170,7 @@ async function renderSection(
     const box = doc.createElement("div");
     box.addEventListener("click", () => {
       if (box.closest("note-editor")) {
-        box.ownerGlobal?.ZoteroPane?.selectItem(targetItem.id);
+        box.ownerDocument.defaultView?.ZoteroPane?.selectItem(targetItem.id);
       } else {
         addon.hooks.onOpenNote(targetItem.id, "preview", linkParams);
       }
